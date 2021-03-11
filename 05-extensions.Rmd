@@ -1,0 +1,461 @@
+---
+output:
+  #bookdown::html_document2: default
+  #bookdown::word_document2: default
+  bookdown::pdf_document2: 
+    template: templates/brief_template.tex
+    citation_package: biblatex
+documentclass: book
+bibliography: references.bib
+---
+
+```{block type='savequote', include=knitr::is_latex_output(), quote_author='(ref:darwin-quote)'}
+There is grandeur in this view of life, with its several powers, having been originally breathed into a few forms or into one; and that, whilst this planet has gone cycling on according to the fixed law of gravity, from so simple a beginning endless forms most beautiful and most wonderful have been, and are being, evolved.
+
+```
+(ref:darwin-quote) --- Charles Darwin [@Darwin1859]
+  
+# Customisations and extensions
+\minitoc <!-- this will include a mini table of contents-->
+
+<!-- LaTeX normally does not indent the first line after a heading - however, it does so after the mini table of contents. You can manually tell it not to with \noindent -->
+
+\noindent This chapter describes a number of additional tips and tricks as well as possible customizations to the `oxforddown` thesis.
+
+## Front matter
+### Shorten captions shown in the list of figures (PDF)
+You might want your list of figures (which follows the table of contents) to have shorter (or just different) figure descriptions than the actual figure captions.
+
+Do this using the chunk option `fig.scap` ('short caption'), for example `{r captain-image, fig.cap="A very long and descriptive (and potentially boring) caption that doesn't fit in the list of figures, but helps the reader understand what the figure communicates.", fig.scap="A concise description for the list of figures"`
+
+
+### Shorten captions shown in the list of tables (PDF)
+You might want your list of tables (which follows the list of figures in your thesis front matter) to have shorter (or just different) table descriptions than the actual table captions.
+
+If you are using `knitr::kable` to generate a table, you can do this with the argument `caption.short`, e.g.:
+
+```r
+knitr::kable(mtcars,
+              caption = "A very long and descriptive (and potentially
+              boring) caption that doesn't fit in the list of figures,
+              but helps the reader understand what the figure 
+              communicates.",
+              caption.short = "A concise description for the list of tables")
+```
+
+## Shorten running header (PDF)
+You might want a chapter's running header (i.e. the header showing the title of the current chapter at the top of page) to be shorter (or just different) to the actual chapter title.
+
+Do this by adding the latex command `\chaptermark{My shorter version}` after your chapter title.
+
+For example, chapter \@ref(cites-and-refs)'s running header is simply 'Cites and cross-refs', because it begins like this:
+
+```markdown
+# Citations, cross-references, and collaboration {#cites-and-refs} 
+\chaptermark{Cites and cross-refs}
+```
+
+## Unnumbered chapters
+To make chapters unnumbered (normally only relevant to the Introduction and/or the Conclusion), follow the chapter header with `{-}`, e.g. `# Introduction {-}`.
+
+When you do this, you must also follow the heading with these two latex commands:
+```latex
+\adjustmtc
+\markboth{The Name of Your Unnumbered Chapter}{}
+```
+
+Otherwise the chapter's mini table of contents and the running header will show the previous chapter.
+
+
+## Beginning chapters with quotes (PDF)
+The OxThesis LaTeX template lets you inject some wittiness into your thesis by including a block of type `savequote` at the beginning of chapters. 
+To do this, use the syntax ```` ```{block type='savequote'} ````.^[For more on custom block types, see the relevant section in [_Authoring Books with R Markdown_](https://bookdown.org/yihui/bookdown/custom-blocks.html).]
+
+Add the reference for the quote with the chunk option `quote_author="my author name"`. 
+You will also want to add the chunk option `include=knitr::is_latex_output()` so that quotes are only included in PDF output.
+
+It's not possible to use markdown syntax inside chunk options, so if you want to e.g. italicise a book name in the reference use a ['text reference'](https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#text-references): Create a named piece of text with '(ref:label-name) My text', then point to this in the chunk option with `quote_author='(ref:label-name)'`.
+
+
+## Highlighting corrections (HTML & PDF)
+For when it comes time to do corrections, you may want to highlight changes made when you submit a post-viva, corrected copy to your examiners so they can quickly verify you've completed the task. 
+You can do so like this:
+
+### Short, inline corrections
+Highlight **short, inline corrections** by doing `[like this]{.correction}` --- the text between the square brackets will then [be highlighted in blue]{.correction} in the output.
+
+Note that pandoc might get confused by citations and cross-references inside inline corrections.
+In particular, it might get confused by `"[what @Shea2014 said]{.correction}"` which becomes [what @Shea2014 said]{.correction}
+In such cases, you can use LaTeX syntax directly. 
+The correction highlighting uses the [soul](https://ctan.org/pkg/soul) package, so you can do like this:
+
+- If using biblatex for references, use `"\hl{what \textcite{Shea2014} said}`
+- If using natbib for references, use `"\hl{what \cite{Shea2014} said}`
+
+Using raw LaTeX has the drawback of corrections then not showing up in HTML output at all, but you might only care about correction highlighting in the PDF for your examiners anyway!
+
+
+### Blocks of added or changed material
+Highlight entire **blocks of added or changed material** by putting them in a block of type `correction`, using the syntax ```` ```{block type='correction'} ````.^[In the **.tex** file for PDF output, this will put the content between `\begin{correction}` and `\end{correction}`; in gitbook output it will be put between `<div class="correction">` and `</div>`.]
+Like so:
+
+```{block type='correction', include=knitr::is_latex_output() | knitr::is_html_output()}
+For larger chunks, like this paragraph or indeed entire figures, you can use the `correction` block type. This environment **highlights paragraph-sized and larger blocks** with the same blue colour.
+```
+
+*Note that correction blocks cannot be included in word output.*
+
+### Stopping corrections from being highlighted
+To turn off correction highlighting, go to the YAML header of **index.Rmd**, then:
+
+- PDF output: set `corrections: false` \
+- HTML output: remove or comment out `- templates/corrections.css`
+
+
+## Apply custom font color and highlighting to text (HTML & PDF)
+The lua filter that adds the functionality to highlight corrections adds two more tricks:
+you can apply your own choice of colour to highlight text, or change the font color.
+The syntax is as follows:
+
+> Here's `[some text in pink highlighting]{highlight="pink"}` \
+> Becomes: Here's [some text in pink highlighting]{highlight="pink"}.
+
+> `[Here's some text with blue font]{color="blue"}` \
+> Becomes: [Here's some text with blue font]{color="blue"}
+
+> Finally --- never, ever actually do this -- `[here's some text with black highlighting and yellow font]{highlight="black" color="yellow"}` \
+> Becomes: [here's some text with black highlighting and yellow font]{highlight="black" color="yellow"}
+
+The file **scripts_and_filters/colour_and_highlight.lua** implements this, if you want to fiddle around with it.
+It works with both PDF and HTML output.
+
+
+## Including another paper in your thesis - embed a PDF document {#embed-pdf}
+
+You may want to embed existing PDF documents into the thesis, for example if your department allows a 'portfolio' style thesis and you need to include an existing typeset publication as a chapter. 
+
+In gitbook output, you can simply use `knitr::include_graphics` and it should include a scrollable (and downloadable) PDF.
+You will probably want to set the chunk options `out.width='100%'` and `out.height='1000px'`:
+
+```{r, eval=knitr::is_html_output(), out.width='100%', out.height='1000px'}
+knitr::include_graphics("figures/sample-content/pdf_embed_example/Lyngs2020_FB.pdf")
+```
+<br>
+
+In LaTeX output, however, this approach can cause odd behaviour.
+Therefore, when you build your thesis to PDF, split the PDF into an alphanumerically sorted sequence of **single-page** PDF files (you can do this automatically with the package `pdftools`). You can then use the appropriate LaTeX command to insert them, as shown below (for brevity, in the `oxforddown` PDF sample content we're only including two pages).
+*Note that the chunk option `results='asis'` must be set.*
+You may also want to remove margins from the PDF files, which you can do with Adobe Acrobat (paid version) and likely other software.
+
+```{r, echo=TRUE, results='asis', eval=knitr::is_latex_output(), linewidth = 70}
+# install.packages(pdftools)
+# split PDF into pages stored in figures/sample-content/pdf_embed_example/split/
+# pdftools::pdf_split("figures/sample-content/pdf_embed_example/Lyngs2020_FB.pdf",
+#        output = "figures/sample-content/pdf_embed_example/split/")
+
+# grab the pages
+pages <- list.files("figures/sample-content/pdf_embed_example/split", full.names = TRUE)
+
+# set how wide you want the inserted PDFs to be: 
+# 1.0 is 100 per cent of the oxforddown PDF page width;
+# you may want to make it a bit bigger
+pdf_width <- 1.2
+
+# for each PDF page, insert it nicely and
+# end with a page break
+cat(stringr::str_c("\\newpage \\begin{center} \\makebox[\\linewidth][c]{\\includegraphics[width=", pdf_width, "\\linewidth]{", pages, "}} \\end{center}"))
+
+```
+
+
+## Including another paper in your thesis - R Markdown child document {#embed-rmd}
+
+Sometimes you want to include another paper you are currently writing as a chapter in your thesis.
+Above \@ref(embed-pdf), we described the simplest way to do this: include the other paper as a pdf.
+However, in some cases you instead want to include the R Markdown source from this paper, and have it compiled within your thesis.
+This is a little bit more tricky, because you need to keep careful track of your file paths, but it is possible by [including the paper as a child document](https://bookdown.org/yihui/rmarkdown-cookbook/child-document.html).
+There are four main steps: 
+
+1. Include the paper as a child document
+1. Make file paths compatible with knitting the article on its own, as well as when it's include in your thesis
+1. Make header levels correct
+1. Make figure widths correct
+
+### An example paper in another folder
+Take this simple example (files for this are in [this GitHub repository](https://github.com/ulyngs/oxforddown-external-article)):
+
+```markdown 
+|--paper_to_include
+|  |--my_paper.Rmd
+|  |--data
+|  |  |--cat_salt.csv
+|  |--figures
+|  |  |--cat.jpg
+|
+|--thesis
+```
+
+As the chart suggests, you have another folder, **paper_to_include/** living in the same containing folder as your thesis folder.
+In the **paper_to_include** folder, the file **my_paper.Rmd** is where you write the paper.
+In **my_paper.Rmd**, you read in a CSV file found in the subfolder **data/cats.csv**, and also an image from the subfolder **figures/cat.jpg**.
+
+### Step 1: Include paper as a child document
+In your thesis folder, create an Rmd file for the chapter where you want to include another paper. 
+Add one or more code chunks that include R Markdown files from that paper as child documents:
+
+````markdown
+# Including an external chapter 
+
+`r ''````{r child = "../paper_to_include/my_paper.Rmd"}
+```
+````
+
+
+### Step 2: Make file paths compatible
+Use [parameters](https://rmarkdown.rstudio.com/lesson-6.html) to adjust the file path of images based on values you set in the YAML header of an R Markdown file.
+In **my_paper.Rmd**, create a parameter called `other_path` and set it to an empty string:
+
+```yaml
+---
+title: "A fabulous article in a different folder"
+params:
+  other_path: ""
+---
+```
+
+In **my_paper.Rmd**, put this at the start of the filepath when you read in data or include images:
+
+```r
+library(tidyverse)
+library(knitr)
+
+cat_data <- read_csv(str_c(params$other_path, "data/cats.csv"))
+include_graphics(str_c(params$other_path, "figures/cat.jpg"))
+```
+
+Finally, in your thesis folder's **index.Rmd** file, also create the parameter `other_path`.
+But here, set it to where the **paper_to_include/** folder is relative to your thesis folder:
+
+```yaml
+params:
+  other_path: "../paper_to_include/"
+```
+
+#### Note on HTML output
+Note that if you want to host an HTML version on your thesis online, you will need to include graphics in the content that you host online - the internet obviously won't be able to see filepaths that are just referring to stuff in another folder on your computer!
+
+
+### Step 3: Make sure header levels are correct
+Unless the paper you want to include is also written as a book, your header levels are probably going to be off.
+That is, the level 1 headers (\# Some header) you use for main sections in the other paper turns into chaper titles when included in your thesis.
+
+To avoid this, first _increment all heading levels by one in **paper_to_include/my_paper.Rmd**_ (\# Some header -> \#\# Some header).
+Then in **paper_to_include/** create a [lua filter](https://bookdown.org/yihui/rmarkdown-cookbook/lua-filters.html#lua-filters) that decrements header levels by one: Create a text file, save it as **reduce_header_level.lua**, and give it the content below.
+
+```lua
+function Header(el)
+  if (el.level <= 1) then
+    error("I don't know how to decrease the level of h1")
+  end
+  el.level = el.level - 1
+  return el
+end
+```
+
+In the YAML header of **paper_to_include/my_paper.Rmd**, use this filter:
+
+```yaml
+---
+title: "A fabulous article in a different folder"
+params:
+  other_path: ""
+output:
+  pdf_document: 
+    pandoc_args: ["--lua-filter=reduce_header_level.lua"]
+---
+```
+
+Now, your header levels will be correct both when you knit the paper on its own and when its included in your thesis.
+
+### Step 4. Make sure figure widths are correct
+It might be that your figure widths when knitting your paper on its own, and when including it in your thesis, need to be different.
+You can again use parameters to set figure widths.
+
+Imagine you want figure width to be 80% of the page width when knitting your paper on its own, but 100% in your thesis.
+In **paper_to_include/my_paper.Rmd**, first add a parameter we could call `out_width` and set it to the string "80%":
+
+```yaml
+---
+title: "A fabulous article in a different folder"
+params:
+  other_path: ""
+  out_width: "80%"
+output:
+  pdf_document: 
+    pandoc_args: ["--lua-filter=reduce_header_level.lua"]
+---
+```
+
+Then, make sure use that parameter to set the output width when you include figures in **paper_to_include/my_paper.Rmd**:
+
+````markdown
+`r ''````{r, out.width=params$out_width, fig.cap="A very funny cat"}
+include_graphics(str_c(params$other_path, "figures/cat.jpg"))
+```
+````
+
+Finally, create the parameter `out_width` in your thesis' **index.Rmd** file:
+
+```yaml
+params:
+  other_path: "../paper_to_include/"
+  out_width: "80%"
+```
+
+Now, the output width of your figure will be 80% when knitting your paper on its own, and 100% when knitting it as child document of your thesis.
+
+
+
+## Customizing referencing 
+
+### Using a .csl file with pandoc instead of biblatex
+The `oxforddown` package uses biblatex in LaTeX for referencing. 
+It is also possible to use pandoc for referencing by providing a .csl file in the YAML header of **index.Rmd** (likely requiring commenting out the biblatex code in **templates/template.tex**). 
+This may be helpful for those who have a .csl file describing the referencing format for a particular journal. 
+However, note that this approach does not support chapter bibliographies (see Section \@ref(biblatex-custom)).
+
+```YAML
+csl: ecology.csl
+```
+
+### Customizing biblatex and adding chapter bibliographies {#biblatex-custom}
+
+This section provides one example of customizing biblatex. Much of this code was combined from searches on Stack Exchange and other sources (e.g. [here](https://tex.stackexchange.com/questions/10682/suppress-in-biblatex)).
+
+In **templates/template.tex**, one can replace the existing biblatex calls with the following to achieve referencing that looks like this: 
+
+(Charmantier and Gienapp 2014)
+
+Charmantier, A. and P. Gienapp (2014). Climate change and timing of avian breeding and migration: evolutionary versus plastic changes. Evolutionary Applications 7(1):15–28. doi: 10.1111/eva.12126.
+
+
+```latex
+\usepackage[backend=biber,
+    bibencoding=utf8,
+    refsection=chapter, % referencing by chapter
+    style=authoryear, 
+    firstinits=true,
+    isbn=false,
+    doi=true,
+    url=false,
+    eprint=false,
+    related=false,
+    dashed=false,
+    clearlang=true,
+    maxcitenames=2,
+    mincitenames=1,
+    maxbibnames=10,
+    abbreviate=false,
+    minbibnames=3,
+    uniquelist=minyear,
+    sortcites=true,
+    date=year
+]{biblatex}
+\AtEveryBibitem{%
+  \clearlist{language}%
+  \clearfield{note}
+}
+
+\DeclareFieldFormat{titlecase}{\MakeTitleCase{#1}}
+
+\newrobustcmd{\MakeTitleCase}[1]{%
+  \ifthenelse{\ifcurrentfield{booktitle}\OR\ifcurrentfield{booksubtitle}%
+    \OR\ifcurrentfield{maintitle}\OR\ifcurrentfield{mainsubtitle}%
+    \OR\ifcurrentfield{journaltitle}\OR\ifcurrentfield{journalsubtitle}%
+    \OR\ifcurrentfield{issuetitle}\OR\ifcurrentfield{issuesubtitle}%
+    \OR\ifentrytype{book}\OR\ifentrytype{mvbook}\OR\ifentrytype{bookinbook}%
+    \OR\ifentrytype{booklet}\OR\ifentrytype{suppbook}%
+    \OR\ifentrytype{collection}\OR\ifentrytype{mvcollection}%
+    \OR\ifentrytype{suppcollection}\OR\ifentrytype{manual}%
+    \OR\ifentrytype{periodical}\OR\ifentrytype{suppperiodical}%
+    \OR\ifentrytype{proceedings}\OR\ifentrytype{mvproceedings}%
+    \OR\ifentrytype{reference}\OR\ifentrytype{mvreference}%
+    \OR\ifentrytype{report}\OR\ifentrytype{thesis}}
+    {#1}
+    {\MakeSentenceCase{#1}}}
+    
+% \renewbibmacro{in:}{}
+% suppress "in" for articles
+% 
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+%-- no "quotes" around titles of chapters/article titles
+\DeclareFieldFormat[article, inbook, incollection, inproceedings, misc, thesis, unpublished]
+{title}{#1}
+%-- no punctuation after volume
+\DeclareFieldFormat[article]
+{volume}{{#1}}
+%-- puts number/issue between brackets
+\DeclareFieldFormat[article, inbook, incollection, inproceedings, misc, thesis, unpublished]
+{number}{\mkbibparens{#1}} 
+%-- and then for articles directly the pages w/o any "pages" or "pp." 
+\DeclareFieldFormat[article]
+{pages}{#1}
+%-- for some types replace "pages" by "p."
+\DeclareFieldFormat[inproceedings, incollection, inbook]
+{pages}{p. #1}
+%-- format 16(4):224--225 for articles
+\renewbibmacro*{volume+number+eid}{
+  \printfield{volume}%
+  \printfield{number}%
+  \printunit{\addcolon}
+}
+```
+
+If you would like chapter bibliographies, in addition insert the following code at the end of each chapter, and comment out the entire REFERENCES section at the end of template.tex.
+
+```latex
+\printbibliography[segment=\therefsection,heading=subbibliography]
+```
+
+## Customizing the page headers and footers (PDF)
+
+This can now be done directly in **index.Rmd**'s YAML header.
+If you are a LaTeX expert and need further customisation that what's currently provided, you can tweak the relevant sections of **templates/template.tex** - the relevant code is beneath the line that begins `\usepackage{fancyhdr}`.
+
+## Diving in to the OxThesis LaTeX template (PDF)
+For LaTeX minded people, you can read through **templates/template.tex** to see which additional customisation options are available as well as **templates/ociamthesis.cls** which supplies the base class.
+For example, **template.tex** provides an option for master's degree submissions, which changes identifying information to candidate number and includes a word count. 
+At the time of writing, you must set this directly in **template.tex** rather than from the YAML header in **index.Rmd**.
+
+
+## Customising to a different university
+### The minimal route
+If the front matter in the OxThesis LaTeX template is suitable to your university, customising `oxforddown` to your needs could be as simple as putting the name of your institution and the path to your university's logo in **index.Rmd**:
+
+```yaml
+university: University of You
+university-logo: figures/your-logo-here.pdf
+```
+
+### Replacing the entire title page with your required content
+If you have a **.tex** file with some required front matter from your university that you want to replace the OxThesis template's title page altogether, you can provide a filepath to this file in **index.Rmd**.
+`oxforddown`'s sample content includes and example of this --- if you use the YAML below, your front matter will look like this:
+
+```yaml
+alternative-title-page: front-and-back-matter/alt-title-page-example.tex
+````
+
+```{r, echo=FALSE, eval=knitr::is_html_output(), out.width='100%', out.height='1000px'}
+knitr::include_graphics("figures/sample-content/alt_frontmatter_example/alt-frontmatter-example.pdf")
+```
+
+\noindent
+```{r, echo=FALSE, out.width='100%', out.height='1000px', results='asis', eval=knitr::is_latex_output}
+# grab the pages
+pages <- list.files("figures/sample-content/alt_frontmatter_example/split", full.names = TRUE)
+
+pdf_width <- 0.32
+
+cat(stringr::str_c("\\fbox{\\includegraphics[width=", pdf_width, "\\linewidth]{", pages, "}}"))
+```

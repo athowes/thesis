@@ -1,0 +1,160 @@
+---
+#####################
+## thesis metadata ##
+#####################
+title: |
+  `oxforddown`: \
+  An Oxford University Thesis \
+  Template for R Markdown
+author: Author Name
+college: Your College
+university: University of Oxford
+university-logo: templates/beltcrest.pdf
+submitted-text: A thesis submitted for the degree of
+degree: Doctor of Philosophy
+degreedate: Michaelmas 2018
+abstract: |
+  `r paste(readLines("front-and-back-matter/_abstract.Rmd"), collapse = '\n  ')`
+acknowledgements: |
+  `r paste(readLines("front-and-back-matter/_acknowledgements.Rmd"), collapse = '\n  ')`
+dedication: For Yihui Xie
+abbreviations: "front-and-back-matter/abbreviations" # path to .tex file with abbreviations
+
+#######################
+## bibliography path ##
+#######################
+bibliography: references.bib
+
+########################
+## PDF layout options ###
+#########################
+## submitting a master's thesis ##
+# set masters-submission: true for an alternative, anonymous title page with 
+# candidate number and word count
+masters-submission: false
+candidate-number: 123456
+word-count: 10,052
+
+# if you want to use a different title page altogether, provide a path to a 
+# .tex file here and it will override the default Oxford one
+# alternative-title-page: front-and-back-matter/alt-title-page-example.tex
+
+## correction highlighting ##
+corrections: true
+
+## binding / margins ##
+page-layout: nobind #'nobind' for equal margins (PDF output), 'twoside' for two-sided binding (mirror margins and blank pages), leave blank for one-sided binding (left margin > right margin)
+
+## position of page numbers ##
+ordinary-page-number-foot-or-head: foot #'foot' puts page number in footer, 'head' in header
+ordinary-page-number-position: C  #C = center, R = right, L = left. If page layout is 'twoside', O = odd pages and E = even pages. E.g. RO,LE puts the page number to the right on odd pages and left on even pages
+chapter-page-number-foot-or-head: foot #you may want it to be different on the chapter pages
+chapter-page-number-position: C
+
+## position of running header ##
+running-header: true #indicate current chapter/section in header?
+running-header-foot-or-head: head
+running-header-position-leftmark: LO #marks the chapter. If layout is 'nobind', only this is used.
+running-header-position-rightmark: RE  #marks the section.
+
+draft-mark: false # add a DRAFT mark?
+draft-mark-foot-or-head: foot ##'foot' = in footer, 'head' = in header
+draft-mark-position: C
+
+## section numbering ##
+section-numbering-depth: 2 # to which depth should headings be numbered?
+
+## tables of content ##
+toc-depth: 1 # to which depth should headings be included in table of contents?
+lof: true # include list of figures in front matter?
+lot: true # include list of tables in front matter?
+mini-toc: true  # include mini-table of contents at start of each chapter? (this just prepares it; you must also add \minitoc after the chapter titles)
+mini-lot: false  # include mini-list of tables by start of each chapter?
+mini-lof: false  # include mini-list of figures by start of each chapter?
+
+## code block spacing ##
+space-before-code-block: 10pt
+space-after-code-block: 8pt
+
+## linespacing ##
+linespacing: 22pt plus2pt # 22pt is official for submission & library copies
+frontmatter-linespacing: 17pt plus1pt minus1pt #spacing in roman-numbered pages (acknowledgments, table of contents, etc.)
+
+### other stuff ###
+abstractseparate: true  # include front page w/ abstract for examination schools?
+hidelinks: true # false to highlight clickable links with a colored border
+
+### citation and bibliography style ###
+bibliography-heading-in-pdf: Works Cited
+
+# biblatex options #
+# unless you run into 'biber' error messages, use natbib as it lets you customise your bibliography directly
+use-biblatex: true
+bib-latex-options: "style=authoryear, sorting=nyt, backend=biber, maxcitenames=2, useprefix, doi=true, isbn=false, uniquename=false" #for science, you might want style=numeric-comp, sorting=none for numerical in-text citation with references in order of appearance
+
+# natbib options #
+# natbib runs into fewer errors than biblatex, but to customise your bibliography you need to fiddle with .bst files
+use-natbib: false # to use natbib, set this to true, and change "output:bookdown::pdf_book:citation_package:" to "natbib"
+natbib-citation-style: authoryear #for science, you might want numbers,square
+natbib-bibliography-style: ACM-Reference-Format #or plainnat or some .bst file you download
+
+
+
+#####################
+## output options  ##
+#####################
+output:
+  bookdown::pdf_book:
+    citation_package: biblatex
+    template: templates/template.tex
+    keep_tex: true
+    pandoc_args: "--lua-filter=scripts_and_filters/colour_and_highlight.lua"
+  bookdown::bs4_book: 
+    css: 
+      - templates/bs4_style.css
+      - templates/corrections.css # remove to stop highlighting corrections
+    theme:
+      primary: "#6D1919"
+    repo: https://github.com/ulyngs/oxforddown
+    pandoc_args: "--lua-filter=scripts_and_filters/colour_and_highlight.lua"
+  bookdown::gitbook:
+    css: templates/style.css
+    config:
+      sharing:
+        facebook: false
+        twitter: yes
+        all: false
+  bookdown::word_document2:
+    toc: true   
+link-citations: true
+documentclass: book
+always_allow_html: true #this allows html stuff in word (.docx) output
+# The lines below make the 'knit' button render the whole thesis to PDF, HTML, or Word
+# When outputting to PDF, you can clean up the files LaTeX generates by running 
+# 'file.remove(list.files(pattern = "*.(log|mtc|maf|aux|bbl|blg|xml)"))' in the R console
+knit: (function(input, ...) {bookdown::render_book(input, output_format = "bookdown::pdf_book")})
+#knit: (function(input, ...) {bookdown::render_book(input, output_format = "bookdown::bs4_book")})
+#knit: (function(input, ...) {bookdown::render_book(input, output_format = "bookdown::gitbook")})
+#knit: (function(input, ...) {bookdown::render_book(input, output_format = "bookdown::word_document2")})
+---
+
+
+```{r install_packages, include=FALSE}
+source('scripts_and_filters/install_packages_if_missing.R')
+```
+
+```{r create_chunk_options, include=FALSE, eval=knitr::is_latex_output()}
+source('scripts_and_filters/create_chunk_options.R')
+source('scripts_and_filters/wrap_lines.R')
+```
+
+<!--
+Include the create_chunk_options chunk above at the top of your index.Rmd file
+This will include code to create additional chunk options (e.g. for adding author references to savequotes)
+and to make sure lines in code soft wrap
+If you need to create your own additional chunk options, edit the file scripts/create_chunk_options.R
+-->
+
+<!-- This chunk includes the front page content in HTML output -->
+```{r ebook-welcome, child = 'front-and-back-matter/_welcome-ebook.Rmd', eval=knitr::is_html_output()}
+```

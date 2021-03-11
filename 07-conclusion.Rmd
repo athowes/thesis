@@ -1,0 +1,34 @@
+---
+#########################################
+# options for knitting a single chapter #
+#########################################
+output:
+  #bookdown::html_document2: default
+  #bookdown::word_document2: default
+  bookdown::pdf_document2:
+    template: templates/brief_template.tex
+documentclass: book
+bibliography: references.bib
+---
+
+```{block type='savequote', include=knitr::opts_knit$get('rmarkdown.pandoc.to') == 'latex', quote_author='(ref:goethe-quote)'}
+Alles Gescheite ist schon gedacht worden.\
+Man muss nur versuchen, es noch einmal zu denken.
+
+All intelligent thoughts have already been thought;\
+what is necessary is only to try to think them again.
+
+<!-- ending a line with a lonely backslash inserts a linebreak -->
+```
+(ref:goethe-quote) --- Johann Wolfgang von Goethe [@von_goethe_wilhelm_1829]
+
+# Conclusion {-}
+If we don't want Conclusion to have a chapter number next to it, we can add the `{-}` attribute.
+
+## More info {-}
+And here's some other random info: 
+the first paragraph after a chapter title or section head _shouldn't be_ indented, because indents are to tell the reader that you're starting a new paragraph. 
+Since that's obvious after a chapter or section title, proper typesetting doesn't add an indent there.
+
+This paragraph, by contrast, *will* be indented as it should because it is not the first one after the 'More info' heading.
+All hail LaTeX. (If you're reading the HTML version, you won't see any indentation - have a look at the PDF version to understand what in the earth this section is babbling on about).
