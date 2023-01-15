@@ -45,7 +45,6 @@
 \usepackage[colorlinks=false,pdfpagelabels,hidelinks=true]{hyperref}
 \usepackage{float}
 
-
 %UL set section header spacing
 \usepackage{titlesec}
 % 
@@ -265,8 +264,11 @@
 
 %%%%% ABSTRACT -- Nothing to do here except comment out if you don't want it.
 \begin{abstract}
-	Disease surveillance alters policy.
-Complex statistical models and quantification of uncertainty are required.
+	HIV is a large problem.
+Disease burden is unevenly distributed.
+Effective public health response and prioritised prevention requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
+Complex statistical models are required to overcome significant data challenges.
+In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV surveillance.
 \end{abstract}
 
 %%%%% MINI TABLES
@@ -312,19 +314,17 @@ Complex statistical models and quantification of uncertainty are required.
 \adjustmtc
 \markboth{Background}{}
 
-\hypertarget{disease-surveillance}{%
-\section{Disease surveillance}\label{disease-surveillance}}
+\hypertarget{disease-surveillance-and-small-area-estimation}{%
+\section{Disease surveillance and small-area estimation}\label{disease-surveillance-and-small-area-estimation}}
 
 \begin{itemize}
 \tightlist
 \item
+  Disease surveillance is a central application of statistics
+\item
   Small-area estimation in health, epidemiology and environment
-
-  \begin{itemize}
-  \tightlist
-  \item
-    The Small-Area Health Statistics Unit at Imperial was set-up to monitor health around point sources of environmental pollution in response to the Sellafield enquiry into the increased incidence of childhood leukemia leukaemia near a nuclear reprocessing plant \autocite{elliott1992small}. This research has a focus on ratios of observed events to expected events, and testing hypothesis about hot-spots
-  \end{itemize}
+\item
+  The Small-Area Health Statistics Unit at Imperial was set-up to monitor health around point sources of environmental pollution in response to the Sellafield enquiry into the increased incidence of childhood leukemia leukaemia near a nuclear reprocessing plant \autocite{elliott1992small}. This research has a focus on ratios of observed events to expected events, and testing hypothesis about hot-spots.
 \end{itemize}
 
 \hypertarget{hivaids}{%
@@ -333,17 +333,28 @@ Complex statistical models and quantification of uncertainty are required.
 \begin{itemize}
 \tightlist
 \item
-  The HIV/AIDS epidemic has a large disease burden
+  HIV/AIDS has a large disease burden
 \item
-  The disease burden is unevenly distributed in space and across communities
+  The disease burden is unevenly distributed in space and across communities and individuals
 \item
   Surveillance techniques and statistical models have been used to respond to the epidemic
 \item
-  Aims for HIV response going forward, and surveillance capabilities are needed to meet them
+  Key HIV indicators are HIV prevalence, HIV incidence, ART coverage and coverage of other interventions such as PrEP, PEP
 \item
   Data difficulties including sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, demography
 \item
-  Phasing out of nationally-representative household surveys for HIV. Importance of relying on multiple sources of information: evidence synthesis, Naomi, multivariate models. Bayesian survey design
+  Aims for HIV response going forward, and surveillance capabilities are needed to meet them
+\item
+  Phasing out of nationally-representative household surveys for HIV
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Bayesian survey design
+  \end{itemize}
+\item
+  Importance of relying on multiple sources of information
+  Creates requirement for for complex models e.g.~evidence synthesis, Naomi, multivariate models
 \item
   Why isn't case-based surveillance included yet?
 
@@ -356,8 +367,6 @@ Complex statistical models and quantification of uncertainty are required.
   \item
     Post-hoc matching and create a case-based surveillance record
   \end{itemize}
-\item
-  Key HIV indicators are HIV prevalence, HIV incidence, ART coverage and coverage of other interventions such as PrEP, PEP
 \item
   Drivers of transmission
 \item
@@ -372,13 +381,36 @@ Complex statistical models and quantification of uncertainty are required.
   The population strategy of Geoffrey Rose
 \end{itemize}
 
-\hypertarget{statistics}{%
-\section{Statistics}\label{statistics}}
+\hypertarget{bayesian-spatio-temporal-statistics}{%
+\section{Bayesian spatio-temporal statistics}\label{bayesian-spatio-temporal-statistics}}
 
 \begin{itemize}
 \tightlist
 \item
+  The practice of doing Bayesian statistics primarily concerns construction of a generative model for the data we observe
+\item
+  In spatio-temporal statistics, the data is indexed by spatial and or temporal location
+\item
+  The independent and identically distributed (IID) assumptions commonly used for observations are rarely suitable in the spatio-temporal setting
+\item
+  We expect there to be spatio-temporal structure
+\item
+  Given a generative model, computation of the posterior distribution proceeds using approximate Bayesian inference methods
+\item
+  Markov chain Monte Carlo (MCMC) is the most popular approach and works by simulating samples from a Markov chain which by construction has stationary distribution equal to the distribution of interest
+\item
+  Variational Bayes approaches assume the posterior distribution belongs to some class and use optimisation to choose the best member of that class
+\item
+  Laplace approximation and integrated nested Laplace approximation
+\item
+  Empirical Bayes
+\item
   Definition of a latent Gaussian model \autocite{rue2009approximate}
+  \begin{alignat}{2}
+  &\text{(Observations)}     &        y_i &\sim p(y_i \, | \, x_i, \btheta), \quad i = 1, \ldots, n, \label{eq:data} \\
+  &\text{(Latent field)}     &        \x &\sim \mathcal{N}(\x \, | \, \mathbf{0}, \mathbf{Q}(\btheta)^{-1}), \label{eq:process} \\
+  &\text{(Parameters)}       & \qquad \btheta &\sim p(\btheta), \label{eq:parameters}
+  \end{alignat}
 
   \begin{itemize}
   \tightlist
@@ -418,20 +450,6 @@ Complex statistical models and quantification of uncertainty are required.
     Many-to-one is not an issue for \texttt{R-INLA}, the latent field is implemented as a concatenation of many vectors already. For example, for \(\eta_i = \beta_0 + \phi_i\) with \(i = 1, \ldots, n\) the latent field is \((\eta_1, \ldots, \eta_n, \beta_0, \phi_1, \ldots, \phi_n)^\top\) of dimension \(2n + 1\)
   \item
     For additive models, the only non-linearity is in the link function
-  \end{itemize}
-\item
-  Approximate Bayesian inference methods
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Markov chain Monte Carlo
-  \item
-    Variational Bayes
-  \item
-    Laplace approximation and integrated nested Laplace approximation
-  \item
-    Empirical Bayes
   \end{itemize}
 \item
   Particular properties of spatio-temporal models (and LGMs) which make INLA, if feasible, often the best option
