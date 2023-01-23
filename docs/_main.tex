@@ -247,10 +247,10 @@
 \begin{acknowledgements}
  	Thanks to Jeff Eaton and Seth Flaxman for supervision of this research;
  staff and students of the StatML CDT at Imperial and Oxford;
- members of the HIV inference lab at Imperial;
- Mike McLaren, Kevin Esvelt and the Sculpting Evolution lab for hosting my visit to MIT;
+ members of the HIV inference group at Imperial;
+ Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to MIT;
  Alex Stringer for hosting my visit to Waterloo;
- the Effective altruism community;
+ the Effective Altruism community;
  the Bill \& Melinda Gates Foundation and EPSRC for funding this PhD;
  my friends and family for their support.
 
@@ -308,8 +308,7 @@ In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV sur
 
 % all your chapters and appendices will appear here
 \hypertarget{background}{%
-\chapter*{Background}\label{background}}
-\addcontentsline{toc}{chapter}{Background}
+\chapter{Background}\label{background}}
 
 \adjustmtc
 \markboth{Background}{}
@@ -471,35 +470,116 @@ In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV sur
   How does the ecological fallacy relate to aggregated output models
 \end{itemize}
 
-\hypertarget{understanding-models-for-spatial-structure-in-small-area-estimation}{%
-\chapter*{Understanding models for spatial structure in small-area estimation}\label{understanding-models-for-spatial-structure-in-small-area-estimation}}
-\addcontentsline{toc}{chapter}{Understanding models for spatial structure in small-area estimation}
+\hypertarget{understanding-models-for-spatial-structure}{%
+\chapter{Understanding models for spatial structure}\label{understanding-models-for-spatial-structure}}
 
 \adjustmtc
-\markboth{Models for spatial structure in small-area estimation}{}
+\markboth{Models for spatial structure}{}
 
 The repository for this work is \href{https://github.com/athowes/areal-comparison}{\texttt{athowes/areal-comparison}}.
 Include an edited version of the corresponding paper here.
 
-\hypertarget{spatio-temporal-estimates-of-hiv-risk-group-proportions-for-adolescent-girls-and-young-women-across-13-priority-countries-in-sub-saharan-africa}{%
-\chapter*{Spatio-temporal estimates of HIV risk group proportions for adolescent girls and young women across 13 priority countries in sub-Saharan Africa}\label{spatio-temporal-estimates-of-hiv-risk-group-proportions-for-adolescent-girls-and-young-women-across-13-priority-countries-in-sub-saharan-africa}}
-\addcontentsline{toc}{chapter}{Spatio-temporal estimates of HIV risk group proportions for adolescent girls and young women across 13 priority countries in sub-Saharan Africa}
+\hypertarget{a-multinomial-spatio-temporal-model-for-risk-group-proportions}{%
+\chapter{A multinomial spatio-temporal model for risk group proportions}\label{a-multinomial-spatio-temporal-model-for-risk-group-proportions}}
 
 \adjustmtc
-\markboth{Spatio-temporal estimates of HIV risk group proportions for adolescent girls and young women across 13 priority countries in sub-Saharan Africa}{}
+\markboth{A multinomial spatio-temporal model for risk group proportions}{}
 
-The repository for this work is \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}}.
-Include an edited version of the corresponding paper here.
+In this chapter I describe an applied piece of work on small-area estimation of HIV risk group proportions.
+This project was initially worked on by Kathryn Risher, who continues to lead dissemination of the results as a tool to be used by countries, as well as model development and data extensions.
+This work was described in \textcite{howes2022spatio}, which I draw from here.
+Code for the work in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}}.
 
-\hypertarget{simplifying-integrated-nested-laplace-approximation-with-adaptive-gaussian-hermite-quadrature}{%
-\chapter*{Simplifying Integrated nested Laplace approximation with adaptive Gaussian Hermite quadrature}\label{simplifying-integrated-nested-laplace-approximation-with-adaptive-gaussian-hermite-quadrature}}
-\addcontentsline{toc}{chapter}{Simplifying Integrated nested Laplace approximation with adaptive Gaussian Hermite quadrature}
+\hypertarget{background-1}{%
+\section{Background}\label{background-1}}
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+\hypertarget{statistical-model}{%
+\section{Statistical model}\label{statistical-model}}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{conclusions}{%
+\section{Conclusions}\label{conclusions}}
+
+\hypertarget{fast-approximate-inference-for-the-naomi-model}{%
+\chapter{Fast, approximate inference for the Naomi model}\label{fast-approximate-inference-for-the-naomi-model}}
 
 \adjustmtc
-\markboth{Simplifying Integrated nested Laplace approximation with adaptive Gaussian Hermite quadrature}{}
+\markboth{Fast, approximate inference for the Naomi model}{}
 
 The repository for this work is \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/elgm-inf}}.
 Include an edited version of the corresponding paper here.
+
+\hypertarget{conclusions-and-future-work}{%
+\chapter{Conclusions and future work}\label{conclusions-and-future-work}}
+
+\adjustmtc
+\markboth{Conclusions}{}
+
+\hypertarget{future-work}{%
+\section{Future work}\label{future-work}}
+
+Avenues for future work include:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Extending the risk group model to include all adults 15-49. This might involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but may be possible using the \texttt{aghq} with Laplace marginals
+\item
+  Evaluating the accuracy of \texttt{aghq} with Laplace marginals for a greater variety of extended latent Gaussian models
+\end{enumerate}
+
+\hypertarget{conclusions-1}{%
+\section{Conclusions}\label{conclusions-1}}
+
+The spatial structure chapter is interesting because:
+
+\begin{itemize}
+\tightlist
+\item
+  I design experiments to thoroughly compare models for spatial structure using tools for model assessment like proper scoring rules and posterior predictive checks
+\end{itemize}
+
+The risk group chapter is interesting because:
+
+\begin{itemize}
+\tightlist
+\item
+  I estimated HIV risk group proportions, enabling more countries to prioritise their delivery of HIV prevention services
+\item
+  I analysed the number of new infections that might be reached under a variety of risk stratification strategies
+\item
+  I used \texttt{R-INLA} to specify multinomial spatio-temporal models via the Poisson-multinomial transformation, including two- and three-way Kronecker product interactions
+\end{itemize}
+
+The fast, approximate inference chapter is interesting because:
+
+\begin{itemize}
+\tightlist
+\item
+  I developed a novel Bayesian inference method, motivated by a challenging and important problem in HIV inference
+\item
+  The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible
+\item
+  I implemented the method straightforwardly, building on the \texttt{TMB} and \texttt{aghq} packages, and described it completely and accessibly in \textcite{howes2023integrated}
+\end{itemize}
+
+My final conclusions are:
+
+\begin{itemize}
+\tightlist
+\item
+  Modelling complex data, more often than not, pushes the boundaries of the statistical toolkit available
+\item
+  One challenge I encountered was that of trying to implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the \texttt{R-INLA} website \autocite{rinla2023faq} notes that, ``the devil is in the details''. I have resolved this challenge by using a given \texttt{TMB} model template to fit models using multiple inference methodologies: empirical Bayes with Gaussian marginals \autocite{kristensen2016tmb}, AGHQ with Gaussian marginals \autocite{stringer2021implementing}, AGHQ with Laplace marginals \autocite{howes2023integrated}, and HMC using NUTS \autocite{monnahan2018no}. The benefits of such a ecosystem of packages are noted by \textcite{stringer2021fields}. I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
+\item
+  I have aimed to write this thesis, and the work described within it, in keeping with the principles of open science. I hope that doing so allows my work to be scrutinised, and, optimistically, built upon. This would not have been possible without a range of tools from the R ecosystem such as \texttt{rmarkdown} and \texttt{rticles}, as well as those developed within the MRC Centre for Global Infectious Disease Analysis like \texttt{orderly} and \texttt{didehpc}.
+\end{itemize}
 
 \startappendices
 
