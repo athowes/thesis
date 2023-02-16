@@ -141,7 +141,7 @@
 
 %%%%% THESIS / TITLE PAGE INFORMATION
 % Everybody needs to complete the following:
-\title{Bayesian spatio-temporal statistics for prioritised HIV prevention}
+\title{Methods and applications of Bayesian spatio-temporal statistics for prioritised HIV prevention}
 \author{Adam Howes}
 \college{}
 
@@ -264,10 +264,10 @@
 
 %%%%% ABSTRACT -- Nothing to do here except comment out if you don't want it.
 \begin{abstract}
-	HIV is a large problem.
+	HIV remains a large problem.
 Disease burden is unevenly distributed.
 Effective public health response and prioritised prevention requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
-Complex statistical models are required to overcome significant data challenges.
+Thoughtful statistical modelling is required to overcome significant data challenges.
 In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV surveillance.
 \end{abstract}
 
@@ -476,19 +476,18 @@ In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV sur
 \adjustmtc
 \markboth{Models for spatial structure}{}
 
-The repository for this work is \href{https://github.com/athowes/areal-comparison}{\texttt{athowes/areal-comparison}}.
+Code for the analysis in this chapter is available from \href{https://github.com/athowes/areal-comparison}{\texttt{athowes/areal-comparison}} and supported by the R package \href{https://athowes.github.io/arealutils}{\texttt{arealutils}}.
 Include an edited version of the corresponding paper here.
 
-\hypertarget{a-multinomial-spatio-temporal-model-for-risk-group-proportions}{%
-\chapter{A multinomial spatio-temporal model for risk group proportions}\label{a-multinomial-spatio-temporal-model-for-risk-group-proportions}}
+\hypertarget{multi-agyw}{%
+\chapter{A multinomial spatio-temporal model for risk group proportions}\label{multi-agyw}}
 
 \adjustmtc
 \markboth{A multinomial spatio-temporal model for risk group proportions}{}
 
-In this chapter I describe an applied piece of work on small-area estimation of HIV risk group proportions.
-This project was initially worked on by Kathryn Risher, who continues to lead dissemination of the results as a tool to be used by countries, as well as model development and data extensions.
-This work was described in \textcite{howes2022spatio}, which I draw from here.
-Code for the work in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}}.
+In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
+This project was initially worked on by Kathryn Risher, who continues to lead dissemination of the results as a tool to be used by countries, as well as model development and data extensions, and is described in \textcite{howes2022spatio}, which I draw from here.
+Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}} and supported by the R package \href{https://athowes.github.io/multi-agyw}{\texttt{multi.utils}}.
 
 \hypertarget{background-1}{%
 \section{Background}\label{background-1}}
@@ -505,17 +504,17 @@ Code for the work in this chapter is available from \href{https://github.com/ath
 \hypertarget{conclusions}{%
 \section{Conclusions}\label{conclusions}}
 
-\hypertarget{fast-approximate-inference-for-the-naomi-model}{%
-\chapter{Fast, approximate inference for the Naomi model}\label{fast-approximate-inference-for-the-naomi-model}}
+\hypertarget{elgm-inf}{%
+\chapter{Fast, approximate inference for the Naomi model}\label{elgm-inf}}
 
 \adjustmtc
 \markboth{Fast, approximate inference for the Naomi model}{}
 
-The repository for this work is \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/elgm-inf}}.
+Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/elgm-inf}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
 Include an edited version of the corresponding paper here.
 
-\hypertarget{conclusions-and-future-work}{%
-\chapter{Conclusions and future work}\label{conclusions-and-future-work}}
+\hypertarget{future-work-and-conclusions}{%
+\chapter{Future work and conclusions}\label{future-work-and-conclusions}}
 
 \adjustmtc
 \markboth{Conclusions}{}
@@ -529,9 +528,9 @@ Avenues for future work include:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Extending the risk group model to include all adults 15-49. This might involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but may be possible using the \texttt{aghq} with Laplace marginals
+  Extending the risk group model described in Chapter \ref{multi-agyw} to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but may be possible using \texttt{aghq} with Laplace marginals as described in Chapter \ref{elgm-inf}.
 \item
-  Evaluating the accuracy of \texttt{aghq} with Laplace marginals for a greater variety of extended latent Gaussian models
+  Evaluating the accuracy of \texttt{aghq} with Laplace marginals for a greater variety of extended latent Gaussian models.
 \end{enumerate}
 
 \hypertarget{conclusions-1}{%
@@ -542,7 +541,7 @@ The spatial structure chapter is interesting because:
 \begin{itemize}
 \tightlist
 \item
-  I design experiments to thoroughly compare models for spatial structure using tools for model assessment like proper scoring rules and posterior predictive checks
+  I designed experiments to thoroughly compare models for spatial structure using tools for model assessment such as proper scoring rules and posterior predictive checks.
 \end{itemize}
 
 The risk group chapter is interesting because:
@@ -550,11 +549,11 @@ The risk group chapter is interesting because:
 \begin{itemize}
 \tightlist
 \item
-  I estimated HIV risk group proportions, enabling more countries to prioritise their delivery of HIV prevention services
+  I estimated HIV risk group proportions for AGYW, enabling countries to prioritise their delivery of HIV prevention services.
 \item
-  I analysed the number of new infections that might be reached under a variety of risk stratification strategies
+  I analysed the number of new infections that might be reached under a variety of risk stratification strategies.
 \item
-  I used \texttt{R-INLA} to specify multinomial spatio-temporal models via the Poisson-multinomial transformation, including two- and three-way Kronecker product interactions
+  I used \texttt{R-INLA} to specify multinomial spatio-temporal models via the Poisson-multinomial transformation. This includes complex two- and three-way Kronecker product interactions defined using the \texttt{group} and \texttt{replicate} options.
 \end{itemize}
 
 The fast, approximate inference chapter is interesting because:
@@ -562,11 +561,11 @@ The fast, approximate inference chapter is interesting because:
 \begin{itemize}
 \tightlist
 \item
-  I developed a novel Bayesian inference method, motivated by a challenging and important problem in HIV inference
+  I developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV inference.
 \item
-  The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible
+  The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible.
 \item
-  I implemented the method straightforwardly, building on the \texttt{TMB} and \texttt{aghq} packages, and described it completely and accessibly in \textcite{howes2023integrated}
+  My implementation of the method was straightforward, building on the \texttt{TMB} and \texttt{aghq} packages, and described completely and accessibly in \textcite{howes2023integrated}.
 \end{itemize}
 
 My final conclusions are:

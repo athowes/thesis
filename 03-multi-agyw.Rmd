@@ -12,22 +12,60 @@ documentclass: book
 bibliography: references.bib
 ---
 
-# A multinomial spatio-temporal model for risk group proportions
+# A multinomial spatio-temporal model for risk group proportions {#multi-agyw}
 \adjustmtc
 \markboth{A multinomial spatio-temporal model for risk group proportions}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
-This project was initially worked on by Kathryn Risher, who continues to lead dissemination of the results as a tool to be used by countries, as well as model development and data extensions, and is described in @howes2022spatio, which I draw from here.
-Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
+In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions [@howes2022spatio].
+Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw) and supported by the R package [`multi.utils`](https://athowes.github.io/multi.utils).
 
 ## Background
 
 ## Data
 
-## Statistical model
+## Model for risk group proportions
 
-## Results
+To estimate the proportion of AGYW in each risk group, I took a two-stage modelling approach.
 
-## Conclusions
+### Spatio-temporal multinomial logistic-regression
 
+#### The multinomial-Poisson transformation
+
+#### Alternative model specifications
+
+### Spatial logistic regression
+
+#### Alternative model specifications
+
+### Female sex worker population size adjustment
+
+To estimate the number of FSW by age group and country, we disaggregated country-specific estimates of adult (15-49) FSW population size from @stevens2022estimating by age group.
+First, we calculated the total sexually debuted population in each age group, in each country.
+To describe the distribution of age at first sex, we used skew logistic distributions [@nguyen2022trends] with cumulative distribution function given by
+\begin{equation}
+F(x) = \left(1 + \exp(\kappa_c (\mu_c - x)) \right)^{- \gamma_c},
+\end{equation}
+where $\kappa_c, \mu_c, \gamma_c > 0$ are country-specific shape, shape and skewness parameters respectively.
+Next, we used the assumed $\text{Gamma}(\alpha = 10.4, \beta = 0.36)$ FSW age distribution in South Africa from the Thembisa model [@johnson2020thembisa] to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
+We assumed these ratios in South Africa were applicable to every country to calculate the number of FSW by age group in all 13 countries.
+
+### Results
+
+#### Coverage assessment
+
+#### Variance decomposition
+
+#### Estimates
+
+## Calculation of prevalence and incidence stratified by risk group
+
+### Disaggregation of Naomi estimates
+
+### Expected new infections reached
+
+## Discussion
+
+### Limitations
+
+### Conclusion
