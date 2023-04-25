@@ -17,38 +17,52 @@ bibliography: references.bib
 \markboth{A multinomial spatio-temporal model for risk group proportions}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions [@howes2022spatio].
+In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
+This work was done in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
+My role in the work was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
+The results are described in @howes2023spatio, and are now beginning to be used by countries to guide policy via a spreadsheet tool created by Kathryn.
 Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw) and supported by the R package [`multi.utils`](https://athowes.github.io/multi.utils).
 
 ## Background
 
+The risk of acquiring HIV infection is not equal for all individuals.
+
 ## Data
+
+I used the following household surveys.
 
 ## Model for risk group proportions
 
-To estimate the proportion of AGYW in each risk group, I took a two-stage modelling approach.
+I found that it was not appropriate to use the surveys without a specific transactional sex question on an equal footing as the other surveys.
+For this reason, I took a two-stage modelling approach to estimating the four risk group proportions.
+In particular, let the four risk groups be $k \in \{1, 2, 3, 4\}$, and denote being in either the third or fourth risk group by $k = 3^{+}$.
+First, using all the surveys, I used a multinomial logistic regression model to model the proportion of AGYW in the risk groups $k \in \{1, 2, 3^{+}\}$.
+Then, using only those surveys with a specific transactional sex question, I fit a logistic regression model to estimate the proportion of those in the $k = 3^{+}$ risk group that were in the $k = 3$ and $k = 4$ risk groups respectively.
 
-### Spatio-temporal multinomial logistic-regression
-
-#### The multinomial-Poisson transformation
-
-#### Alternative model specifications
+### Spatio-temporal multinomial logistic regression
 
 ### Spatial logistic regression
 
-#### Alternative model specifications
-
 ### Female sex worker population size adjustment
 
-To estimate the number of FSW by age group and country, we disaggregated country-specific estimates of adult (15-49) FSW population size from @stevens2022estimating by age group.
-First, we calculated the total sexually debuted population in each age group, in each country.
-To describe the distribution of age at first sex, we used skew logistic distributions [@nguyen2022trends] with cumulative distribution function given by
+Responding "yes" to the survey question "have you had sex in return for gifts, cash or anything else in the past 12 months" is not considered sufficient to constitute sex work.
+In recognition of this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.
+
+@stevens2022estimating used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
+I disaggregated these estimates by age according to the following method.
+First, I calculated the total sexually debuted population in each age group, in each country.
+To describe the distribution of age at first sex, I used skew logistic distributions [@nguyen2022trends] with cumulative distribution function given by
 \begin{equation}
 F(x) = \left(1 + \exp(\kappa_c (\mu_c - x)) \right)^{- \gamma_c},
 \end{equation}
 where $\kappa_c, \mu_c, \gamma_c > 0$ are country-specific shape, shape and skewness parameters respectively.
-Next, we used the assumed $\text{Gamma}(\alpha = 10.4, \beta = 0.36)$ FSW age distribution in South Africa from the Thembisa model [@johnson2020thembisa] to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
-We assumed these ratios in South Africa were applicable to every country to calculate the number of FSW by age group in all 13 countries.
+Next, I used the assumed $\text{Gamma}(\alpha = 10.4, \beta = 0.36)$ FSW age distribution in South Africa from the Thembisa model [@johnson2020thembisa] to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
+I assumed these ratios in South Africa were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
+The results obtained are shown in Figure \@ref(fig:age-disagg-fsw-line).
+
+```{r age-disagg-fsw-line, out.width = "90%", echo=FALSE, fig.cap="Proportion of FSW by age group (including the age groups 30-34, 35-39, 40-44 and 45-49) as produced by the disaggregation procedure."}
+knitr::include_graphics("figures/multi-agyw/age-disagg-fsw-line.png")
+```
 
 ### Results
 
