@@ -26,5 +26,3 @@ If you would like to cite this work, please use:
   year = {2023}
 }
 ```
-
-
