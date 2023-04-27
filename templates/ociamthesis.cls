@@ -212,6 +212,36 @@
 \end{alwayssingle}}
 
 
+% COPYRIGHT
+%
+% The copyright environment puts a large, bold, centered 
+% "Acknowledgements" label at the top of the page. The copyright
+% itself appear in a quote environment, i.e. tabbed in at both sides, and
+% on its own page.
+
+\newenvironment{copyrights}%
+{   \begin{alwayssingle}\chapter*{Copyright}
+    \thispagestyle{empty}
+	\pagestyle{empty}
+	\setlength{\baselineskip}{\frontmatterbaselineskip}
+}
+{\end{alwayssingle}}
+
+
+% ORIGINALITY
+%
+% The originality environment puts a large, bold, centered 
+% "Statement of Originality" label at the top of the page. The copyright
+% itself appear in a quote environment, i.e. tabbed in at both sides, and
+% on its own page.
+
+\newenvironment{originality}%
+{   \begin{alwayssingle}\chapter*{Statement of Originality}
+    \thispagestyle{empty}
+	\pagestyle{empty}
+	\setlength{\baselineskip}{\frontmatterbaselineskip}
+}
+{\end{alwayssingle}}
 
 % DEDICATION
 %

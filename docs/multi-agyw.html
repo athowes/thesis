@@ -217,8 +217,9 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="multi-agyw.html"><a href="multi-agyw.html#spatio-temporal-multinomial-logistic-regression"><i class="fa fa-check"></i><b>3.3.1</b> Spatio-temporal multinomial logistic regression</a></li>
 <li class="chapter" data-level="3.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#spatial-logistic-regression"><i class="fa fa-check"></i><b>3.3.2</b> Spatial logistic regression</a></li>
-<li class="chapter" data-level="3.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>3.3.3</b> Female sex worker population size adjustment</a></li>
-<li class="chapter" data-level="3.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#results-2"><i class="fa fa-check"></i><b>3.3.4</b> Results</a></li>
+<li class="chapter" data-level="3.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#coverage-assessment"><i class="fa fa-check"></i><b>3.3.3</b> Coverage assessment</a></li>
+<li class="chapter" data-level="3.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>3.3.4</b> Female sex worker population size adjustment</a></li>
+<li class="chapter" data-level="3.3.5" data-path="multi-agyw.html"><a href="multi-agyw.html#results-2"><i class="fa fa-check"></i><b>3.3.5</b> Results</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#calculation-of-prevalence-and-incidence-stratified-by-risk-group"><i class="fa fa-check"></i><b>3.4</b> Calculation of prevalence and incidence stratified by risk group</a>
 <ul>
@@ -282,12 +283,146 @@ First, using all the surveys, I used a multinomial logistic regression model to 
 Then, using only those surveys with a specific transactional sex question, I fit a logistic regression model to estimate the proportion of those in the <span class="math inline">\(k = 3^{+}\)</span> risk group that were in the <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 4\)</span> risk groups respectively.</p>
 <div id="spatio-temporal-multinomial-logistic-regression" class="section level3 hasAnchor" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Spatio-temporal multinomial logistic regression<a href="multi-agyw.html#spatio-temporal-multinomial-logistic-regression" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>As notation, let <span class="math inline">\(i \in \{1, \ldots, n\}\)</span> denote subnational units which partition the 13 studied AGYW priority countries <span class="math inline">\(c[i] \in \{1, \ldots, 13\}\)</span>.
+Consider the years 1999-2018 denoted as <span class="math inline">\(t \in \{1, \ldots, T\}\)</span>, and age groups <span class="math inline">\(a \in \{\text{15--19}, \text{20--24}, \text{25--29}\}\)</span>.</p>
+<div id="the-multinomial-poisson-transformation" class="section level4 hasAnchor" number="3.3.1.1">
+<h4><span class="header-section-number">3.3.1.1</span> The multinomial-Poisson transformation<a href="multi-agyw.html#the-multinomial-poisson-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The multinomial-Poisson transformation reframes a given multinomial logisitic regression model as an equivalent Poisson log-linear model of the form
+<span class="math display">\[\begin{align}
+    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson} \\
+    \log(\kappa_{itak}) &amp;= \eta_{itak},
+\end{align}\]</span>
+for certain choice of the linear predictor <span class="math inline">\(\eta_{itak}\)</span>.
+The basis of the transformation is that, conditional on their sum, Poisson counts are jointly multinomially distributed <span class="citation">(<a href="#ref-mccullagh1989generalized" role="doc-biblioref">McCullagh and Nelder 1989</a>)</span> as follows
+<span class="math display">\[\begin{equation}
+    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
+\end{equation}\]</span>
+where <span class="math inline">\(\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}\)</span> such that category probabilities are obtained by the softmax function
+<span class="math display">\[\begin{equation}
+    p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
+\end{equation}\]</span>
+In the equivalent model, the sample sizes <span class="math inline">\(m_{ita} = \sum_k y_{itak}\)</span> are treated as random, rather than fixed as they would be in the multinomial logistic regression model, taking a Poisson distribution
+<span class="math display">\[\begin{equation}
+    m_{ita} \sim \text{Poisson} \left( \kappa_{ita} \right).
+\end{equation}\]</span>
+In the equivalent model, the joint distribution of <span class="math inline">\(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\)</span> is
+<span class="math display">\[\begin{align}
+p(\mathbf{y}_{ita}, m_{ita}) &amp;= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
+&amp;= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
+&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \label{eq:prodpoisson}
+\end{align}\]</span>
+corresponding to the product of independent Poisson likelihoods as in Equation <span class="math inline">\(\ref{eq:poisson}\)</span>.
+This model, including random sample sizes, is equivalent to the multinomial logistic regression only when these normalisation constants are recovered exactly.
+To ensure that this is the case, one approach is to include observation-specific random effects <span class="math inline">\(\theta_{ita}\)</span> in the equation for the linear predictor.
+Multiplying each of <span class="math inline">\(\{\kappa_{itak}\}_{k = 1}^{3^+}\)</span> by <span class="math inline">\(\exp(\theta_{ita})\)</span> has no effect on the category probabilities, but does provide the necessary flexibility for <span class="math inline">\(\kappa_{ita}\)</span> to recover <span class="math inline">\(m_{ita}\)</span> exactly.
+Although in theory an improper prior <span class="math inline">\(\theta_{ita} \propto 1\)</span> should be used, in practise, by keeping <span class="math inline">\(\eta_{ita}\)</span> otherwise small using appropriate constraints, so that arbitrarily large values of <span class="math inline">\(\theta_{ita}\)</span> are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior.</p>
+</div>
+<div id="model-specifications" class="section level4 hasAnchor" number="3.3.1.2">
+<h4><span class="header-section-number">3.3.1.2</span> Model specifications<a href="multi-agyw.html#model-specifications" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>I considered four models for <span class="math inline">\(\eta_{ita}\)</span> of the form
+<span class="math display">\[
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \phi_{ik} + \gamma_{tk}.
+\]</span>
+<!-- + \delta_{itk} -->
+Observation random effects <span class="math inline">\(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\)</span> were included in all models we considered.
+To capture country-specific proportion estimates for each category, we included category random effects <span class="math inline">\(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\)</span> and country-category random effects <span class="math inline">\(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\)</span>.
+Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects <span class="math inline">\(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.
+I considered two specifications, independent and identically distributed (IID) and Besag <span class="citation">(<a href="#ref-besag1991bayesian" role="doc-biblioref">Besag, York, and Mollié 1991</a>)</span>, for the space-category <span class="math inline">\(\phi_{ik}\)</span> random effects (Section <span class="math inline">\(\ref{sec:spatial-random-effects}\)</span>) and two specifications, IID and first order autoregressive (AR1), for the year-category <span class="math inline">\(\gamma_{tk}\)</span> random effects (Section <span class="math inline">\(\ref{sec:temporal-random-effects}\)</span>).
+All random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_\phi, \tau_\gamma\}\)</span> were given independent penalised complexity (PC) priors <span class="citation">(<a href="#ref-simpson2017penalising" role="doc-biblioref">Simpson et al. 2017</a>)</span> with base model <span class="math inline">\(\sigma = 0\)</span> given by <span class="math inline">\(p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)\)</span> where <span class="math inline">\(\nu = - \ln(0.01) / 2.5\)</span> such that <span class="math inline">\(\mathbb{P}(\sigma &gt; 2.5) = 0.01\)</span>.</p>
+</div>
+<div id="spatial-random-effects-1" class="section level4 hasAnchor" number="3.3.1.3">
+<h4><span class="header-section-number">3.3.1.3</span> Spatial random effects<a href="multi-agyw.html#spatial-random-effects-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The specifications we considered were IID
+<span class="math display">\[
+\phi_{ik} \sim \mathcal{N}(0, \tau_\phi^{-1}),
+\]</span>
+and Besag grouped by category
+<span class="math display">\[
+\bphi = (\phi_{11}, \ldots, \phi_{n1}, \ldots, \phi_{1{3^{+}}}, \ldots \phi_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\phi)^{-}),
+\]</span>
+where the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_\phi = \mathbf{R}^\star_b \otimes \mathbf{I}\)</span> is given by the Kronecker product of the scaled Besag structure matrix <span class="math inline">\(\mathbf{R}^\star_b\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, and <span class="math inline">\({-}\)</span> denotes the generalised matrix inverse.
+Scaling of the structure matrix to have generalised variance one ensures interpretable priors may be placed on the precision parameter <span class="citation">(<a href="#ref-sorbye2014scaling" role="doc-biblioref"><strong>sorbye2014scaling?</strong></a>)</span>.
+We followed the further recommendations of <span class="citation">(<a href="#ref-freni2018note" role="doc-biblioref"><strong>freni2018note?</strong></a>)</span> with regard to disconnected adjacency graphs, singletons and constraints.
+The Besag structure matrix <span class="math inline">\(\mathbf{R}_b\)</span> is obtained by the precision matrix of the random effects <span class="math inline">\(\mathbf{b} = (b_1, \ldots, b_n)^\top\)</span> with full conditionals
+<span class="math display">\[\begin{equation}
+b_i \, | \, \mathbf{b}_{-i} \sim \N\left(\frac{\sum_{j: j \sim i} b_j}{n_{\delta i}}, \frac{1}{n_{\delta i}}\right),
+\end{equation}\]</span>
+where <span class="math inline">\(j \sim i\)</span> if the districts <span class="math inline">\(A_i\)</span> and <span class="math inline">\(A_j\)</span> are adjacent, and <span class="math inline">\(n_{\delta i}\)</span> is the number of districts adjacent to <span class="math inline">\(A_i\)</span>.</p>
+<p>In preliminary testing, we excluded spatial random effects from the model, but found that this negatively effected performance.
+We also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson2017penalising" role="doc-biblioref">Simpson et al. 2017</a>)</span> in place of the Besag, but found that the proportion parameter posteriors tended to be highly peaked at the value one.
+For simplicity and to avoid numerical issues, by using Besag random effects we decided to fix this proportion to one.</p>
+</div>
+<div id="temporal-random-effects" class="section level4 hasAnchor" number="3.3.1.4">
+<h4><span class="header-section-number">3.3.1.4</span> Temporal random effects<a href="multi-agyw.html#temporal-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The specifications we considered were IID
+<span class="math display">\[
+\phi_{tk} \sim \mathcal{N}(0, \tau_\phi^{-1}),
+\]</span>
+and AR1 grouped by category
+<span class="math display">\[
+\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\gamma)^{-}),
+\]</span>
+where the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}\)</span> is given by the Kronecker product of a scaled AR1 structure matrix <span class="math inline">\(\mathbf{R}^\star_r\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.
+The AR1 structure matrix <span class="math inline">\(\mathbf{R}_r\)</span> is obtained by precision matrix of the random effects <span class="math inline">\(\mathbf{r} = (r_1, \ldots, r_T)^\top\)</span> specified by
+<span class="math display">\[\begin{align}
+r_1 &amp;\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
+r_t &amp;= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T,
+\end{align}\]</span>
+where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, 1)\)</span> and <span class="math inline">\(|\rho| &lt; 1\)</span>.
+For the lag-one correlation parameter <span class="math inline">\(\rho\)</span>, we used the PC prior, as derived by <span class="citation">(<a href="#ref-sorbye2017penalised" role="doc-biblioref"><strong>sorbye2017penalised?</strong></a>)</span>, with base model <span class="math inline">\(\rho = 1\)</span> and condition <span class="math inline">\(\mathbb{P}(\rho &gt; 0 = 0.75)\)</span>.
+We chose the base model <span class="math inline">\(\rho = 1\)</span> corresponding to no change in behaviour over time, rather than the alternative <span class="math inline">\(\rho = 0\)</span> corresponding to no correlation in behaviour over time, as we judged the former to be more plausible a priori.</p>
+</div>
+<div id="constraints" class="section level4 hasAnchor" number="3.3.1.5">
+<h4><span class="header-section-number">3.3.1.5</span> Constraints<a href="multi-agyw.html#constraints" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To ensure interpretable posterior inferences of random effect contribution, we applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+For the space-year-category random effects, we applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects.
+Together, these were:</p>
+<ol style="list-style-type: decimal">
+<li>Category <span class="math inline">\(\sum_k \beta_k = 0\)</span></li>
+<li>Country <span class="math inline">\(\sum_c \zeta_{ck} = 0, \, \forall \, k\)</span></li>
+<li>Age-country <span class="math inline">\(\sum_a \alpha_{ack} = 0, \, \forall \, c, k\)</span>,</li>
+<li>Spatial <span class="math inline">\(\sum_i \phi_{ik} = 0, \, \forall \, k\)</span></li>
+<li>Temporal <span class="math inline">\(\sum_t \gamma_{tk} = 0, \, \forall \, k\)</span></li>
+</ol>
+</div>
+<div id="survey-weighted-likelihood" class="section level4 hasAnchor" number="3.3.1.6">
+<h4><span class="header-section-number">3.3.1.6</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>We included surveys which use a complex design, in which each individual has an unequal probability of being included in the sample.
+For example the DHS often employs a two-stage cluster design, first taking an urban rural stratified sample of ennumeration areas, before selecting households from each ennumeration area using systematic sampling <span class="citation">(<a href="#ref-measure2012sampling" role="doc-biblioref"><strong>measure2012sampling?</strong></a>)</span>.</p>
+<p>To account for this aspect of survey design, we use a weighted pseudo-likelihood where the observed counts <span class="math inline">\(y\)</span> are replaced by effective counts <span class="math inline">\(y^\star\)</span> calculated using the survey weights <span class="math inline">\(w_j\)</span> of all individuals <span class="math inline">\(j\)</span> in the corresponding strata.
+We multiplied direct estimates produced using the <code>survey</code> package <span class="citation">(<a href="#ref-JSSv009i08" role="doc-biblioref"><strong>JSSv009i08?</strong></a>)</span> by the Kish effective sample size <span class="citation">(<a href="#ref-kish1965survey" role="doc-biblioref"><strong>kish1965survey?</strong></a>)</span>
+<span class="math display">\[\begin{equation}
+    m^\star = \frac{\left(\sum_j w_j \right)^2}{\sum_j {w_j}^2}
+\end{equation}\]</span>
+to obtain <span class="math inline">\(y^\star\)</span>.
+These counts may not be integers, and as such the Poisson likelihood we used in Equation <span class="math inline">\(\ref{eq:poisson}\)</span> is not appropriate.
+Instead, we used a generalised Poisson pseudo-likelihood <span class="math inline">\(y^\star \sim \text{xPoisson}(\kappa)\)</span>, given by
+<span class="math display">\[\begin{equation}
+    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
+\end{equation}\]</span>
+as implemented by <code>family = "xPoisson"</code> in <code>R-INLA</code>, which accepts non-integer input.</p>
+</div>
+<div id="model-selection" class="section level4 hasAnchor" number="3.3.1.7">
+<h4><span class="header-section-number">3.3.1.7</span> Model selection<a href="multi-agyw.html#model-selection" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
 </div>
 <div id="spatial-logistic-regression" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Spatial logistic regression<a href="multi-agyw.html#spatial-logistic-regression" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="model-specifications-1" class="section level4 hasAnchor" number="3.3.2.1">
+<h4><span class="header-section-number">3.3.2.1</span> Model specifications<a href="multi-agyw.html#model-specifications-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
-<div id="female-sex-worker-population-size-adjustment" class="section level3 hasAnchor" number="3.3.3">
-<h3><span class="header-section-number">3.3.3</span> Female sex worker population size adjustment<a href="multi-agyw.html#female-sex-worker-population-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="survey-weighted-likelihood-1" class="section level4 hasAnchor" number="3.3.2.2">
+<h4><span class="header-section-number">3.3.2.2</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="model-selection-1" class="section level4 hasAnchor" number="3.3.2.3">
+<h4><span class="header-section-number">3.3.2.3</span> Model selection<a href="multi-agyw.html#model-selection-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+</div>
+<div id="coverage-assessment" class="section level3 hasAnchor" number="3.3.3">
+<h3><span class="header-section-number">3.3.3</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="female-sex-worker-population-size-adjustment" class="section level3 hasAnchor" number="3.3.4">
+<h3><span class="header-section-number">3.3.4</span> Female sex worker population size adjustment<a href="multi-agyw.html#female-sex-worker-population-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Responding “yes” to the survey question “have you had sex in return for gifts, cash or anything else in the past 12 months” is not considered sufficient to constitute sex work.
 In recognition of this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.</p>
 <p><span class="citation">Stevens et al. (<a href="#ref-stevens2022estimating" role="doc-biblioref">2022</a>)</span> used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
@@ -308,16 +443,16 @@ Figure 3.1: Proportion of FSW by age group (including the age groups 30-34, 35-3
 </p>
 </div>
 </div>
-<div id="results-2" class="section level3 hasAnchor" number="3.3.4">
-<h3><span class="header-section-number">3.3.4</span> Results<a href="multi-agyw.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="coverage-assessment" class="section level4 hasAnchor" number="3.3.4.1">
-<h4><span class="header-section-number">3.3.4.1</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="results-2" class="section level3 hasAnchor" number="3.3.5">
+<h3><span class="header-section-number">3.3.5</span> Results<a href="multi-agyw.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-assessment-1" class="section level4 hasAnchor" number="3.3.5.1">
+<h4><span class="header-section-number">3.3.5.1</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
-<div id="variance-decomposition" class="section level4 hasAnchor" number="3.3.4.2">
-<h4><span class="header-section-number">3.3.4.2</span> Variance decomposition<a href="multi-agyw.html#variance-decomposition" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="variance-decomposition" class="section level4 hasAnchor" number="3.3.5.2">
+<h4><span class="header-section-number">3.3.5.2</span> Variance decomposition<a href="multi-agyw.html#variance-decomposition" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
-<div id="estimates" class="section level4 hasAnchor" number="3.3.4.3">
-<h4><span class="header-section-number">3.3.4.3</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="estimates" class="section level4 hasAnchor" number="3.3.5.3">
+<h4><span class="header-section-number">3.3.5.3</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
 </div>
 </div>
@@ -325,9 +460,35 @@ Figure 3.1: Proportion of FSW by age group (including the age groups 30-34, 35-3
 <h2><span class="header-section-number">3.4</span> Calculation of prevalence and incidence stratified by risk group<a href="multi-agyw.html#calculation-of-prevalence-and-incidence-stratified-by-risk-group" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="disaggregation-of-naomi-estimates" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Disaggregation of Naomi estimates<a href="multi-agyw.html#disaggregation-of-naomi-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated HIV incidence <span class="math inline">\(\lambda_{iak}\)</span> and number of new HIV infections <span class="math inline">\(I_{iak}\)</span> stratified according to district, age group and risk group by linear disaggregation
+<span class="math display">\[\begin{align}
+    I_{ia} &amp;= \sum_k I_{iak} = \sum_k \lambda_{iak}N_{iak} \\
+    &amp;= 0 + \lambda_{ia2} N_{ia2} + \lambda_{ia3} N_{ia3} + \lambda_{ia4} N_{ia4} \\
+    &amp;= \lambda_{ia2} \left(N_{ia2}  + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}  \right).
+\end{align}\]</span>
+Risk group specific HIV incidence estimates are then given by
+<span class="math display">\[\begin{align}
+    \lambda_{ia1} &amp;= 0, \\
+    \lambda_{ia2} &amp;= I_{ia} / \left(N_{ia2} + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}\right), \\
+    \lambda_{ia3} &amp;= \text{RR}_{3} \lambda_{ia2}, \\
+    \lambda_{ia4} &amp;= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
+\end{align}\]</span>
+which we evaluated using Naomi model estimates of the number of new HIV infections <span class="math inline">\(I_{ia} = \lambda_{ia} N_{ia}\)</span>, HIV infection risk ratios <span class="math inline">\(\{\text{RR}_3, \text{RR}_4(\lambda_{ia})\}\)</span>, and risk group population sizes as above.
+The risk ratio <span class="math inline">\(\text{RR}_4(\lambda_{ia})\)</span> was defined as a function of general population incidence.
+The number of new HIV infections are then <span class="math inline">\(I_{iak} = \lambda_{iak} N_{iak}\)</span>.</p>
 </div>
 <div id="expected-new-infections-reached" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections-reached" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population–that is for all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.
+As an illustration, for stratification just by age, we aggregated the number of new HIV infections and HIV incidence as such
+<span class="math display">\[\begin{align}
+    I_a &amp;= \sum_{ik} I_{iak}, \\
+    \lambda_a &amp;= I_a / \sum_{ik} N_{iak}.
+\end{align}\]</span>
+Under this stratification, individuals in each age group <span class="math inline">\(a\)</span> are prioritised according to the highest HIV incidence <span class="math inline">\(\lambda_a\)</span>.
+By cumulatively summing the expected infections, for each fraction of the total population reached we calculated the fraction of total expected new infections that would be reached.</p>
+<p>This analysis was relatively simple.
+More involved analyses might consider prioritisation of a hypothetical intervention which has some, possibly varying, probability of preventing HIV acquisition, as well as the costs associated to its roll-out.</p>
 </div>
 </div>
 <div id="discussion-1" class="section level2 hasAnchor" number="3.5">
@@ -343,14 +504,23 @@ Figure 3.1: Proportion of FSW by age group (including the age groups 30-34, 35-3
 </div>
 <h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-besag1991bayesian" class="csl-entry">
+Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
+</div>
 <div id="ref-howes2023spatio" class="csl-entry">
 Howes, Adam, Kathryn A. Risher, Van Kính Nguyen, Oliver Stevens, Katherine M. Jia, Timothy M. Wolock, Rachel T. Esra, et al. 2023. <span>“<span class="nocase">Spatio-temporal estimates of HIV risk group proportions for adolescent girls and young women across 13 priority countries in sub-Saharan Africa</span>.”</span> <em>PLOS Global Public Health</em> 3 (4): 1–14. <a href="https://doi.org/10.1371/journal.pgph.0001731">https://doi.org/10.1371/journal.pgph.0001731</a>.
 </div>
 <div id="ref-johnson2020thembisa" class="csl-entry">
 Johnson, L, and RE Dorrington. 2020. <span>“<span class="nocase">Thembisa version 4.3: A model for evaluating the impact of HIV/AIDS in South Africa</span>.”</span> <em>View Article</em>.
 </div>
+<div id="ref-mccullagh1989generalized" class="csl-entry">
+McCullagh, Peter, and John A Nelder. 1989. <em>Generalized Linear Models</em>. Routledge.
+</div>
 <div id="ref-nguyen2022trends" class="csl-entry">
 Nguyen, Van Kính, and Jeffrey W. Eaton. 2022. <span>“<span class="nocase">Trends and country-level variation in age at first sex in sub-Saharan Africa among birth cohorts entering adulthood between 1985 and 2020</span>.”</span> <em>BMC Public Health</em> 22 (1): 1120. <a href="https://doi.org/10.1186/s12889-022-13451-y">https://doi.org/10.1186/s12889-022-13451-y</a>.
+</div>
+<div id="ref-simpson2017penalising" class="csl-entry">
+Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørbye, et al. 2017. <span>“<span class="nocase">Penalising model component complexity: A principled, practical approach to constructing priors</span>.”</span> <em>Statistical Science</em> 32 (1): 1–28.
 </div>
 <div id="ref-stevens2022estimating" class="csl-entry">
 Stevens, Oliver, Keith Sabin, Sonia Arias Garcia, Kalai Willis, Abu Abdul-Quader, Anne McIntyre, Frances Cowan, et al. 2022. <span>“<span class="nocase">Estimating key population size, HIV prevalence, and ART coverage for sub-Saharan Africa at the national level</span>.”</span>
