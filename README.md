@@ -8,11 +8,12 @@ Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff Eaton](https://www.
 
 |            | Title      | Additional resources |
 | ---------- | ---------- | -------------------- |
-| 1 | Background | |
-| 2 | Understanding models for spatial structure  | [Code](https://github.com/athowes/areal-comparison) |
-| 3 | A multinomial spatio-temporal model for risk group proportions  | [Code](https://github.com/athowes/multi-agyw) |
-| 4 | Fast, approximate inference for the Naomi model | [Code](https://github.com/athowes/elgm-inf) |
-| 5 | Future work and conclusions | |
+| 1 | Introduction | |
+| 2 | Background | |
+| 3 | Spatial structure  | [Code](https://github.com/athowes/beyond-borders) |
+| 4 | A model for risk group proportions  | [Code](https://github.com/athowes/multi-agyw) |
+| 5 | Fast approximate deterministic Bayesian inference | [Code](https://github.com/athowes/naomi-aghq) |
+| 6 | Future work and conclusions | |
 
 ## Citation
 

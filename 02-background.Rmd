@@ -12,18 +12,24 @@ documentclass: book
 bibliography: references.bib
 ---
 
-# Background
+```{r echo = FALSE}
+options(scipen = 100)
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dpi = 320,
+  cache = TRUE,
+  out.width = "95%",
+  fig.align = 'center'
+)
+```
+
+# Background {#background}
 \adjustmtc
 \markboth{Background}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-
-## Small-area estimation
-
-Small-area estimation methods aim to estimate population indicators for subgroups, typically in situations where direct estimates perform poorly due to data limitations.
-These subgroups may often correspond to small geographic areas.
-Small-area estimation methods have been used in a wide range of fields.
-The Small-Area Health Statistics Unit (SASHU) at Imperial College London was set-up to monitor health around point sources of environmental pollution in response to the Sellafield enquiry into the increased incidence of childhood leukemia leukaemia near a nuclear reprocessing plant [@elliott1992small].
-The research of SASHU has a focus on ratios of observed events to expected events, and testing hypothesis about hot-spots.
 
 ## The HIV/AIDS epidemic
 
@@ -33,58 +39,72 @@ deaths2022 <- 700000
 infections2022 <- 1700000
 ```
 
-According to latest estimates, in 2022 `r xfun::numbers_to_words(plhiv2022)` people are living with HIV, there were `r xfun::numbers_to_words(deaths2022)` AIDS-related deaths, and there were `r xfun::numbers_to_words(infections2022)` people newly infected with HIV.
-Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-Sub-Saharan Africa is the most affected region.
-Within sub-Saharan Africa, disease burden is unevenly distributed in space and across communities and individuals.
+<!-- The extent of HIV as a problem -->
+According to latest estimates, in 2022 there were `r xfun::numbers_to_words(plhiv2022)` people living with HIV, `r xfun::numbers_to_words(deaths2022)` AIDS-related deaths, and `r xfun::numbers_to_words(infections2022)` people newly infected with HIV.
+
+<!-- Uneven burden -->
+Disease burden is unevenly distributed in space, and across communities and individuals.
+The region most affected is Sub-Saharan Africa.
 Key populations include men who have sex with men, female sex workers, people who inject drugs, transgender people, incarcerated people.
-Larger demographic groups of higher risk include adolescent girls and young women.
-Key HIV indicators are HIV prevalence, HIV incidence, coverage of ART and other interventions.
+Large demographic groups at higher risk include adolescent girls and young women.
+Fortunately, progress is being made.
+
+<!-- Possible interventions to help -->
 Key interventions are ART, condoms, PrEP and PEP, education, economic empowerment, VMMC.
 
+<!-- Prioritisation of interventions  -->
+Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, individual-level risk characteristics.
+Are there differences in effectiveness of treatments for different groups.
+
+<!-- What is surveillance and how can it be used to meet these needs -->
+Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+Key HIV indicators are HIV prevalence, HIV incidence, coverage of ART and other interventions.
+
+<!-- Why is surveillance difficult -->
 There are significant data related difficulties associated with furnishing these estimates.
 These include sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, changing demographies.
 These data limitations foreground the importance of synthesising multiple sources of information to obtain estimates.
 Doing so increases the difficulty and complexity of the statistical modelling required.
 
+<!-- Future trends in surveillance -->
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
 
-Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, individual-level risk characteristics.
-Are there differences in effectiveness of treatments for different groups.
-
-The population strategy [@rose2001sick] is based on reducing risk factors across an entire population.
-The individual strategy focuses on prevention in high-risk individuals.
-
-<!-- Why isn't case-based surveillance included yet? -->
-<!-- There aren't individual linked databases and patient records have to be consolidated. -->
-<!-- Passive case-based surveillance. -->
-<!-- Post-hoc matching and create a case-based surveillance record. -->
-
 ## Bayesian spatio-temporal statistics
 
-Bayesian statistics is a statistical paradigm which, at its best, lets the analyst focus their attention on modelling the data at hand.
-In particular, the primary concern is construction of a generative model for the observed data $y$ 
-$$
-(y, \vartheta) \sim p(y, \vartheta).
-$$
+### Bayesian statistics
 
-Given a generative model, computation of the posterior distribution
-$$
-p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}
-$$
-proceeds using approximate Bayesian inference methods.
-Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
+Bayesian statistics is a paradigm for learning from data.
+In this section I will provide a brief overview.
+For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
+
+At it's best, the Bayesian framework allows the analyst focus their attention on modelling the data at hand.
+In particular, this is achieved by the construction of a generative model for the observed data $y$ together with parameters $\vartheta$
+\begin{equation}
+(y, \vartheta) \sim p(y, \vartheta).
+\end{equation}
+Given this generative model, computation of the posterior distribution
+\begin{equation}
+p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}, \label{eq:posterior}
+\end{equation}
+usually proceeds using approximate Bayesian inference methods, where $p(y \, | \, \vartheta)$ is the likelihood, $p(y \, | \, \vartheta)$ is the prior, and $p(\vartheta)$ is the evidence.
+
+Markov chain Monte Carlo (MCMC) is the most popular approach for computing Equation \ref{eq:posterior}, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
 Variational Bayes approaches assume the posterior distribution belongs to some class and use optimisation to choose the best member of that class.
 Particular properties of spatio-temporal models make integrated nested Laplace approximations, if feasible, often the best option
 Empirical Bayes approaches, like Template Model Builder [@osgoodzimmerman2021statistical].
 
+### Spatio-temporal statistics
+
 In spatio-temporal statistics the data we observe are indexed by spatial or temporal location.
-The independent and identically distributed (IID) assumptions commonly used for observations are rarely suitable in this setting because we expect there to be spatio-temporal structure.
+Commonly used independent and identically distributed (IID) assumptions on observations are rarely suitable in this setting because we expect there to be spatio-temporal correlation structure.
+
 Split the parameters $\vartheta = (x, \theta)$.
 Call $x$ the latent field.
 Call $\theta$ the hyperparameters.
 Often, the latent field is assumed to be jointly multivariate Gaussian.
+
+### Latent Gaussian and extended latent Gaussian models
 
 Latent Gaussian models [@rue2009approximate] are of the form
 \begin{align*}
@@ -102,7 +122,7 @@ It is convenient to collect these parameters into a vector $x \in \mathbb{R}^N$ 
 Let $\theta = (\theta_1, \theta_2) \in \mathbb{R}^s$ with $m = s_1 + s_2$ be all hyperparameters, with prior $p(\theta)$.
 Common examples of latent Gaussian models include the following.
 
-Many of the cutting-edge models used in small-area estimation fall outside the latent Gaussian model class.
+Many of the leading-edge models used in small-area estimation fall outside the latent Gaussian model class.
 Examples include disaggregation models, evidence synthesis models [@eaton2019joint; @eaton2021naomi], attendance models, risk group models.
 <!-- There are other complex models from [ecology](https://www.bioss.ac.uk/rsse/2013/September2013slides-Illian.pdf) that can't currently be fit using `R-INLA` -->
 However, many of these models do fit into the class of extended latent Gaussian models [@stringer2021fast].
@@ -113,3 +133,5 @@ By allowing many-to-one link functions, extended latent Gaussian models facilita
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 <!-- Thesis work of [Follestad](https://cds.cern.ch/record/639625/files/sis-2003-305.pdf) that stayed as a preprint -->
 <!-- How does the ecological fallacy relate to aggregated output models? -->
+
+### Survey methods

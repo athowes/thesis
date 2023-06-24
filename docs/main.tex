@@ -55,56 +55,6 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
  
 % UL 1 Dec 2018, fix to include code in shaded environments
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-
-%UL set white space before and after code blocks
-\renewenvironment{Shaded}
-{
-  \vspace{10pt}%
-  \begin{snugshade}%
-}{%
-  \end{snugshade}%
-  \vspace{8pt}%
-}
 
 %UL set whitespace around verbatim environments
 \usepackage{etoolbox}
@@ -300,9 +250,8 @@
 
 %%%%% ORIGINALITY -- added by ATH.
 \begin{originality}
-  Putting aside the parts I didn't do, I did this work.
-  Me.
-  Adam Howes.
+  This thesis, and the work presented in it, is work that I conducted myself.
+  In all cases where I describe others' work, I provide appropriate references.
 \end{originality}
 
 %%%%% DEDICATION -- If you'd like one, un-comment the following.
@@ -315,6 +264,7 @@
  	Thanks to Jeff Eaton and Seth Flaxman for supervision of this research;
  staff and students of the StatML CDT at Imperial and Oxford;
  members of the HIV Inference Group at Imperial;
+ members of the Machine Learning and Global Health Network;
  the Bill \& Melinda Gates Foundation and EPSRC for funding this PhD;
  Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to MIT;
  Alex Stringer for hosting my visit to Waterloo;
@@ -373,40 +323,59 @@ In this thesis, I develop and apply Bayesian spatio-temporal methods for HIV sur
 \flushbottom
 
 % all your chapters and appendices will appear here
+\hypertarget{introduction}{%
+\chapter{Introduction}\label{introduction}}
+
+\adjustmtc
+\markboth{Introduction}{}
+
+This thesis is about applied and methodological Bayesian statistics.
+The focus is on questions motivated by surveillance of HIV in sub-Saharan Africa.
+The data are related to people, located in space and time.
+Tackling substantive applied questions has been a productive strategy for the statistical science discipline.
+As such, it is my hope that the work contained within will also be of interest more broadly.
+
+\hypertarget{chapter-overview}{%
+\section{Chapter overview}\label{chapter-overview}}
+
+\begin{itemize}
+\tightlist
+\item
+  Chapter \ref{background}: I review the required background for the rest of the thesis.
+\item
+  Chapter \ref{beyond-borders}: I raise concerns with the prevailing model for spatial structure used in small-area estimation, and evaluate whether these concerns have practical consequences \autocite{howes2023beyond}.
+\item
+  Chapter \ref{multi-agyw}: I estimate the size of HIV risk groups for adolescent girls and young women across 13 countries in sub-Saharan Africa \autocite{howes2023spatio}.
+\item
+  Chapter \ref{naomi-aghq}: I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis, and apply it to the Naomi small-area estimation model in Malawi \autocite{howes2023fast}.
+\item
+  Chapter \ref{conclusions}: I discuss avenues for future work, and my conclusions regarding the PhD research.
+\end{itemize}
+
 \hypertarget{background}{%
 \chapter{Background}\label{background}}
 
 \adjustmtc
 \markboth{Background}{}
 
-\hypertarget{small-area-estimation}{%
-\section{Small-area estimation}\label{small-area-estimation}}
-
-Small-area estimation methods aim to estimate population indicators for subgroups, typically in situations where direct estimates perform poorly due to data limitations.
-These subgroups may often correspond to small geographic areas.
-Small-area estimation methods have been used in a wide range of fields.
-The Small-Area Health Statistics Unit (SASHU) at Imperial College London was set-up to monitor health around point sources of environmental pollution in response to the Sellafield enquiry into the increased incidence of childhood leukemia leukaemia near a nuclear reprocessing plant \autocite{elliott1992small}.
-The research of SASHU has a focus on ratios of observed events to expected events, and testing hypothesis about hot-spots.
-
 \hypertarget{the-hivaids-epidemic}{%
 \section{The HIV/AIDS epidemic}\label{the-hivaids-epidemic}}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{plhiv2022 }\OtherTok{\textless{}{-}} \DecValTok{38000000}
-\NormalTok{deaths2022 }\OtherTok{\textless{}{-}} \DecValTok{700000}
-\NormalTok{infections2022 }\OtherTok{\textless{}{-}} \DecValTok{1700000}
-\end{Highlighting}
-\end{Shaded}
+According to latest estimates, in 2022 there were thirty-eight million people living with HIV, seven hundred thousand AIDS-related deaths, and one million, seven hundred thousand people newly infected with HIV.
 
-According to latest estimates, in 2022 thirty-eight million people are living with HIV, there were seven hundred thousand AIDS-related deaths, and there were one million, seven hundred thousand people newly infected with HIV.
-Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-Sub-Saharan Africa is the most affected region.
-Within sub-Saharan Africa, disease burden is unevenly distributed in space and across communities and individuals.
+Disease burden is unevenly distributed in space, and across communities and individuals.
+The region most affected is Sub-Saharan Africa.
 Key populations include men who have sex with men, female sex workers, people who inject drugs, transgender people, incarcerated people.
-Larger demographic groups of higher risk include adolescent girls and young women.
-Key HIV indicators are HIV prevalence, HIV incidence, coverage of ART and other interventions.
+Large demographic groups at higher risk include adolescent girls and young women.
+Fortunately, progress is being made.
+
 Key interventions are ART, condoms, PrEP and PEP, education, economic empowerment, VMMC.
+
+Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, individual-level risk characteristics.
+Are there differences in effectiveness of treatments for different groups.
+
+Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+Key HIV indicators are HIV prevalence, HIV incidence, coverage of ART and other interventions.
 
 There are significant data related difficulties associated with furnishing these estimates.
 These include sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, changing demographies.
@@ -416,37 +385,45 @@ Doing so increases the difficulty and complexity of the statistical modelling re
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
 
-Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, individual-level risk characteristics.
-Are there differences in effectiveness of treatments for different groups.
-
-The population strategy \autocite{rose2001sick} is based on reducing risk factors across an entire population.
-The individual strategy focuses on prevention in high-risk individuals.
-
 \hypertarget{bayesian-spatio-temporal-statistics}{%
 \section{Bayesian spatio-temporal statistics}\label{bayesian-spatio-temporal-statistics}}
 
-Bayesian statistics is a statistical paradigm which, at its best, lets the analyst focus their attention on modelling the data at hand.
-In particular, the primary concern is construction of a generative model for the observed data \(y\)
-\[
-(y, \vartheta) \sim p(y, \vartheta).
-\]
+\hypertarget{bayesian-statistics}{%
+\subsection{Bayesian statistics}\label{bayesian-statistics}}
 
-Given a generative model, computation of the posterior distribution
-\[
-p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}
-\]
-proceeds using approximate Bayesian inference methods.
-Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
+Bayesian statistics is a paradigm for learning from data.
+In this section I will provide a brief overview.
+For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
+
+At it's best, the Bayesian framework allows the analyst focus their attention on modelling the data at hand.
+In particular, this is achieved by the construction of a generative model for the observed data \(y\) together with parameters \(\vartheta\)
+\begin{equation}
+(y, \vartheta) \sim p(y, \vartheta).
+\end{equation}
+Given this generative model, computation of the posterior distribution
+\begin{equation}
+p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}, \label{eq:posterior}
+\end{equation}
+usually proceeds using approximate Bayesian inference methods, where \(p(y \, | \, \vartheta)\) is the likelihood, \(p(y \, | \, \vartheta)\) is the prior, and \(p(\vartheta)\) is the evidence.
+
+Markov chain Monte Carlo (MCMC) is the most popular approach for computing Equation \ref{eq:posterior}, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
 Variational Bayes approaches assume the posterior distribution belongs to some class and use optimisation to choose the best member of that class.
 Particular properties of spatio-temporal models make integrated nested Laplace approximations, if feasible, often the best option
 Empirical Bayes approaches, like Template Model Builder \autocite{osgoodzimmerman2021statistical}.
 
+\hypertarget{spatio-temporal-statistics}{%
+\subsection{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
+
 In spatio-temporal statistics the data we observe are indexed by spatial or temporal location.
-The independent and identically distributed (IID) assumptions commonly used for observations are rarely suitable in this setting because we expect there to be spatio-temporal structure.
+Commonly used independent and identically distributed (IID) assumptions on observations are rarely suitable in this setting because we expect there to be spatio-temporal correlation structure.
+
 Split the parameters \(\vartheta = (x, \theta)\).
 Call \(x\) the latent field.
 Call \(\theta\) the hyperparameters.
 Often, the latent field is assumed to be jointly multivariate Gaussian.
+
+\hypertarget{latent-gaussian-and-extended-latent-gaussian-models}{%
+\subsection{Latent Gaussian and extended latent Gaussian models}\label{latent-gaussian-and-extended-latent-gaussian-models}}
 
 Latent Gaussian models \autocite{rue2009approximate} are of the form
 \begin{align*}
@@ -464,18 +441,21 @@ It is convenient to collect these parameters into a vector \(x \in \mathbb{R}^N\
 Let \(\theta = (\theta_1, \theta_2) \in \mathbb{R}^s\) with \(m = s_1 + s_2\) be all hyperparameters, with prior \(p(\theta)\).
 Common examples of latent Gaussian models include the following.
 
-Many of the cutting-edge models used in small-area estimation fall outside the latent Gaussian model class.
+Many of the leading-edge models used in small-area estimation fall outside the latent Gaussian model class.
 Examples include disaggregation models, evidence synthesis models \autocite{eaton2019joint,eaton2021naomi}, attendance models, risk group models.
 However, many of these models do fit into the class of extended latent Gaussian models \autocite{stringer2021fast}.
 By allowing many-to-one link functions, extended latent Gaussian models facilitate modelling of non-linearities.
 
-\hypertarget{understanding-models-for-spatial-structure}{%
-\chapter{Understanding models for spatial structure}\label{understanding-models-for-spatial-structure}}
+\hypertarget{survey-methods}{%
+\subsection{Survey methods}\label{survey-methods}}
+
+\hypertarget{beyond-borders}{%
+\chapter{Spatial structure}\label{beyond-borders}}
 
 \adjustmtc
 \markboth{Models for spatial structure}{}
 
-Code for the analysis in this chapter is available from \href{https://github.com/athowes/areal-comparison}{\texttt{athowes/areal-comparison}} and supported by the R package \href{https://athowes.github.io/arealutils}{\texttt{arealutils}}.
+Code for the analysis in this chapter is available from \href{https://github.com/athowes/beyond-borders}{\texttt{athowes/beyond-borders}} and supported by the R package \href{https://athowes.github.io/arealutils}{\texttt{arealutils}}.
 Include an edited version of the corresponding paper here.
 
 \hypertarget{background-1}{%
@@ -548,41 +528,59 @@ Include an edited version of the corresponding paper here.
 \subsection{Conclusion}\label{conclusion}}
 
 \hypertarget{multi-agyw}{%
-\chapter{A multinomial spatio-temporal model for risk group proportions}\label{multi-agyw}}
+\chapter{A model for risk group proportions}\label{multi-agyw}}
 
 \adjustmtc
-\markboth{A multinomial spatio-temporal model for risk group proportions}{}
+\markboth{A model for risk group proportions}{}
 
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was done in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-My role in the work was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
-The results are described in \textcite{howes2023spatio}, and are now beginning to be used by countries to guide policy via a spreadsheet tool created by Kathryn.
+My primary role was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
+The results are described in \textcite{howes2023spatio}, and are beginning to be used by countries to guide policy via a spreadsheet tool created by Kathryn.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}} and supported by the R package \href{https://athowes.github.io/multi.utils}{\texttt{multi.utils}}.
 
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-The risk of acquiring HIV infection is not equal for all individuals.
+Risk of acquiring HIV infection is not equal for all individuals.
+Moreover, variation in risk is systematic across to demographic characteristics.
+Adolescent girls and young women (AGYW) -- that is, females aged 15-29 -- are one demographic group at particular risk.
+
+The Global AIDS Strategy 2021-2026 proposed stratifying HIV prevention packages to AGYW based on local population-level HIV incidence and individual-level sexual risk behaviour.
+The idea is that prioritisation based on both of these factors is more efficient than on only or one the other.
+
+Implementing the strategy requires estimates.
 
 \hypertarget{data}{%
 \section{Data}\label{data}}
 
-I used the following household surveys.
+I used household survey data.
 
 \hypertarget{model-for-risk-group-proportions}{%
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
 
-I found that it was not appropriate to use the surveys without a specific transactional sex question on an equal footing as the other surveys.
-For this reason, I took a two-stage modelling approach to estimating the four risk group proportions.
-In particular, let the four risk groups be \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group by \(k = 3^{+}\).
+I found that it was not appropriate to use the surveys without a specific transactional sex question on an equal footing to the other surveys.
+For this reason, I took a two-stage modelling approach to estimate the four risk group proportions.
+In particular, index the four risk groups as \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group by \(k = 3^{+}\).
 First, using all the surveys, I used a multinomial logistic regression model to model the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
 Then, using only those surveys with a specific transactional sex question, I fit a logistic regression model to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
 
 \hypertarget{spatio-temporal-multinomial-logistic-regression}{%
 \subsection{Spatio-temporal multinomial logistic regression}\label{spatio-temporal-multinomial-logistic-regression}}
 
-As notation, let \(i \in \{1, \ldots, n\}\) denote subnational units which partition the 13 studied AGYW priority countries \(c[i] \in \{1, \ldots, 13\}\).
+Let \(i \in \{1, \ldots, n\}\) denote districts which partition the 13 studied AGYW priority countries \(c[i] \in \{1, \ldots, 13\}\).
 Consider the years 1999-2018 denoted as \(t \in \{1, \ldots, T\}\), and age groups \(a \in \{\text{15--19}, \text{20--24}, \text{25--29}\}\).
+Let \(p_{itak} > 0\) with \(\sum_{k = 1}^{3^{+}} p_{itak} = 1\), be the probability of membership of risk group \(k\) for an individual in district \(i\), at time \(t\), in age group \(a\).
+
+\hypertarget{multinomial-logistic-regression}{%
+\subsubsection{Multinomial logistic regression}\label{multinomial-logistic-regression}}
+
+A baseline category multinomial logistic regression model is specified by
+\begin{align}
+    \y_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
+    \log(p_{itak} / p_{ita1}) &= \eta_k, k = 2, 3^{+},
+\end{align}
+where the number in risk group \(k\) is \(y_{itak}\), the sample size is \(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\), \(p_{itak} > 0\) is the probability of membership of the \(k\)th risk group, and \(k = 1\) is the baseline category.
 
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
@@ -753,7 +751,12 @@ I assumed these ratios in South Africa were applicable to every country, allowin
 The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
 
 \begin{figure}
-\includegraphics[width=0.9\linewidth]{figures/multi-agyw/age-disagg-fsw-line} \caption{Proportion of FSW by age group (including the age groups 30-34, 35-39, 40-44 and 45-49) as produced by the disaggregation procedure.}\label{fig:age-disagg-fsw-line}
+
+{\centering \includegraphics[width=0.9\linewidth]{figures/multi-agyw/age-disagg-fsw-line} 
+
+}
+
+\caption{Proportion of FSW by age group (including the age groups 30-34, 35-39, 40-44 and 45-49) as produced by the disaggregation procedure.}\label{fig:age-disagg-fsw-line}
 \end{figure}
 
 \hypertarget{results-2}{%
@@ -768,8 +771,8 @@ The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
 \hypertarget{estimates}{%
 \subsubsection{Estimates}\label{estimates}}
 
-\hypertarget{calculation-of-prevalence-and-incidence-stratified-by-risk-group}{%
-\section{Calculation of prevalence and incidence stratified by risk group}\label{calculation-of-prevalence-and-incidence-stratified-by-risk-group}}
+\hypertarget{prevalence-and-incidence-by-risk-group}{%
+\section{Prevalence and incidence by risk group}\label{prevalence-and-incidence-by-risk-group}}
 
 \hypertarget{disaggregation-of-naomi-estimates}{%
 \subsection{Disaggregation of Naomi estimates}\label{disaggregation-of-naomi-estimates}}
@@ -809,23 +812,64 @@ More involved analyses might consider prioritisation of a hypothetical intervent
 \hypertarget{discussion-1}{%
 \section{Discussion}\label{discussion-1}}
 
+\hypertarget{distribution-of-risk}{%
+\subsubsection{Distribution of risk}\label{distribution-of-risk}}
+
+\begin{itemize}
+\tightlist
+\item
+  Connection to phylogenetic results from BDI
+\item
+  About transmission rather than incidence
+\item
+  Only age-sex structured not age-sex-behaviour
+\item
+  Does not undermine my work
+\end{itemize}
+
+\hypertarget{community-engagement}{%
+\subsubsection{Community engagement}\label{community-engagement}}
+
+\begin{itemize}
+\tightlist
+\item
+  CSO engagement
+\item
+  Problem in Malawi with FSW
+\end{itemize}
+
 \hypertarget{limitations-1}{%
 \subsection{Limitations}\label{limitations-1}}
 
 \hypertarget{conclusion-1}{%
 \subsection{Conclusion}\label{conclusion-1}}
 
-\hypertarget{elgm-inf}{%
-\chapter{Fast, approximate inference for the Naomi model}\label{elgm-inf}}
+\hypertarget{naomi-aghq}{%
+\chapter{Fast approximate deterministic Bayesian inference}\label{naomi-aghq}}
 
 \adjustmtc
 \markboth{Fast, approximate inference for the Naomi model}{}
 
-Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/elgm-inf}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
+Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
 Include an edited version of the corresponding paper here.
 
-\hypertarget{future-work-and-conclusions}{%
-\chapter{Future work and conclusions}\label{future-work-and-conclusions}}
+\hypertarget{background-3}{%
+\section{Background}\label{background-3}}
+
+\hypertarget{the-naomi-model}{%
+\section{The Naomi model}\label{the-naomi-model}}
+
+\hypertarget{adaptive-gauss-hermite-quadrature}{%
+\section{Adaptive Gauss-Hermite quadrature}\label{adaptive-gauss-hermite-quadrature}}
+
+\hypertarget{malawi-case-study}{%
+\section{Malawi case-study}\label{malawi-case-study}}
+
+\hypertarget{discussion-2}{%
+\section{Discussion}\label{discussion-2}}
+
+\hypertarget{conclusions}{%
+\chapter{Future work and conclusions}\label{conclusions}}
 
 \adjustmtc
 \markboth{Conclusions}{}
@@ -839,13 +883,13 @@ Avenues for future work include:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Extending the risk group model described in Chapter \ref{multi-agyw} to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but may be possible using \texttt{aghq} with Laplace marginals as described in Chapter \ref{elgm-inf}.
+  Extending the risk group model described in Chapter \ref{multi-agyw} to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but may be possible using \texttt{aghq} with Laplace marginals as described in Chapter \ref{naomi-aghq}.
 \item
   Evaluating the accuracy of \texttt{aghq} with Laplace marginals for a greater variety of extended latent Gaussian models.
 \end{enumerate}
 
-\hypertarget{conclusions}{%
-\section{Conclusions}\label{conclusions}}
+\hypertarget{conclusions-1}{%
+\section{Conclusions}\label{conclusions-1}}
 
 The spatial structure chapter is interesting because:
 
@@ -876,7 +920,7 @@ The fast, approximate inference chapter is interesting because:
 \item
   The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible.
 \item
-  My implementation of the method was straightforward, building on the \texttt{TMB} and \texttt{aghq} packages, and described completely and accessibly in \textcite{howes2023integrated}.
+  My implementation of the method was straightforward, building on the \texttt{TMB} and \texttt{aghq} packages, and described completely and accessibly in \textcite{howes2023fast}.
 \end{itemize}
 
 My final conclusions are:
@@ -886,7 +930,7 @@ My final conclusions are:
 \item
   Modelling complex data, more often than not, pushes the boundaries of the statistical toolkit available
 \item
-  A challenge I encountered was the difficulty of implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the \texttt{R-INLA} website \autocite{rinla2023faq} notes that, ``the devil is in the details''. I have resolved this challenge by using a given \texttt{TMB} model template to fit models using multiple inference methodologies: empirical Bayes with Gaussian marginals \autocite{kristensen2016tmb}, AGHQ with Gaussian marginals \autocite{stringer2021implementing}, AGHQ with Laplace marginals \autocite{howes2023integrated}, and HMC using NUTS \autocite{monnahan2018no}. The benefits of such a ecosystem of packages are noted by \textcite{stringer2021fields}. I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
+  A challenge I encountered was the difficulty of implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the \texttt{R-INLA} website \autocite{rinla2023faq} notes that, ``the devil is in the details''. I have resolved this challenge by using a given \texttt{TMB} model template to fit models using multiple inference methodologies: empirical Bayes with Gaussian marginals \autocite{kristensen2016tmb}, AGHQ with Gaussian marginals \autocite{stringer2021implementing}, AGHQ with Laplace marginals \autocite{howes2023fast}, and HMC using NUTS \autocite{monnahan2018no}. The benefits of such a ecosystem of packages are noted by \textcite{stringer2021fields}. I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
 \item
   I have aimed to write this thesis, and the work described within it, in keeping with the principles of open science. I hope that doing so allows my work to be scrutinised, and, optimistically, built upon. This would not have been possible without a range of tools from the R ecosystem such as \texttt{rmarkdown} and \texttt{rticles}, as well as those developed within the MRC Centre for Global Infectious Disease Analysis like \texttt{orderly} and \texttt{didehpc}.
 \end{itemize}
