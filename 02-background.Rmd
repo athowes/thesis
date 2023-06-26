@@ -34,31 +34,50 @@ knitr::opts_chunk$set(
 ## The HIV/AIDS epidemic
 
 ```{r}
-plhiv2022 <- 38000000
-deaths2022 <- 700000
-infections2022 <- 1700000
+plhiv2021 <- 38000000
+deaths2021 <- 650000
+infections2021 <- 1500000
 ```
 
 <!-- The extent of HIV as a problem -->
-According to latest estimates, in 2022 there were `r xfun::numbers_to_words(plhiv2022)` people living with HIV, `r xfun::numbers_to_words(deaths2022)` AIDS-related deaths, and `r xfun::numbers_to_words(infections2022)` people newly infected with HIV.
+HIV/AIDS remains a source of substantial disease burden.
+In 2021 there were `r xfun::numbers_to_words(plhiv2021)` people living with HIV, `r xfun::numbers_to_words(deaths2021)` AIDS-related deaths, and `r xfun::numbers_to_words(infections2021)` people newly infected with HIV [@unaids2021global].
 
-<!-- Uneven burden -->
-Disease burden is unevenly distributed in space, and across communities and individuals.
+<!-- What is being done -->
+A major global effort has been made to address the epidemic.
+Significant progress has been made, both in reducing the number of new HIV cases and decreasing the number of AIDS related deaths (Figure \ref{fig:overall-picture}).
+Roll out of antiretroviral therapy (ART) has been a key tool.
+Other interventions include condoms, pre-exposure prophylaxis (PrEP) and PEP, education, economic empowerment, VMMC.
+
+```{r overall-picture, fig.cap="Overall picture."}
+knitr::include_graphics("figures/introduction/overall-picture.png")
+```
+
+<!-- Uneven burden in space -->
+Disease burden is not evenly distributed in space.
 The region most affected is Sub-Saharan Africa.
-Key populations include men who have sex with men, female sex workers, people who inject drugs, transgender people, incarcerated people.
-Large demographic groups at higher risk include adolescent girls and young women.
-Fortunately, progress is being made.
+Within sub-Saharan Africa, there is significant geographic heterogeneity.
 
-<!-- Possible interventions to help -->
-Key interventions are ART, condoms, PrEP and PEP, education, economic empowerment, VMMC.
+<!-- Uneven burden across people -->
+Disease burden is not evenly distributed across populations.
+Disproportionately impacted groups are sometimes referred to as key populations.
+Key populations include men who have sex with men, female sex workers, people who inject drugs, transgender people, and incarcerated people.
+Key populations are often marginalised, and face legal and social issues.
+
+<!-- How difuse is burden -->
+In sub-Saharan Africa, the epidemic is not as concentrated in key populations as in other contexts.
+Large demographic groups at higher risk include adolescent girls and young women.
 
 <!-- Prioritisation of interventions  -->
-Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, individual-level risk characteristics.
-Are there differences in effectiveness of treatments for different groups.
+HIV interventions can be prioritised.
+Precision public health aims to get the right interventions, to the right population, in the right place, at the right time.
+Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics.
 
 <!-- What is surveillance and how can it be used to meet these needs -->
 Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-Key HIV indicators are HIV prevalence, HIV incidence, coverage of ART and other interventions.
+HIV prevalence is the proportion of the population who have HIV.
+HIV incidence is the rate of new HIV infections.
+ART coverage is the proprotion of people living with HIV who are on ART.
 
 <!-- Why is surveillance difficult -->
 There are significant data related difficulties associated with furnishing these estimates.
@@ -75,20 +94,22 @@ Phasing out of nationally-representative household surveys for HIV.
 ### Bayesian statistics
 
 Bayesian statistics is a paradigm for learning from data.
-In this section I will provide a brief overview.
-For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
+I provide a brief overview in this section, and recommend @mcelreath2020statistical or @gelman2013bayesian for a more complete introduction.
 
 At it's best, the Bayesian framework allows the analyst focus their attention on modelling the data at hand.
-In particular, this is achieved by the construction of a generative model for the observed data $y$ together with parameters $\vartheta$
+This is achieved by the construction of a generative model for the observed data $y$ together with parameters $\vartheta$
 \begin{equation}
 (y, \vartheta) \sim p(y, \vartheta).
 \end{equation}
-Given this generative model, computation of the posterior distribution
+This model is generative in the sense that one could simulate pairs $(y, \vartheta)$ from it.
+If these pairs differ too greatly from what the analyst would expect, then the generative model may be refined.
+This is what is known as a prior predictive check.
+
+Computation of the posterior distribution
 \begin{equation}
 p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}, \label{eq:posterior}
 \end{equation}
-usually proceeds using approximate Bayesian inference methods, where $p(y \, | \, \vartheta)$ is the likelihood, $p(y \, | \, \vartheta)$ is the prior, and $p(\vartheta)$ is the evidence.
-
+usually proceeds using approximate Bayesian inference methods. 
 Markov chain Monte Carlo (MCMC) is the most popular approach for computing Equation \ref{eq:posterior}, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
 Variational Bayes approaches assume the posterior distribution belongs to some class and use optimisation to choose the best member of that class.
 Particular properties of spatio-temporal models make integrated nested Laplace approximations, if feasible, often the best option

@@ -23,22 +23,22 @@ bibliography: references.bib
 
 Avenues for future work include:
 
-1. Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships [@wolock2021evaluating]. Such a model would likely fall out of the scope of `R-INLA`, but may be possible using `aghq` with Laplace marginals as described in Chapter \@ref(naomi-aghq).
+1. Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships [@wolock2021evaluating]. Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the methods discussed in \@ref(naomi-aghq).
 2. Evaluating the accuracy of `aghq` with Laplace marginals for a greater variety of extended latent Gaussian models.
 
 ## Conclusions
 
-The spatial structure chapter is interesting because:
+Chapter \@ref(beyond-borders) is interesting because:
 
 * I designed experiments to thoroughly compare models for spatial structure using tools for model assessment such as proper scoring rules and posterior predictive checks.
 
-The risk group chapter is interesting because:
+Chapter \@ref(multi-agyw) is interesting because:
 
 * I estimated HIV risk group proportions for AGYW, enabling countries to prioritise their delivery of HIV prevention services.
 * I analysed the number of new infections that might be reached under a variety of risk stratification strategies.
 * I used `R-INLA` to specify multinomial spatio-temporal models via the Poisson-multinomial transformation. This includes complex two- and three-way Kronecker product interactions defined using the `group` and `replicate` options.
 
-The fast, approximate inference chapter is interesting because:
+Chapter \@ref(naomi-aghq) is interesting because:
 
 * I developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV inference.
 * The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible.
@@ -46,6 +46,6 @@ The fast, approximate inference chapter is interesting because:
 
 My final conclusions are:
 
-* Modelling complex data, more often than not, pushes the boundaries of the statistical toolkit available
-* A challenge I encountered was the difficulty of implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes that, "the devil is in the details". I have resolved this challenge by using a given `TMB` model template to fit models using multiple inference methodologies: empirical Bayes with Gaussian marginals [@kristensen2016tmb], AGHQ with Gaussian marginals [@stringer2021implementing], AGHQ with Laplace marginals [@howes2023fast], and HMC using NUTS [@monnahan2018no]. The benefits of such a ecosystem of packages are noted by @stringer2021fields. I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
-* I have aimed to write this thesis, and the work described within it, in keeping with the principles of open science. I hope that doing so allows my work to be scrutinised, and, optimistically, built upon. This would not have been possible without a range of tools from the R ecosystem such as `rmarkdown` and `rticles`, as well as those developed within the MRC Centre for Global Infectious Disease Analysis like `orderly` and `didehpc`.
+* Modelling complex data, more often than not, pushes the boundaries of the statistical toolkit available.
+* A challenge I encountered was the difficulty of implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes that "the devil is in the details". I have resolved this challenge by using a given `TMB` model template to fit models using multiple inference methodologies. The benefits of such a ecosystem of packages are noted by @stringer2021fields. I particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
+* To the best of my abilities, I have written this thesis, and the work described within it, in keeping with the principles of open science. I hope that doing so allows my work to be scrutinised, and optimistically built upon. This would not have been possible without a range of tools from the R ecosystem such as `rmarkdown` and `rticles`, as well as those developed within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
