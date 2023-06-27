@@ -1,4 +1,4 @@
-incidence <- read_csv("data/introduction/incidence-of-hiv-by-age.csv")
+incidence <- read_csv("resources/introduction/incidence-of-hiv-by-age.csv")
 
 incidence_plot <- incidence %>%
   filter(Entity == "Sub-Saharan Africa (UN)") %>%
@@ -10,7 +10,7 @@ incidence_plot <- incidence %>%
     geom_point() +
     theme_minimal()
 
-deaths <- read_csv("data/introduction/hivaids-and-tuberculosis-deaths.csv")
+deaths <- read_csv("resources/introduction/hivaids-and-tuberculosis-deaths.csv")
 
 deaths_plot <- deaths %>%
   filter(Entity == "Sub-Saharan Africa (WB)") %>%

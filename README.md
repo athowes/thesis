@@ -27,3 +27,9 @@ If you would like to cite this work, please use:
   year = {2023}
 }
 ```
+
+## Frequently asked questions
+
+> How did you format this thesis?
+
+I used the R package [`thesisdown`](https://github.com/ismayc/thesisdown), inspired by [`bookdown`](https://github.com/rstudio/bookdown).
