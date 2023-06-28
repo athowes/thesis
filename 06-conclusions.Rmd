@@ -19,32 +19,34 @@ bibliography: references.bib
 
 <!-- JWE: Minor corrections often involve (1) fixing typos, (2) clarifying things, (3) elaborating on the contributions to science and implications of the PhD in the Conclusions chapter [by far the most common point of examiner feedback] -->
 
-## Future work
+## Strengths
 
-Avenues for future work include:
-
-1. Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships [@wolock2021evaluating]. Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the methods discussed in \@ref(naomi-aghq).
-2. Evaluating the accuracy of `aghq` with Laplace marginals for a greater variety of extended latent Gaussian models.
-
-## Conclusions
-
-Chapter \@ref(beyond-borders) is interesting because:
+### Chapter \@ref(beyond-borders)
 
 * I designed experiments to thoroughly compare models for spatial structure using tools for model assessment such as proper scoring rules and posterior predictive checks.
 
-Chapter \@ref(multi-agyw) is interesting because:
+### Chapter \@ref(multi-agyw)
 
 * I estimated HIV risk group proportions for AGYW, enabling countries to prioritise their delivery of HIV prevention services.
 * I analysed the number of new infections that might be reached under a variety of risk stratification strategies.
 * I used `R-INLA` to specify multinomial spatio-temporal models via the Poisson-multinomial transformation. This includes complex two- and three-way Kronecker product interactions defined using the `group` and `replicate` options.
 
-Chapter \@ref(naomi-aghq) is interesting because:
+### Chapter \@ref(naomi-aghq)
 
 * I developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV inference.
 * The method enables integrated nested Laplace approximations to be fit to and studied on a wider class of models than was previously possible.
 * My implementation of the method was straightforward, building on the `TMB` and `aghq` packages, and described completely and accessibly in @howes2023fast.
 
-My final conclusions are:
+## Future work
+
+Avenues for future work include:
+
+1. Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships [@wolock2021evaluating].
+Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the methods discussed in Chapter \@ref(naomi-aghq).
+2. Speeding up the implementation of Laplace marginals using the matrix algebra approximations described in @wood2020simplified.
+2. Evaluating the accuracy of deterministic Bayesian inference methods for a broader variety of extended latent Gaussian models.
+
+## Conclusions
 
 * Modelling complex data, more often than not, pushes the boundaries of the statistical toolkit available.
 * A challenge I encountered was the difficulty of implementing identical models across multiple frameworks with the aim of studying the inference method. Or, of a similarly fraught nature, comparing different models implemented in different frameworks with the aim of studying model differences. The frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes that "the devil is in the details". I have resolved this challenge by using a given `TMB` model template to fit models using multiple inference methodologies. The benefits of such a ecosystem of packages are noted by @stringer2021fields. I particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.

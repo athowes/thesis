@@ -174,6 +174,8 @@
 \newcommand{\bphi}{\bm{\phi}}
 \newcommand{\brho}{\bm{\rho}}
 \newcommand{\btheta}{\bm{\theta}}
+\newcommand{\bmeta}{\bm{\eta}}
+\newcommand{\bvartheta}{\bm{\vartheta}}
 
 \RequirePackage{bm}
 
@@ -333,19 +335,19 @@ In sum, the contributions in this thesis help to guide HIV policy in sub-Saharan
 \markboth{Introduction}{}
 
 This thesis is about applied and methodological Bayesian statistics.
-It is Bayesian in the sense that I use probability models to draw conclusions from data.
+It is Bayesian in the sense that I use probability models to arrive at conclusions based on data.
 It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
 
-The real world questions relate to surveillance of HIV in sub-Saharan Africa.
-Though important progress has been made, over forty years since the first reported cases millions of people remain impacted by HIV each year.
+The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
+Though important progress has been made, millions of people are impacted by HIV each year.
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
 
-The data in this thesis are related to people.
-Usually, people answering survey questions or using healthcare facilities.
-Because the data have positions in space and time, statisticians describe it as spatio-temporal \autocite{cressie2015statistics}.
-While there is a great diversity of spatio-temporal data, there are important and distinctive commonalities which make their shared study worthwhile.
+The data in this thesis are related to people answering survey questions or using healthcare facilities.
+The data have particular positions in space and time which are important to take into account.
+Spatio-temporal data, while encompassing a great diversity, has important and distinctive commonalities which make its collective study worthwhile.
 
-Computation is an essential part of modern statistical practice, and each project chapter is accompanied by code, hosted on GitHub.
+Computation is an essential part of modern statistical practice.
+Each project chapter is accompanied by code, hosted on GitHub.
 
 \hypertarget{chapter-overview}{%
 \section{Chapter overview}\label{chapter-overview}}
@@ -373,13 +375,17 @@ Computation is an essential part of modern statistical practice, and each projec
 \hypertarget{the-hivaids-epidemic}{%
 \section{The HIV/AIDS epidemic}\label{the-hivaids-epidemic}}
 
-HIV/AIDS remains a source of substantial disease burden.
+Human immunodeficiency virus (HIV) is a virus.
+Over time, if left untreated HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV can be transmitted by exposure to certain bodily fluids, most commonly during sexual intercourse.
+
+Though the HIV/AIDS epidemic began over forty years ago, it remains a major source of disease burden today.
 In 2021 there were thirty-eight million people living with HIV, six hundred fifty thousand AIDS-related deaths, and one million, five hundred thousand people newly infected with HIV \autocite{unaids2021global}.
 
 A major global effort has been made to address the epidemic.
 Significant progress has been made, both in reducing the number of new HIV cases and decreasing the number of AIDS related deaths (Figure \ref{fig:overall-picture}).
 Roll out of antiretroviral therapy (ART) has been a key tool.
-Other interventions include condoms, pre-exposure prophylaxis (PrEP) and PEP, education, economic empowerment, VMMC.
+Other interventions include condoms, pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP), and voluntary medical male circumcision (VMMC).
 
 \begin{figure}
 
@@ -390,13 +396,13 @@ Other interventions include condoms, pre-exposure prophylaxis (PrEP) and PEP, ed
 \caption{Overall picture.}\label{fig:overall-picture}
 \end{figure}
 
-Disease burden is not evenly distributed in space.
+Disease burden is not evenly distributed geographically.
 The region most affected is Sub-Saharan Africa.
 Within sub-Saharan Africa, there is significant geographic heterogeneity.
 
 Disease burden is not evenly distributed across populations.
 Disproportionately impacted groups are sometimes referred to as key populations.
-Key populations include men who have sex with men, female sex workers, people who inject drugs, transgender people, and incarcerated people.
+Key populations include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), transgender people, and incarcerated people.
 Key populations are often marginalised, and face legal and social issues.
 
 In sub-Saharan Africa, the epidemic is not as concentrated in key populations as in other contexts.
@@ -406,15 +412,15 @@ HIV interventions can be prioritised.
 Precision public health aims to get the right interventions, to the right population, in the right place, at the right time.
 Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics.
 
-Surveillance is used is conducted to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+Surveillance is used to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
 HIV prevalence is the proportion of the population who have HIV.
 HIV incidence is the rate of new HIV infections.
 ART coverage is the proprotion of people living with HIV who are on ART.
 
-There are significant data related difficulties associated with furnishing these estimates.
-These include sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, changing demographies.
+There are significant difficulties associated with furnishing these estimates.
+These include sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, changing demographics.
 These data limitations foreground the importance of synthesising multiple sources of information to obtain estimates.
-Doing so increases the difficulty and complexity of the statistical modelling required.
+Doing so increases the complexity of the statistical models used.
 
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
@@ -425,65 +431,107 @@ Phasing out of nationally-representative household surveys for HIV.
 \hypertarget{bayesian-statistics}{%
 \subsection{Bayesian statistics}\label{bayesian-statistics}}
 
-Bayesian statistics is a paradigm for learning from data.
-I provide a brief overview in this section, and recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian} for a more complete introduction.
+Bayesian statistics is a mathematical paradigm for learning from data.
+I provide a brief, opinionated, overview in this section, and recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian} for a more complete introduction.
 
-At it's best, the Bayesian framework allows the analyst focus their attention on modelling the data at hand.
-This is achieved by the construction of a generative model for the observed data \(y\) together with parameters \(\vartheta\)
-\begin{equation}
-(y, \vartheta) \sim p(y, \vartheta).
-\end{equation}
-This model is generative in the sense that one could simulate pairs \((y, \vartheta)\) from it.
-If these pairs differ too greatly from what the analyst would expect, then the generative model may be refined.
+\hypertarget{bayesian-modelling}{%
+\subsubsection{Bayesian modelling}\label{bayesian-modelling}}
+
+At its best, the Bayesian paradigm allows the analyst focus their attention on the question of how to model the data.
+This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y\) together with parameters \(\bvartheta\).
+The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\).
+If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
 This is what is known as a prior predictive check.
 
-Computation of the posterior distribution
+The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) such that \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
+The likelihood, as a function of \(\bvartheta\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bvartheta\).
+The prior encapsulates beliefs about the parameters \(\bvartheta\) before the data is observed.
+
+There is disagreement about how the prior should be specified.
+The distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
+
+\hypertarget{bayesian-computation}{%
+\subsubsection{Bayesian computation}\label{bayesian-computation}}
+
+Interest lies in obtaining the posterior distribution \(p(\bvartheta \, | \, \y)\) which represents beliefs about the parameters given the observed data.
+Using Bayes' theorem, the posterior distribution is given by
 \begin{equation}
-p(\vartheta \, | \, y) = \frac{p(y \, | \, \vartheta) p(\vartheta)}{p(y)}, \label{eq:posterior}
+p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-usually proceeds using approximate Bayesian inference methods.
-Markov chain Monte Carlo (MCMC) is the most popular approach for computing Equation \ref{eq:posterior}, and proceeds by simulating samples from a Markov chain with stationary distribution equal to the distribution of interest.
-Variational Bayes approaches assume the posterior distribution belongs to some class and use optimisation to choose the best member of that class.
-Particular properties of spatio-temporal models make integrated nested Laplace approximations, if feasible, often the best option
-Empirical Bayes approaches, like Template Model Builder \autocite{osgoodzimmerman2021statistical}.
+However, it is usually intractable to calculate the posterior distribution directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
+As such, though the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
+A great variety of computational methods have been developed at to tackle this problem.
+Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
+Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
+
+\hypertarget{interplay-between-modelling-and-computation}{%
+\subsubsection{Interplay between modelling and computation}\label{interplay-between-modelling-and-computation}}
+
+Bayesian computation aspires to abstract away calculation of the posterior distribution.
+Modern computational techniques and software have made this aspiration a reality for many models.
+However, computation of the posterior remains intractable for a substantial majority of models.
+As such, the analyst need not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior is tractable in reasonable time.
+It is in this sense, that there is an interplay between modelling and computation.
+As computation improves, the space of models available to the analyst expands.
 
 \hypertarget{spatio-temporal-statistics}{%
 \subsection{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
 
-In spatio-temporal statistics the data we observe are indexed by spatial or temporal location.
+In spatio-temporal statistics \autocite{cressie2015statistics} we observe data indexed by spatial or temporal location.
+In this thesis we assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
+Data may be associated to a point in space \(s \in \mathcal{S}\) or an area \(A \subseteq \mathcal{S}\).
+The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
+
 Commonly used independent and identically distributed (IID) assumptions on observations are rarely suitable in this setting because we expect there to be spatio-temporal correlation structure.
 
-Split the parameters \(\vartheta = (x, \theta)\).
-Call \(x\) the latent field.
-Call \(\theta\) the hyperparameters.
-Often, the latent field is assumed to be jointly multivariate Gaussian.
+\hypertarget{hierarchical-lgm-elgm}{%
+\subsection{Model classes}\label{hierarchical-lgm-elgm}}
 
-\hypertarget{latent-gaussian-and-extended-latent-gaussian-models}{%
-\subsection{Latent Gaussian and extended latent Gaussian models}\label{latent-gaussian-and-extended-latent-gaussian-models}}
+\hypertarget{hierarchical}{%
+\subsubsection{Hierarchical models}\label{hierarchical}}
 
-Latent Gaussian models \autocite{rue2009approximate} are of the form
+Bayesian hierarchical models are comprised of multiple stages
+\begin{align*}
+p(\x, \btheta \, | \, \y) \propto p(\y, \x, \btheta) = p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta).
+\end{align*}
+
+\hypertarget{latent-gaussian-models}{%
+\subsubsection{Latent Gaussian models}\label{latent-gaussian-models}}
+
+Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
+More specifically, in an LGM, the likelihood is given by
 \begin{align*}
 y_i &\sim p(y_i \, | \, \eta_i, \theta_1), \quad i \in [n]\\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
 \eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}),
 \end{align*}
 where \([n] = \{1, \ldots, n\}\).
-The response variable is \(y = (y)_{i \in [n]}\) with likelihood \(p(y \, | \, \eta, \theta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \theta_1)\), where \(\eta = (\eta)_{i \in [n]}\).
+The response variable is \(\y = (y)_{i \in [n]}\) with likelihood \(p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)\), where \(\bmeta = (\eta)_{i \in [n]}\).
 Each response has conditional mean \(\mu_i\) with inverse link function \(g: \mathbb{R} \to \mathbb{R}\) such that \(\mu_i = g(\eta_i)\).
-The vector \(\theta_1 \in \mathbb{R}^s\), with \(s_1\) assumed small, are additional parameters of the likelihood.
+The vector \(\btheta_1 \in \mathbb{R}^{s_1}\), with \(s_1\) assumed small, are additional parameters of the likelihood.
 The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\), linear effects \(\beta_j\) of the covariates \(z_{ji}\), and unknown functions \(f_k(\cdot)\) of the covariates \(u_{ki}\).
-The parameters \(\beta_0\), \(\{\beta_j\}\), \(\{f_k(\cdot)\}\) are each assigned Gaussian priors.
-It is convenient to collect these parameters into a vector \(x \in \mathbb{R}^N\) called the latent field such that \(x \sim \mathcal{N}(0, Q(\theta_2)^{-1})\) where \(\theta_2 \in \mathbb{R}^{s_2}\) are further parameters, again with \(s_2\) assumed small.
-Let \(\theta = (\theta_1, \theta_2) \in \mathbb{R}^s\) with \(m = s_1 + s_2\) be all hyperparameters, with prior \(p(\theta)\).
-Common examples of latent Gaussian models include the following.
+The parameters \(\beta_0\), \(\{\beta_j\}\), \(\{f_k(\cdot)\}\) are each assigned Gaussian priors, and can be collected into a vector \(\x \in \mathbb{R}^N\) such that \(\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})\) where \(\btheta_2 \in \mathbb{R}^{s_2}\) are further parameters, again with \(s_2\) assumed small.
+Let \(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m\) with \(m = s_1 + s_2\) be all hyperparameters, with prior \(p(\theta)\).
+In total, the parameters of the LGM \(\bvartheta = (\x, \btheta)\) comprise both the latent field and hyperparameters.
 
-Many of the leading-edge models used in small-area estimation fall outside the latent Gaussian model class.
-Examples include disaggregation models, evidence synthesis models \autocite{eaton2019joint,eaton2021naomi}, attendance models, risk group models.
-However, many of these models do fit into the class of extended latent Gaussian models \autocite{stringer2021fast}.
-By allowing many-to-one link functions, extended latent Gaussian models facilitate modelling of non-linearities.
+Spatio-temporal data are well suited to being modelled with LGMs.
 
-\hypertarget{survey-methods}{%
-\subsection{Survey methods}\label{survey-methods}}
+\hypertarget{extended-latent-gaussian-models}{%
+\subsubsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
+
+Many of leading-edge disease mapping models fall outside the LGM class.
+However, many of these models do fit into the class of extended latent Gaussian models {[}ELGMs; \textcite{stringer2021fast}{]}.
+By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
+The structured additive predictor is redefined as \(\bmeta = (\eta)_{i \in [N_n]}\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
+Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\).
+The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\).
+Put together, ELGMs are then of the form
+\begin{align*}
+y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i \in [n] \\
+\mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
+\eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j \in [N_n],
+\end{align*}
+with latent field and hyperparameter priors as in the LGM case.
 
 \hypertarget{beyond-borders}{%
 \chapter{Spatial structure}\label{beyond-borders}}
@@ -491,8 +539,12 @@ By allowing many-to-one link functions, extended latent Gaussian models facilita
 \adjustmtc
 \markboth{Models for spatial structure}{}
 
+In this chapter, I describe an investigation of spatial random effects specifications.
+The motivated for this investigation was one of the fundamental questions encountered by an analyst during model construction.
+Namely, should the model be augmented to better capture a feature of the data generating process that we believe exists?
+The results are presented in \textcite{howes2023beyond}.
+
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/beyond-borders}{\texttt{athowes/beyond-borders}} and supported by the R package \href{https://athowes.github.io/arealutils}{\texttt{arealutils}}.
-Include an edited version of the corresponding paper here.
 
 \hypertarget{background-1}{%
 \section{Background}\label{background-1}}
@@ -573,7 +625,7 @@ In this chapter I describe an application of Bayesian spatio-temporal statistics
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 My primary role was to develop the statistical model.
 I built on an earlier version of the analysis conducted by Kathryn Risher.
-The results are described in \textcite{howes2023spatio}.
+The results are presented in \textcite{howes2023spatio}.
 Kathryn has further created a spreadsheet tool using the resulting estimates which is now being used by countries to guide policy.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}} and supported by the R package \href{https://athowes.github.io/multi.utils}{\texttt{multi.utils}} \autocite{multiutils}.
 
@@ -993,9 +1045,9 @@ In this chapter I describe a novel Bayesian inference method I developed with th
 This work builds on that of others, including \textcite{rue2009approximate}, \textcite{kristensen2016tmb} and \textcite{stringer2021fast}.
 I began working on this project in 2020, but did not make significant progress until I read Alex Stringer's work.
 We later began collaborating, including Alex supervising my visit to the University of Waterloo in 2022.
+The results are presented in \textcite{howes2023fast}.
 
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
-Include an edited version of the corresponding paper here.
 
 \hypertarget{background-3}{%
 \section{Background}\label{background-3}}
@@ -1003,8 +1055,8 @@ Include an edited version of the corresponding paper here.
 \hypertarget{the-naomi-model}{%
 \section{The Naomi model}\label{the-naomi-model}}
 
-\hypertarget{adaptive-gauss-hermite-quadrature}{%
-\section{Adaptive Gauss-Hermite quadrature}\label{adaptive-gauss-hermite-quadrature}}
+\hypertarget{methods-for-inference}{%
+\section{Methods for inference}\label{methods-for-inference}}
 
 \hypertarget{malawi-case-study}{%
 \section{Malawi case-study}\label{malawi-case-study}}
@@ -1018,24 +1070,11 @@ Include an edited version of the corresponding paper here.
 \adjustmtc
 \markboth{Conclusions}{}
 
-\hypertarget{future-work}{%
-\section{Future work}\label{future-work}}
+\hypertarget{strengths}{%
+\section{Strengths}\label{strengths}}
 
-Avenues for future work include:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Extending the risk group model described in Chapter \ref{multi-agyw} to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}. Such a model would likely fall out of the scope of \texttt{R-INLA}, but would be possible to write with \texttt{TMB} and therefore amenable to the methods discussed in \ref{naomi-aghq}.
-\item
-  Evaluating the accuracy of \texttt{aghq} with Laplace marginals for a greater variety of extended latent Gaussian models.
-\end{enumerate}
-
-\hypertarget{conclusions-1}{%
-\section{Conclusions}\label{conclusions-1}}
-
-Chapter \ref{beyond-borders} is interesting because:
+\hypertarget{chapter-refbeyond-borders}{%
+\subsection{Chapter \ref{beyond-borders}}\label{chapter-refbeyond-borders}}
 
 \begin{itemize}
 \tightlist
@@ -1043,7 +1082,8 @@ Chapter \ref{beyond-borders} is interesting because:
   I designed experiments to thoroughly compare models for spatial structure using tools for model assessment such as proper scoring rules and posterior predictive checks.
 \end{itemize}
 
-Chapter \ref{multi-agyw} is interesting because:
+\hypertarget{chapter-refmulti-agyw}{%
+\subsection{Chapter \ref{multi-agyw}}\label{chapter-refmulti-agyw}}
 
 \begin{itemize}
 \tightlist
@@ -1055,7 +1095,8 @@ Chapter \ref{multi-agyw} is interesting because:
   I used \texttt{R-INLA} to specify multinomial spatio-temporal models via the Poisson-multinomial transformation. This includes complex two- and three-way Kronecker product interactions defined using the \texttt{group} and \texttt{replicate} options.
 \end{itemize}
 
-Chapter \ref{naomi-aghq} is interesting because:
+\hypertarget{chapter-refnaomi-aghq}{%
+\subsection{Chapter \ref{naomi-aghq}}\label{chapter-refnaomi-aghq}}
 
 \begin{itemize}
 \tightlist
@@ -1067,7 +1108,25 @@ Chapter \ref{naomi-aghq} is interesting because:
   My implementation of the method was straightforward, building on the \texttt{TMB} and \texttt{aghq} packages, and described completely and accessibly in \textcite{howes2023fast}.
 \end{itemize}
 
-My final conclusions are:
+\hypertarget{future-work}{%
+\section{Future work}\label{future-work}}
+
+Avenues for future work include:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Extending the risk group model described in Chapter \ref{multi-agyw} to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships \autocite{wolock2021evaluating}.
+  Such a model would likely fall out of the scope of \texttt{R-INLA}, but would be possible to write with \texttt{TMB} and therefore amenable to the methods discussed in Chapter \ref{naomi-aghq}.
+\item
+  Speeding up the implementation of Laplace marginals using the matrix algebra approximations described in \textcite{wood2020simplified}.
+\item
+  Evaluating the accuracy of deterministic Bayesian inference methods for a broader variety of extended latent Gaussian models.
+\end{enumerate}
+
+\hypertarget{conclusions-1}{%
+\section{Conclusions}\label{conclusions-1}}
 
 \begin{itemize}
 \tightlist
@@ -1081,8 +1140,14 @@ My final conclusions are:
 
 \startappendices
 
-\hypertarget{the-first-appendix}{%
-\chapter{The First Appendix}\label{the-first-appendix}}
+\hypertarget{spatial-structure-supplement}{%
+\chapter{Spatial structure supplement}\label{spatial-structure-supplement}}
+
+\hypertarget{a-model-for-risk-group-proportions-supplement}{%
+\chapter{A model for risk group proportions supplement}\label{a-model-for-risk-group-proportions-supplement}}
+
+\hypertarget{fast-approximate-bayesian-inference-supplement}{%
+\chapter{Fast approximate Bayesian inference supplement}\label{fast-approximate-bayesian-inference-supplement}}
 
 
 %%%%% REFERENCES
