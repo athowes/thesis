@@ -284,12 +284,12 @@
 \begin{abstract}
 	Progress towards ending AIDS as a public health threat by 2030 is faltering.
 Effective public health response requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
-Limitations of available data make obtaining these estimates difficult.
+Limitations of available data make obtaining such estimates difficult.
 I develop and apply Bayesian spatio-temporal methods to meet this challenge.
 Firstly, I examine models for area-level spatial structure.
-Secondly, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention interventions, as suggested by the Global AIDS Strategy.
+Secondly, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward by the Global AIDS Strategy.
 Finally, I develop a novel Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
-In sum, the contributions in this thesis help to guide HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
+In sum, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
 \end{abstract}
 
 %%%%% MINI TABLES
@@ -339,12 +339,12 @@ It is Bayesian in the sense that I use probability models to arrive at conclusio
 It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
 
 The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
-Though important progress has been made, millions of people are impacted by HIV each year.
+Though progress has been made, millions of people are impacted by HIV each year.
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
 
-The data in this thesis are related to people answering survey questions or using healthcare facilities.
-The data have particular positions in space and time which are important to take into account.
-Spatio-temporal data, while encompassing a great diversity, has important and distinctive commonalities which make its collective study worthwhile.
+The data in this thesis relate to people answering survey questions or using healthcare facilities.
+As such, it has particular positions in space and time which should be taken into account.
+Spatio-temporal data, while encompassing a great diversity, has distinctive commonalities which make its collective study worthwhile.
 
 Computation is an essential part of modern statistical practice.
 Each project chapter is accompanied by code, hosted on GitHub.
@@ -355,7 +355,7 @@ Each project chapter is accompanied by code, hosted on GitHub.
 \begin{itemize}
 \tightlist
 \item
-  Chapter \ref{background}: I start by reviewing the required background for the rest of the thesis, namely relating to the HIV/AIDS epidemic and Bayesian spatio-temporal statistics.
+  Chapter \ref{background}: I start by reviewing the required background for the rest of the thesis, namely regarding the HIV/AIDS epidemic and Bayesian spatio-temporal statistics.
 \item
   Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was designed with analysis of a grid of pixels in mind. In disease mapping, we work using the districts of a country, which are not a grid. I evaluate the practical consequences of this this concern \autocite{howes2023beyond}.
 \item
@@ -375,16 +375,21 @@ Each project chapter is accompanied by code, hosted on GitHub.
 \hypertarget{the-hivaids-epidemic}{%
 \section{The HIV/AIDS epidemic}\label{the-hivaids-epidemic}}
 
-Human immunodeficiency virus (HIV) is a virus.
+Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
+HIV primarily infects CD4+ T cells, a type of white blood cell vital for the function of the immune system.
 Over time, if left untreated HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
-HIV can be transmitted by exposure to certain bodily fluids, most commonly during sexual intercourse.
+AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
 
-Though the HIV/AIDS epidemic began over forty years ago, it remains a major source of disease burden today.
+HIV is transmitted by exposure to certain bodily fluids of an infected person.
+The most common mode of transmission is through sexual contact.
+
+The first HIV cases were reported in the early 1980s.
 In 2021 there were thirty-eight million people living with HIV, six hundred fifty thousand AIDS-related deaths, and one million, five hundred thousand people newly infected with HIV \autocite{unaids2021global}.
 
 A major global effort has been made to address the epidemic.
 Significant progress has been made, both in reducing the number of new HIV cases and decreasing the number of AIDS related deaths (Figure \ref{fig:overall-picture}).
 Roll out of antiretroviral therapy (ART) has been a key tool.
+Treatment
 Other interventions include condoms, pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP), and voluntary medical male circumcision (VMMC).
 
 \begin{figure}
@@ -396,31 +401,29 @@ Other interventions include condoms, pre-exposure prophylaxis (PrEP) and post-ex
 \caption{Overall picture.}\label{fig:overall-picture}
 \end{figure}
 
-Disease burden is not evenly distributed geographically.
-The region most affected is Sub-Saharan Africa.
-Within sub-Saharan Africa, there is significant geographic heterogeneity.
+There is substantial geographic inequality in disease burden.
+In some countries, the epidemic is concentrated within small populations, and prevalence is low.
+For others, transmission is sustained in the general population, and prevalence is higher.
+Most of the countries severely affected are in sub-Saharan Africa (SSA), accounting for percentage of people living with HIV (PLHIV) worldwide.
+There is also significant geographic variation within countries.
 
-Disease burden is not evenly distributed across populations.
-Disproportionately impacted groups are sometimes referred to as key populations.
-Key populations include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), transgender people, and incarcerated people.
-Key populations are often marginalised, and face legal and social issues.
+In all settings, there is substantial inequality in disease burden across groups.
+Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
+KPs are often marginalised, and face legal and social issues.
 
-In sub-Saharan Africa, the epidemic is not as concentrated in key populations as in other contexts.
-Large demographic groups at higher risk include adolescent girls and young women.
+In SSA, risk is more diffuse across the population than in concentrated settings.
+Large demographic groups at increased risk of HIV infection include adolescent girls and young women (AGYW).
 
-HIV interventions can be prioritised.
-Precision public health aims to get the right interventions, to the right population, in the right place, at the right time.
-Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics.
+HIV interventions should be prioritised to have the greatest impact on the epidemic.
+The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
 
-Surveillance is used to track epidemic trends, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-HIV prevalence is the proportion of the population who have HIV.
-HIV incidence is the rate of new HIV infections.
-ART coverage is the proprotion of people living with HIV who are on ART.
+HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
+Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+Important indicators include HIV prevalence, which is the proportion of the population who have HIV; HIV incidence, the rate of new HIV infections; and ART coverage, which is the proportion of PLHIV who are on ART.
 
 There are significant difficulties associated with furnishing these estimates.
-These include sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, changing demographics.
-These data limitations foreground the importance of synthesising multiple sources of information to obtain estimates.
-Doing so increases the complexity of the statistical models used.
+The difficulties include data sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, and changing demographics.
+These data limitations foreground the importance of statistical modelling, including synthesising multiple sources of information.
 
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
@@ -479,7 +482,7 @@ As computation improves, the space of models available to the analyst expands.
 
 In spatio-temporal statistics \autocite{cressie2015statistics} we observe data indexed by spatial or temporal location.
 In this thesis we assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
-Data may be associated to a point in space \(s \in \mathcal{S}\) or an area \(A \subseteq \mathcal{S}\).
+Data may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
 The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
 
 Commonly used independent and identically distributed (IID) assumptions on observations are rarely suitable in this setting because we expect there to be spatio-temporal correlation structure.
@@ -626,16 +629,15 @@ This work was conducted in collaboration with colleagues from the MRC Centre for
 My primary role was to develop the statistical model.
 I built on an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in \textcite{howes2023spatio}.
-Kathryn has further created a spreadsheet tool using the resulting estimates which is now being used by countries to guide policy.
+Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries to guide policy.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}} and supported by the R package \href{https://athowes.github.io/multi.utils}{\texttt{multi.utils}} \autocite{multiutils}.
 
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-Risk of acquiring HIV infection varies by individual.
-Moreover, variation is systematic across demographic characteristics.
-Adolescent girls and young women (AGYW, here defined as females aged 15-29) are one demographic group at increased risk.
-AGYW comprise 44\% of new infections, while only 28\% of the population \autocite{unaids2021update}, and HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
+Adolescent girls and young women (AGYW, here defined as females aged 15-29) are a demographic group at increased risk of HIV infection
+AGYW comprise 44\% of new infections, while only 28\% of the population \autocite{unaids2021update}.
+HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
 The reasons for this disparity are given in Table \ref{tab:agyw-reasons}.
 
 \begin{longtable}[]{@{}ll@{}}
@@ -717,7 +719,23 @@ Very High & Transactional sex (adjusted to correspond to female sex workers) & 0
 
 I used household survey data from 13 countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
 These countries have been designated AGYW priority countries.
-I found that it was not appropriate to use the surveys without a specific transactional sex question on an equal footing to the other surveys.
+
+For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
+These risk groups were: not sexually active, one cohabiting sexual partner, non-regular or multiple sexual partner(s), and AGYW who report transactional sex.
+In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
+Exact survey questions varied slightly across survey types and between survey phases.
+Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
+For their three most recent partners, respondents were also asked about the type of partnership (spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other).
+
+Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
+In these surveys, 2.64\% of women reported transactional sex.
+In surveys without such a question, women almost never (0.01\%) answered that one of their three most recent partners was a sex work client.
+Due to this incomparability across surveys, I did not include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
+I instead focused on estimating the proportion of women who reported transactional sex at a district level, and subsequently adjusted these proportions to align to national estimates for the number of female sex workers.
+
+I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
+The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries, exceptions being Cameroon and Kenya where I conducted analysis one level higher at the department and county levels, respectively.
+I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
 
 \hypertarget{model-for-risk-group-proportions}{%
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
@@ -748,7 +766,7 @@ This model is not an LGM, and is not possible to fit in \texttt{R-INLA}.
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
 
-We use the multinomial-Poisson transformation to enable inference with \texttt{R-INLA}.
+I use the multinomial-Poisson transformation to enable inference with \texttt{R-INLA}.
 The transformation reframes a given multinomial logisitic regression model as an equivalent Poisson log-linear model of the form
 \begin{align}
     y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
@@ -908,8 +926,8 @@ I considered six logistic regression models each including a constant \(\beta_0 
 The prior on \(\beta_0\) placed 95\% prior probability on the range 2-50\% for the percentage of those with non-regular or multiple partners who report transactional sex.
 I considered two specifications (IID, Besag) for the spatial random effects \(\phi_i\).
 To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent}, available from \textcite{hodgins2022population}.
-For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) we used the PC prior with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
-For the regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) we used the prior \(\beta \sim \mathcal{N}(0, 2.5^2)\).
+For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) I used the PC prior with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
+For the regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) I used the prior \(\beta \sim \mathcal{N}(0, 2.5^2)\).
 
 \hypertarget{model-specifications-1}{%
 \subsubsection{Model specifications}\label{model-specifications-1}}
@@ -1003,6 +1021,45 @@ By cumulatively summing the expected infections, for each fraction of the total 
 \hypertarget{discussion-1}{%
 \section{Discussion}\label{discussion-1}}
 
+I estimated the proportion of AGYW who fall into different risk groups at a district level in 13 sub-Saharan African countries.
+These estimates support consideration of differentiated prevention programming according to geographic locations and risk behaviour, as outlined in the Global AIDS Strategy.
+Systematic differences in risk by age groups, and variation within and between countries, explained the large majority of variation in risk group proportions.
+Changes over time were negligible in the overall variation in risk group proportions.
+The proportion of 15-19 year olds who are sexually active, and among women aged 20-29 years, norms around cohabitation especially varied across districts and countries.
+This variation underscores the need for these granular data to implement HIV prevention options aligned to local norms and risk behaviours.
+
+I considered four risk groups based on sexual behaviour, the most proximal determinant of risk.
+Other factors, such as condom usage or type of sexual act, may account for additional heterogeneity in risk from sexual behaviour.
+However, I did not include these factors in view of measurement difficulties, concerns about consistency across contexts, and the operational benefits of describing risk parsimoniously.
+Sexual behaviour confers risk only when AGYW reside in geographic locations where there is unsuppressed viral load among their potential partners.
+I did not include more distal determinants, such as school attendance, orphanhood, or gender empowerment, as I expect their effects on risk to largely be mediated by more proximal determinants.
+However, to effectively implement programming, it is crucial to understand these factors, as well as the broader structural barriers and limits to personal agency faced by AGYW.
+Importantly, programs must ensure that intervention prioritisation occurs without stigmatising or blaming AGYW.
+
+Brugh et al. \autocite{brugh2021characterizing} previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
+My work builds on Brugh et al. \autocite{brugh2021characterizing} by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.
+
+By considering a range of possible risk stratification strategies, I showed that successful implementation of a risk-stratified approach would allow substantially more of those at risk for infections to be identified before infection occurs.
+A considerable proportion of estimated new infections were among FSW, supporting the case for HIV programming efforts focused on key population groups \autocite{baral2012burden}.
+There is substantial variation in the importance of prioritisation by age, location and behaviour within each country.
+This highlights the importance of understanding and tailoring HIV prevention efforts to country-specific contexts.
+By standardising our analysis across all 13 countries, I showed the additional efficiency benefits of resource allocation between countries.
+
+I found a geographic delineation in the proportion of women cohabiting between southern and eastern Africa, calling attention to a divide attributable to many cultural, social, and economic factors.
+The delineation does not represent a boundary between predominately Christian and Muslim populations, which is further north.
+I also note that the high numbers of adolescent girls aged 15-19 cohabiting in Mozambique is markedly different from the other countries \autocite{unicef}.
+
+Our modelled estimates of risk group proportions improve upon direct survey results for three reasons.
+First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
+Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing (Fig B in S2 Text).
+Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as our analysis of risk group specific prevalence and incidence).
+
+The final surveys included in our risk model model were conducted in 2018.
+I plan to update our analysis with more surveys as they become available, but do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.
+
+Our analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the 0\% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
+Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.
+
 \hypertarget{distribution-of-risk}{%
 \subsubsection{Distribution of risk}\label{distribution-of-risk}}
 
@@ -1032,8 +1089,39 @@ By cumulatively summing the expected infections, for each fraction of the total 
 \hypertarget{limitations-1}{%
 \subsection{Limitations}\label{limitations-1}}
 
+Our analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
+In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of our risk group proportion estimates.
+Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners \autocite[\textcite{helleringer2011reliability}]{nnko2004secretive} or may bias their reporting of sexual debut \autocite{zaba2004age,wringe2009comparative,nguyen2022trends}.
+For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of our results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age \autocite{glynn2011assessing}, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
+If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in our analysis, likely over-attributing risk to higher risk groups.
+
+I have the least confidence in our estimates for the FSW risk group.
+As well as having the smallest sample sizes, our transactional sex estimates do not overcome the difficulties of sampling hard to reach groups.
+I inherent any limitations of the national FSW estimates \autocite{stevens2022estimating} which I adjust our estimates of transactional sex to match.
+Furthermore, I do not consider seasonal migration patterns, which may particularly affect FSW size.
+More generally, I did not consider covariates potentially predictive of risk group proportions (such as sociodemographic characteristics, education, local economic activity, cultural and religious norms and attitudes), which are typically difficult to measure spatially.
+Identifying measurable correlates of risk, or particular settings in which time-concentrated HIV risk occurs, is an important area for further research to improve risk prioritisation and precision HIV programme delivery.
+
+The efficiency of each stratified prevention strategy depends on the ability of programmes to identify and effectively reach those in each strata.
+Our analysis of new infections potentially averted assumed a ``best-case'' scenario where AGYW of every strata can be reached perfectly, and should therefore be interpreted as illustrating the potentially obtainable benefits rather than benefits which would be obtained from any specific intervention strategy.
+In practice, stratified prevention strategies are likely to be substantially less efficient than this best-case scenario.
+Factors I did not consider include the greater administrative burden of more complex strategies, variation in difficulty or feasibility of reaching individuals in each strata, variation in the range or effectiveness of interventions by strata, and changes in strata membership that may occur during the course of a year.
+Identifying and reaching behavioural strata may be particularly challenging.
+Empirical evaluations of behavioural risk screening tools have found only moderate discriminatory ability \autocite{jia2022risk}, and risk behaviour may change rapidly among young populations, increasing the challenge to effectively deliver appropriately timed prevention packages.
+This consideration may motivate selecting risk groups based on easily observable attributes, such as attendance of a particular service or facility, rather than sexual behaviour.
+
 \hypertarget{conclusion-1}{%
 \subsection{Conclusion}\label{conclusion-1}}
+
+I estimated the proportion of AGYW aged 15-19, 20-24 and 25-29 years in four sexual risk groups at a district-level in 13 priority countries and analyzed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
+Though subject to limitations, these estimates provide data that national HIV programmes can use to set targets and implement differentiated HIV prevention strategies as outlined in the Global AIDS Strategy.
+Successfully implementing this approach would result in more efficiently reaching a greater number of those at risk of infection.
+
+Among AGYW, there was systematic variation in sexual behaviour by age and location, but not over time.
+Age group variation was primarily attributable to age of sexual debut (ages 15-24).
+Spatial variation was particularly present between those who reported one cohabiting partner versus non-regular or multiple partners.
+Risk group proportions did not change substantially over time, indicating that norms relating to sexual behaviour are relatively static.
+These findings underscore the importance of providing effective HIV prevention options tailored to the needs of particular age groups, as well as local norms around sexual partnerships.
 
 \hypertarget{naomi-aghq}{%
 \chapter{Fast approximate Bayesian inference}\label{naomi-aghq}}
