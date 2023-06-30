@@ -355,7 +355,9 @@ Each project chapter is accompanied by code, hosted on GitHub.
 \begin{itemize}
 \tightlist
 \item
-  Chapter \ref{background}: I start by reviewing the required background for the rest of the thesis, namely regarding the HIV/AIDS epidemic and Bayesian spatio-temporal statistics.
+  Chapter \ref{background}: I start by providing useful setting and motivation of the rest of this thesis.
+\item
+  Chapter \ref{bayes-st}: Introduces the statistical concepts and notation used throughout the thesis.
 \item
   Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was designed with analysis of a grid of pixels in mind. In disease mapping, we work using the districts of a country, which are not a grid. I evaluate the practical consequences of this this concern \autocite{howes2023beyond}.
 \item
@@ -366,31 +368,60 @@ Each project chapter is accompanied by code, hosted on GitHub.
   Chapter \ref{conclusions}: I discuss avenues for future work, and my conclusions regarding the research.
 \end{itemize}
 
-\hypertarget{background}{%
-\chapter{Background}\label{background}}
+Figure \ref{fig:chapter-flowchart} gives the dependency structure for the above chapters.
+The original work (Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq}) may be read in any order.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/chapter-flowchart} 
+
+}
+
+\caption{Flowchart presenting the recommended chapter dependencies for the thesis. The dashed line represents a recommended, but not required dependency. Each of the chapters in the block can be read in any order, though the order presented is recommended.}\label{fig:chapter-flowchart}
+\end{figure}
+
+\hypertarget{hiv-aids}{%
+\chapter{The HIV/AIDS epidemic}\label{hiv-aids}}
 
 \adjustmtc
-\markboth{Background}{}
+\markboth{HIV/AIDS}{}
 
-\hypertarget{the-hivaids-epidemic}{%
-\section{The HIV/AIDS epidemic}\label{the-hivaids-epidemic}}
+\hypertarget{background}{%
+\section{Background}\label{background}}
 
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
-HIV primarily infects CD4+ T cells, a type of white blood cell vital for the function of the immune system.
-Over time, if left untreated HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV primarily infects a type of white blood cell vital for the function of the immune system.
+If left untreated, HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
 
-HIV is transmitted by exposure to certain bodily fluids of an infected person.
-The most common mode of transmission is through sexual contact.
+HIV is transmitted by exposure to bodily fluids of an infected person.
+The most common mode of transmission is through unprotected anal or vaginal sex.
+Trasmission also occurs from a mother to her baby, or by sharing drug injection equipment.
 
 The first HIV cases were reported in the early 1980s.
-In 2021 there were thirty-eight million people living with HIV, six hundred fifty thousand AIDS-related deaths, and one million, five hundred thousand people newly infected with HIV \autocite{unaids2021global}.
+Since then, around 40 million people have died from causes related to HIV.
+In 2021 there were 38 million people living with HIV, 650 thousand HIV related deaths, and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
 
 A major global effort has been made to address the epidemic.
-Significant progress has been made, both in reducing the number of new HIV cases and decreasing the number of AIDS related deaths (Figure \ref{fig:overall-picture}).
-Roll out of antiretroviral therapy (ART) has been a key tool.
-Treatment
-Other interventions include condoms, pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP), and voluntary medical male circumcision (VMMC).
+The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}).
+The following interventions:
+
+\begin{itemize}
+\tightlist
+\item
+  Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+  By taking ART daily, a person living with HIV can live a full and healthy life.
+  ART has been estimated to have averted this many million deaths.
+  Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
+  For this reason, treatment also operates as prevention (TaSP).
+\item
+  Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
+  Scale-up of condom usage since 1990 has been estimated to have averted over 10 million new HIV infections \autocite{stover2021impact}.
+\item
+  Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP).
+\item
+  Voluntary medical male circumcision (VMMC).
+\end{itemize}
 
 \begin{figure}
 
@@ -412,65 +443,104 @@ Groups at increased risk of HIV infection are known as key populations (KPs), an
 KPs are often marginalised, and face legal and social issues.
 
 In SSA, risk is more diffuse across the population than in concentrated settings.
-Large demographic groups at increased risk of HIV infection include adolescent girls and young women (AGYW).
+Demographic groups, while not classified as KPs, at increased risk of HIV infection include adolescent girls and young women (AGYW), migratory populations, and rural communities.
 
 HIV interventions should be prioritised to have the greatest impact on the epidemic.
 The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
 
+\hypertarget{hiv-surveillance}{%
+\section{HIV surveillance}\label{hiv-surveillance}}
+
 HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
 Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-Important indicators include HIV prevalence, which is the proportion of the population who have HIV; HIV incidence, the rate of new HIV infections; and ART coverage, which is the proportion of PLHIV who are on ART.
+Important indicators include:
 
-There are significant difficulties associated with furnishing these estimates.
-The difficulties include data sparsity in space and time, survey bias, conflicting information sources, hard to reach populations, and changing demographics.
-These data limitations foreground the importance of statistical modelling, including synthesising multiple sources of information.
+\begin{itemize}
+\tightlist
+\item
+  HIV prevalence, the proportion of the population who have HIV, typically given as a percentage;
+\item
+  HIV incidence, the rate of new HIV infections, typically given as number of new infections per 1000 person years; and
+\item
+  ART coverage, which is the proportion of PLHIV who are on ART, typically given as a percentage.
+\end{itemize}
+
+There are significant difficulties associated with obtaining these estimates, including:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Data sparsity in space and time
+\item
+  Survey biases
+\item
+  Conflicting information source
+\item
+  Hard to reach populations
+\item
+  Changing demographics
+\end{enumerate}
+
+These limitations foreground the importance of statistical modelling.
+Important modelling techniques include:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Synthesising multiple sources of information.
+\end{enumerate}
 
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
 
-\hypertarget{bayesian-spatio-temporal-statistics}{%
-\section{Bayesian spatio-temporal statistics}\label{bayesian-spatio-temporal-statistics}}
+\hypertarget{bayes-st}{%
+\chapter{Bayesian spatio-temporal statistics}\label{bayes-st}}
+
+\adjustmtc
+\markboth{Bayesian}{}
 
 \hypertarget{bayesian-statistics}{%
-\subsection{Bayesian statistics}\label{bayesian-statistics}}
+\section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
 I provide a brief, opinionated, overview in this section, and recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian} for a more complete introduction.
 
 \hypertarget{bayesian-modelling}{%
-\subsubsection{Bayesian modelling}\label{bayesian-modelling}}
+\subsection{Bayesian modelling}\label{bayesian-modelling}}
 
 At its best, the Bayesian paradigm allows the analyst focus their attention on the question of how to model the data.
 This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y\) together with parameters \(\bvartheta\).
-The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\).
+The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\) in what is known as a prior predictive check.
 If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
-This is what is known as a prior predictive check.
 
-The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) such that \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
+The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) whereby \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
 The likelihood, as a function of \(\bvartheta\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bvartheta\).
 The prior encapsulates beliefs about the parameters \(\bvartheta\) before the data is observed.
-
-There is disagreement about how the prior should be specified.
-The distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
+There are substantial disagreements about how the prior should be specified.
+That said, the distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
+As such, these difficulties are not unique to the prior \autocite{gelman2017prior}.
 
 \hypertarget{bayesian-computation}{%
-\subsubsection{Bayesian computation}\label{bayesian-computation}}
+\subsection{Bayesian computation}\label{bayesian-computation}}
 
-Interest lies in obtaining the posterior distribution \(p(\bvartheta \, | \, \y)\) which represents beliefs about the parameters given the observed data.
-Using Bayes' theorem, the posterior distribution is given by
+The posterior distribution \(p(\bvartheta \, | \, \y)\) represents beliefs about the parameters given the observed data.
+Using Bayes' theorem, it is given by
 \begin{equation}
 p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-However, it is usually intractable to calculate the posterior distribution directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
-As such, though the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
+Unfortunately, it is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
+As such, we are typically in the situation where, athough the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
+
 A great variety of computational methods have been developed at to tackle this problem.
 Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
 Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
 
 \hypertarget{interplay-between-modelling-and-computation}{%
-\subsubsection{Interplay between modelling and computation}\label{interplay-between-modelling-and-computation}}
+\subsection{Interplay between modelling and computation}\label{interplay-between-modelling-and-computation}}
 
-Bayesian computation aspires to abstract away calculation of the posterior distribution.
+Bayesian computation aspires to abstract away calculation of the posterior distribution from the analyst.
 Modern computational techniques and software have made this aspiration a reality for many models.
 However, computation of the posterior remains intractable for a substantial majority of models.
 As such, the analyst need not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior is tractable in reasonable time.
@@ -478,28 +548,47 @@ It is in this sense, that there is an interplay between modelling and computatio
 As computation improves, the space of models available to the analyst expands.
 
 \hypertarget{spatio-temporal-statistics}{%
-\subsection{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
+\section{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
 
 In spatio-temporal statistics \autocite{cressie2015statistics} we observe data indexed by spatial or temporal location.
 In this thesis we assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
 Data may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
 The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
 
-Commonly used independent and identically distributed (IID) assumptions on observations are rarely suitable in this setting because we expect there to be spatio-temporal correlation structure.
+Correlation structure is an important feature of spatio-temporal data.
+
+\hypertarget{small-area-estimation}{%
+\section{Small-area estimation}\label{small-area-estimation}}
 
 \hypertarget{hierarchical-lgm-elgm}{%
-\subsection{Model classes}\label{hierarchical-lgm-elgm}}
+\section{Model classes}\label{hierarchical-lgm-elgm}}
 
 \hypertarget{hierarchical}{%
-\subsubsection{Hierarchical models}\label{hierarchical}}
+\subsection{Hierarchical models}\label{hierarchical}}
 
-Bayesian hierarchical models are comprised of multiple stages
-\begin{align*}
-p(\x, \btheta \, | \, \y) \propto p(\y, \x, \btheta) = p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta).
-\end{align*}
+Real world data usually has hierarchical structure.
+For example, there might be multiple measurements of the same unit (Figure \ref{fig:hierarchical-structure}).
+
+Bayesian hierarchical models are comprised of multiple stages.
+For example in a three-stage model, we have
+\begin{align}
+\y &\sim p(\y \, | \, \x, \btheta), \\
+\x &\sim p(\x \, | \, \btheta), \\
+\btheta &\sim p(\btheta),
+\end{align}
+with posterior proportional to \(p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)\).
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/hierarchical-structure} 
+
+}
+
+\caption{Data often has a hierarchical structure.}\label{fig:hierarchical-structure}
+\end{figure}
 
 \hypertarget{latent-gaussian-models}{%
-\subsubsection{Latent Gaussian models}\label{latent-gaussian-models}}
+\subsection{Latent Gaussian models}\label{latent-gaussian-models}}
 
 Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
 More specifically, in an LGM, the likelihood is given by
@@ -514,18 +603,18 @@ Each response has conditional mean \(\mu_i\) with inverse link function \(g: \ma
 The vector \(\btheta_1 \in \mathbb{R}^{s_1}\), with \(s_1\) assumed small, are additional parameters of the likelihood.
 The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\), linear effects \(\beta_j\) of the covariates \(z_{ji}\), and unknown functions \(f_k(\cdot)\) of the covariates \(u_{ki}\).
 The parameters \(\beta_0\), \(\{\beta_j\}\), \(\{f_k(\cdot)\}\) are each assigned Gaussian priors, and can be collected into a vector \(\x \in \mathbb{R}^N\) such that \(\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})\) where \(\btheta_2 \in \mathbb{R}^{s_2}\) are further parameters, again with \(s_2\) assumed small.
-Let \(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m\) with \(m = s_1 + s_2\) be all hyperparameters, with prior \(p(\theta)\).
+Let \(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m\) with \(m = s_1 + s_2\) be all hyperparameters, with prior \(p(\btheta)\).
 In total, the parameters of the LGM \(\bvartheta = (\x, \btheta)\) comprise both the latent field and hyperparameters.
 
 Spatio-temporal data are well suited to being modelled with LGMs.
 
 \hypertarget{extended-latent-gaussian-models}{%
-\subsubsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
+\subsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
 
-Many of leading-edge disease mapping models fall outside the LGM class.
-However, many of these models do fit into the class of extended latent Gaussian models {[}ELGMs; \textcite{stringer2021fast}{]}.
+Some leading-edge spatio-temporal models used in small-area estimation fall outside the LGM class.
+However, many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by \textcite{stringer2021fast}.
 By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
-The structured additive predictor is redefined as \(\bmeta = (\eta)_{i \in [N_n]}\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
+In particular, the structured additive predictor is redefined as \(\bmeta = (\eta)_{i \in [N_n]}\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
 Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\).
 The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\).
 Put together, ELGMs are then of the form
@@ -535,6 +624,8 @@ y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i \in [n] \\
 \eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j \in [N_n],
 \end{align*}
 with latent field and hyperparameter priors as in the LGM case.
+
+Instances of ELGM structures being useful for small-area estimation are as follows.
 
 \hypertarget{beyond-borders}{%
 \chapter{Spatial structure}\label{beyond-borders}}
@@ -1131,8 +1222,7 @@ These findings underscore the importance of providing effective HIV prevention o
 
 In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
 This work builds on that of others, including \textcite{rue2009approximate}, \textcite{kristensen2016tmb} and \textcite{stringer2021fast}.
-I began working on this project in 2020, but did not make significant progress until I read Alex Stringer's work.
-We later began collaborating, including Alex supervising my visit to the University of Waterloo in 2022.
+I began working on this project in 2020, but did not make significant progress until I read Alex Stringer's work in 2021, and later visited the University of Waterloo to collaborate in 2022.
 The results are presented in \textcite{howes2023fast}.
 
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.

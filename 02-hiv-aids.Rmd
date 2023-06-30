@@ -1,0 +1,150 @@
+---
+#########################################
+# options for knitting a single chapter #
+#########################################
+output:
+  bookdown::pdf_document2:
+    template: templates/brief_template.tex
+    citation_package: biblatex
+  bookdown::html_document2: default
+  bookdown::word_document2: default
+documentclass: book
+bibliography: references.bib
+---
+
+```{r echo = FALSE}
+options(scipen = 100)
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dpi = 320,
+  cache = TRUE,
+  out.width = "95%",
+  fig.align = 'center'
+)
+```
+
+# The HIV/AIDS epidemic {#hiv-aids}
+\adjustmtc
+\markboth{HIV/AIDS}{}
+<!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
+
+```{r}
+custom_numbers_to_words <- function(number) {
+  powers <- c(3, 6, 9, 12)
+  
+  if (number == 0) {
+    return("0")
+  }
+  
+  sign <- ifelse(number < 0, -1, 1)
+  number <- abs(number)
+  
+  for (power in powers) {
+    scaled_number <- number / 10^power
+    if (scaled_number >= 1 && scaled_number < 1000) {
+      suffix <- gsub("^one\\s", "", xfun::numbers_to_words(10^power))
+      return(paste0(sign * scaled_number, " ", suffix))
+    }
+  }
+  
+  return("Number out of range.")
+}
+
+deaths <- 40000000
+
+plhiv2021 <- 38000000
+deaths2021 <- 650000
+infections2021 <- 1500000
+
+condom_averted_lb <- 10000000
+```
+
+## Background
+
+<!-- What is HIV -->
+Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
+HIV primarily infects a type of white blood cell vital for the function of the immune system.
+If left untreated, HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
+
+<!-- How is HIV transmitted -->
+HIV is transmitted by exposure to bodily fluids of an infected person.
+The most common mode of transmission is through unprotected anal or vaginal sex.
+Trasmission also occurs from a mother to her baby, or by sharing drug injection equipment.
+
+<!-- The extent of HIV as a problem -->
+The first HIV cases were reported in the early 1980s.
+Since then, around `r custom_numbers_to_words(deaths)` people have died from causes related to HIV.
+In 2021 there were `r custom_numbers_to_words(plhiv2021)` people living with HIV, `r custom_numbers_to_words(deaths2021)` HIV related deaths, and `r custom_numbers_to_words(infections2021)` people newly infected with HIV [@unaids2021global].
+
+<!-- What is being done -->
+A major global effort has been made to address the epidemic.
+The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}).
+The following interventions:
+
+* Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+By taking ART daily, a person living with HIV can live a full and healthy life.
+ART has been estimated to have averted this many million deaths.
+Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
+For this reason, treatment also operates as prevention (TaSP).
+* Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
+Scale-up of condom usage since 1990 has been estimated to have averted over `r custom_numbers_to_words(condom_averted_lb)` new HIV infections [@stover2021impact].
+* Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP).
+* Voluntary medical male circumcision (VMMC).
+
+```{r overall-picture, fig.cap="Overall picture."}
+knitr::include_graphics("figures/overall-picture.png")
+```
+
+<!-- Uneven burden in space -->
+There is substantial geographic inequality in disease burden.
+In some countries, the epidemic is concentrated within small populations, and prevalence is low.
+For others, transmission is sustained in the general population, and prevalence is higher.
+Most of the countries severely affected are in sub-Saharan Africa (SSA), accounting for percentage of people living with HIV (PLHIV) worldwide.
+There is also significant geographic variation within countries.
+
+<!-- Uneven burden across people -->
+In all settings, there is substantial inequality in disease burden across groups.
+Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
+KPs are often marginalised, and face legal and social issues.
+
+<!-- How difuse is burden -->
+In SSA, risk is more diffuse across the population than in concentrated settings.
+Demographic groups, while not classified as KPs, at increased risk of HIV infection include adolescent girls and young women (AGYW), migratory populations, and rural communities.
+
+<!-- Prioritisation of interventions  -->
+HIV interventions should be prioritised to have the greatest impact on the epidemic.
+The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
+<!-- Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics. -->
+
+## HIV surveillance
+
+<!-- What is surveillance and how can it be used to meet these needs -->
+HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
+Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+Important indicators include:
+
+* HIV prevalence, the proportion of the population who have HIV, typically given as a percentage;
+* HIV incidence, the rate of new HIV infections, typically given as number of new infections per 1000 person years; and
+* ART coverage, which is the proportion of PLHIV who are on ART, typically given as a percentage.
+
+<!-- Why is surveillance difficult -->
+There are significant difficulties associated with obtaining these estimates, including:
+
+1. Data sparsity in space and time
+2. Survey biases
+3. Conflicting information source
+4. Hard to reach populations
+5. Changing demographics
+
+These limitations foreground the importance of statistical modelling.
+Important modelling techniques include:
+
+1. Synthesising multiple sources of information.
+
+<!-- Future trends in surveillance -->
+Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
+Phasing out of nationally-representative household surveys for HIV.
