@@ -141,7 +141,7 @@
 
 %%%%% THESIS / TITLE PAGE INFORMATION
 % Everybody needs to complete the following:
-\title{Methods and applications of Bayesian spatio-temporal statistics for small-area estimation of HIV indicators}
+\title{Bayesian spatio-temporal methods for small-area estimation of HIV indicators}
 \author{Adam Howes}
 \college{Department of Mathematics}
 
@@ -263,12 +263,12 @@
 
 %%%%% ACKNOWLEDGEMENTS -- Nothing to do here except comment out if you don't want it.
 \begin{acknowledgements}
- 	Thanks to Jeff Eaton and Seth Flaxman for supervision of this research;
+ 	Thanks to Seth Flaxman and Jeff Eaton for supervision of this research;
  staff and students of the StatML CDT at Imperial and Oxford;
  members of the HIV Inference Group at Imperial;
  members of the Machine Learning and Global Health Network;
  the Bill \& Melinda Gates Foundation and EPSRC for funding this PhD;
- Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to MIT;
+ Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab;
  Alex Stringer for hosting my visit to Waterloo;
  the Effective Altruism community;
  my friends and family.
@@ -276,7 +276,7 @@
  \begin{flushright}
  Adam Howes \\
  Imperial College London\\
- 2023
+ September 2023
  \end{flushright}
 \end{acknowledgements}
 
@@ -289,7 +289,7 @@ I develop and apply Bayesian spatio-temporal methods to meet this challenge.
 Firstly, I examine models for area-level spatial structure.
 Secondly, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward by the Global AIDS Strategy.
 Finally, I develop a novel Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
-In sum, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
+Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
 \end{abstract}
 
 %%%%% MINI TABLES
@@ -339,12 +339,12 @@ It is Bayesian in the sense that I use probability models to arrive at conclusio
 It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
 
 The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
-Though progress has been made, millions of people are impacted by HIV each year.
+Millions of people are impacted by HIV each year.
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
 
-The data in this thesis relate to people answering survey questions or using healthcare facilities.
-As such, it has particular positions in space and time which should be taken into account.
-Spatio-temporal data, while encompassing a great diversity, has distinctive commonalities which make its collective study worthwhile.
+The data in this thesis relate to people's answers to survey questions or use of healthcare facilities.
+It has particular positions in space and time which should be taken into account.
+Spatio-temporal data, while diverse, has distinctive commonalities which make its collective study worthwhile.
 
 Computation is an essential part of modern statistical practice.
 Each project chapter is accompanied by code, hosted on GitHub.
@@ -355,21 +355,28 @@ Each project chapter is accompanied by code, hosted on GitHub.
 \begin{itemize}
 \tightlist
 \item
-  Chapter \ref{background}: I start by providing useful setting and motivation of the rest of this thesis.
+  Chapter \ref{hiv-aids}: I begin by providing background on the HIV/AIDS epidemic.
 \item
-  Chapter \ref{bayes-st}: Introduces the statistical concepts and notation used throughout the thesis.
+  Chapter \ref{bayes-st}: I then introduce the statistical concepts and notation used throughout the thesis.
 \item
-  Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was designed with analysis of a grid of pixels in mind. In disease mapping, we work using the districts of a country, which are not a grid. I evaluate the practical consequences of this this concern \autocite{howes2023beyond}.
+  Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was designed with analysis of a grid of pixels in mind.
+  In disease mapping, we work using the districts of a country, which are not a grid.
+  I evaluate the practical consequences of this this concern \autocite{howes2023beyond}.
 \item
-  Chapter \ref{multi-agyw}: Adolescent girls and young women are a demographic group at disproportionate risk of HIV infection. The Global AIDS Strategy suggests prioritising interventions on the basis of behaviour to prevent the most new infections using available resources. I estimate the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assess the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
+  Chapter \ref{multi-agyw}: Adolescent girls and young women are a demographic group at disproportionate risk of HIV infection.
+  The Global AIDS Strategy suggests prioritising interventions on the basis of behaviour to prevent the most new infections using available resources.
+  I estimate the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assess the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
 \item
-  Chapter \ref{naomi-aghq}: The Naomi small-area estimation model \autocite{eaton2021naomi} is used by countries to estimate district-level HIV indicators. With this motivation, I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}. I apply the method to data from Malawi, and analyse the consequence of inference method choice for policy relevant outcomes. Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
+  Chapter \ref{naomi-aghq}: The Naomi small-area estimation model \autocite{eaton2021naomi} is used by countries to estimate district-level HIV indicators.
+  Motivated by this model, I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
+  I apply the method to data from Malawi, and analyse the consequences of inference method choice for policy relevant outcomes.
+  Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
 \item
   Chapter \ref{conclusions}: I discuss avenues for future work, and my conclusions regarding the research.
 \end{itemize}
 
 Figure \ref{fig:chapter-flowchart} gives the dependency structure for the above chapters.
-The original work (Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq}) may be read in any order.
+Though the presented order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq}) may be read in any order.
 
 \begin{figure}
 
@@ -377,7 +384,7 @@ The original work (Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Ch
 
 }
 
-\caption{Flowchart presenting the recommended chapter dependencies for the thesis. The dashed line represents a recommended, but not required dependency. Each of the chapters in the block can be read in any order, though the order presented is recommended.}\label{fig:chapter-flowchart}
+\caption{Flowchart presenting the recommended chapter dependencies for this thesis. The dashed line represents a recommended, but not required dependency.}\label{fig:chapter-flowchart}
 \end{figure}
 
 \hypertarget{hiv-aids}{%
@@ -390,21 +397,21 @@ The original work (Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Ch
 \section{Background}\label{background}}
 
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
-HIV primarily infects a type of white blood cell vital for the function of the immune system.
-If left untreated, HIV can progress to a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV primarily attacks a type of white blood cell vital for the function of the immune system.
+A more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop if HIV is left untreated.
 AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
 
-HIV is transmitted by exposure to bodily fluids of an infected person.
+HIV is transmitted by exposure to the bodily fluids of an infected person.
 The most common mode of transmission is through unprotected anal or vaginal sex.
-Trasmission also occurs from a mother to her baby, or by sharing drug injection equipment.
+Transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 
-The first HIV cases were reported in the early 1980s.
-Since then, around 40 million people have died from causes related to HIV.
-In 2021 there were 38 million people living with HIV, 650 thousand HIV related deaths, and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
+The first AIDS cases were reported in Los Angeles in the early 1980s.
+Since then, HIV has spread globally, and has already caused around 40 million deaths.
+In 2021 there were 38 million people living with HIV, as well as 650 thousand HIV related deaths, and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
 
-A major global effort has been made to address the epidemic.
-The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}).
-The following interventions:
+A major international effort has been made to address the epidemic.
+The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}) from the peak of the epidemic.
+This has been possible because of the following interventions:
 
 \begin{itemize}
 \tightlist
@@ -414,6 +421,7 @@ The following interventions:
   ART has been estimated to have averted this many million deaths.
   Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
   For this reason, treatment also operates as prevention (TaSP).
+  ART has been estimated to have averted this many new infections.
 \item
   Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
   Scale-up of condom usage since 1990 has been estimated to have averted over 10 million new HIV infections \autocite{stover2021impact}.
@@ -434,19 +442,20 @@ The following interventions:
 
 There is substantial geographic inequality in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
-For others, transmission is sustained in the general population, and prevalence is higher.
-Most of the countries severely affected are in sub-Saharan Africa (SSA), accounting for percentage of people living with HIV (PLHIV) worldwide.
+In others, transmission is sustained in the general population, and prevalence is higher.
+Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for this percentage of people living with HIV (PLHIV) worldwide.
 There is also significant geographic variation within countries.
 
-In all settings, there is substantial inequality in disease burden across groups.
+Across all settings, there is substantial inequality in disease burden between groups.
 Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
 
-In SSA, risk is more diffuse across the population than in concentrated settings.
+In SSA, risk is more diffuse than in concentrated settings.
 Demographic groups, while not classified as KPs, at increased risk of HIV infection include adolescent girls and young women (AGYW), migratory populations, and rural communities.
 
 HIV interventions should be prioritised to have the greatest impact on the epidemic.
 The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
+This requires data.
 
 \hypertarget{hiv-surveillance}{%
 \section{HIV surveillance}\label{hiv-surveillance}}
@@ -505,35 +514,37 @@ Phasing out of nationally-representative household surveys for HIV.
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-I provide a brief, opinionated, overview in this section, and recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian} for a more complete introduction.
+I provide a brief, opinionated, overview in this section.
+For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
 
 \hypertarget{bayesian-modelling}{%
 \subsection{Bayesian modelling}\label{bayesian-modelling}}
 
-At its best, the Bayesian paradigm allows the analyst focus their attention on the question of how to model the data.
+At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
 This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y\) together with parameters \(\bvartheta\).
-The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\) in what is known as a prior predictive check.
+The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\).
 If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
+In this way, models can be built iteratively, and complexity added gradually.
 
 The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) whereby \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
 The likelihood, as a function of \(\bvartheta\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bvartheta\).
 The prior encapsulates beliefs about the parameters \(\bvartheta\) before the data is observed.
 There are substantial disagreements about how the prior should be specified.
 That said, the distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
-As such, these difficulties are not unique to the prior \autocite{gelman2017prior}.
+As such, it may be argued that these difficulties are not unique to the prior \autocite{gelman2017prior}.
 
 \hypertarget{bayesian-computation}{%
 \subsection{Bayesian computation}\label{bayesian-computation}}
 
 The posterior distribution \(p(\bvartheta \, | \, \y)\) represents beliefs about the parameters given the observed data.
-Using Bayes' theorem, it is given by
+Using teh eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
-As such, we are typically in the situation where, athough the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
+Unfortunately, the above equation is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
+As such, the typically situation is that although the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
 
-A great variety of computational methods have been developed at to tackle this problem.
+A great variety of computational methods have been developed which aim to tackle this problem.
 Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
 Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
 
@@ -726,27 +737,37 @@ Code for the analysis in this chapter is available from \href{https://github.com
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-Adolescent girls and young women (AGYW, here defined as females aged 15-29) are a demographic group at increased risk of HIV infection
-AGYW comprise 44\% of new infections, while only 28\% of the population \autocite{unaids2021update}.
+Adolescent girls and young women (AGYW, defined here as females aged 15-29) are a demographic group at increased risk of HIV infection.
+Though AGHYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-The reasons for this disparity are given in Table \ref{tab:agyw-reasons}.
+The social and biological reasons for this disparity are given in Table \ref{tab:agyw-reasons}.
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{\label{tab:agyw-reasons} Reasons.}\tabularnewline
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\caption{\label{tab:agyw-reasons} AYGW are at higher risk of HIV infection for interacting social and biological reasons.}\tabularnewline
 \toprule\noalign{}
-Reason & Description \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Reason
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Reason & Description \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Reason
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Structural vulnerability and power imbalances & Text \\
-Age patterns of sexual mixing & Text \\
+Structural vulnerability and power imbalances & Gender inequality, lack of agency, economic factors, limited healthcare access, stigma and discrimination \\
+Age patterns of sexual mixing & Older male partners have higher prevalence of HIV \\
 Younger age at first sex & Text \\
-Increased susceptibility to HIV infection & Text \\
+Increased susceptibility to HIV infection & Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells \\
 \end{longtable}
 
 On this basis, AGYW have been identified as a priority population for HIV prevention services \autocite{saul2018dreams,global2018measurement}.
@@ -808,15 +829,29 @@ Very High & Transactional sex (adjusted to correspond to female sex workers) & 0
 \hypertarget{data}{%
 \section{Data}\label{data}}
 
-I used household survey data from 13 countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
-These countries have been designated AGYW priority countries.
+I used household survey data from 13 designated AGYW priority countries.: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
 
 For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
-These risk groups were: not sexually active, one cohabiting sexual partner, non-regular or multiple sexual partner(s), and AGYW who report transactional sex.
+These risk groups were:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Not sexually active
+\item
+  One cohabiting sexual partner
+\item
+  Non-regular or multiple sexual partner(s), and
+\item
+  AGYW who report transactional sex.
+\end{enumerate}
+
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
 Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
-For their three most recent partners, respondents were also asked about the type of partnership (spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other).
+For their three most recent partners, respondents were also asked about the type of partnership.
+Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
 
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64\% of women reported transactional sex.
@@ -825,7 +860,8 @@ Due to this incomparability across surveys, I did not include surveys without a 
 I instead focused on estimating the proportion of women who reported transactional sex at a district level, and subsequently adjusted these proportions to align to national estimates for the number of female sex workers.
 
 I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
-The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries, exceptions being Cameroon and Kenya where I conducted analysis one level higher at the department and county levels, respectively.
+The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries.
+Exceptions are Cameroon and Kenya, where I conducted analysis one level higher at the department and county levels, respectively.
 I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
 
 \hypertarget{model-for-risk-group-proportions}{%
@@ -998,9 +1034,6 @@ Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPo
 \end{equation}
 as implemented by \texttt{family\ =\ "xPoisson"} in \texttt{R-INLA}, which accepts non-integer input.
 
-\hypertarget{model-selection}{%
-\subsubsection{Model selection}\label{model-selection}}
-
 \hypertarget{s-logistic}{%
 \subsection{Spatial logistic regression}\label{s-logistic}}
 
@@ -1013,30 +1046,32 @@ where \(q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}\).
 Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \ref{eq:logistic-regression}.
 As all such surveys occurred in 2013-2018, in the logistic regression model I assumed \(q_{ia}\) to be constant over time.
 
-I considered six logistic regression models each including a constant \(\beta_0 \sim \mathcal{N}(-2, 1^2)\), country random effects \(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\), and age-country random effects \(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
+\hypertarget{model-specifications-1}{%
+\subsubsection{Model specifications}\label{model-specifications-1}}
+
+I considered six logistic regression models.
+Each included a constant \(\beta_0 \sim \mathcal{N}(-2, 1^2)\), country random effects \(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\), and age-country random effects \(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
 The prior on \(\beta_0\) placed 95\% prior probability on the range 2-50\% for the percentage of those with non-regular or multiple partners who report transactional sex.
 I considered two specifications (IID, Besag) for the spatial random effects \(\phi_i\).
 To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent}, available from \textcite{hodgins2022population}.
 For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) I used the PC prior with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
 For the regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) I used the prior \(\beta \sim \mathcal{N}(0, 2.5^2)\).
 
-\hypertarget{model-specifications-1}{%
-\subsubsection{Model specifications}\label{model-specifications-1}}
-
 \hypertarget{survey-weighted-likelihood-1}{%
 \subsubsection{Survey weighted likelihood}\label{survey-weighted-likelihood-1}}
 
-\hypertarget{model-selection-1}{%
-\subsubsection{Model selection}\label{model-selection-1}}
-
-\hypertarget{coverage-assessment}{%
-\subsection{Coverage assessment}\label{coverage-assessment}}
+As with the multinomial regression model, I used survey weighted counts \(\{y_{itak}^\star\}\) and sample sizes \(\{m_{itak}^\star\}\).
+I used a generalised binomial pseudo-likelihood \(y^\star \sim \text{xBinomial}(m^\star, q)\), as implemented by \texttt{family = "xBinomial"} in \texttt{R-INLA}, given by
+\begin{equation}
+    p(y^\star \, | \, m^\star, q) =  \binom{\lfloor m^\star \rfloor}{\lfloor y^\star \rfloor} q^{y^\star} (1 - q)^{m^\star - y^\star}.
+\end{equation}
+to extend the binomial distribution to non-integer weighted counts and sample sizes.
 
 \hypertarget{female-sex-worker-population-size-adjustment}{%
 \subsection{Female sex worker population size adjustment}\label{female-sex-worker-population-size-adjustment}}
 
-Responding ``yes'' to the survey question ``have you had sex in return for gifts, cash or anything else in the past 12 months'' is not considered sufficient to constitute sex work.
-In recognition of this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.
+Responding ``yes'' to the question ``have you had sex in return for gifts, cash or anything else in the past 12 months'' is not considered sufficient to constitute sex work.
+Recognising this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.
 
 \textcite{stevens2022estimating} used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
 I disaggregated these estimates by age as follows.
@@ -1056,14 +1091,23 @@ The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
 
 }
 
-\caption{Proportion of FSW by age group (including the age groups 30-34, 35-39, 40-44 and 45-49) as produced by the disaggregation procedure.}\label{fig:age-disagg-fsw-line}
+\caption{The disaggregation procedure I used produces a plausible age distirbution of FSW by country.}\label{fig:age-disagg-fsw-line}
 \end{figure}
 
 \hypertarget{results-2}{%
 \subsection{Results}\label{results-2}}
 
-\hypertarget{coverage-assessment-1}{%
-\subsubsection{Coverage assessment}\label{coverage-assessment-1}}
+\hypertarget{coverage-assessment}{%
+\subsubsection{Coverage assessment}\label{coverage-assessment}}
+
+To assess the calibration of the fitted model, I calculated the quantile \(q\) of each observation within the posterior predictive distribution.
+For calibrated models, these quantiles, known as probability integral transform (PIT) values \autocite{dawid1984present,bosse2022scoringutils}, should follow a uniform distribution \(q \sim \mathcal{U}[0, 1]\).
+To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
+
+Using the PIT values, it is possible to calculate the empirical coverage of all \((1 - \alpha)100\)\% (equal-tailed) posterior predictive credible intervals.
+These empirical coverages can be compared to the nominal coverage \((1 - \alpha)\) for each value of \(\alpha \in [0, 1]\) to give empirical cumulative distribution function (ECDF) difference values.
+This approach has the advantage of considering all possible confidence values at once.
+\textcite{sailynoja2021graphical} develop binomial distribution-based simultaneous confidence bands for ECDF difference values which test uniformity.
 
 \hypertarget{variance-decomposition}{%
 \subsubsection{Variance decomposition}\label{variance-decomposition}}
@@ -1140,66 +1184,49 @@ I found a geographic delineation in the proportion of women cohabiting between s
 The delineation does not represent a boundary between predominately Christian and Muslim populations, which is further north.
 I also note that the high numbers of adolescent girls aged 15-19 cohabiting in Mozambique is markedly different from the other countries \autocite{unicef}.
 
-Our modelled estimates of risk group proportions improve upon direct survey results for three reasons.
+My modelled estimates of risk group proportions improve upon direct survey results for three reasons.
 First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
-Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing (Fig B in S2 Text).
+Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing.
 Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as our analysis of risk group specific prevalence and incidence).
 
 The final surveys included in our risk model model were conducted in 2018.
-I plan to update our analysis with more surveys as they become available, but do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.
+The analysis may be updated with more surveys as they become available.
+I do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.
 
-Our analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the 0\% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
+My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the 0\% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
 Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.
 
-\hypertarget{distribution-of-risk}{%
-\subsubsection{Distribution of risk}\label{distribution-of-risk}}
-
-\begin{itemize}
-\tightlist
-\item
-  Connection to phylogenetic results from BDI
-\item
-  About transmission rather than incidence
-\item
-  Only age-sex structured not age-sex-behaviour
-\item
-  Does not undermine my work
-\end{itemize}
-
-\hypertarget{community-engagement}{%
-\subsubsection{Community engagement}\label{community-engagement}}
-
-\begin{itemize}
-\tightlist
-\item
-  CSO engagement
-\item
-  Problem in Malawi with FSW
-\end{itemize}
+Phylogenetic results from BDI are about transmission rather than incidence.
+Only age-sex structured not age-sex-behaviour.
+Does not undermine my work.
 
 \hypertarget{limitations-1}{%
 \subsection{Limitations}\label{limitations-1}}
 
-Our analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
-In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of our risk group proportion estimates.
+My analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
+In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of my risk group proportion estimates.
 Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners \autocite[\textcite{helleringer2011reliability}]{nnko2004secretive} or may bias their reporting of sexual debut \autocite{zaba2004age,wringe2009comparative,nguyen2022trends}.
-For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of our results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age \autocite{glynn2011assessing}, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
-If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in our analysis, likely over-attributing risk to higher risk groups.
+For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of my results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age \autocite{glynn2011assessing}, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
+If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in my analysis, likely over-attributing risk to higher risk groups.
 
-I have the least confidence in our estimates for the FSW risk group.
-As well as having the smallest sample sizes, our transactional sex estimates do not overcome the difficulties of sampling hard to reach groups.
-I inherent any limitations of the national FSW estimates \autocite{stevens2022estimating} which I adjust our estimates of transactional sex to match.
+I have the least confidence in my estimates for the FSW risk group.
+As well as having the smallest sample sizes, my transactional sex estimates do not overcome the difficulties of sampling hard to reach groups.
+I inherent any limitations of the national FSW estimates \autocite{stevens2022estimating} which I adjust my estimates of transactional sex to match.
 Furthermore, I do not consider seasonal migration patterns, which may particularly affect FSW size.
 More generally, I did not consider covariates potentially predictive of risk group proportions (such as sociodemographic characteristics, education, local economic activity, cultural and religious norms and attitudes), which are typically difficult to measure spatially.
 Identifying measurable correlates of risk, or particular settings in which time-concentrated HIV risk occurs, is an important area for further research to improve risk prioritisation and precision HIV programme delivery.
 
 The efficiency of each stratified prevention strategy depends on the ability of programmes to identify and effectively reach those in each strata.
-Our analysis of new infections potentially averted assumed a ``best-case'' scenario where AGYW of every strata can be reached perfectly, and should therefore be interpreted as illustrating the potentially obtainable benefits rather than benefits which would be obtained from any specific intervention strategy.
+My analysis of new infections potentially averted assumed a ``best-case'' scenario where AGYW of every strata can be reached perfectly, and should therefore be interpreted as illustrating the potentially obtainable benefits rather than benefits which would be obtained from any specific intervention strategy.
 In practice, stratified prevention strategies are likely to be substantially less efficient than this best-case scenario.
 Factors I did not consider include the greater administrative burden of more complex strategies, variation in difficulty or feasibility of reaching individuals in each strata, variation in the range or effectiveness of interventions by strata, and changes in strata membership that may occur during the course of a year.
 Identifying and reaching behavioural strata may be particularly challenging.
 Empirical evaluations of behavioural risk screening tools have found only moderate discriminatory ability \autocite{jia2022risk}, and risk behaviour may change rapidly among young populations, increasing the challenge to effectively deliver appropriately timed prevention packages.
 This consideration may motivate selecting risk groups based on easily observable attributes, such as attendance of a particular service or facility, rather than sexual behaviour.
+
+I did not engage with country experts or civil society organisations.
+This led to problems, including in Malawi.
+Future work should be better.
 
 \hypertarget{conclusion-1}{%
 \subsection{Conclusion}\label{conclusion-1}}

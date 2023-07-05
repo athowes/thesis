@@ -1,4 +1,4 @@
-# Methods and applications of Bayesian spatio-temporal statistics for small-area estimation of HIV indicators
+# Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
 PhD in [Modern Statistics and Statistical Machine Learning](https://statml.io/) at Imperial College London.
 
@@ -24,7 +24,7 @@ If you would like to cite this work, please use:
 @phdthesis{howes23,
   author = {Howes, Adam},
   school = {Imperial College London},
-  title = {Methods and applications of Bayesian spatio-temporal statistics for small-area estimation of HIV indicators},
+  title = {Bayesian spatio-temporal methods for small-area estimation of HIV indicators},
   year = {2023}
 }
 ```
