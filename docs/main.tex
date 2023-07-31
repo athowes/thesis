@@ -171,11 +171,20 @@
 \newcommand{\y}{\mathbf{y}}
 \newcommand{\z}{\mathbf{z}}
 \newcommand{\bb}{\mathbf{b}}
+\newcommand{\Hb}{\mathbf{H}}
 \newcommand{\bphi}{\bm{\phi}}
 \newcommand{\brho}{\bm{\rho}}
 \newcommand{\btheta}{\bm{\theta}}
 \newcommand{\bmeta}{\bm{\eta}}
 \newcommand{\bvartheta}{\bm{\vartheta}}
+\newcommand{\bmu}{\bm{\mu}}
+
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \RequirePackage{bm}
 
@@ -339,11 +348,11 @@ It is Bayesian in the sense that I use probability models to arrive at conclusio
 It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
 
 The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
-Millions of people are impacted by HIV each year.
+Millions of people are impacted by HIV every year.
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
 
-The data in this thesis relate to people's answers to survey questions or use of healthcare facilities.
-It has particular positions in space and time which should be taken into account.
+The data I use relate to people's answers to survey questions or use of healthcare facilities.
+It has location in space and time which should be taken into account.
 Spatio-temporal data, while diverse, has distinctive commonalities which make its collective study worthwhile.
 
 Computation is an essential part of modern statistical practice.
@@ -397,20 +406,20 @@ Though the presented order is recommended, Chapter \ref{beyond-borders}, Chapter
 \section{Background}\label{background}}
 
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
+If left untreated, a more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop.
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
-A more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop if HIV is left untreated.
-AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
+As a result, AIDS is characterised by increased risk of developing opportunistic infections.
 
-HIV is transmitted by exposure to the bodily fluids of an infected person.
+HIV is transmitted by exposure to specific bodily fluids of an infected person.
 The most common mode of transmission is through unprotected anal or vaginal sex.
 Transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 
 The first AIDS cases were reported in Los Angeles in the early 1980s.
-Since then, HIV has spread globally, and has already caused around 40 million deaths.
-In 2021 there were 38 million people living with HIV, as well as 650 thousand HIV related deaths, and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
-
+Since then, HIV has spread globally, resulting in 40 million deaths.
 A major international effort has been made to address the epidemic.
-The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}) from the peak of the epidemic.
+Large global health initiatives focused on HIV/AIDS include the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$29.2 billion) and the President's Emergency Plan for AIDS Relief (PEPFAR; \$85 billion).
+
+Significant progress has been made, both in reducing the yearly number of new HIV cases and decreasing the yearly number of HIV related deaths (Figure \ref{fig:overall-picture}).
 This has been possible because of the following interventions:
 
 \begin{itemize}
@@ -418,6 +427,7 @@ This has been possible because of the following interventions:
 \item
   Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
   By taking ART daily, a person living with HIV can live a full and healthy life.
+  There were 38 million people living with HIV in 2021, the majority of whom taking ART.
   ART has been estimated to have averted this many million deaths.
   Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
   For this reason, treatment also operates as prevention (TaSP).
@@ -426,9 +436,9 @@ This has been possible because of the following interventions:
   Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
   Scale-up of condom usage since 1990 has been estimated to have averted over 10 million new HIV infections \autocite{stover2021impact}.
 \item
-  Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP).
+  Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
 \item
-  Voluntary medical male circumcision (VMMC).
+  Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
 \end{itemize}
 
 \begin{figure}
@@ -439,6 +449,8 @@ This has been possible because of the following interventions:
 
 \caption{Overall picture.}\label{fig:overall-picture}
 \end{figure}
+
+In 2021 there were 650 thousand HIV related deaths and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
 
 There is substantial geographic inequality in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
@@ -467,28 +479,31 @@ Important indicators include:
 \begin{itemize}
 \tightlist
 \item
-  HIV prevalence, the proportion of the population who have HIV, typically given as a percentage;
+  \textbf{HIV prevalence} The proportion of the population who have HIV, typically given as a percentage;
 \item
-  HIV incidence, the rate of new HIV infections, typically given as number of new infections per 1000 person years; and
+  \textbf{HIV incidence} The rate of new HIV infections, typically given as number of new infections per 1000 person years; and
 \item
-  ART coverage, which is the proportion of PLHIV who are on ART, typically given as a percentage.
+  \textbf{ART coverage} The proportion of PLHIV who are on ART, typically given as a percentage.
 \end{itemize}
 
-There are significant difficulties associated with obtaining these estimates, including:
+There are significant difficulties associated with obtaining estimates of these indicators, which are reliable, timely, and at an appropriate resolution.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Data sparsity in space and time
+  \textbf{Information sparsity}
+  Collection of data is costly and time consuming.
+  As a result, data may not be available for at the particular time and location of interest.
 \item
-  Survey biases
+  \textbf{Survey biases}
 \item
-  Conflicting information source
+  \textbf{Conflicting information}
 \item
-  Hard to reach populations
+  \textbf{Hard to reach populations}
+  Many of the key populations at greatest risk are difficult to reach
 \item
-  Changing demographics
+  \textbf{Changing demographics}
 \end{enumerate}
 
 These limitations foreground the importance of statistical modelling.
@@ -498,7 +513,11 @@ Important modelling techniques include:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Synthesising multiple sources of information.
+  \textbf{Borrowing information}
+\item
+  \textbf{Evidence synthesis}
+\item
+  \textbf{Expert guidance}
 \end{enumerate}
 
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
@@ -514,14 +533,14 @@ Phasing out of nationally-representative household surveys for HIV.
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-I provide a brief, opinionated, overview in this section.
+I provide a brief overview in this section.
 For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
 
 \hypertarget{bayesian-modelling}{%
 \subsection{Bayesian modelling}\label{bayesian-modelling}}
 
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y\) together with parameters \(\bvartheta\).
+This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y = (y_1, \ldots, y_n)\) together with parameters \(\bvartheta = (\vartheta_1, \ldots, \vartheta_d)\).
 The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\).
 If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
 In this way, models can be built iteratively, and complexity added gradually.
@@ -529,19 +548,19 @@ In this way, models can be built iteratively, and complexity added gradually.
 The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) whereby \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
 The likelihood, as a function of \(\bvartheta\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bvartheta\).
 The prior encapsulates beliefs about the parameters \(\bvartheta\) before the data is observed.
-There are substantial disagreements about how the prior should be specified.
+There has been substantial discussion and disagreement about how the prior should be specified.
 That said, the distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
-As such, it may be argued that these difficulties are not unique to the prior \autocite{gelman2017prior}.
+As such, it may be argued that these difficulties are not unique to the prior and ultimately the challenge of specifying the data generating process is better thought of more holistically \autocite{gelman2017prior}.
 
 \hypertarget{bayesian-computation}{%
 \subsection{Bayesian computation}\label{bayesian-computation}}
 
 The posterior distribution \(p(\bvartheta \, | \, \y)\) represents beliefs about the parameters given the observed data.
-Using teh eponymous Bayes' theorem, it is given by
+Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, the above equation is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
+Unfortunately, Equation \ref{eq:posterior} is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
 As such, the typically situation is that although the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
 
 A great variety of computational methods have been developed which aim to tackle this problem.
@@ -1248,20 +1267,95 @@ These findings underscore the importance of providing effective HIV prevention o
 \markboth{Fast, approximate inference for the Naomi model}{}
 
 In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
-This work builds on that of others, including \textcite{rue2009approximate}, \textcite{kristensen2016tmb} and \textcite{stringer2021fast}.
-I began working on this project in 2020, but did not make significant progress until I read Alex Stringer's work in 2021, and later visited the University of Waterloo to collaborate in 2022.
+Naomi is a complex model, used in over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
 The results are presented in \textcite{howes2023fast}.
+
+Though I began working on this project in 2020, I only started to make significant progress after reading \textcite{stringer2021fast}.
+I am grateful to have subsequently collaborate with Alex Stringer on this project, including my visiting the University of Waterloo during the fall term of 2022.
 
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
 
 \hypertarget{background-3}{%
 \section{Background}\label{background-3}}
 
-\hypertarget{the-naomi-model}{%
-\section{The Naomi model}\label{the-naomi-model}}
+The goal of a Bayesian analysis is to obtain the posterior distribution \(p(\bvartheta \, | \, \y)\).
+This is a reasonable goal because given a loss function \(L\), the posterior loss of action \(a\) depends on the data only via the posterior distribution.
+It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
+\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta
+\end{equation}
+As such, approximations to the posterior distribution are typically used.
 
-\hypertarget{methods-for-inference}{%
-\section{Methods for inference}\label{methods-for-inference}}
+\hypertarget{inference-methods}{%
+\section{Inference methods}\label{inference-methods}}
+
+\hypertarget{the-laplace-approximation}{%
+\subsection{The Laplace approximation}\label{the-laplace-approximation}}
+
+The posterior normalising constant may be approximated using Laplace's method \autocite{tierney1986accurate}.
+Let \(h(\bvartheta) = \log p(\bvartheta, \y)\) such that
+\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta = \int_{\mathbb{R}^d} \exp(h(\bvartheta)) \text{d}\bvartheta.
+\end{equation}
+Let
+\begin{equation}
+\hat \bvartheta = \argmax_{\bvartheta} h(\bvartheta)
+\end{equation}
+be the posterior mode, and
+\begin{equation}
+\hat {\Hb} = - \frac{\partial^2}{\partial \bvartheta \partial \bvartheta^\top} h(\bvartheta) \rvert_{\bvartheta = \hat \bvartheta}
+\end{equation}
+be the Hessian matrix evaluated at the posterior mode.
+Taking a second order Taylor approximation at the posterior mode gives the Laplace approximation to the normalising constant as
+\begin{align}
+\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bvartheta) - \frac{1}{2} (\bvartheta - \hat \bvartheta)^\top \hat {\Hb} (\bvartheta - \hat \bvartheta) \right) \text{d}\bvartheta \label{eq:la} \\
+&= \exp(h(\hat \bvartheta)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+\end{align}
+where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution \(\mathcal{N}(\cdot \, | \, \hat \bvartheta, \hat {\Hb}^{-1})\).
+
+\hypertarget{adaptive-gauss-hermite-quadrature}{%
+\subsection{Adaptive Gauss-Hermite quadrature}\label{adaptive-gauss-hermite-quadrature}}
+
+Another way to approximate the posterior normalising constant is using quadrature.
+Let \(\mathcal{Q}\) be a set of quadrature points, and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
+Then a quadrature approximation to the posterior normalising constant is given by
+\begin{equation}
+\tilde p(\y) = \sum_{\bvartheta \in \mathcal{Q}} p(\y, \bvartheta) \omega(\bvartheta).
+\end{equation}
+
+\hypertarget{integrated-nested-laplace-approximation}{%
+\subsection{Integrated nested Laplace approximation}\label{integrated-nested-laplace-approximation}}
+
+\hypertarget{a-universal-inla-implementation}{%
+\section{A universal INLA implementation}\label{a-universal-inla-implementation}}
+
+In this section, I implement the INLA method from scratch, using the \texttt{TMB} package.
+The result is universal in that it is compatible with any model with a \texttt{TMB} C++ template for the log-posterior.
+The \texttt{R-INLA} software uses a formula interface (e.g.~\texttt{y\ \textasciitilde{}\ 1\ +\ x}) which facilitates use of the method for common models.
+Though beneficial for new users, this imposes constraints on advanced users who would like to use more complicated models.
+Indeed \textcite{martino2019integrated} note that ``implementing INLA from scratch is a complex task'', and as a result ``applications of INLA are limited to the (large class of) models implemented {[}in \texttt{R-INLA}{]}''.
+\textcite{skaug2009approximate} highlights the potential benefits of a more flexible INLA implementation using automatic differentiation.
+
+I demonstrate the implementation using the epilepsy generalised linear mixed model example from \textcite{spiegelhalter1996bugs}.
+The model is based on that of \textcite{breslow1993approximate}, itself a modification of \textcite{thall1990some}, and the data are from an epilespy drug double-blind clinical trial \autocite{leppik1985double}.
+\textcite{rue2009approximate} (Section 5.2) demonstrate the INLA method using this example, and find that there is a difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters (Figure 3).
+
+In the trial, patients \(i = 1, \ldots, 59\) were each assigned either the new drug \(\texttt{Trt}_i = 1\) or placebo \(\texttt{Trt}_i = 0\).
+Each patient made four visits the clinic \(j = 1, \ldots, 4\), and the observations \(y_{ij}\) are the number of seizures of the \(i\)th person in the two weeks preceding their \(j\)th visit.
+The covariates used in the model were age \(\texttt{Age}_i\), baseline seizure counts \(\texttt{Base}_i\) and an indicator for the final clinic visit \(\texttt{V}_4\), which were all centered.
+The observations were modelled using a Poisson distribution \(y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})\) with linear predictor
+\begin{align*}
+\eta_{ij}
+&= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
+   \beta_{\texttt{Trt} \times \texttt{Base}} \texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4) \\ 
+&+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
+   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4],
+\end{align*}
+where the prior distribution on each of the regression parameters, including the intercept, was \(\mathcal{N}(0, 100^2)\).
+The random effects are IID \(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\) and \(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\) with precision prior distributions \(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\).
+
+\hypertarget{naomi-model}{%
+\section{Naomi model}\label{naomi-model}}
 
 \hypertarget{malawi-case-study}{%
 \section{Malawi case-study}\label{malawi-case-study}}

@@ -18,17 +18,88 @@ bibliography: references.bib
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
-This work builds on that of others, including @rue2009approximate, @kristensen2016tmb and @stringer2021fast.
-I began working on this project in 2020, but did not make significant progress until I read Alex Stringer's work in 2021, and later visited the University of Waterloo to collaborate in 2022.
+Naomi is a complex model, used in over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
 The results are presented in @howes2023fast.
+
+Though I began working on this project in 2020, I only started to make significant progress after reading @stringer2021fast.
+I am grateful to have subsequently collaborate with Alex Stringer on this project, including my visiting the University of Waterloo during the fall term of 2022.
 
 Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf) and supported by the R package [`inf.utils`](https://athowes.github.io/inf.utils).
 
 ## Background
 
-## The Naomi model
+The goal of a Bayesian analysis is to obtain the posterior distribution $p(\bvartheta \, | \, \y)$.
+This is a reasonable goal because given a loss function $L$, the posterior loss of action $a$ depends on the data only via the posterior distribution.
+It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
+\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta
+\end{equation}
+As such, approximations to the posterior distribution are typically used.
 
-## Methods for inference
+## Inference methods
+
+### The Laplace approximation
+
+The posterior normalising constant may be approximated using Laplace's method [@tierney1986accurate].
+Let $h(\bvartheta) = \log p(\bvartheta, \y)$ such that
+\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta = \int_{\mathbb{R}^d} \exp(h(\bvartheta)) \text{d}\bvartheta.
+\end{equation}
+Let
+\begin{equation}
+\hat \bvartheta = \argmax_{\bvartheta} h(\bvartheta)
+\end{equation}
+be the posterior mode, and
+\begin{equation}
+\hat {\Hb} = - \frac{\partial^2}{\partial \bvartheta \partial \bvartheta^\top} h(\bvartheta) \rvert_{\bvartheta = \hat \bvartheta}
+\end{equation}
+be the Hessian matrix evaluated at the posterior mode.
+Taking a second order Taylor approximation at the posterior mode gives the Laplace approximation to the normalising constant as
+\begin{align}
+\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bvartheta) - \frac{1}{2} (\bvartheta - \hat \bvartheta)^\top \hat {\Hb} (\bvartheta - \hat \bvartheta) \right) \text{d}\bvartheta \label{eq:la} \\
+&= \exp(h(\hat \bvartheta)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+\end{align}
+where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bvartheta, \hat {\Hb}^{-1})$.
+
+### Adaptive Gauss-Hermite quadrature
+
+Another way to approximate the posterior normalising constant is using quadrature.
+Let $\mathcal{Q}$ be a set of quadrature points, and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
+Then a quadrature approximation to the posterior normalising constant is given by
+\begin{equation}
+\tilde p(\y) = \sum_{\bvartheta \in \mathcal{Q}} p(\y, \bvartheta) \omega(\bvartheta).
+\end{equation}
+
+### Integrated nested Laplace approximation
+
+## A universal INLA implementation
+
+In this section, I implement the INLA method from scratch, using the `TMB` package.
+The result is universal in that it is compatible with any model with a `TMB` C++ template for the log-posterior.
+The `R-INLA` software uses a formula interface (e.g. `y ~ 1 + x`) which facilitates use of the method for common models.
+Though beneficial for new users, this imposes constraints on advanced users who would like to use more complicated models.
+Indeed @martino2019integrated note that "implementing INLA from scratch is a complex task", and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
+@skaug2009approximate highlights the potential benefits of a more flexible INLA implementation using automatic differentiation.
+
+I demonstrate the implementation using the epilepsy generalised linear mixed model example from @spiegelhalter1996bugs.
+The model is based on that of @breslow1993approximate, itself a modification of @thall1990some, and the data are from an epilespy drug double-blind clinical trial [@leppik1985double].
+@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find that there is a difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters (Figure 3).
+
+In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
+Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th visit.
+The covariates used in the model were age $\texttt{Age}_i$, baseline seizure counts $\texttt{Base}_i$ and an indicator for the final clinic visit $\texttt{V}_4$, which were all centered.
+The observations were modelled using a Poisson distribution $y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})$ with linear predictor 
+\begin{align*}
+\eta_{ij}
+&= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
+   \beta_{\texttt{Trt} \times \texttt{Base}} \texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4) \\ 
+&+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
+   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4],
+\end{align*}
+where the prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
+The random effects are IID $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
+
+## Naomi model
 
 ## Malawi case-study
 

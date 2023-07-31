@@ -66,39 +66,48 @@ condom_averted_lb <- 10000000
 
 <!-- What is HIV -->
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
+If left untreated, a more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop.
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
-A more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop if HIV is left untreated. 
-AIDS is characterised by increased risk of developing infections normally controlled by the immune system.
+As a result, AIDS is characterised by increased risk of developing opportunistic infections.
 
 <!-- How is HIV transmitted -->
-HIV is transmitted by exposure to the bodily fluids of an infected person.
+HIV is transmitted by exposure to specific bodily fluids of an infected person.
 The most common mode of transmission is through unprotected anal or vaginal sex.
 Transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 
-<!-- The extent of HIV as a problem -->
-The first AIDS cases were reported in Los Angeles in the early 1980s.
-Since then, HIV has spread globally, and has already caused around `r custom_numbers_to_words(deaths)` deaths.
-In 2021 there were `r custom_numbers_to_words(plhiv2021)` people living with HIV, as well as `r custom_numbers_to_words(deaths2021)` HIV related deaths, and `r custom_numbers_to_words(infections2021)` people newly infected with HIV [@unaids2021global].
+```{r}
+pepfar <- 85 * 1000000000
+#' From https://www.theglobalfund.org/en/hivaids/
+global_fund <- (24.2 + 5) * 1000000000
+```
 
-<!-- What is being done -->
+<!-- The extent of HIV as a problem and what is being done -->
+The first AIDS cases were reported in Los Angeles in the early 1980s.
+Since then, HIV has spread globally, resulting in `r custom_numbers_to_words(deaths)` deaths.
 A major international effort has been made to address the epidemic.
-The result has been significant progress, both in reducing the number of new HIV cases and decreasing the number of HIV related deaths (Figure \ref{fig:overall-picture}) from the peak of the epidemic.
+Large global health initiatives focused on HIV/AIDS include the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$`r custom_numbers_to_words(global_fund)`) and the President's Emergency Plan for AIDS Relief (PEPFAR; \$`r custom_numbers_to_words(pepfar)`).
+
+Significant progress has been made, both in reducing the yearly number of new HIV cases and decreasing the yearly number of HIV related deaths (Figure \ref{fig:overall-picture}).
 This has been possible because of the following interventions:
 
 * Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
 By taking ART daily, a person living with HIV can live a full and healthy life.
+There were `r custom_numbers_to_words(plhiv2021)` people living with HIV in 2021, the majority of whom taking ART.
 ART has been estimated to have averted this many million deaths.
 Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
 For this reason, treatment also operates as prevention (TaSP).
 ART has been estimated to have averted this many new infections.
 * Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
 Scale-up of condom usage since 1990 has been estimated to have averted over `r custom_numbers_to_words(condom_averted_lb)` new HIV infections [@stover2021impact].
-* Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP).
-* Voluntary medical male circumcision (VMMC).
+* Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
+* Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
 
 ```{r overall-picture, fig.cap="Overall picture."}
 knitr::include_graphics("figures/overall-picture.png")
 ```
+
+<!-- Though progress is being made we are not there yet -->
+In 2021 there were `r custom_numbers_to_words(deaths2021)` HIV related deaths and `r custom_numbers_to_words(infections2021)` people newly infected with HIV [@unaids2021global].
 
 <!-- Uneven burden in space -->
 There is substantial geographic inequality in disease burden.
@@ -129,23 +138,28 @@ HIV surveillance refers to the collection, analysis, interpretation and dissemin
 Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
 Important indicators include:
 
-* HIV prevalence, the proportion of the population who have HIV, typically given as a percentage;
-* HIV incidence, the rate of new HIV infections, typically given as number of new infections per 1000 person years; and
-* ART coverage, which is the proportion of PLHIV who are on ART, typically given as a percentage.
+* **HIV prevalence** The proportion of the population who have HIV, typically given as a percentage;
+* **HIV incidence** The rate of new HIV infections, typically given as number of new infections per 1000 person years; and
+* **ART coverage** The proportion of PLHIV who are on ART, typically given as a percentage.
 
 <!-- Why is surveillance difficult -->
-There are significant difficulties associated with obtaining these estimates, including:
+There are significant difficulties associated with obtaining estimates of these indicators, which are reliable, timely, and at an appropriate resolution.
 
-1. Data sparsity in space and time
-2. Survey biases
-3. Conflicting information source
-4. Hard to reach populations
-5. Changing demographics
+1. **Information sparsity**
+Collection of data is costly and time consuming.
+As a result, data may not be available for at the particular time and location of interest.
+2. **Survey biases**
+3. **Conflicting information**
+4. **Hard to reach populations**
+Many of the key populations at greatest risk are difficult to reach
+5. **Changing demographics**
 
 These limitations foreground the importance of statistical modelling.
 Important modelling techniques include:
 
-1. Synthesising multiple sources of information.
+1. **Borrowing information**
+2. **Evidence synthesis**
+3. **Expert guidance**
 
 <!-- Future trends in surveillance -->
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
