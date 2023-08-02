@@ -31,17 +31,47 @@ knitr::opts_chunk$set(
 \markboth{Introduction}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This thesis is about applied and methodological Bayesian statistics.
-It is Bayesian in the sense that I use probability models to arrive at conclusions based on data.
-It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
+```{r}
+custom_numbers_to_words <- function(number) {
+  powers <- c(3, 6, 9, 12)
+  
+  if (number == 0) {
+    return("0")
+  }
+  
+  sign <- ifelse(number < 0, -1, 1)
+  number <- abs(number)
+  
+  for (power in powers) {
+    scaled_number <- number / 10^power
+    if (scaled_number >= 1 && scaled_number < 1000) {
+      suffix <- gsub("^one\\s", "", xfun::numbers_to_words(10^power))
+      return(paste0(sign * scaled_number, " ", suffix))
+    }
+  }
+  
+  return("Number out of range.")
+}
 
-The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
-Millions of people are impacted by HIV every year.
+esa_plhiv2022 <- 20.8 * 1e6
+wca_plhiv2022 <- 4.8 * 1e6
+ssa_plhiv2022 <- esa_plhiv2022 + wca_plhiv2022
+
+plhiv2022 <- 39 * 1e6
+
+ssa_pop2022 <- 1.2 * 1e9 #' From the world bank
+```
+
+This thesis is about applied and methodological Bayesian statistics.
+The sense in which it is Bayesian is that I use probability models to arrive at conclusions based on data.
+The sense in which it is applied and methodological is that I am concerned with real world questions and the means to answer them.
+
+The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa, a region it is estimated that `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of the total `r custom_numbers_to_words(plhiv2022)` people living with HIV in the world live [@unaids2022global].
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination. 
 
-The data I use relate to people's answers to survey questions or use of healthcare facilities.
-It has location in space and time which should be taken into account.
-Spatio-temporal data, while diverse, has distinctive commonalities which make its collective study worthwhile.
+The data in this thesis appertain to people's answers to survey questions or use of healthcare facilities.
+An important feature of the data is its location in space and time.
+Spatio-temporal data, while diverse, have distinctive commonalities which make its collective study valuable.
 
 Computation is an essential part of modern statistical practice.
 Each project chapter is accompanied by code, hosted on GitHub.
@@ -63,7 +93,7 @@ Further, I open the door to a new class of fast, flexible, and accurate Bayesian
 * Chapter \@ref(conclusions): I discuss avenues for future work, and my conclusions regarding the research.
 
 Figure \@ref(fig:chapter-flowchart) gives the dependency structure for the above chapters.
-Though the presented order is recommended, Chapter \@ref(beyond-borders), Chapter \@ref(multi-agyw) and Chapter \@ref(naomi-aghq)) may be read in any order.
+Though the presented order is recommended, Chapter \@ref(beyond-borders), Chapter \@ref(multi-agyw) and Chapter \@ref(naomi-aghq) may be read in any order.
 
 ```{r chapter-flowchart, fig.cap="Flowchart presenting the recommended chapter dependencies for this thesis. The dashed line represents a recommended, but not required dependency."}
 knitr::include_graphics("figures/chapter-flowchart.pdf")

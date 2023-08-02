@@ -293,7 +293,7 @@
 \begin{abstract}
 	Progress towards ending AIDS as a public health threat by 2030 is faltering.
 Effective public health response requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
-Limitations of available data make obtaining such estimates difficult.
+Limitations of available data make obtaining these estimates difficult.
 I develop and apply Bayesian spatio-temporal methods to meet this challenge.
 Firstly, I examine models for area-level spatial structure.
 Secondly, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward by the Global AIDS Strategy.
@@ -344,16 +344,15 @@ Together, the contributions in this thesis help to guide precision HIV policy in
 \markboth{Introduction}{}
 
 This thesis is about applied and methodological Bayesian statistics.
-It is Bayesian in the sense that I use probability models to arrive at conclusions based on data.
-It is applied and methodological in the sense that I am concerned with real world questions and the means to answer them.
+The sense in which it is Bayesian is that I use probability models to arrive at conclusions based on data.
+The sense in which it is applied and methodological is that I am concerned with real world questions and the means to answer them.
 
-The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa.
-Millions of people are impacted by HIV every year.
+The real world questions relate to surveillance of the HIV epidemic in sub-Saharan Africa, a region it is estimated that 66\% of the total 39 million people living with HIV in the world live \autocite{unaids2022global}.
 Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
 
-The data I use relate to people's answers to survey questions or use of healthcare facilities.
-It has location in space and time which should be taken into account.
-Spatio-temporal data, while diverse, has distinctive commonalities which make its collective study worthwhile.
+The data in this thesis appertain to people's answers to survey questions or use of healthcare facilities.
+An important feature of the data is its location in space and time.
+Spatio-temporal data, while diverse, have distinctive commonalities which make its collective study valuable.
 
 Computation is an essential part of modern statistical practice.
 Each project chapter is accompanied by code, hosted on GitHub.
@@ -385,7 +384,7 @@ Each project chapter is accompanied by code, hosted on GitHub.
 \end{itemize}
 
 Figure \ref{fig:chapter-flowchart} gives the dependency structure for the above chapters.
-Though the presented order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq}) may be read in any order.
+Though the presented order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq} may be read in any order.
 
 \begin{figure}
 
@@ -406,29 +405,25 @@ Though the presented order is recommended, Chapter \ref{beyond-borders}, Chapter
 \section{Background}\label{background}}
 
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
-If left untreated, a more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop.
+If left untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections.
 
 HIV is transmitted by exposure to specific bodily fluids of an infected person.
-The most common mode of transmission is through unprotected anal or vaginal sex.
-Transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
+The most common mode of transmission is via unprotected anal or vaginal sex, though transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 
 The first AIDS cases were reported in Los Angeles in the early 1980s.
-Since then, HIV has spread globally, resulting in 40 million deaths.
-A major international effort has been made to address the epidemic.
-Large global health initiatives focused on HIV/AIDS include the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$29.2 billion) and the President's Emergency Plan for AIDS Relief (PEPFAR; \$85 billion).
-
-Significant progress has been made, both in reducing the yearly number of new HIV cases and decreasing the yearly number of HIV related deaths (Figure \ref{fig:overall-picture}).
-This has been possible because of the following interventions:
+Since then, HIV has spread globally, and so far resulted in an estimated 40 million deaths.
+A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies, and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$85 billion invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$29.2 billion invested).
+Some interventions have had a large impact on the epidemic.
 
 \begin{itemize}
 \tightlist
 \item
   Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
   By taking ART daily, a person living with HIV can live a full and healthy life.
-  There were 38 million people living with HIV in 2021, the majority of whom taking ART.
-  ART has been estimated to have averted this many million deaths.
+  Of the 39 million people living with HIV (PLHIV) in 2022, around 76 are accessing ART.
+  As a result, ART is estimated to have averted 16.5 million AIDS-related deaths.
   Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
   For this reason, treatment also operates as prevention (TaSP).
   ART has been estimated to have averted this many new infections.
@@ -447,18 +442,19 @@ This has been possible because of the following interventions:
 
 }
 
-\caption{Overall picture.}\label{fig:overall-picture}
+\caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\%. Data from UNAIDS epidemiological estimates 2023.}\label{fig:overall-picture}
 \end{figure}
 
-In 2021 there were 650 thousand HIV related deaths and 1.5 million people newly infected with HIV \autocite{unaids2021global}.
+The epidemic response has seen both the yearly number of new HIV cases and number of AIDS-related deaths fall significantly since their respective peaks (Figure \ref{fig:overall-picture}).
+However, there remains significant distance to go in ending AIDS as a public health threat: in 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths \autocite{unaids2022global}.
 
 There is substantial geographic inequality in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
 In others, transmission is sustained in the general population, and prevalence is higher.
-Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for this percentage of people living with HIV (PLHIV) worldwide.
-There is also significant geographic variation within countries.
+Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for 66\% of PLHIV worldwide.
+Even within countries, there is significant geographic variation.
 
-Across all settings, there is substantial inequality in disease burden between groups.
+Across all settings, the inequality in disease burden extends to groups.
 Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
 
@@ -470,10 +466,14 @@ The precision public health paradigm aims to get the right interventions, to the
 This requires data.
 
 \hypertarget{hiv-surveillance}{%
-\section{HIV surveillance}\label{hiv-surveillance}}
+\section{\texorpdfstring{HIV surveillance \label{sec:surveillance}}{HIV surveillance }}\label{hiv-surveillance}}
 
 HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
 Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+
+\hypertarget{hiv-indicators}{%
+\subsection{HIV indicators}\label{hiv-indicators}}
+
 Important indicators include:
 
 \begin{itemize}
@@ -486,27 +486,39 @@ Important indicators include:
   \textbf{ART coverage} The proportion of PLHIV who are on ART, typically given as a percentage.
 \end{itemize}
 
-There are significant difficulties associated with obtaining estimates of these indicators, which are reliable, timely, and at an appropriate resolution.
+\hypertarget{challenges}{%
+\subsection{Challenges}\label{challenges}}
+
+There are significant difficulties associated with obtaining reliable, timely, estimates of these indicators at an appropriate resolution.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Information sparsity}
+  \textbf{Data sparsity}
   Collection of data is costly and time consuming.
-  As a result, data may not be available for at the particular time and location of interest.
+  As a result, direct data is unlikely to be available for the particular time and location of interest.
 \item
-  \textbf{Survey biases}
-\item
-  \textbf{Conflicting information}
+  \textbf{Survey response biases}
+  Under-reporting.
+  Non-response.
+  Measurement error.
 \item
   \textbf{Hard to reach populations}
-  Many of the key populations at greatest risk are difficult to reach
+  Many of the key populations at greatest risk are difficult to reach.
+  May not appear on household survey sampling frames.
 \item
   \textbf{Changing demographics}
+  Many indicators are rates or proportions, incorporating the population at risk in the denominator.
+  However, accurately estimating these population denominators is usually itself a challenging task.
+  Taking a ratio of uncertain quantities only goes to amplify the uncertainty.
 \end{enumerate}
 
+\hypertarget{statistical-methods}{%
+\subsection{Statistical methods}\label{statistical-methods}}
+
 These limitations foreground the importance of statistical modelling.
+Direct interpretation of the data is at worst useless, and at best misleading.
 Important modelling techniques include:
 
 \begin{enumerate}
@@ -520,6 +532,9 @@ Important modelling techniques include:
   \textbf{Expert guidance}
 \end{enumerate}
 
+\hypertarget{future-trends}{%
+\subsection{Future trends}\label{future-trends}}
+
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.
 
@@ -532,40 +547,52 @@ Phasing out of nationally-representative household surveys for HIV.
 \hypertarget{bayesian-statistics}{%
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
-Bayesian statistics is a mathematical paradigm for learning from data.
-I provide a brief overview in this section.
+Bayesian statistics is a mathematical paradigm for learning from data, that allows flexible and principled incorporation of scientific knowledge.
+As such, it is particularly well suited for attending to the challenges I present in Section \ref{sec:surveillance} wherein the data demands careful analysis.
+In this section I provide brief overview.
 For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
 
 \hypertarget{bayesian-modelling}{%
 \subsection{Bayesian modelling}\label{bayesian-modelling}}
 
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y = (y_1, \ldots, y_n)\) together with parameters \(\bvartheta = (\vartheta_1, \ldots, \vartheta_d)\).
-The model is generative in the sense that one can simulate from it to obtain draws \((\y, \bvartheta) \sim p(\y, \bvartheta)\).
+This is achieved by the construction of a generative model \(p(\y, \bvartheta)\) for the observed data \(\y = (y_1, \ldots, y_n)\) together with parameters \(\bvartheta = (\vartheta_1, \ldots, \vartheta_d)\), where \(n\) is the dimension of the data and \(d\) is the number of parameters.
+The model is generative in the sense that one can simulate from it to obtain draws
+\begin{equation}
+(\y, \bvartheta) \sim p(\y, \bvartheta)
+\end{equation}
 If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
-In this way, models can be built iteratively, and complexity added gradually.
+In this way, models can be built iteratively, with complexity added gradually.
 
 The model is usually constructed from two parts, known as the likelihood \(p(\y \, | \, \bvartheta)\) and the prior \(p(\bvartheta)\) whereby \(p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)\).
 The likelihood, as a function of \(\bvartheta\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bvartheta\).
 The prior encapsulates beliefs about the parameters \(\bvartheta\) before the data is observed.
-There has been substantial discussion and disagreement about how the prior should be specified.
-That said, the distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
+There has been substantial discussion about how the prior should be specified.
+The main axis of disagreement is the degree of subjectivity which should be allowed.
+However, the distinction between likelihood and prior can sometimes be blurred (Section \ref{hierarchical-lgm-elgm}).
 As such, it may be argued that these difficulties are not unique to the prior and ultimately the challenge of specifying the data generating process is better thought of more holistically \autocite{gelman2017prior}.
 
 \hypertarget{bayesian-computation}{%
 \subsection{Bayesian computation}\label{bayesian-computation}}
 
-The posterior distribution \(p(\bvartheta \, | \, \y)\) represents beliefs about the parameters given the observed data.
+The posterior distribution \(p(\bvartheta \, | \, \y)\) encapsulates probabilistic beliefs about the parameters given the observed data.
 Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
 \end{equation}
 Unfortunately, Equation \ref{eq:posterior} is usually intractable to calculate directly because of the integral \(p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta\) in the denominator.
-As such, the typically situation is that although the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is not easy to evaluate the posterior itself.
+As such, the typical situation is that although the numerator is proportional to the posterior \(p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)\) and easy to evaluate, it is difficult to evaluate the posterior itself.
 
-A great variety of computational methods have been developed which aim to tackle this problem.
-Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
-Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
+A great variety of computational methods have been developed to tackle this problem.
+Briefly, the main categories are:
+
+\begin{itemize}
+\tightlist
+\item
+  Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
+\item
+  Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
+\end{itemize}
 
 \hypertarget{interplay-between-modelling-and-computation}{%
 \subsection{Interplay between modelling and computation}\label{interplay-between-modelling-and-computation}}
@@ -600,7 +627,7 @@ Real world data usually has hierarchical structure.
 For example, there might be multiple measurements of the same unit (Figure \ref{fig:hierarchical-structure}).
 
 Bayesian hierarchical models are comprised of multiple stages.
-For example in a three-stage model, we have
+For example in a three-stage model, we have \(\bvartheta = (\x, \btheta) = (x_1, \ldots, x_N, \theta_1, \ldots, \theta_m)\) such that
 \begin{align}
 \y &\sim p(\y \, | \, \x, \btheta), \\
 \x &\sim p(\x \, | \, \btheta), \\
@@ -617,18 +644,25 @@ with posterior proportional to \(p(\x, \btheta \, | \, \y) \propto p(\y \, | \, 
 \caption{Data often has a hierarchical structure.}\label{fig:hierarchical-structure}
 \end{figure}
 
+\hypertarget{mixed-effects}{%
+\subsection{Mixed effects}\label{mixed-effects}}
+
+Mixed effect models contain both fixed and random effects.
+Fixed and random effects have notoriously many different definitions \autocite{gelman2005analysis}, but nonetheless.
+Partial pooling.
+Structured random effects.
+
 \hypertarget{latent-gaussian-models}{%
 \subsection{Latent Gaussian models}\label{latent-gaussian-models}}
 
 Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
 More specifically, in an LGM, the likelihood is given by
 \begin{align*}
-y_i &\sim p(y_i \, | \, \eta_i, \theta_1), \quad i \in [n]\\
+y_i &\sim p(y_i \, | \, \eta_i, \theta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
-\eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}),
+\eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}).
 \end{align*}
-where \([n] = \{1, \ldots, n\}\).
-The response variable is \(\y = (y)_{i \in [n]}\) with likelihood \(p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)\), where \(\bmeta = (\eta)_{i \in [n]}\).
+The likelihood is \(p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)\), where \(\bmeta = (\eta_1, \ldots, \eta_n)\).
 Each response has conditional mean \(\mu_i\) with inverse link function \(g: \mathbb{R} \to \mathbb{R}\) such that \(\mu_i = g(\eta_i)\).
 The vector \(\btheta_1 \in \mathbb{R}^{s_1}\), with \(s_1\) assumed small, are additional parameters of the likelihood.
 The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\), linear effects \(\beta_j\) of the covariates \(z_{ji}\), and unknown functions \(f_k(\cdot)\) of the covariates \(u_{ki}\).
@@ -644,18 +678,22 @@ Spatio-temporal data are well suited to being modelled with LGMs.
 Some leading-edge spatio-temporal models used in small-area estimation fall outside the LGM class.
 However, many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by \textcite{stringer2021fast}.
 By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
-In particular, the structured additive predictor is redefined as \(\bmeta = (\eta)_{i \in [N_n]}\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
-Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\).
+In particular, the structured additive predictor is redefined as \(\bmeta = (\eta_1, \ldots \eta_{N_n})\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
+Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\), where \([N_n] = \{1, \ldots, N_n\}\).
 The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\).
 Put together, ELGMs are then of the form
 \begin{align*}
-y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i \in [n] \\
+y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
 \eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j \in [N_n],
 \end{align*}
 with latent field and hyperparameter priors as in the LGM case.
 
-Instances of ELGM structures being useful for small-area estimation are as follows.
+In my experience, the ELGMs class is well suited to the demands of small-area estimation.
+Indeed, I will use this class of models throughout the thesis.
+In Chapter \ref{beyond-borders} I consider\ldots{}
+While I am able to transform it to an LGM using the Poisson-multinomial transformation, the multinomial logistic regression model I use in Chapter \ref{multi-agyw} is naturally written as an ELGM where each observation depends on the set of structured additive predictors corresponding to\ldots{}
+Finally, Chapter \ref{naomi-aghq} I show that the Naomi small-area estimation model used to produce estimates of HIV indicators across over 35 countries is an ELGM.
 
 \hypertarget{beyond-borders}{%
 \chapter{Spatial structure}\label{beyond-borders}}

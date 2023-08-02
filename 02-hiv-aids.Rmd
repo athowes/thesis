@@ -32,68 +32,48 @@ knitr::opts_chunk$set(
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 ```{r}
-custom_numbers_to_words <- function(number) {
-  powers <- c(3, 6, 9, 12)
-  
-  if (number == 0) {
-    return("0")
-  }
-  
-  sign <- ifelse(number < 0, -1, 1)
-  number <- abs(number)
-  
-  for (power in powers) {
-    scaled_number <- number / 10^power
-    if (scaled_number >= 1 && scaled_number < 1000) {
-      suffix <- gsub("^one\\s", "", xfun::numbers_to_words(10^power))
-      return(paste0(sign * scaled_number, " ", suffix))
-    }
-  }
-  
-  return("Number out of range.")
-}
+deaths <- 40 * 1e6
 
-deaths <- 40000000
+plhiv2022 <- 39 * 1e6
+deaths2022 <- 630 * 1e3
+infections2022 <- 1.3 * 1e6
 
-plhiv2021 <- 38000000
-deaths2021 <- 650000
-infections2021 <- 1500000
+coverage2022 <- 76
 
-condom_averted_lb <- 10000000
+#' From https://www.unaids.org/en/resources/presscentre/featurestories/2021/september/20210906_global-roll-out-hiv-treatment
+art_averted <- 16.5 * 1e6
+
+condom_averted_lb <- 10 * 1e6
 ```
 
 ## Background
 
 <!-- What is HIV -->
 Human immunodeficiency virus (HIV) is a retrovirus which infects humans.
-If left untreated, a more advanced stage known as acquired immunodeficiency syndrome (AIDS) can develop.
+If left untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections.
 
 <!-- How is HIV transmitted -->
 HIV is transmitted by exposure to specific bodily fluids of an infected person.
-The most common mode of transmission is through unprotected anal or vaginal sex.
-Transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
+The most common mode of transmission is via unprotected anal or vaginal sex, though transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 
 ```{r}
-pepfar <- 85 * 1000000000
+pepfar <- 85 * 1e9
 #' From https://www.theglobalfund.org/en/hivaids/
-global_fund <- (24.2 + 5) * 1000000000
+global_fund <- (24.2 + 5) * 1e9
 ```
 
-<!-- The extent of HIV as a problem and what is being done -->
+<!-- HIV is a big problem that a lot of effort goes into combating -->
 The first AIDS cases were reported in Los Angeles in the early 1980s.
-Since then, HIV has spread globally, resulting in `r custom_numbers_to_words(deaths)` deaths.
-A major international effort has been made to address the epidemic.
-Large global health initiatives focused on HIV/AIDS include the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$`r custom_numbers_to_words(global_fund)`) and the President's Emergency Plan for AIDS Relief (PEPFAR; \$`r custom_numbers_to_words(pepfar)`).
-
-Significant progress has been made, both in reducing the yearly number of new HIV cases and decreasing the yearly number of HIV related deaths (Figure \ref{fig:overall-picture}).
-This has been possible because of the following interventions:
+Since then, HIV has spread globally, and so far resulted in an estimated `r custom_numbers_to_words(deaths)` deaths.
+A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies, and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$`r custom_numbers_to_words(pepfar)` invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$`r custom_numbers_to_words(global_fund)` invested).
+Some interventions have had a large impact on the epidemic.
 
 * Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
 By taking ART daily, a person living with HIV can live a full and healthy life.
-There were `r custom_numbers_to_words(plhiv2021)` people living with HIV in 2021, the majority of whom taking ART.
-ART has been estimated to have averted this many million deaths.
+Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022` are accessing ART.
+As a result, ART is estimated to have averted `r custom_numbers_to_words(art_averted)` AIDS-related deaths.
 Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
 For this reason, treatment also operates as prevention (TaSP).
 ART has been estimated to have averted this many new infections.
@@ -102,22 +82,22 @@ Scale-up of condom usage since 1990 has been estimated to have averted over `r c
 * Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
 * Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
 
-```{r overall-picture, fig.cap="Overall picture."}
+```{r overall-picture, fig.cap="Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\\%. Data from UNAIDS epidemiological estimates 2023."}
 knitr::include_graphics("figures/overall-picture.png")
 ```
 
-<!-- Though progress is being made we are not there yet -->
-In 2021 there were `r custom_numbers_to_words(deaths2021)` HIV related deaths and `r custom_numbers_to_words(infections2021)` people newly infected with HIV [@unaids2021global].
+The epidemic response has seen both the yearly number of new HIV cases and number of AIDS-related deaths fall significantly since their respective peaks (Figure \ref{fig:overall-picture}).
+However, there remains significant distance to go in ending AIDS as a public health threat: in 2022 there were `r custom_numbers_to_words(infections2022)` people newly infected with HIV and `r custom_numbers_to_words(deaths2022)` AIDS-related deaths [@unaids2022global].
 
 <!-- Uneven burden in space -->
 There is substantial geographic inequality in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
 In others, transmission is sustained in the general population, and prevalence is higher.
-Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for this percentage of people living with HIV (PLHIV) worldwide.
-There is also significant geographic variation within countries.
+Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of PLHIV worldwide.
+Even within countries, there is significant geographic variation.
 
 <!-- Uneven burden across people -->
-Across all settings, there is substantial inequality in disease burden between groups.
+Across all settings, the inequality in disease burden extends to groups.
 Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
 
@@ -131,36 +111,51 @@ The precision public health paradigm aims to get the right interventions, to the
 This requires data.
 <!-- Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics. -->
 
-## HIV surveillance
+## HIV surveillance \label{sec:surveillance}
 
 <!-- What is surveillance and how can it be used to meet these needs -->
 HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
 Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
+
+### HIV indicators
+
 Important indicators include:
 
 * **HIV prevalence** The proportion of the population who have HIV, typically given as a percentage;
 * **HIV incidence** The rate of new HIV infections, typically given as number of new infections per 1000 person years; and
 * **ART coverage** The proportion of PLHIV who are on ART, typically given as a percentage.
 
-<!-- Why is surveillance difficult -->
-There are significant difficulties associated with obtaining estimates of these indicators, which are reliable, timely, and at an appropriate resolution.
+### Challenges
 
-1. **Information sparsity**
+<!-- Why is surveillance difficult -->
+There are significant difficulties associated with obtaining reliable, timely, estimates of these indicators at an appropriate resolution.
+
+1. **Data sparsity**
 Collection of data is costly and time consuming.
-As a result, data may not be available for at the particular time and location of interest.
-2. **Survey biases**
-3. **Conflicting information**
-4. **Hard to reach populations**
-Many of the key populations at greatest risk are difficult to reach
-5. **Changing demographics**
+As a result, direct data is unlikely to be available for the particular time and location of interest.
+2. **Survey response biases**
+Under-reporting.
+Non-response.
+Measurement error.
+3. **Hard to reach populations**
+Many of the key populations at greatest risk are difficult to reach.
+May not appear on household survey sampling frames.
+4. **Changing demographics**
+Many indicators are rates or proportions, incorporating the population at risk in the denominator.
+However, accurately estimating these population denominators is usually itself a challenging task.
+Taking a ratio of uncertain quantities only goes to amplify the uncertainty.
+
+### Statistical methods
 
 These limitations foreground the importance of statistical modelling.
+Direct interpretation of the data is at worst useless, and at best misleading.
 Important modelling techniques include:
 
 1. **Borrowing information**
 2. **Evidence synthesis**
 3. **Expert guidance**
 
-<!-- Future trends in surveillance -->
+### Future trends
+
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 Phasing out of nationally-representative household surveys for HIV.

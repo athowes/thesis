@@ -1,36 +1,87 @@
-library(readr)
+library(readxl)
+library(stringr)
 library(tidyverse)
 library(patchwork)
 
-incidence <- read_csv("resources/introduction/incidence-of-hiv-by-age.csv")
+cbpalette <- c("#56B4E9","#009E73", "#E69F00", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
 
-incidence_plot <- incidence %>%
-  filter(Entity == "Sub-Saharan Africa (UN)") %>%
-  select(
-    year = Year,
-    incidence = `3.3.1 - Number of new HIV infections per 1,000 uninfected population, by sex and age (per 1,000 uninfected population) - SH_HIV_INCD - All age ranges or no breaks by age - Both sexes`
-  ) %>%
-  filter(year >= 2000) %>%
-  ggplot(aes(x = year, y = incidence)) +
-    geom_point() +
-    labs(x = "", y = "HIV incidence") +
-    theme_minimal()
+as_numeric_spaces <- function(x) {
+  as.numeric(str_replace_all(x, " ", ""))
+}
 
-deaths <- read_csv("resources/introduction/hivaids-and-tuberculosis-deaths.csv")
+infections_esa <- read_xlsx("resources/introduction/epidemic-transition-metrics-esa.xlsx", sheet = 1, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Eastern and southern Africa", Indicator = "New HIV infections")
 
-deaths_plot <- deaths %>%
-  filter(Entity == "Sub-Saharan Africa (WB)") %>%
-  select(
-    year = Year,
-    deaths_direct = `Deaths - HIV/AIDS - Sex: Both - Age: All Ages (Number)`,
-    deaths_indirect = `Deaths - HIV/AIDS resulting in other diseases - Sex: Both - Age: All Ages (Number)`
-  ) %>%
-  mutate(deaths = deaths_direct + deaths_indirect) %>%
-  filter(year >= 2000) %>%
-  ggplot(aes(x = year, y = deaths)) +
-    geom_point() +
-    lims(x = c(2000, 2020)) +
-    labs(x = "Year", y = "AIDS related deaths") +
-    theme_minimal()
+deaths_esa <- read_xlsx("resources/introduction/epidemic-transition-metrics-esa.xlsx", sheet = 2, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Eastern and southern Africa", Indicator = "AIDS-related deaths")
 
-ggsave("figures/overall-picture.png", incidence_plot / deaths_plot, h = 4, w = 6.25)
+infections_wca <- read_xlsx("resources/introduction/epidemic-transition-metrics-wca.xlsx", sheet = 1, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Western and central Africa", Indicator = "New HIV infections")
+
+deaths_wca <- read_xlsx("resources/introduction/epidemic-transition-metrics-wca.xlsx", sheet = 2, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Western and central Africa", Indicator = "AIDS-related deaths")
+
+infections_global <- read_xlsx("resources/introduction/epidemic-transition-metrics-global.xlsx", sheet = 1, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Global", Indicator = "New HIV infections")
+
+deaths_global <- read_xlsx("resources/introduction/epidemic-transition-metrics-global.xlsx", sheet = 2, skip = 1) %>%
+  select(-5) %>%
+  mutate(across(1:4, as_numeric_spaces)) %>%
+  mutate(Region = "Global", Indicator = "AIDS-related deaths")
+
+infections_deaths <- bind_rows(
+  infections_esa,
+  deaths_esa,
+  infections_wca,
+  deaths_wca,
+  infections_global,
+  deaths_global
+) %>%
+  mutate(Region = fct_relevel(Region, "Global", "Eastern and southern Africa", "Western and central Africa"))
+
+infections_plot <- infections_deaths %>%
+  filter(Indicator == "New HIV infections") %>%
+  ggplot(aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
+  geom_ribbon(alpha = 0.25, colour = NA) +
+  geom_line() +
+  labs(x = "", y = "New HIV infections") +
+  scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
+  scale_fill_manual(values = cbpalette) +
+  scale_color_manual(values = cbpalette) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+deaths_plot <- infections_deaths %>%
+  filter(Indicator == "AIDS-related deaths") %>%
+  ggplot(aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
+  geom_ribbon(alpha = 0.25, colour = NA) +
+  geom_line() +
+  labs(x = "Year", y = "AIDS-related deaths") +
+  scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
+  scale_fill_manual(values = cbpalette) +
+  scale_color_manual(values = cbpalette) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+
+infections_global %>%
+  filter(`All ages estimate` == max(`All ages estimate`))
+
+round(100 * (max(infections_global$`All ages estimate`) - tail(infections_global$`All ages estimate`, 1)) / max(infections_global$`All ages estimate`))
+
+deaths_global %>%
+  filter(`All ages estimate` == max(`All ages estimate`))
+
+round(100 * (max(deaths_global$`All ages estimate`) - tail(deaths_global$`All ages estimate`, 1)) / max(deaths_global$`All ages estimate`))
+
+ggsave("figures/overall-picture.png", infections_plot / deaths_plot, h = 4, w = 6.25)
