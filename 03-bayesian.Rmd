@@ -33,53 +33,57 @@ knitr::opts_chunk$set(
 
 ## Bayesian statistics
 
-Bayesian statistics is a mathematical paradigm for learning from data, that allows flexible and principled incorporation of scientific knowledge.
-As such, it is particularly well suited for attending to the challenges I present in Section \ref{sec:surveillance} wherein the data demands careful analysis.
+Bayesian statistics is a mathematical paradigm for learning from data.
+It is well suited for attending to the challenges in Section \ref{sec:surveillance} because it allows principled, flexible incorporation of scientific knowledge.
 In this section I provide brief overview.
 For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
 
 ### Bayesian modelling
 
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model $p(\y, \bvartheta)$ for the observed data $\y = (y_1, \ldots, y_n)$ together with parameters $\bvartheta = (\vartheta_1, \ldots, \vartheta_d)$, where $n$ is the dimension of the data and $d$ is the number of parameters.
-The model is generative in the sense that one can simulate from it to obtain draws
+This is achieved by the construction of a generative model $p(\y, \bphi)$ for the observed data $\y = (y_1, \ldots, y_n)$ together with parameters $\bphi = (\phi_1, \ldots, \phi_d)$, where $n$ is the dimension of the data and $d$ is the number of parameters.
+The model is generative in the sense that one can simulate from it to generate draws
 \begin{equation}
-(\y, \bvartheta) \sim p(\y, \bvartheta)
+(\y, \bphi) \sim p(\y, \bphi)
 \end{equation}
-If these draws differ too greatly from what the analyst would expect, then the generative model can be refined.
+If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
 In this way, models can be built iteratively, with complexity added gradually. 
 
-The model is usually constructed from two parts, known as the likelihood $p(\y \, | \, \bvartheta)$ and the prior $p(\bvartheta)$ whereby $p(\y, \bvartheta) = p(\y \, | \, \bvartheta) p(\bvartheta)$.
-The likelihood, as a function of $\bvartheta$ with $\y$ fixed, reflects the probability of observing the data when the true value of the parameters is $\bvartheta$.
-The prior encapsulates beliefs about the parameters $\bvartheta$ before the data is observed.
-There has been substantial discussion about how the prior should be specified.
-The main axis of disagreement is the degree of subjectivity which should be allowed.
-However, the distinction between likelihood and prior can sometimes be blurred (Section \@ref(hierarchical-lgm-elgm)).
-As such, it may be argued that these difficulties are not unique to the prior and ultimately the challenge of specifying the data generating process is better thought of more holistically [@gelman2017prior].
+The model is usually constructed from two parts, known respectively as the likelihood $p(\y \, | \, \bphi)$ and the prior distribution $p(\bphi)$ whereby the joint distribution is obtained by the product $p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)$.
+The likelihood, as a function of $\bphi$ with $\y$ fixed, reflects the probability of observing the data when the true value of the parameters is $\bphi$.
+The prior distribution encapsulates beliefs about the parameters $\bphi$ before the data is observed.
+
+Recommendations for specifying the prior distribution vary.
+A central issue is the extent to which subjective information should be incorporated into the prior distribution, and thereby influence the posterior distribution.
+Proponents of the objective Bayesian paradigm suggest that the prior distribution should be non-informative.
+That said, we shall see that the distinction between likelihood and prior distribution can be blurred (Section \@ref(hierarchical-lgm-elgm)).
+As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically [@gelman2017prior].
 
 ### Bayesian computation
 
-The posterior distribution $p(\bvartheta \, | \, \y)$ encapsulates probabilistic beliefs about the parameters given the observed data.
+The posterior distribution $p(\bphi \, | \, \y)$ encapsulates probabilistic beliefs about the parameters given the observed data.
 Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
-p(\bvartheta \, | \, \y) = \frac{p(\y \, | \, \bvartheta) p(\bvartheta)}{p(\y)}. \label{eq:posterior}
+p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, Equation \ref{eq:posterior} is usually intractable to calculate directly because of the integral $p(\y) = \int p(\y, \bvartheta) \text{d}\bvartheta$ in the denominator.
-As such, the typical situation is that although the numerator is proportional to the posterior $p(\bvartheta \, | \, \y) \propto p(\y \, | \, \bvartheta) p(\bvartheta)$ and easy to evaluate, it is difficult to evaluate the posterior itself.
+Unfortunately, it is usually intractable to calculate Equation \ref{eq:posterior} directly because of the integral $p(\y) = \int p(\y, \bphi) \text{d}\bphi$ in the denominator, sometimes known as the marginal likelihood or evidence.
+As such, although the numerator is proportional to the posterior distribution $p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)$ and easy to evaluate, it is typically difficult to evaluate the posterior distribution itself.
 
 A great variety of computational methods have been developed to tackle this problem.
 Briefly, the main categories are:
 
-* Markov chain Monte Carlo (MCMC) is the most popular approach, and proceeds by simulating samples from a Markov chain with the posterior as its stationary distribution.
-* Variational Bayes approaches assume the posterior distribution belongs to a certain class of functions and use optimisation to choose the best member of that class.
+1. **Sampling algorithms** Also known as Monte Carlo algorithms, these approaches look to generate samples from the posterior distribution.
+The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
+In this thesis, I make use of the No-U-Turn sampler (NUTS), a Hamiltonian Monte Carlo (HMC) algorithm, implemented in the Stan probabilistic programming language (PPL).
+2. **Variational Bayes** In variational Bayes, the posterior distribution is assumed to belong to a particular class of functions and use optimisation to choose the best member of that class.
 
 ### Interplay between modelling and computation
 
 Bayesian computation aspires to abstract away calculation of the posterior distribution from the analyst.
 Modern computational techniques and software have made this aspiration a reality for many models.
-However, computation of the posterior remains intractable for a substantial majority of models.
-As such, the analyst need not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior is tractable in reasonable time.
-It is in this sense, that there is an interplay between modelling and computation.
+However, computation of the posterior distribution remains intractable for a majority of models.
+As such, the analyst need not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior distribution is tractable in reasonable time.
+As such, there is an important interplay between modelling and computation, wherein models are bound by the limits of computation.
 As computation improves, the space of models available to the analyst expands.
 
 ## Spatio-temporal statistics
@@ -91,33 +95,37 @@ The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally 
 
 Correlation structure is an important feature of spatio-temporal data.
 
-## Small-area estimation
-
 ## Model classes {#hierarchical-lgm-elgm}
 
 ### Hierarchical models {#hierarchical}
-
-Real world data usually has hierarchical structure.
-For example, there might be multiple measurements of the same unit (Figure \ref{fig:hierarchical-structure}).
-
-Bayesian hierarchical models are comprised of multiple stages.
-For example in a three-stage model, we have $\bvartheta = (\x, \btheta) = (x_1, \ldots, x_N, \theta_1, \ldots, \theta_m)$ such that
-\begin{align}
-\y &\sim p(\y \, | \, \x, \btheta), \\
-\x &\sim p(\x \, | \, \btheta), \\
-\btheta &\sim p(\btheta),
-\end{align}
-with posterior proportional to $p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)$.
 
 ```{r hierarchical-structure, fig.cap="Data often has a hierarchical structure."}
 knitr::include_graphics("figures/hierarchical-structure.pdf")
 ```
 
-### Mixed effects
+Real world data usually has hierarchical structure.
+For example, we might have a study (Figure \ref{fig:hierarchical-structure}) where each individual $j = 1, \ldots, J$ has a group of $n_j$ observations.
+Then, it would be inappropriate to treat all $\sum_j n_j$ observations as being independent and identically distributed (IID).
+Observations belonging to the same group, that is of the same individual, are likely to be more similar than observations from different groups, which refer to different individuals.
 
-Mixed effect models contain both fixed and random effects.
-Fixed and random effects have notoriously many different definitions [@gelman2005analysis], but nonetheless.
-Partial pooling.
+Bayesian hierarchical or multilevel models, comprised of multiple stages, allow handling data of this sort.
+For example, in a three-stage hierarchical model, we partition the parameters so that $\bphi = (\x, \btheta)$.
+I refer to $\x = (x_1, \ldots, x_N)$ as the latent field, and $\btheta = (\theta_1, \ldots, \theta_m)$ as the hyperparameters.
+The generative model for data $\y$ is then
+\begin{align}
+\y &\sim p(\y \, | \, \x, \btheta), \\
+\x &\sim p(\x \, | \, \btheta), \\
+\btheta &\sim p(\btheta),
+\end{align}
+with posterior distribution proportional to $p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)$.
+Referring back to the previous example, we may informally think about the latent field as modelling properties of individuals, and the hyperparameters as modelling shared properties of individuals or the observation process.
+
+### Mixed effects models
+
+Fixed effects refer to parts of the latent field which are constant across groups.
+Random effects refer to parts of the latent field which vary across groups.
+Though these terms have notoriously many different definitions [@gelman2005analysis], I nonetheless find them useful to introduce here.
+No pooling, partial pooling, complete pooling.
 Structured random effects.
 
 ### Latent Gaussian models
@@ -125,17 +133,16 @@ Structured random effects.
 Latent Gaussian models [LGMs; @rue2009approximate] are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
 More specifically, in an LGM, the likelihood is given by
 \begin{align*}
-y_i &\sim p(y_i \, | \, \eta_i, \theta_1), \quad i = 1, \ldots, n, \\
+y_i &\sim p(y_i \, | \, \eta_i, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
 \eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}).
 \end{align*}
-The likelihood is $p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)$, where $\bmeta = (\eta_1, \ldots, \eta_n)$.
+The likelihood is given by a product $p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)$, where $\bmeta = (\eta_1, \ldots, \eta_n)$.
 Each response has conditional mean $\mu_i$ with inverse link function $g: \mathbb{R} \to \mathbb{R}$ such that $\mu_i = g(\eta_i)$.
 The vector $\btheta_1 \in \mathbb{R}^{s_1}$, with $s_1$ assumed small, are additional parameters of the likelihood.
-The structured additive predictor $\eta_i$ may include an intercept $\beta_0$, linear effects $\beta_j$ of the covariates $z_{ji}$, and unknown functions $f_k(\cdot)$ of the covariates $u_{ki}$.
-The parameters $\beta_0$, $\{\beta_j\}$, $\{f_k(\cdot)\}$ are each assigned Gaussian priors, and can be collected into a vector $\x \in \mathbb{R}^N$ such that $\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})$ where $\btheta_2 \in \mathbb{R}^{s_2}$ are further parameters, again with $s_2$ assumed small.
-Let $\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m$ with $m = s_1 + s_2$ be all hyperparameters, with prior $p(\btheta)$.
-In total, the parameters of the LGM $\bvartheta = (\x, \btheta)$ comprise both the latent field and hyperparameters.
+The structured additive predictor $\eta_i$ may include an intercept $\beta_0$, fixed effects $\beta_j$ of the covariates $z_{ji}$, and random effects $f_k(\cdot)$ of the covariates $u_{ki}$.
+The parameters $\beta_0$, $\{\beta_j\}$, $\{f_k(\cdot)\}$ are each assigned Gaussian prior distributions, and can be collected into a vector $\x \in \mathbb{R}^N$ such that $\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})$ where $\btheta_2 \in \mathbb{R}^{s_2}$ are further hyperparameters, again with $s_2$ assumed small.
+Let $\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m$ with $m = s_1 + s_2$ be all hyperparameters, with prior distribution $p(\btheta)$.
 
 Spatio-temporal data are well suited to being modelled with LGMs.
 
@@ -145,9 +152,9 @@ Spatio-temporal data are well suited to being modelled with LGMs.
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 <!-- Thesis work of [Follestad](https://cds.cern.ch/record/639625/files/sis-2003-305.pdf) that stayed as a preprint -->
 
-Some leading-edge spatio-temporal models used in small-area estimation fall outside the LGM class.
+Some models used in small-area estimation fall outside the LGM class.
 <!-- There are other complex models from [ecology](https://www.bioss.ac.uk/rsse/2013/September2013slides-Illian.pdf) that can't currently be fit using `R-INLA` -->
-However, many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by @stringer2021fast.
+Many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by @stringer2021fast.
 By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
 In particular, the structured additive predictor is redefined as $\bmeta = (\eta_1, \ldots \eta_{N_n})$, where $N_n \in \mathbb{N}$ is a function of $n$, and it is possible that $N_n \neq n$.
 Each mean response $\mu_i$ now depends on some subset $\mathcal{J}_i \subseteq [N_n]$ of indices of $\bmeta$, with $\cup_{i = 1}^n \mathcal{J}_i = [N_n]$ and $1 \leq |\mathcal{J}_i| \leq N_n$, where $[N_n] = \{1, \ldots, N_n\}$.
@@ -156,12 +163,21 @@ Put together, ELGMs are then of the form
 \begin{align*}
 y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
-\eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j \in [N_n],
+\eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j = 1, \ldots, N_n,
 \end{align*}
-with latent field and hyperparameter priors as in the LGM case.
+with latent field and hyperparameter prior distributions as in the LGM case.
 
-In my experience, the ELGMs class is well suited to the demands of small-area estimation.
-Indeed, I will use this class of models throughout the thesis.
-In Chapter \@ref(beyond-borders) I consider...
-While I am able to transform it to an LGM using the Poisson-multinomial transformation, the multinomial logistic regression model I use in Chapter \@ref(multi-agyw) is naturally written as an ELGM where each observation depends on the set of structured additive predictors corresponding to...
-Finally, Chapter \@ref(naomi-aghq) I show that the Naomi small-area estimation model used to produce estimates of HIV indicators across over 35 countries is an ELGM.
+The ELGM class is well suited to small-area estimation of HIV indicators.
+Indeed, this class of models is used throughout the thesis.
+While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial], the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is naturally written as an ELGM in which each observation depends on the set of structured additive predictors corresponding to each multinomial observation.
+In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators across over 35 countries is shown to have the features of an ELGM.
+
+## Survey methods
+
+Survey methods concern the design and analysis of survey data [@lohr2009sampling].
+In SSA, nationally representative household surveys, such as the Demographic and Health Surveys (DHS) or Population-based HIV Impact Assessment (PHIA) surveys, provide the highest quality information about HIV.
+Talk about the DDC [@meng2018statistical].
+With regard to the DDC, discuss how survey weighting is helpful.
+Discuss how we weight then model following @chen2014use.
+Discuss how we ignore clustering structure.
+Discuss how all of this isn't great and that someone should figure this out.

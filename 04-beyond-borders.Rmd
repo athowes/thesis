@@ -17,55 +17,56 @@ bibliography: references.bib
 \markboth{Models for spatial structure}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter, I describe an investigation of spatial random effects specifications.
-The motivated for this investigation was one of the fundamental questions encountered by an analyst during model construction.
-Namely, should the model be augmented to better capture a feature of the data generating process that we believe exists?
+In this chapter, I present an investigation of spatial random effects specifications.
+This investigation was motivated by a particular instance of a fundamental question encountered during model construction.
+Namely, should the model be augmented to capture a feature we have prior belief exists?
 The results are presented in @howes2023beyond.
 
 Code for the analysis in this chapter is available from [`athowes/beyond-borders`](https://github.com/athowes/beyond-borders) and supported by the R package [`arealutils`](https://athowes.github.io/arealutils).
 
 ## Background
 
-### Areal and point data
-
-### Spatial random effects
-
 ## Models based on adjacency
 
-### The Besag model
+Spatial structure can be encoded using a symmetric relation between areas.
+Let $i \sim j$ if the areas $A_i$ and $A_j$ are adjacent or neighbouring.
+Adjacency is often defined by a shared border, though other choices are possible [@paciorek2013spatial].
+The Besag model [@besag1991bayesian] is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the $i$th spatial random effect is given by
+\begin{equation}
+    u_i \, | \, \bu_{-i} \sim \N \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \label{eq:besag}
+\end{equation}
+where $\delta i$ is the set of neighbours of $A_i$ with cardinality $n_{\delta i} = |\delta i|$ and $\bu_{-i}$ is the vector of spatial random effects with the $i$th entry removed.
+The conditional mean of the random effect $u_i$ is the average of its neighbours $\{u_j\}_{j \sim i}$ and the precision $n_{\delta i}\tau_u$ is proportional to the number of neighbours $n_{\delta i}$.
+By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
+\begin{equation}
+    \bu \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \bR^{-}), \label{eq:gmrf}
+\end{equation}
+where $\bR^{-}$ is the generalised inverse of the rank-deficient structure matrix $\bR$, so-called because it defines the structure of the precision matrix, with entries
+\begin{equation}
+    R_{ij} =
+    \begin{cases}
+        n_{\delta i}, & i = j \\
+        -1, & i \sim j \\
+        0, & \text{otherwise.}
+    \end{cases}
+\end{equation}
+The Markov property arises due to the conditional independence structure $p(u_i \, | \, \bu_{-i}) = p(u_i \, | \, \bu_{\delta i})$ whereby each area only depends on its neighbours.
+This is reflected in the sparsity of $\bR$ such that $u_i \perp u_j \, | \, \bu_{-ij}$ if and only if $R_{ij} = 0$.
+The structure matrix $\bR$ may also be expressed as the Laplacian of the adjacency graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ with vertices $v \in \mathcal{V}$ corresponding to each area and edges $e \in \mathcal{E}$ between vertices $i$ and $j$ when $i \sim j$.
 
-### The BYM2 model
+Rewriting Equation \ref{eq:gmrf}, the probability density function of $\bu$ is
+\begin{equation}
+    p(\bu)
+    \propto \exp \left( -\frac{\tau_u}{2} \bu^\top \bR \bu \right)
+    \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). \label{eq:pdfu}
+\end{equation}
+This density is a function of the pairwise differences $u_i - u_j$ and so is invariant to the addition of a constant $c$ to each entry $p(\bu) = p(\bu + c\mathbf{1})$, leading to an improper uniform distribution on the average of the $u_i$.
+If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and $\text{rank}(\bR) = n - 1$, while if $\mathcal{G}$ is disconnected, and composed of $n_c \geq 2$ connected components with index sets $I_1, \ldots, I_{n_c}$, then the corresponding structure matrix $\bR$ has rank $n - n_c$ and the density is invariant to the addition of a constant to each of the connected components $p(\bu_{I}) = p(\bu_{I} + c\mathbf{1})$ where $I = I_1, \ldots, I_{n_c}$.
 
 ## Models using kernels
 
-### The centroid kernel model
-
-### The integrated kernel model
-
 ## Simulation study
-
-### Synthetic data-sets
-
-### Inferential models
-
-#### Priors
-
-#### Kernel details
-
-### Inference algorithms
-
-### Model assessment
-
-#### Continuous ranked probability score
-
-### Results
 
 ## HIV prevalence study
 
-### Results
-
 ## Discussion
-
-### Limitations
-
-### Conclusion

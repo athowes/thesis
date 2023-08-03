@@ -19,20 +19,22 @@ bibliography: references.bib
 
 In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
 Naomi is a complex model, used in over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
-The results are presented in @howes2023fast.
 
 Though I began working on this project in 2020, I only started to make significant progress after reading @stringer2021fast.
 I am grateful to have subsequently collaborate with Alex Stringer on this project, including my visiting the University of Waterloo during the fall term of 2022.
+The results of this work are presented in @howes2023fast.
 
 Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf) and supported by the R package [`inf.utils`](https://athowes.github.io/inf.utils).
 
 ## Background
 
-The goal of a Bayesian analysis is to obtain the posterior distribution $p(\bvartheta \, | \, \y)$.
-This is a reasonable goal because given a loss function $L$, the posterior loss of action $a$ depends on the data only via the posterior distribution.
+In a Bayesian analysis, the primary goal is to obtain the posterior distribution $p(\bphi \, | \, \y)$.
+This goal is reasonable because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
+In this sense, the posterior distribution is sufficient for use in decision making.
+
 It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi
 \end{equation}
 As such, approximations to the posterior distribution are typically used.
 
@@ -41,25 +43,25 @@ As such, approximations to the posterior distribution are typically used.
 ### The Laplace approximation
 
 The posterior normalising constant may be approximated using Laplace's method [@tierney1986accurate].
-Let $h(\bvartheta) = \log p(\bvartheta, \y)$ such that
+Let $h(\bphi) = \log p(\bphi, \y)$ such that
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bvartheta) \text{d}\bvartheta = \int_{\mathbb{R}^d} \exp(h(\bvartheta)) \text{d}\bvartheta.
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
 \end{equation}
 Let
 \begin{equation}
-\hat \bvartheta = \argmax_{\bvartheta} h(\bvartheta)
+\hat \bphi = \argmax_{\bphi} h(\bphi)
 \end{equation}
 be the posterior mode, and
 \begin{equation}
-\hat {\Hb} = - \frac{\partial^2}{\partial \bvartheta \partial \bvartheta^\top} h(\bvartheta) \rvert_{\bvartheta = \hat \bvartheta}
+\hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
 Taking a second order Taylor approximation at the posterior mode gives the Laplace approximation to the normalising constant as
 \begin{align}
-\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bvartheta) - \frac{1}{2} (\bvartheta - \hat \bvartheta)^\top \hat {\Hb} (\bvartheta - \hat \bvartheta) \right) \text{d}\bvartheta \label{eq:la} \\
-&= \exp(h(\hat \bvartheta)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
+&= \exp(h(\hat \bphi)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
 \end{align}
-where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bvartheta, \hat {\Hb}^{-1})$.
+where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bphi, \hat {\Hb}^{-1})$.
 
 ### Adaptive Gauss-Hermite quadrature
 
@@ -67,7 +69,7 @@ Another way to approximate the posterior normalising constant is using quadratur
 Let $\mathcal{Q}$ be a set of quadrature points, and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 \begin{equation}
-\tilde p(\y) = \sum_{\bvartheta \in \mathcal{Q}} p(\y, \bvartheta) \omega(\bvartheta).
+\tilde p(\y) = \sum_{\bphi \in \mathcal{Q}} p(\y, \bphi) \omega(\bphi).
 \end{equation}
 
 ### Integrated nested Laplace approximation
