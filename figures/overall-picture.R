@@ -66,7 +66,7 @@ deaths_plot <- infections_deaths %>%
   ggplot(aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
   geom_ribbon(alpha = 0.25, colour = NA) +
   geom_line() +
-  labs(x = "Year", y = "AIDS-related deaths") +
+  labs(x = "Year", y = "AIDS-related deaths", caption = "Source: UNAIDS epidemiological estimates, 2023") +
   scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
   scale_fill_manual(values = cbpalette) +
   scale_color_manual(values = cbpalette) +
@@ -84,4 +84,4 @@ deaths_global %>%
 
 round(100 * (max(deaths_global$`All ages estimate`) - tail(deaths_global$`All ages estimate`, 1)) / max(deaths_global$`All ages estimate`))
 
-ggsave("figures/overall-picture.png", infections_plot / deaths_plot, h = 4, w = 6.25)
+ggsave("figures/overall-picture.png", infections_plot / deaths_plot, h = 4.25, w = 6.25)

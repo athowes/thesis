@@ -4,6 +4,8 @@ PhD in [Modern Statistics and Statistical Machine Learning](https://statml.io/) 
 
 Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff Eaton](https://www.imperial.ac.uk/people/jeffrey.eaton).
 
+![A dotplot and map of adult HIV prevalence in sub-Saharan Africa.](figures/naomi-continent.png)
+
 ## Chapters
 
 |            | Title      | Additional resources |
@@ -34,3 +36,4 @@ If you would like to cite this work, please use:
 > How did you format this thesis?
 
 I used the R package [`thesisdown`](https://github.com/ismayc/thesisdown), inspired by [`bookdown`](https://github.com/rstudio/bookdown).
+

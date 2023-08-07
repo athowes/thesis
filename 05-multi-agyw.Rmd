@@ -23,6 +23,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r}
+resource_version <- "20230627-144735-3da88508"
+```
+
 # A model for risk group proportions {#multi-agyw}
 \adjustmtc
 \markboth{A model for risk group proportions}{}
@@ -30,8 +34,7 @@ knitr::opts_chunk$set(
 
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-My primary role was to develop the statistical model.
-I built on an earlier version of the analysis conducted by Kathryn Risher.
+My primary role was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in @howes2023spatio.
 Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries to guide policy.
 Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw) and supported by the R package [`multi.utils`](https://athowes.github.io/multi.utils) [@multiutils].
@@ -39,47 +42,54 @@ Code for the analysis in this chapter is available from [`athowes/multi-agyw`](h
 ## Background
 
 Adolescent girls and young women (AGYW, defined here as females aged 15-29) are a demographic group at increased risk of HIV infection.
-Though AGHYW are only 28% of the population, they comprise 44% of new infections [@unaids2021update].
+Though AGYW are only 28% of the population, they comprise 44% of new infections [@unaids2021update].
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-The social and biological reasons for this disparity are given in Table \@ref(tab:agyw-reasons).
+Table \@ref(tab:agyw-reasons) gives the social and biological reasons for this disparity.
 
 | Reason      | Description |
 | ----------- | ----------- |
 | Structural vulnerability and power imbalances | Gender inequality, lack of agency, economic factors, limited healthcare access, stigma and discrimination |
-| Age patterns of sexual mixing | Older male partners have higher prevalence of HIV |
-| Younger age at first sex   | Text |
-| Increased susceptibility to HIV infection | Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells |
+| Age patterns of sexual mixing, including a younger age at first sex | Older male partners have higher prevalence of HIV                                   |
+| Increased susceptibility to HIV infection     | Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells        |
 
-Table: (\#tab:agyw-reasons) AYGW are at higher risk of HIV infection for interacting social and biological reasons.
+Table: (\#tab:agyw-reasons) AYGW are at higher risk of HIV infection as a result of interacting social and biological reasons.
 
 On this basis, AGYW have been identified as a priority population for HIV prevention services [@saul2018dreams; @global2018measurement].
 The Global AIDS Strategy 2021-2026 [@unaids2021global] proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
-As risk depends on both factors, prioritisation of prevention services would be more efficient if both are taken into account (Figure \@ref(fig:risk-grid)).
+As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure \@ref(fig:risk-grid)).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
-Estimates of the size of each risk group are required.
+To implement the strategy, estimates of the size of each risk group are required.
 
 ```{r risk-grid, fig.cap="Risk depends on both individual-level risk behaviour and population-level HIV incidence."}
 knitr::include_graphics("figures/risk-grid.png")
 ```
+
+## Data
 
 | Risk group | Description | Local HIV incidence | Incidence ratio |
 | ---------- | ----------- | ------------------- | --------------- |
 | None       | Not sexually active | -- | 0.0 |
 | Low        | One cohabiting partner | -- | 1.0 (Baseline) |
 | High       | Non-regular or multiple partner(s) | -- | 1.72 |
-| Very High  | Transactional sex (adjusted to correspond to female sex workers) | 0.1-0.3% | 13.0 |
-| | | 0.3-1.0% | 9.0 |
-| | | 1.0-3.0% | 6.0 |
-| | | >3.0% | 3.0 |
+| Very High  | Transactional sex (adjusted to correspond to female sex workers) | 0.1-0.3%, 0.3-1.0%, 1.0-3.0%, 1.0-3.0% | 13.0, 9.0, 6.0, 3.0 |
 
-Table: (\#tab:risk-groups) Behavioural risk groups.
+Table: (\#tab:risk-groups) HIV risk groups and assumed HIV incidence rate ratio for each risk group relative to AGYW with one cohabiting sexual partner.
+Among FSW, the incidence rate ratio depended on the level of HIV incidence among the general population.
+The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of ALPHA network data.
+Non-regular partners are defined to be non-cohabiting.
+The transactional sex risk group is adjusted during analysis to correspond to female sex worker, and incidence rate ratios among FSW were derived based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
+When the local HIV incidence in the general population is higher, the incidence rate ratio for FSW is lower.
 
-## Data
+```{r available-surveys, out.width = "90%", echo=FALSE, fig.cap="Surveys."}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
+```
 
-I used household survey data from 13 designated AGYW priority countries.: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+I used household survey data from 13 designated AGYW priority countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+I included surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts.
+Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS) were included.
 
 For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
-These risk groups were:
+These risk groups were (Table \@ref(tab:risk-groups)):
 
 1. Not sexually active
 2. One cohabiting sexual partner
@@ -106,7 +116,7 @@ I used the most recent 2022 estimates for all countries, apart from Mozambique w
 ## Model for risk group proportions
 
 I took a two-stage modelling approach to estimate the four risk group proportions.
-Index the four risk groups as $k \in \{1, 2, 3, 4\}$, and denote being in either the third or fourth risk group by $k = 3^{+}$.
+Let the four risk groups be indexed by $k \in \{1, 2, 3, 4\}$, and denote being in either the third or fourth risk group as $k = 3^{+}$.
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model (Section \@ref(st-multinomial)) to estimate the proportion of AGYW in the risk groups $k \in \{1, 2, 3^{+}\}$.
 Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model (Section \@ref(s-logistic)) to estimate the proportion of those in the $k = 3^{+}$ risk group that were in the $k = 3$ and $k = 4$ risk groups respectively.
 
@@ -150,7 +160,7 @@ p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
 &= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \label{eq:prodpoisson}
 \end{align}
-corresponding to the product of independent Poisson likelihoods as in Equation \ref{eq:poisson1}.
+corresponding to the product of independent Poisson likelihoods as in Equation \@ref(eq:poisson1).
 
 This model, including random sample sizes, is equivalent to the multinomial logistic regression only when the normalisation constants $m_{ita}$ are recovered exactly.
 To ensure that this is the case, one approach is to include observation-specific random effects $\theta_{ita}$ in the equation for the linear predictor.
@@ -159,7 +169,7 @@ Although in theory an improper prior $\theta_{ita} \propto 1$ should be used, I 
 
 #### Model specifications
 
-I considered four models for $\eta_{ita}$ in Equation \ref{eq:poisson2} of the form
+I considered four models for $\eta_{ita}$ in Equation \@ref(eq:poisson2) of the form
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \phi_{ik} + \gamma_{tk}.
 \end{equation}
@@ -236,7 +246,7 @@ I multiplied direct estimates produced using the `survey` package [@JSSv009i08] 
     m^\star = \frac{\left(\sum_j w_j \right)^2}{\sum_j {w_j}^2}
 \end{equation}
 to obtain $y^\star$.
-These counts may not be integers, and as such the Poisson likelihood I used in Equation \ref{eq:poisson1} is not appropriate.
+These counts may not be integers, and as such the Poisson likelihood I used in Equation \@ref(eq:poisson1) is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood $y^\star \sim \text{xPoisson}(\kappa)$, given by
 \begin{equation}
     p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
@@ -251,7 +261,7 @@ To estimate the proportion of those in the $k = 3^{+}$ risk group that were in t
     q_{ia} &= \text{logit}^{-1} \left( \eta_{ia} \right), 
 \end{align}
 where $q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}$.
-Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \ref{eq:logistic-regression}.
+Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \@ref(eq:logistic-regression).
 As all such surveys occurred in 2013-2018, in the logistic regression model I assumed $q_{ia}$ to be constant over time.
 
 #### Model specifications
@@ -291,7 +301,7 @@ I assumed these ratios in South Africa were applicable to every country, allowin
 The results obtained are shown in Figure \@ref(fig:age-disagg-fsw-line).
 
 ```{r age-disagg-fsw-line, out.width = "90%", echo=FALSE, fig.cap="The disaggregation procedure I used produces a plausible age distirbution of FSW by country."}
-knitr::include_graphics("resources/multi-agyw/20230627-144735-3da88508/depends/age-disagg-fsw-line.png")
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-disagg-fsw-line.png"))
 ```
 
 ### Results
@@ -307,9 +317,21 @@ These empirical coverages can be compared to the nominal coverage $(1 - \alpha)$
 This approach has the advantage of considering all possible confidence values at once.
 @sailynoja2021graphical develop binomial distribution-based simultaneous confidence bands for ECDF difference values which test uniformity.
 
+```{r coverage, out.width = "90%", echo=FALSE, fig.cap="Coverage."}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/coverage.png"))
+```
+
 #### Variance decomposition
 
 #### Estimates
+
+```{r 3p1-continental-map, out.width = "90%", echo=FALSE, fig.cap="Map."}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/3p1-continental-map.png"))
+```
+
+```{r 3p1-within-between-country-variation, out.width = "90%", echo=FALSE, fig.cap="Dots."}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/3p1-within-between-country-variation.png"))
+```
 
 ## Prevalence and incidence by risk group
 
@@ -344,6 +366,10 @@ Under this stratification, individuals in each age group $a$ are prioritised acc
 By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
 
 ### Results
+
+```{r infections-reached, out.width = "90%", echo=FALSE, fig.cap="Surveys."}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached.png"))
+```
 
 ## Discussion
 
@@ -395,7 +421,7 @@ Does not undermine my work.
 
 My analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population [@cleland2004monitoring].
 In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of my risk group proportion estimates.
-Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners [@nnko2004secretive, @helleringer2011reliability] or may bias their reporting of sexual debut [@zaba2004age; @wringe2009comparative; @nguyen2022trends].
+Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners [@nnko2004secretive; @helleringer2011reliability] or may bias their reporting of sexual debut [@zaba2004age; @wringe2009comparative; @nguyen2022trends].
 For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of my results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age [@glynn2011assessing], suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
 If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in my analysis, likely over-attributing risk to higher risk groups.
 

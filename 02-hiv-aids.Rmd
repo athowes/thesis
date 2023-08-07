@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 # The HIV/AIDS epidemic {#hiv-aids}
 \adjustmtc
-\markboth{HIV/AIDS}{}
+\markboth{The HIV/AIDS epidemic}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 ```{r}
@@ -40,11 +40,6 @@ deaths2022 <- 630 * 1e3
 infections2022 <- 1.3 * 1e6
 
 coverage2022 <- 76
-
-#' From https://www.unaids.org/en/resources/presscentre/featurestories/2021/september/20210906_global-roll-out-hiv-treatment
-art_averted <- 16.5 * 1e6
-
-condom_averted_lb <- 10 * 1e6
 ```
 
 ## Background
@@ -53,7 +48,7 @@ condom_averted_lb <- 10 * 1e6
 HIV is a retrovirus which infects humans.
 If untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
-As a result, AIDS is characterised by increased risk of developing opportunistic infections such as *Pneumocystis* pneumonia and tuberculosis.
+As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or *Pneumocystis* pneumonias.
 
 <!-- HIV is a big problem, plus how is it transmitted -->
 The first AIDS cases were reported in Los Angeles in the early 1980s.
@@ -65,53 +60,66 @@ Approximately `r custom_numbers_to_words(infections)` people have become infecte
 ```{r}
 pepfar <- 85 * 1e9
 #' From https://www.theglobalfund.org/en/hivaids/
-global_fund <- (24.2 + 5) * 1e9
+global_fund <- round((24.2 + 5)) * 1e9
 ```
 
 <!-- A lot of effort going into it -->
 A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies such as the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$`r custom_numbers_to_words(pepfar)` invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$`r custom_numbers_to_words(global_fund)` invested).
-A number of interventions have had a substantial impact on the course of the epidemic:
+A number of interventions have had a substantial impact on the course of the epidemic.
+These include:
+
+```{r}
+#' From https://www.unaids.org/en/resources/presscentre/featurestories/2021/september/20210906_global-roll-out-hiv-treatment
+art_deaths_averted <- 16.5 * 1e6
+condom_infections_averted <- 117 * 1e6
+```
 
 * Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
 By taking ART daily, a person living with HIV can live a full and healthy life.
-Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022` are accessing ART.
-As a result, ART is estimated to have averted `r custom_numbers_to_words(art_averted)` AIDS-related deaths.
-Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
+Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022`% were accessing ART.
+As such, ART is estimated to have averted `r custom_numbers_to_words(art_deaths_averted)` AIDS-related deaths.
+Further, if the virus is undetectable then it cannot be transmitted sexually [@cohen2011prevention].
 For this reason, treatment also operates as prevention (TaSP).
 ART has been estimated to have averted this many new infections.
-* Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
-Scale-up of condom usage since 1990 has been estimated to have averted over `r custom_numbers_to_words(condom_averted_lb)` new HIV infections [@stover2021impact].
+* Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as *Chlamydia trachomatis*, *Neisseria gonorroeae*, syphilis, and *Trichomonas vaginalis*.
+There has been a significant scale-up of condom usage since 1990, which is estimated to have averted `r custom_numbers_to_words(condom_infections_averted)` new HIV infections [@stover2021impact].
+However, there remain significant and difficult to close gaps in condom use at last high-risk sex.
+* Voluntary medical male circumcision (VMMC), in which the foreskin is completely removed surgically, has been found to provide partial protection against female-to-male HIV transmission, resulting in a reduction of HIV incidence in men by 50-60% [@auvert2005randomized; @gray2007male; @bailey2007male].
 * Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
-* Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
+They are primarily useful in high risk settings.
 
-```{r overall-picture, fig.cap="Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\\%. Data from UNAIDS epidemiological estimates 2023."}
+```{r overall-picture, fig.cap="Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions combined comprise sub-Saharan Africa."}
 knitr::include_graphics("figures/overall-picture.png")
 ```
 
-The epidemic response has seen both the yearly number of new HIV cases and number of AIDS-related deaths fall significantly since their respective peaks (Figure \ref{fig:overall-picture}).
+The epidemic response has seen both the yearly number of new HIV cases and number of AIDS-related deaths fall significantly since their respective peaks (Figure \@ref(fig:overall-picture)).
 However, there remains significant distance to go in ending AIDS as a public health threat: in 2022 there were `r custom_numbers_to_words(infections2022)` people newly infected with HIV and `r custom_numbers_to_words(deaths2022)` AIDS-related deaths [@unaids2022global].
 Furthermore progress is halting due to lack of investment, COVID-19 and other reasons.
 
+```{r naomi-continent, fig.cap="Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These 2023 estimates were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \\texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO)."}
+knitr::include_graphics("figures/naomi-continent.png")
+```
+
 <!-- Uneven burden in space -->
-There is substantial geographic inequality in disease burden.
+There is substantial geographic variation in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
 In others, transmission is sustained in the general population, and prevalence is higher.
 Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of PLHIV worldwide.
-Even within countries, there is significant geographic variation.
+Adult HIV prevalence (ages 15-49) is as high as 10% or more in some countries in southern Africa.
+As well as country-level geographic variation, there is significant variation between sub-national districts (Figure \@ref(fig:naomi-continent)).
 
 <!-- Uneven burden across people -->
-Across all settings, the inequality in disease burden extends to groups.
-Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
+Across all settings, some people are at much higher risk than others.
+Groups of people at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
 
 <!-- How difuse is burden -->
-In SSA, risk is more diffuse than in concentrated settings.
-Demographic groups, while not classified as KPs, at increased risk of HIV infection include adolescent girls and young women (AGYW), migratory populations, and rural communities.
+Risk is more diffuse in SSA than in concentrated settings in which the majority of new infections occur among KPs.
+For example, adolescent girls and young women (AGYW) are a demographic group at increased risk of HIV infection in SSA [@risher2021age; @monod2023growing].
 
 <!-- Prioritisation of interventions  -->
-HIV interventions should be prioritised to have the greatest impact on the epidemic.
-The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
-This requires data.
+For the available resources to have the greatest impact, it is important that HIV interventions are prioritised
+The precision public health paradigm [@khoury2016precision] looks to provide the right intervention, to the right population, in the right place, at the right time.
 <!-- Methods for prevention prioritisation include geographic, demographic, key population services, risk screening, and individual-level risk characteristics. -->
 
 ## HIV surveillance \label{sec:surveillance}
@@ -122,16 +130,19 @@ Surveillance can used to track epidemic indicators, identify at-risk populations
 
 ### HIV indicators
 
-Important indicators include:
+Central indicators include:
 
-* **HIV prevalence** The proportion of the population who have HIV $\rho$, typically given as a percentage.
-Though an important indicator, HIV prevalence is for the most part used indirectly to calculate other indicators rather than directly itself.
-In some circumstances those other indicators can be difficult to estimate, and HIV prevlance can be a useful proxy.
+* **HIV prevalence** is the proportion $\rho \in [0, 1]$ of the population who have HIV, typically written as a percentage.
+Interpreted alone, HIV prevalence can be misleading.
+Prevalence increasing could be as a result of new infections, or as a result of more PLHIV remaining alive by taking treatment.
+As such, HIV prevalence is primarily used in calculations of other indicators, rather than directly itself.
+In some circumstances those other indicators can be difficult to estimate, and HIV prevalence can be a useful proxy.
 The number of PLHIV is given by $N\rho$, where $N$ is the population size.
-* **HIV incidence** The rate of new HIV infections $\lambda$, typically given as number of new infections per 1000 person years.
+* **HIV incidence** is the rate $\lambda \in \mathbb{R}$ of new HIV infections, typically written as number of new infections per 1000 person years.
 HIV incidence can be specified in terms of HIV prevalence by $\lambda = N\Delta\rho$, where $\Delta\rho$ is the change in HIV prevalence over some time period.
-* **ART coverage** The proportion of PLHIV who are on ART $\alpha$, typically given as a percentage.
-Planning of treatment.
+Planning, delivery, and evaluation of prevention programming relies on estimates of HIV incidence.
+* **ART coverage** is the proportion $\alpha \in [0, 1]$ of PLHIV who are on ART, typically written as a percentage.
+Estimates of ART coverage play a direct role in the provision of treatment services.
 
 ### Challenges
 

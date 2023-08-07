@@ -31,6 +31,10 @@ knitr::opts_chunk$set(
 \markboth{Introduction}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
+```{r gbd, fig.cap="HIV/AIDS is the largest cause of DALYs for non-infacts (>1 years) in SSA. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights used in the 2019 Global Burden of Disease study vary depending on severity of the condition. "}
+knitr::include_graphics("figures/gbd.png")
+```
+
 ```{r}
 custom_numbers_to_words <- function(number) {
   powers <- c(3, 6, 9, 12)
@@ -63,25 +67,25 @@ ssa_pop2022 <- 1.2 * 1e9 #' From the world bank
 ```
 
 This thesis is about applied and methodological Bayesian statistics.
-It is Bayesian in that I use probability models to arrive at conclusions based on data.
 It is applied and methodological in that I am concerned first with real world questions and second with the means to answer them.
+It is Bayesian in that I arrive at conclusions based on data using probability models.
 
 The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
-It is estimated that `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) reside in SSA.
+The @ihme1 found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \@ref(fig:gbd)).
 Using statistics to quantify the epidemic is an important part of the public health response, and the path towards disease control and elimination.
 However, there are numerous challenges involved in obtaining suitable estimates of relevant indicators.
 
 The estimates in this thesis are based on data recorded from national household surveys or routinely collected from healthcare facilities.
-One important feature of this data is its location in space and time.
-I use modelling techniques from the field of spatio-temporal statistics.
-While diverse, spatio-temporal data have distinctive commonalities which can can be utilised across settings.
+An important feature of this data is its location and the time at which it was collected.
+While diverse, spatio-temporal data have distinctive commonalities.
+I draw on modelling techniques well suited for this kind of data.
 
 Computation is an essential part of modern statistical practice.
-Each project chapter, as well as the thesis itself, is accompanied by $\textsc{R}$ code, hosted on GitHub.
+Each project in this thesis, as well as the thesis itself, is accompanied by $\textsc{R}$ code, hosted on GitHub.
 
 ## Chapter overview
 
-In this section, I provide a brief overview of the chapters to follow.
+The structure of this thesis is as follows:
 
 * Chapter \@ref(hiv-aids): I begin by providing background on the HIV/AIDS epidemic, as well as describing the challenges faced by surveillance efforts.
 * Chapter \@ref(bayes-st): I then introduce the statistical concepts and notation used throughout the thesis, focusing on Bayesian modelling and computation.

@@ -14,7 +14,7 @@ bibliography: references.bib
 
 # Fast approximate Bayesian inference {#naomi-aghq}
 \adjustmtc
-\markboth{Fast, approximate inference for the Naomi model}{}
+\markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
@@ -61,7 +61,7 @@ Taking a second order Taylor approximation at the posterior mode gives the Lapla
 \tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
 &= \exp(h(\hat \bphi)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
 \end{align}
-where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bphi, \hat {\Hb}^{-1})$.
+where Equation \@ref(eq:la) is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bphi, \hat {\Hb}^{-1})$.
 
 ### Adaptive Gauss-Hermite quadrature
 
@@ -102,6 +102,17 @@ where the prior distribution on each of the regression parameters, including the
 The random effects are IID $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
 
 ## Naomi model
+
+The Naomi small-area estimation model [@eaton2021naomi] synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
+Software has been developed for Naomi (\url{https://naomi.unaids.org}), allowing countries to input their data and interactively generate estimates during workshops as a part of a yearly process supported by UNAIDS.
+Creation of estimates by country teams, rather than external agencies or researchers, is an important and distinctive feature of the HIV response.
+Drawing on expertise closest to the data being modelled improves the accuracy of the process, as well as strengthening trust in the resulting estimates, creating a virtuous cycle of data quality, use and ownership [@noor2022country].
+
+Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and presents a challenging Bayesian inference problem.
+As well as hundreds of fixed and random effect parameters, Naomi has >20 hyperparameters: substantially more than the small number that can typically be handled by approaches like integrated nested Laplace approximations [INLA; @rue2009approximate].
+Moreover, observations depend on multiple structured additive predictors, such that Naomi falls into the class of extended latent Gaussian models [ELGMs; @stringer2022fast].
+
+We consider a simplified version defined only at the time of the most recent household survey with HIV testing, omitting nowcasting and temporal projection, as these time points involve limited inferences.
 
 ## Malawi case-study
 
