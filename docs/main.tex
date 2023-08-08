@@ -153,11 +153,16 @@
 % Your full degree name.  (But remember that DPhils aren't "in" anything.  They're just DPhils.)
 \degree{Doctor of Philosophy}
 % Term and year of submission, or date if your board requires (eg most masters)
-\degreedate{September 2023}
+\degreedate{October 2023}
 
 
 %%%%% YOUR OWN PERSONAL MACROS
 % This is a good place to dump your own LaTeX macros as they come up.
+
+\usepackage{pifont}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{bm}
 
 \newcommand{\Sc}{\mathcal{S}}
 \newcommand{\R}{\mathcal{R}}
@@ -183,11 +188,8 @@
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
 
-\usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
-
-\RequirePackage{bm}
 
 % To make text superscripts shortcuts
 	\renewcommand{\th}{\textsuperscript{th}} % ex: I won 4\th place
@@ -273,20 +275,17 @@
 
 %%%%% ACKNOWLEDGEMENTS -- Nothing to do here except comment out if you don't want it.
 \begin{acknowledgements}
- 	Thanks to Seth Flaxman and Jeff Eaton for supervision of this research;
- staff and students of the StatML CDT at Imperial and Oxford;
- members of the HIV Inference Group at Imperial;
- members of the Machine Learning and Global Health Network;
- the Bill \& Melinda Gates Foundation and EPSRC via the StatML CDT for funding this PhD;
- Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab;
- Alex Stringer for hosting my visit to Waterloo;
- the Effective Altruism community;
- my friends and family.
+ 	I would like to start by thanking my supervisors Seth Flaxman and Jeff Eaton for their guidance and mentorship during the course of this research.
+ I am grateful for the research environment offered by the HIV Inference Group, Modern Statistics and Statistical Machine Learning Centre for Doctoral Training, and Machine Learning and Global Health Network.
+ The Effective Altruism community provided me a framework for deciding what to work on.
+ Thanks to Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab, and Alex Stringer for hosting my visit to the University of Waterloo.
+ Thank you to my parents and grandparents.
+ This research was possible due to funding by the Bill \& Melinda Gates Foundation and EPSRC.
 
  \begin{flushright}
  Adam Howes \\
  Imperial College London\\
- September 2023
+ October 2023
  \end{flushright}
 \end{acknowledgements}
 
@@ -297,7 +296,7 @@ Effective public health response requires accurate, timely, high-resolution esti
 Limitations of available data make obtaining these estimates difficult.
 I develop and apply Bayesian spatio-temporal methods to meet this challenge.
 First, I examine models for area-level spatial structure.
-Second, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward by the Global AIDS Strategy.
+Second, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
 Finally, I develop a novel Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
 Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
 \end{abstract}
@@ -344,27 +343,36 @@ Together, the contributions in this thesis help to guide precision HIV policy in
 \adjustmtc
 \markboth{Introduction}{}
 
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/gbd} 
+
+}
+
+\caption{HIV/AIDS is the largest cause of DALYs for non-infacts (>1 years) in SSA. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights used in the 2019 Global Burden of Disease study vary depending on severity of the condition. }\label{fig:gbd}
+\end{figure}
+
 This thesis is about applied and methodological Bayesian statistics.
-It is Bayesian in that I use probability models to arrive at conclusions based on data.
 It is applied and methodological in that I am concerned first with real world questions and second with the means to answer them.
+It is Bayesian in that I arrive at conclusions based on data using probability models.
 
 The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
-It is estimated that 66\% of the 39 million people living with HIV (PLHIV) reside in SSA.
+The \textcite{ihme1} found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \ref{fig:gbd}).
 Using statistics to quantify the epidemic is an important part of the public health response, and the path towards disease control and elimination.
 However, there are numerous challenges involved in obtaining suitable estimates of relevant indicators.
 
 The estimates in this thesis are based on data recorded from national household surveys or routinely collected from healthcare facilities.
-One important feature of this data is its location in space and time.
-I use modelling techniques from the field of spatio-temporal statistics.
-While diverse, spatio-temporal data have distinctive commonalities which can can be utilised across settings.
+An important feature of this data is its location and the time at which it was collected.
+While diverse, spatio-temporal data have distinctive commonalities.
+I draw on modelling techniques well suited for this kind of data.
 
 Computation is an essential part of modern statistical practice.
-Each project chapter, as well as the thesis itself, is accompanied by \(\textsc{R}\) code, hosted on GitHub.
+Each project in this thesis, as well as the thesis itself, is accompanied by \(\textsc{R}\) code, hosted on GitHub.
 
 \hypertarget{chapter-overview}{%
 \section{Chapter overview}\label{chapter-overview}}
 
-In this section, I provide a brief overview of the chapters to follow.
+The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
 
 \begin{itemize}
 \tightlist
@@ -386,7 +394,7 @@ In this section, I provide a brief overview of the chapters to follow.
   I apply the method to data from Malawi, and analyse the consequences of inference method choice for policy relevant outcomes.
   Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
 \item
-  Chapter \ref{conclusions}: I discuss avenues for future work, and my conclusions regarding the research, as well as its strengths and weaknesses.
+  Chapter \ref{conclusions}: Finally, I discuss avenues for future work, and my conclusions regarding the research, as well as its strengths and weaknesses.
 \end{itemize}
 
 \begin{figure}
@@ -395,17 +403,14 @@ In this section, I provide a brief overview of the chapters to follow.
 
 }
 
-\caption{Flowchart presenting the recommended chapter dependencies for this thesis. The dashed line represents a recommended, but not required dependency.}\label{fig:chapter-flowchart}
+\caption{The chapters in this thesis are structured to depend on each other. The dashed line represents a recommended, but not required dependency. Though chronological order is recommended, Chapter 4, Chapter 5 and Chapter 6 may be read in any order as, for the most part, they correspond to separable research projects.}\label{fig:chapter-flowchart}
 \end{figure}
-
-Figure \ref{fig:chapter-flowchart} gives the dependency structure for the chapters.
-Though chronological order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq} may be read in any order as, for the most part, they correspond to separable research projects.
 
 \hypertarget{hiv-aids}{%
 \chapter{The HIV/AIDS epidemic}\label{hiv-aids}}
 
 \adjustmtc
-\markboth{HIV/AIDS}{}
+\markboth{The HIV/AIDS epidemic}{}
 
 \hypertarget{background}{%
 \section{Background}\label{background}}
@@ -413,7 +418,7 @@ Though chronological order is recommended, Chapter \ref{beyond-borders}, Chapter
 HIV is a retrovirus which infects humans.
 If untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
-As a result, AIDS is characterised by increased risk of developing opportunistic infections such as \emph{Pneumocystis} pneumonia and tuberculosis.
+As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or \emph{Pneumocystis} pneumonias.
 
 The first AIDS cases were reported in Los Angeles in the early 1980s.
 Since then, HIV has spread globally.
@@ -421,26 +426,29 @@ Transmission occurs by exposure to specific bodily fluids of an infected person.
 The most common mode of transmission is via unprotected anal or vaginal sex, though transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 Approximately 86 million people have become infected with HIV, and of those 40 million have died of AIDS-related causes.
 
-A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies such as the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$85 billion invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$29.2 billion invested).
-A number of interventions have had a substantial impact on the course of the epidemic:
+A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies such as the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$85 billion invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$29 billion invested).
+A number of interventions have had a substantial impact on the course of the epidemic.
+These include:
 
 \begin{itemize}
 \tightlist
 \item
   Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
   By taking ART daily, a person living with HIV can live a full and healthy life.
-  Of the 39 million people living with HIV (PLHIV) in 2022, around 76 are accessing ART.
-  As a result, ART is estimated to have averted 16.5 million AIDS-related deaths.
-  Furthermore, if the virus is undetectable then it cannot be transmitted sexually.
-  For this reason, treatment also operates as prevention (TaSP).
-  ART has been estimated to have averted this many new infections.
+  Of the 39 million people living with HIV (PLHIV) in 2022, around 76\% were accessing ART.
+  ART is estimated to have averted 16.5 million AIDS-related deaths.
+  Further, ART reduces the amount of virus in the blood and genital secretions.
+  If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually \autocite{cohen2011prevention}.
+  For this reason, as well as saving lives, treatment also operates as prevention (TaSP).
 \item
-  Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs).
-  Scale-up of condom usage since 1990 has been estimated to have averted over 10 million new HIV infections \autocite{stover2021impact}.
+  Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as \emph{Chlamydia trachomatis}, \emph{Neisseria gonorroeae}, syphilis, and \emph{Trichomonas vaginalis}.
+  There has been a significant scale-up of condom usage since 1990, which is estimated to have averted 117 million new HIV infections \autocite{stover2021impact}.
+  However, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
+\item
+  Voluntary medical male circumcision (VMMC), in which the foreskin is completely removed surgically, has been found to provide partial protection against female-to-male HIV transmission, resulting in a reduction of HIV incidence in men by 50-60\% \autocite{auvert2005randomized,gray2007male,bailey2007male}.
 \item
   Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
-\item
-  Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
+  They are primarily useful in high risk settings.
 \end{itemize}
 
 \begin{figure}
@@ -449,29 +457,38 @@ A number of interventions have had a substantial impact on the course of the epi
 
 }
 
-\caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\%. Data from UNAIDS epidemiological estimates 2023.}\label{fig:overall-picture}
+\caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions combined comprise sub-Saharan Africa.}\label{fig:overall-picture}
 \end{figure}
 
 The epidemic response has seen both the yearly number of new HIV cases and number of AIDS-related deaths fall significantly since their respective peaks (Figure \ref{fig:overall-picture}).
 However, there remains significant distance to go in ending AIDS as a public health threat: in 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths \autocite{unaids2022global}.
 Furthermore progress is halting due to lack of investment, COVID-19 and other reasons.
 
-There is substantial geographic inequality in disease burden.
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/naomi-continent} 
+
+}
+
+\caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These 2023 estimates were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
+\end{figure}
+
+There is substantial geographic variation in disease burden.
 In some countries, the epidemic is concentrated within small populations, and prevalence is low.
 In others, transmission is sustained in the general population, and prevalence is higher.
 Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA), which accounts for 66\% of PLHIV worldwide.
-Even within countries, there is significant geographic variation.
+Adult HIV prevalence (ages 15-49) is as high as 10\% or more in some countries in southern Africa.
+As well as country-level geographic variation, there is significant variation between sub-national districts (Figure \ref{fig:naomi-continent}).
 
-Across all settings, the inequality in disease burden extends to groups.
-Groups at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
+Across all settings, some people are at much higher risk than others.
+Groups of people at increased risk of HIV infection are known as key populations (KPs), and include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
 
-In SSA, risk is more diffuse than in concentrated settings.
-Demographic groups, while not classified as KPs, at increased risk of HIV infection include adolescent girls and young women (AGYW), migratory populations, and rural communities.
+Risk is more diffuse in SSA than in concentrated settings in which the majority of new infections occur among KPs.
+For example, adolescent girls and young women (AGYW) are a demographic group at increased risk of HIV infection in SSA \autocite{risher2021age,monod2023growing}.
 
-HIV interventions should be prioritised to have the greatest impact on the epidemic.
-The precision public health paradigm aims to get the right interventions, to the right populations, in the right place, at the right time.
-This requires data.
+For the available resources to have the greatest impact, it is important that HIV interventions are prioritised
+The precision public health paradigm \autocite{khoury2016precision} looks to provide the right intervention, to the right population, in the right place, at the right time.
 
 \hypertarget{hiv-surveillance}{%
 \section{\texorpdfstring{HIV surveillance \label{sec:surveillance}}{HIV surveillance }}\label{hiv-surveillance}}
@@ -482,21 +499,24 @@ Surveillance can used to track epidemic indicators, identify at-risk populations
 \hypertarget{hiv-indicators}{%
 \subsection{HIV indicators}\label{hiv-indicators}}
 
-Important indicators include:
+Central indicators include:
 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{HIV prevalence} The proportion of the population who have HIV \(\rho\), typically given as a percentage.
-  Though an important indicator, HIV prevalence is for the most part used indirectly to calculate other indicators rather than directly itself.
-  In some circumstances those other indicators can be difficult to estimate, and HIV prevlance can be a useful proxy.
+  \textbf{HIV prevalence} is the proportion \(\rho \in [0, 1]\) of the population who have HIV, typically written as a percentage.
+  Interpreted alone, HIV prevalence can be misleading.
+  Prevalence increasing could be as a result of new infections, or as a result of more PLHIV remaining alive by taking treatment.
+  As such, HIV prevalence is primarily used in calculations of other indicators, rather than directly itself.
+  In some circumstances those other indicators can be difficult to estimate, and HIV prevalence can be a useful proxy.
   The number of PLHIV is given by \(N\rho\), where \(N\) is the population size.
 \item
-  \textbf{HIV incidence} The rate of new HIV infections \(\lambda\), typically given as number of new infections per 1000 person years.
+  \textbf{HIV incidence} is the rate \(\lambda \in \mathbb{R}\) of new HIV infections, typically written as number of new infections per 1000 person years.
   HIV incidence can be specified in terms of HIV prevalence by \(\lambda = N\Delta\rho\), where \(\Delta\rho\) is the change in HIV prevalence over some time period.
+  Planning, delivery, and evaluation of prevention programming relies on estimates of HIV incidence.
 \item
-  \textbf{ART coverage} The proportion of PLHIV who are on ART \(\alpha\), typically given as a percentage.
-  Planning of treatment.
+  \textbf{ART coverage} is the proportion \(\alpha \in [0, 1]\) of PLHIV who are on ART, typically written as a percentage.
+  Estimates of ART coverage play a direct role in the provision of treatment services.
 \end{itemize}
 
 \hypertarget{challenges}{%
@@ -566,7 +586,7 @@ Aims for HIV response going forward, and surveillance capabilities are needed to
 \chapter{Bayesian spatio-temporal statistics}\label{bayes-st}}
 
 \adjustmtc
-\markboth{Bayesian}{}
+\markboth{Bayesian spatio-temporal statistics}{}
 
 \hypertarget{bayesian-statistics}{%
 \section{Bayesian statistics}\label{bayesian-statistics}}
@@ -636,12 +656,16 @@ As computation improves, the space of models available to the analyst expands.
 \hypertarget{spatio-temporal-statistics}{%
 \section{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
 
-In spatio-temporal statistics \autocite{cressie2015statistics} we observe data indexed by spatial or temporal location.
+In spatio-temporal statistics \autocite{cressie2015statistics}, we observe data indexed by spatial or temporal location.
 In this thesis we assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
 Data may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
 The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
+Similarly, data may be associated to a point \(t \in \mathcal{T}\) or period of time \(T \in \mathcal{T}\).
 
-Correlation structure is an important feature of spatio-temporal data.
+Spatio-temporal data has some important properties.
+Foremost among them is correlation structure.
+Tobler's first law of geography, earlier expressed by \textcite{fisher1936design}, is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
+This law extends not only to space but also time.
 
 \hypertarget{hierarchical-lgm-elgm}{%
 \section{Model classes}\label{hierarchical-lgm-elgm}}
@@ -729,7 +753,7 @@ In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produ
 \section{Survey methods}\label{survey-methods}}
 
 Survey methods concern the design and analysis of survey data \autocite{lohr2009sampling}.
-In SSA, nationally representative household surveys, such as the Demographic and Health Surveys (DHS) or Population-based HIV Impact Assessment (PHIA) surveys, provide the highest quality information about HIV.
+In SSA, nationally representative household surveys, such as the Demographic and Health Surveys (DHS) \autocite{dhs} or Population-based HIV Impact Assessment (PHIA) \autocite{phia} surveys, provide the highest quality information about HIV.
 Talk about the DDC \autocite{meng2018statistical}.
 With regard to the DDC, discuss how survey weighting is helpful.
 Discuss how we weight then model following \textcite{chen2014use}.
@@ -737,7 +761,7 @@ Discuss how we ignore clustering structure.
 Discuss how all of this isn't great and that someone should figure this out.
 
 \hypertarget{beyond-borders}{%
-\chapter{Spatial structure}\label{beyond-borders}}
+\chapter{Models for spatial structure}\label{beyond-borders}}
 
 \adjustmtc
 \markboth{Models for spatial structure}{}
@@ -781,7 +805,7 @@ The Markov property arises due to the conditional independence structure \(p(u_i
 This is reflected in the sparsity of \(\bR\) such that \(u_i \perp u_j \, | \, \bu_{-ij}\) if and only if \(R_{ij} = 0\).
 The structure matrix \(\bR\) may also be expressed as the Laplacian of the adjacency graph \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) with vertices \(v \in \mathcal{V}\) corresponding to each area and edges \(e \in \mathcal{E}\) between vertices \(i\) and \(j\) when \(i \sim j\).
 
-Rewriting Equation \ref{eq:gmrf}, the probability density function of \(\bu\) is
+Rewriting Equation @ref\{eq:gmrf\}, the probability density function of \(\bu\) is
 \begin{equation}
     p(\bu)
     \propto \exp \left( -\frac{\tau_u}{2} \bu^\top \bR \bu \right)
@@ -810,8 +834,7 @@ If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can
 
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-My primary role was to develop the statistical model.
-I built on an earlier version of the analysis conducted by Kathryn Risher.
+My primary role was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in \textcite{howes2023spatio}.
 Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries to guide policy.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}} and supported by the R package \href{https://athowes.github.io/multi.utils}{\texttt{multi.utils}} \autocite{multiutils}.
@@ -820,14 +843,14 @@ Code for the analysis in this chapter is available from \href{https://github.com
 \section{Background}\label{background-2}}
 
 Adolescent girls and young women (AGYW, defined here as females aged 15-29) are a demographic group at increased risk of HIV infection.
-Though AGHYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
+Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-The social and biological reasons for this disparity are given in Table \ref{tab:agyw-reasons}.
+Table \ref{tab:agyw-reasons} gives the social and biological reasons for this disparity.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{\label{tab:agyw-reasons} AYGW are at higher risk of HIV infection for interacting social and biological reasons.}\tabularnewline
+\caption{\label{tab:agyw-reasons} AYGW are at higher risk of HIV infection as a result of interacting social and biological reasons.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Reason
@@ -847,16 +870,15 @@ Description
 \bottomrule\noalign{}
 \endlastfoot
 Structural vulnerability and power imbalances & Gender inequality, lack of agency, economic factors, limited healthcare access, stigma and discrimination \\
-Age patterns of sexual mixing & Older male partners have higher prevalence of HIV \\
-Younger age at first sex & Text \\
+Age patterns of sexual mixing, including a younger age at first sex & Older male partners have higher prevalence of HIV \\
 Increased susceptibility to HIV infection & Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells \\
 \end{longtable}
 
 On this basis, AGYW have been identified as a priority population for HIV prevention services \autocite{saul2018dreams,global2018measurement}.
 The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
-As risk depends on both factors, prioritisation of prevention services would be more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
+As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
-Estimates of the size of each risk group are required.
+To implement the strategy, estimates of the size of each risk group are required.
 
 \begin{figure}
 
@@ -867,12 +889,20 @@ Estimates of the size of each risk group are required.
 \caption{Risk depends on both individual-level risk behaviour and population-level HIV incidence.}\label{fig:risk-grid}
 \end{figure}
 
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1818}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3455}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2727}}@{}}
-\caption{\label{tab:risk-groups} Behavioural risk groups.}\tabularnewline
+\caption{\label{tab:risk-groups} HIV risk groups and assumed HIV incidence rate ratio for each risk group relative to AGYW with one cohabiting sexual partner.
+Among FSW, the incidence rate ratio depended on the level of HIV incidence among the general population.
+The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of ALPHA network data.
+Non-regular partners are defined to be non-cohabiting.
+The transactional sex risk group is adjusted during analysis to correspond to female sex worker, and incidence rate ratios among FSW were derived based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
+When the local HIV incidence in the general population is higher, the incidence rate ratio for FSW is lower.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Risk group
@@ -902,19 +932,24 @@ Incidence ratio
 None & Not sexually active & -- & 0.0 \\
 Low & One cohabiting partner & -- & 1.0 (Baseline) \\
 High & Non-regular or multiple partner(s) & -- & 1.72 \\
-Very High & Transactional sex (adjusted to correspond to female sex workers) & 0.1-0.3\% & 13.0 \\
-& & 0.3-1.0\% & 9.0 \\
-& & 1.0-3.0\% & 6.0 \\
-& & \textgreater3.0\% & 3.0 \\
+Very High & Transactional sex (adjusted to correspond to female sex workers) & 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, 1.0-3.0\% & 13.0, 9.0, 6.0, 3.0 \\
 \end{longtable}
 
-\hypertarget{data}{%
-\section{Data}\label{data}}
+\begin{figure}
 
-I used household survey data from 13 designated AGYW priority countries.: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+{\centering \includegraphics[width=0.9\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/available-surveys} 
+
+}
+
+\caption{Surveys.}\label{fig:available-surveys}
+\end{figure}
+
+I used household survey data from 13 designated AGYW priority countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+I included surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts.
+Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS) were included.
 
 For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
-These risk groups were:
+These risk groups were (Table \ref{tab:risk-groups}):
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -950,7 +985,7 @@ I used the most recent 2022 estimates for all countries, apart from Mozambique w
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
 
 I took a two-stage modelling approach to estimate the four risk group proportions.
-Index the four risk groups as \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group by \(k = 3^{+}\).
+Let the four risk groups be indexed by \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group as \(k = 3^{+}\).
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model (Section \ref{st-multinomial}) to estimate the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
 Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model (Section \ref{s-logistic}) to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
 
@@ -997,7 +1032,7 @@ p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
 &= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \label{eq:prodpoisson}
 \end{align}
-corresponding to the product of independent Poisson likelihoods as in Equation \ref{eq:poisson1}.
+corresponding to the product of independent Poisson likelihoods as in Equation \eqref{eq:poisson1}.
 
 This model, including random sample sizes, is equivalent to the multinomial logistic regression only when the normalisation constants \(m_{ita}\) are recovered exactly.
 To ensure that this is the case, one approach is to include observation-specific random effects \(\theta_{ita}\) in the equation for the linear predictor.
@@ -1007,7 +1042,7 @@ Although in theory an improper prior \(\theta_{ita} \propto 1\) should be used, 
 \hypertarget{model-specifications}{%
 \subsubsection{Model specifications}\label{model-specifications}}
 
-I considered four models for \(\eta_{ita}\) in Equation \ref{eq:poisson2} of the form
+I considered four models for \(\eta_{ita}\) in Equation \eqref{eq:poisson2} of the form
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \phi_{ik} + \gamma_{tk}.
 \end{equation}
@@ -1109,7 +1144,7 @@ I multiplied direct estimates produced using the \texttt{survey} package \autoci
     m^\star = \frac{\left(\sum_j w_j \right)^2}{\sum_j {w_j}^2}
 \end{equation}
 to obtain \(y^\star\).
-These counts may not be integers, and as such the Poisson likelihood I used in Equation \ref{eq:poisson1} is not appropriate.
+These counts may not be integers, and as such the Poisson likelihood I used in Equation \eqref{eq:poisson1} is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPoisson}(\kappa)\), given by
 \begin{equation}
     p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
@@ -1125,7 +1160,7 @@ To estimate the proportion of those in the \(k = 3^{+}\) risk group that were in
     q_{ia} &= \text{logit}^{-1} \left( \eta_{ia} \right), 
 \end{align}
 where \(q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}\).
-Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \ref{eq:logistic-regression}.
+Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \eqref{eq:logistic-regression}.
 As all such surveys occurred in 2013-2018, in the logistic regression model I assumed \(q_{ia}\) to be constant over time.
 
 \hypertarget{model-specifications-1}{%
@@ -1191,11 +1226,38 @@ These empirical coverages can be compared to the nominal coverage \((1 - \alpha)
 This approach has the advantage of considering all possible confidence values at once.
 \textcite{sailynoja2021graphical} develop binomial distribution-based simultaneous confidence bands for ECDF difference values which test uniformity.
 
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/coverage} 
+
+}
+
+\caption{Coverage.}\label{fig:coverage}
+\end{figure}
+
 \hypertarget{variance-decomposition}{%
 \subsubsection{Variance decomposition}\label{variance-decomposition}}
 
 \hypertarget{estimates}{%
 \subsubsection{Estimates}\label{estimates}}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/3p1-continental-map} 
+
+}
+
+\caption{Map.}\label{fig:3p1-continental-map}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/3p1-within-between-country-variation} 
+
+}
+
+\caption{Dots.}\label{fig:3p1-within-between-country-variation}
+\end{figure}
 
 \hypertarget{prevalence-and-incidence-by-risk-group}{%
 \section{Prevalence and incidence by risk group}\label{prevalence-and-incidence-by-risk-group}}
@@ -1234,6 +1296,15 @@ By cumulatively summing the expected infections, for each fraction of the total 
 
 \hypertarget{results-1}{%
 \subsection{Results}\label{results-1}}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/infections-reached} 
+
+}
+
+\caption{Surveys.}\label{fig:infections-reached}
+\end{figure}
 
 \hypertarget{discussion-1}{%
 \section{Discussion}\label{discussion-1}}
@@ -1287,7 +1358,7 @@ Does not undermine my work.
 
 My analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
 In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of my risk group proportion estimates.
-Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners \autocite[\textcite{helleringer2011reliability}]{nnko2004secretive} or may bias their reporting of sexual debut \autocite{zaba2004age,wringe2009comparative,nguyen2022trends}.
+Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners \autocite{nnko2004secretive,helleringer2011reliability} or may bias their reporting of sexual debut \autocite{zaba2004age,wringe2009comparative,nguyen2022trends}.
 For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of my results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age \autocite{glynn2011assessing}, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
 If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in my analysis, likely over-attributing risk to higher risk groups.
 
@@ -1327,42 +1398,41 @@ These findings underscore the importance of providing effective HIV prevention o
 \chapter{Fast approximate Bayesian inference}\label{naomi-aghq}}
 
 \adjustmtc
-\markboth{Fast, approximate inference for the Naomi model}{}
+\markboth{Fast approximate Bayesian inference}{}
 
-In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
-Naomi is a complex model, used in over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
+In this chapter I describe a novel Bayesian inference method I developed motivated the Naomi small-area estimation model
+This model has been used in workshops by over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
+Facilitating fast and accurate inferences for a complex model, across varied data inputs, is a challenging task.
 
-Though I began working on this project in 2020, I only started to make significant progress after reading \textcite{stringer2021fast}.
-I am grateful to have subsequently collaborate with Alex Stringer on this project, including my visiting the University of Waterloo during the fall term of 2022.
+I began working on this project in 2020, and only began making significant progress after reading \textcite{stringer2021fast}.
+Alex Stringer was subsequently kind enough to collaborate with me on this project, as well as host my visit to the University of Waterloo during the fall term of 2022.
 The results of this work are presented in \textcite{howes2023fast}.
-
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}} and supported by the R package \href{https://athowes.github.io/inf.utils}{\texttt{inf.utils}}.
-
-\hypertarget{background-3}{%
-\section{Background}\label{background-3}}
-
-In a Bayesian analysis, the primary goal is to obtain the posterior distribution \(p(\bphi \, | \, \y)\).
-This goal is reasonable because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
-In this sense, the posterior distribution is sufficient for use in decision making.
-
-It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
-\begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi
-\end{equation}
-As such, approximations to the posterior distribution are typically used.
 
 \hypertarget{inference-methods}{%
 \section{Inference methods}\label{inference-methods}}
 
+In a Bayesian analysis, the primary goal is to perform inference, that is obtain the posterior distribution \(p(\bphi \, | \, \y)\).
+Inference is a reasonable goal because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
+In this sense, the posterior distribution is sufficient for use in decision making.
+
+It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
+\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
+\end{equation}
+As such, approximations to the posterior distribution are typically used.
+Some of these approximations can be thought of as ways to approximate Equation \eqref{eq:evidence}.
+
 \hypertarget{the-laplace-approximation}{%
 \subsection{The Laplace approximation}\label{the-laplace-approximation}}
 
-The posterior normalising constant may be approximated using Laplace's method \autocite{tierney1986accurate}.
-Let \(h(\bphi) = \log p(\bphi, \y)\) such that
+Laplace's method may be used to approximate the posterior normalising constant \autocite{tierney1986accurate}.
+Let \(h(\bphi) = \log p(\bphi, \y)\), taking \(\y\) to be given, such that
 \begin{equation}
 p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
 \end{equation}
-Let
+The Laplace approximation follows by taking a second order Taylor approximation at \(h\) at its posterior mode.
+More specifically, let
 \begin{equation}
 \hat \bphi = \argmax_{\bphi} h(\bphi)
 \end{equation}
@@ -1371,37 +1441,104 @@ be the posterior mode, and
 \hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
-Taking a second order Taylor approximation at the posterior mode gives the Laplace approximation to the normalising constant as
+Then the Laplace approximation to is given by
 \begin{align}
-\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&= \exp(h(\hat \bphi)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
+&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
 \end{align}
-where Equation \ref{eq:la} is calculated using the normalising constant of the Gaussian distribution \(\mathcal{N}(\cdot \, | \, \hat \bphi, \hat {\Hb}^{-1})\).
+where Equation \eqref{eq:la} is calculated using the known normalising constant of the Gaussian distribution
+\begin{equation}
+p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+\end{equation}
+As such, the Laplace approximation may be thought of as approximating the posterior distribution using a Gaussian distribution \(p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)\) and written as
+\begin{equation}
+\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
+\end{equation}
 
-\hypertarget{adaptive-gauss-hermite-quadrature}{%
-\subsection{Adaptive Gauss-Hermite quadrature}\label{adaptive-gauss-hermite-quadrature}}
+\hypertarget{the-marginal-laplace-approximation}{%
+\subsubsection{The marginal Laplace approximation}\label{the-marginal-laplace-approximation}}
 
-Another way to approximate the posterior normalising constant is using quadrature.
-Let \(\mathcal{Q}\) be a set of quadrature points, and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
+It may not be desirable to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters using a Gaussian distribution.
+As before, let \(\bphi = (\x, \btheta)\) where \(\x\) is the latent field, and \(\btheta\) are the hyperparameters.
+Applying a Laplace approximation to the latent field, we have \(h(\x, \btheta) = \log p(\x, \btheta, \y)\) with posterior mode
+\begin{equation}
+\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\end{equation}
+and equivalent Hessian matrix evaluated at the posterior mode
+\begin{equation}
+\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \hat \x(\btheta)},
+\end{equation}
+where in both cases dependence on the hyperparameters \(\btheta\) is made explicit.
+The resulting marginal Laplace approximation is then
+\begin{align}
+\tilde p_{\texttt{LA}}(\btheta, \y) &= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
+&= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
+&= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+\end{align}
+where \(\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})\) is a Gaussian approximation to the marginal posterior of the latent field.
+
+\hypertarget{quadrature}{%
+\subsection{Quadrature}\label{quadrature}}
+
+Quadrature is another deterministic approach which can be used to approximate the posterior normalising constant.
+Let \(\mathcal{Q}\) be a set of quadrature points \(\z \in \mathcal{Q}\) and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 \begin{equation}
-\tilde p(\y) = \sum_{\bphi \in \mathcal{Q}} p(\y, \bphi) \omega(\bphi).
+\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
 \end{equation}
+Quadrature methods are most effective when integrating over small dimensions.
+Supposing that \(k\) quadrature points are used per dimension, then the number required in \(d\) dimensions is \(k^d\).
+This exponential increase in the number of points required is sometimes known as the curse of dimensionality.
+
+\hypertarget{gauss-hermite-quadrature}{%
+\subsubsection{Gauss-Hermite quadrature}\label{gauss-hermite-quadrature}}
+
+Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature rule based on the theory of polynomial interpolation which is well-suited to integrating posterior distributions.
+Following \textcite{bilodeau2022stochastic} let \(H_k(z)\) be the \(k\)th Hermite polynomial
+\begin{equation}
+H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
+\end{equation}
+
+\hypertarget{adaptive-quadrature}{%
+\subsubsection{Adaptive quadrature}\label{adaptive-quadrature}}
+
+In an adaptive quadrature rule, the nodes and weights are specified based on the integrand.
 
 \hypertarget{integrated-nested-laplace-approximation}{%
 \subsection{Integrated nested Laplace approximation}\label{integrated-nested-laplace-approximation}}
+
+The integrated nested Laplace approximation (INLA) method \autocite{rue2009approximate} combines marginal Laplace approximations with quadrature to enable approximation of posterior marginal distributions.
+
+\hypertarget{software}{%
+\section{Software}\label{software}}
+
+\hypertarget{tmb}{%
+\subsection{\texorpdfstring{\texttt{TMB}}{TMB}}\label{tmb}}
+
+Template Model Builder {[}TMB, or when referring to the software \texttt{TMB}; \textcite{kristensen2016tmb}{]} is an \(\textsc{R}\) package which implements the Laplace approximation.
+In \texttt{TMB} derivatives are obtained using automatic differentiation \autocite{baydin2017automatic}.
+
+\hypertarget{r-inla}{%
+\subsection{\texorpdfstring{\texttt{R-INLA}}{R-INLA}}\label{r-inla}}
+
+The \texttt{R-INLA} software implements the INLA method
+\texttt{R-INLA} uses a formula interface (e.g.~\texttt{y\ \textasciitilde{}\ 1\ +\ x}) to facilitate use of INLA for common models.
+This is a beneficial design choice for new users.
+For more advanced users, the formula interface can impose constraints on model choice.
 
 \hypertarget{a-universal-inla-implementation}{%
 \section{A universal INLA implementation}\label{a-universal-inla-implementation}}
 
 In this section, I implement the INLA method from scratch, using the \texttt{TMB} package.
-The result is universal in that it is compatible with any model with a \texttt{TMB} C++ template for the log-posterior.
-The \texttt{R-INLA} software uses a formula interface (e.g.~\texttt{y\ \textasciitilde{}\ 1\ +\ x}) which facilitates use of the method for common models.
-Though beneficial for new users, this imposes constraints on advanced users who would like to use more complicated models.
+The result is universal in that it is compatible with any model with a \texttt{TMB} C++ template.
 Indeed \textcite{martino2019integrated} note that ``implementing INLA from scratch is a complex task'', and as a result ``applications of INLA are limited to the (large class of) models implemented {[}in \texttt{R-INLA}{]}''.
-\textcite{skaug2009approximate} highlights the potential benefits of a more flexible INLA implementation using automatic differentiation.
+Further, the potential benefits of a more flexible INLA implementation using automatic differentiation where highlighted by \textcite{skaug2009approximate} in discussion of \textcite{rue2009approximate}.
 
-I demonstrate the implementation using the epilepsy generalised linear mixed model example from \textcite{spiegelhalter1996bugs}.
+\hypertarget{epilepsy-example}{%
+\subsection{Epilepsy example}\label{epilepsy-example}}
+
+To demonstrate the implementation, I use the epilepsy generalised linear mixed model example from \textcite{spiegelhalter1996bugs}.
 The model is based on that of \textcite{breslow1993approximate}, itself a modification of \textcite{thall1990some}, and the data are from an epilespy drug double-blind clinical trial \autocite{leppik1985double}.
 \textcite{rue2009approximate} (Section 5.2) demonstrate the INLA method using this example, and find that there is a difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters (Figure 3).
 
@@ -1421,6 +1558,23 @@ The random effects are IID \(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\) a
 
 \hypertarget{naomi-model}{%
 \section{Naomi model}\label{naomi-model}}
+
+The Naomi small-area estimation model \autocite{eaton2021naomi} synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
+Software has been developed for Naomi (\url{https://naomi.unaids.org}), allowing countries to input their data and interactively generate estimates during workshops as a part of a yearly process supported by UNAIDS.
+Creation of estimates by country teams, rather than external agencies or researchers, is an important and distinctive feature of the HIV response.
+Drawing on expertise closest to the data being modelled improves the accuracy of the process, as well as strengthening trust in the resulting estimates, creating a virtuous cycle of data quality, use and ownership \autocite{noor2022country}.
+
+Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and presents a challenging Bayesian inference problem.
+As well as hundreds of fixed and random effect parameters, Naomi has \textgreater20 hyperparameters: substantially more than the small number that can typically be handled by approaches like integrated nested Laplace approximations {[}INLA; \textcite{rue2009approximate}{]}.
+Moreover, observations depend on multiple structured additive predictors, such that Naomi falls into the class of extended latent Gaussian models {[}ELGMs; \textcite{stringer2022fast}{]}.
+
+\hypertarget{model-structure}{%
+\subsection{Model structure}\label{model-structure}}
+
+We consider a simplified version defined only at the time of the most recent household survey with HIV testing, omitting nowcasting and temporal projection, as these time points involve limited inferences.
+
+\hypertarget{connection-to-elgms}{%
+\subsection{Connection to ELGMs}\label{connection-to-elgms}}
 
 \hypertarget{malawi-case-study}{%
 \section{Malawi case-study}\label{malawi-case-study}}
@@ -1509,6 +1663,166 @@ Avenues for future work include:
 
 \hypertarget{a-model-for-risk-group-proportions-supplement}{%
 \chapter{A model for risk group proportions supplement}\label{a-model-for-risk-group-proportions-supplement}}
+
+\hypertarget{household-survey-data}{%
+\section{Household survey data}\label{household-survey-data}}
+
+\begin{longtable}{rlrcrrrr}
+\toprule
+\multicolumn{1}{l}{} &  &  &  & \multicolumn{4}{c}{Sample size} \\ 
+\cmidrule(lr){5-8}
+\multicolumn{1}{l}{} & Type & Year & Transactional sex question & 15-19 & 20-24 & 25-29 & Total \\ 
+\midrule
+\multicolumn{1}{l}{Botswana} \\ 
+\midrule
+ & BAIS & 2013 & \cmark & 557 & 588 & 649 & 1794 \\ 
+Total &  &  &  & $557$ & $588$ & $649$ & $1794$ \\ 
+\midrule
+\multicolumn{1}{l}{Cameroon} \\ 
+\midrule
+ & DHS & 2004 & \xmark & 2675 & 2207 & 1732 & 6614 \\ 
+ & DHS & 2011 & \xmark & 3588 & 3115 & 2655 & 9358 \\ 
+ & PHIA & 2017 & \xmark & 2620 & 2339 & 2259 & 7218 \\ 
+ & DHS & 2018 & \cmark & 3349 & 2463 & 2345 & 8157 \\ 
+Total &  &  &  & $12232$ & $10124$ & $8991$ & $31347$ \\ 
+\midrule
+\multicolumn{1}{l}{Kenya} \\ 
+\midrule
+ & DHS & 2003 & \xmark & 1819 & 1709 & 1391 & 4919 \\ 
+ & DHS & 2008 & \xmark & 1767 & 1743 & 1419 & 4929 \\ 
+ & DHS & 2014 & \xmark & 2861 & 2534 & 2858 & 8253 \\ 
+Total &  &  &  & $6447$ & $5986$ & $5668$ & $18101$ \\ 
+\midrule
+\multicolumn{1}{l}{Lesotho} \\ 
+\midrule
+ & DHS & 2004 & \xmark & 1761 & 1455 & 1026 & 4242 \\ 
+ & DHS & 2009 & \xmark & 1833 & 1543 & 1194 & 4570 \\ 
+ & DHS & 2014 & \xmark & 1537 & 1292 & 1067 & 3896 \\ 
+ & PHIA & 2017 & \cmark & 1156 & 1202 & 1054 & 3412 \\ 
+Total &  &  &  & $6287$ & $5492$ & $4341$ & $16120$ \\ 
+\midrule
+\multicolumn{1}{l}{Mozambique} \\ 
+\midrule
+ & AIS & 2009 & \xmark & 1031 & 1106 & 987 & 3124 \\ 
+ & DHS & 2011 & \xmark & 2932 & 2299 & 2206 & 7437 \\ 
+ & AIS & 2015 & \xmark & 1552 & 1389 & 1080 & 4021 \\ 
+Total &  &  &  & $5515$ & $4794$ & $4273$ & $14582$ \\ 
+\midrule
+\multicolumn{1}{l}{Malawi} \\ 
+\midrule
+ & DHS & 2000 & \xmark & 2914 & 2998 & 2358 & 8270 \\ 
+ & DHS & 2004 & \xmark & 2407 & 2823 & 2135 & 7365 \\ 
+ & DHS & 2010 & \xmark & 5031 & 4387 & 4309 & 13727 \\ 
+ & DHS & 2015 & \cmark & 5273 & 5094 & 3976 & 14343 \\ 
+ & PHIA & 2016 & \cmark & 1646 & 1934 & 1511 & 5091 \\ 
+Total &  &  &  & $17271$ & $17236$ & $14289$ & $48796$ \\ 
+\midrule
+\multicolumn{1}{l}{Namibia} \\ 
+\midrule
+ & DHS & 2000 & \xmark & 1427 & 1313 & 1098 & 3838 \\ 
+ & DHS & 2006 & \xmark & 2203 & 1869 & 1544 & 5616 \\ 
+ & DHS & 2013 & \xmark & 1852 & 1709 & 1481 & 5042 \\ 
+ & PHIA & 2017 & \cmark & 1491 & 1525 & 1370 & 4386 \\ 
+Total &  &  &  & $6973$ & $6416$ & $5493$ & $18882$ \\ 
+\midrule
+\multicolumn{1}{l}{Eswatini} \\ 
+\midrule
+ & DHS & 2006 & \xmark & 1265 & 1027 & 731 & 3023 \\ 
+ & PHIA & 2017 & \xmark & 1031 & 895 & 811 & 2737 \\ 
+Total &  &  &  & $2296$ & $1922$ & $1542$ & $5760$ \\ 
+\midrule
+\multicolumn{1}{l}{Tanzania} \\ 
+\midrule
+ & AIS & 2003 & \xmark & 1466 & 1377 & 1270 & 4113 \\ 
+ & AIS & 2007 & \xmark & 2137 & 1676 & 1509 & 5322 \\ 
+ & DHS & 2010 & \xmark & 2221 & 1860 & 1613 & 5694 \\ 
+ & AIS & 2012 & \xmark & 2474 & 1923 & 1815 & 6212 \\ 
+ & PHIA & 2016 & \cmark & 2999 & 2845 & 2521 & 8365 \\ 
+Total &  &  &  & $11297$ & $9681$ & $8728$ & $29706$ \\ 
+\midrule
+\multicolumn{1}{l}{Uganda} \\ 
+\midrule
+ & DHS & 2000 & \xmark & 1687 & 1541 & 1326 & 4554 \\ 
+ & DHS & 2006 & \xmark & 1948 & 1660 & 1404 & 5012 \\ 
+ & AIS & 2011 & \xmark & 2451 & 2164 & 1921 & 6536 \\ 
+ & DHS & 2011 & \xmark & 2025 & 1664 & 1614 & 5303 \\ 
+ & DHS & 2016 & \cmark & 4276 & 3782 & 3014 & 11072 \\ 
+ & PHIA & 2016 & \xmark & 3289 & 3059 & 2574 & 8922 \\ 
+\midrule 
+Total &  &  &  & $15676$ & $13870$ & $11853$ & $41399$ \\ 
+\midrule
+\multicolumn{1}{l}{South Africa} \\ 
+\midrule
+ & DHS & 2016 & \cmark & 1505 & 1408 & 1397 & 4310 \\ 
+Total &  &  &  & $1505$ & $1408$ & $1397$ & $4310$ \\ 
+\midrule
+\multicolumn{1}{l}{Zambia} \\ 
+\midrule
+ & DHS & 2007 & \xmark & 1598 & 1405 & 1373 & 4376 \\ 
+ & DHS & 2013 & \xmark & 3685 & 3036 & 2789 & 9510 \\ 
+ & PHIA & 2016 & \cmark & 2120 & 2045 & 1619 & 5784 \\ 
+ & DHS & 2018 & \cmark & 3112 & 2687 & 2166 & 7965 \\ 
+Total &  &  &  & $10515$ & $9173$ & $7947$ & $27635$ \\ 
+\midrule
+\multicolumn{1}{l}{Zimbabwe} \\ 
+\midrule
+ & DHS & 1999 & \xmark & 1467 & 1230 & 1011 & 3708 \\ 
+ & DHS & 2005 & \xmark & 2128 & 1943 & 1438 & 5509 \\ 
+ & DHS & 2010 & \xmark & 1963 & 1796 & 1679 & 5438 \\ 
+ & DHS & 2015 & \cmark & 2154 & 1777 & 1646 & 5577 \\ 
+ & PHIA & 2016 & \cmark & 2114 & 1817 & 1573 & 5504 \\ 
+Total &  &  &  & $9826$ & $8563$ & $7347$ & $25736$ \\ 
+\midrule 
+\midrule 
+Total &  &  &  & $106397$ & $95253$ & $82518$ & $284168$ \\ 
+\bottomrule
+\caption{All of the surveys that we used in our analysis and their sample sizes, disaggregated by respondent age.}
+\label{tab:surveys-used}
+\end{longtable}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Survey & Exclusion reason \\ 
+ \midrule
+MOZ2003DHS & No GPS coordinates available to place survey clusters within districts. \\
+TZA2015DHS & Insufficient sexual behaviour questions. \\
+UGA2004AIS & Unable to download region boundaries. \\
+ZMB2002DHS & No GPS coordinates available to place survey clusters within districts. \\
+\bottomrule
+\end{tabularx}
+\label{tab:surveys-excluded}
+\caption{All of that surveys that were excluded from our analysis.}
+\end{table}
+
+\hypertarget{spatial-analysis-levels}{%
+\section{Spatial analysis levels}\label{spatial-analysis-levels}}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+Country & Number of areas & Analysis level \\ 
+\midrule
+Botswana & 27 & 3 \\ 
+Cameroon & 58 & 2 \\ 
+Kenya & 47 & 2 \\ 
+Lesotho & 10 & 1 \\ 
+Mozambique & 161 & 3 \\ 
+Malawi & 33 & 5 \\ 
+Namibia & 38 & 2 \\ 
+Eswatini & 4 & 1 \\ 
+Tanzania & 195 & 4 \\ 
+Uganda & 136 & 3 \\ 
+South Africa & 52 & 2 \\ 
+Zambia & 116 & 2 \\ 
+Zimbabwe & 63 & 2 \\ 
+\bottomrule
+\end{tabularx}
+\label{tab:area-levels}
+\caption{The numer of areas and analysis levels for each country that were used in our analysis.}
+\end{table}
 
 \hypertarget{fast-approximate-bayesian-inference-supplement}{%
 \chapter{Fast approximate Bayesian inference supplement}\label{fast-approximate-bayesian-inference-supplement}}

@@ -17,37 +17,37 @@ bibliography: references.bib
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe a novel Bayesian inference method I developed with the aim of facilitating fast and accurate inference for the Naomi small-area estimation model.
-Naomi is a complex model, used in over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
+In this chapter I describe a novel Bayesian inference method I developed motivated the Naomi small-area estimation model
+This model has been used in workshops by over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
+Facilitating fast and accurate inferences for a complex model, across varied data inputs, is a challenging task.
 
-Though I began working on this project in 2020, I only started to make significant progress after reading @stringer2021fast.
-I am grateful to have subsequently collaborate with Alex Stringer on this project, including my visiting the University of Waterloo during the fall term of 2022.
+I began working on this project in 2020, and only began making significant progress after reading @stringer2021fast.
+Alex Stringer was subsequently kind enough to collaborate with me on this project, as well as host my visit to the University of Waterloo during the fall term of 2022.
 The results of this work are presented in @howes2023fast.
-
 Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf) and supported by the R package [`inf.utils`](https://athowes.github.io/inf.utils).
 
-## Background
+## Inference methods
 
-In a Bayesian analysis, the primary goal is to obtain the posterior distribution $p(\bphi \, | \, \y)$.
-This goal is reasonable because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
+In a Bayesian analysis, the primary goal is to perform inference, that is obtain the posterior distribution $p(\bphi \, | \, \y)$.
+Inference is a reasonable goal because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
 In this sense, the posterior distribution is sufficient for use in decision making.
 
 It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
 \end{equation}
 As such, approximations to the posterior distribution are typically used.
-
-## Inference methods
+Some of these approximations can be thought of as ways to approximate Equation \@ref(eq:evidence).
 
 ### The Laplace approximation
 
-The posterior normalising constant may be approximated using Laplace's method [@tierney1986accurate].
-Let $h(\bphi) = \log p(\bphi, \y)$ such that
+Laplace's method may be used to approximate the posterior normalising constant [@tierney1986accurate].
+Let $h(\bphi) = \log p(\bphi, \y)$, taking $\y$ to be given, such that
 \begin{equation}
 p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
 \end{equation}
-Let
+The Laplace approximation follows by taking a second order Taylor approximation at $h$ at its posterior mode.
+More specifically, let
 \begin{equation}
 \hat \bphi = \argmax_{\bphi} h(\bphi)
 \end{equation}
@@ -56,34 +56,94 @@ be the posterior mode, and
 \hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
-Taking a second order Taylor approximation at the posterior mode gives the Laplace approximation to the normalising constant as
+Then the Laplace approximation to is given by
 \begin{align}
-\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&= \exp(h(\hat \bphi)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
+&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
 \end{align}
-where Equation \@ref(eq:la) is calculated using the normalising constant of the Gaussian distribution $\mathcal{N}(\cdot \, | \, \hat \bphi, \hat {\Hb}^{-1})$.
-
-### Adaptive Gauss-Hermite quadrature
-
-Another way to approximate the posterior normalising constant is using quadrature.
-Let $\mathcal{Q}$ be a set of quadrature points, and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
-Then a quadrature approximation to the posterior normalising constant is given by
+where Equation \@ref(eq:la) is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
-\tilde p(\y) = \sum_{\bphi \in \mathcal{Q}} p(\y, \bphi) \omega(\bphi).
+p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+\end{equation}
+As such, the Laplace approximation may be thought of as approximating the posterior distribution using a Gaussian distribution $p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)$ and written as
+\begin{equation}
+\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
 \end{equation}
 
+#### The marginal Laplace approximation
+
+It may not be desirable to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters using a Gaussian distribution.
+As before, let $\bphi = (\x, \btheta)$ where $\x$ is the latent field, and $\btheta$ are the hyperparameters.
+Applying a Laplace approximation to the latent field, we have $h(\x, \btheta) = \log p(\x, \btheta, \y)$ with posterior mode
+\begin{equation}
+\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\end{equation}
+and equivalent Hessian matrix evaluated at the posterior mode
+\begin{equation}
+\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \hat \x(\btheta)},
+\end{equation}
+where in both cases dependence on the hyperparameters $\btheta$ is made explicit.
+The resulting marginal Laplace approximation is then
+\begin{align}
+\tilde p_{\texttt{LA}}(\btheta, \y) &= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
+&= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
+&= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+\end{align}
+where $\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})$ is a Gaussian approximation to the marginal posterior of the latent field.
+
+### Quadrature
+
+Quadrature is another deterministic approach which can be used to approximate the posterior normalising constant.
+Let $\mathcal{Q}$ be a set of quadrature points $\z \in \mathcal{Q}$ and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
+Then a quadrature approximation to the posterior normalising constant is given by
+\begin{equation}
+\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
+\end{equation}
+Quadrature methods are most effective when integrating over small dimensions.
+Supposing that $k$ quadrature points are used per dimension, then the number required in $d$ dimensions is $k^d$.
+This exponential increase in the number of points required is sometimes known as the curse of dimensionality.
+
+#### Gauss-Hermite quadrature
+
+Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule based on the theory of polynomial interpolation which is well-suited to integrating posterior distributions.
+Following @bilodeau2022stochastic let $H_k(z)$ be the $k$th Hermite polynomial
+\begin{equation}
+H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
+\end{equation}
+
+#### Adaptive quadrature
+
+In an adaptive quadrature rule, the nodes and weights are specified based on the integrand.
+
 ### Integrated nested Laplace approximation
+
+The integrated nested Laplace approximation (INLA) method [@rue2009approximate] combines marginal Laplace approximations with quadrature to enable approximation of posterior marginal distributions.
+
+## Software
+
+### `TMB`
+
+Template Model Builder [TMB, or when referring to the software `TMB`; @kristensen2016tmb] is an $\textsc{R}$ package which implements the Laplace approximation.
+In `TMB` derivatives are obtained using automatic differentiation [@baydin2017automatic].
+
+### `R-INLA`
+
+The `R-INLA` software implements the INLA method
+`R-INLA` uses a formula interface (e.g. `y ~ 1 + x`) to facilitate use of INLA for common models.
+This is a beneficial design choice for new users.
+For more advanced users, the formula interface can impose constraints on model choice.
 
 ## A universal INLA implementation
 
 In this section, I implement the INLA method from scratch, using the `TMB` package.
-The result is universal in that it is compatible with any model with a `TMB` C++ template for the log-posterior.
-The `R-INLA` software uses a formula interface (e.g. `y ~ 1 + x`) which facilitates use of the method for common models.
-Though beneficial for new users, this imposes constraints on advanced users who would like to use more complicated models.
+The result is universal in that it is compatible with any model with a `TMB` C++ template.
 Indeed @martino2019integrated note that "implementing INLA from scratch is a complex task", and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
-@skaug2009approximate highlights the potential benefits of a more flexible INLA implementation using automatic differentiation.
+Further, the potential benefits of a more flexible INLA implementation using automatic differentiation where highlighted by @skaug2009approximate in discussion of @rue2009approximate.
 
-I demonstrate the implementation using the epilepsy generalised linear mixed model example from @spiegelhalter1996bugs.
+### Epilepsy example
+
+To demonstrate the implementation, I use the epilepsy generalised linear mixed model example from @spiegelhalter1996bugs.
 The model is based on that of @breslow1993approximate, itself a modification of @thall1990some, and the data are from an epilespy drug double-blind clinical trial [@leppik1985double].
 @rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find that there is a difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters (Figure 3).
 
@@ -112,7 +172,11 @@ Naomi is a complex model, comprised of multiple linked generalized linear mixed 
 As well as hundreds of fixed and random effect parameters, Naomi has >20 hyperparameters: substantially more than the small number that can typically be handled by approaches like integrated nested Laplace approximations [INLA; @rue2009approximate].
 Moreover, observations depend on multiple structured additive predictors, such that Naomi falls into the class of extended latent Gaussian models [ELGMs; @stringer2022fast].
 
+### Model structure
+
 We consider a simplified version defined only at the time of the most recent household survey with HIV testing, omitting nowcasting and temporal projection, as these time points involve limited inferences.
+
+### Connection to ELGMs
 
 ## Malawi case-study
 
