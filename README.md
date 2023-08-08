@@ -50,15 +50,15 @@ I have a repository with further miscellaneous recommended [resources](https://g
 
 > I'm a statistician: which parts of the thesis might interest me?
 
-If you use spatial random effects to model areal spatial structure, Chapter 4.
-If you're interested in modelling multinomial data using the multinomial-Poisson transformation and structured random effects, Chapter 5.
+If you use spatial random effects to model areal spatial structure, [Chapter 4](https://athowes.github.io/thesis/beyond-borders.html).
+If you're interested in modelling multinomial data using the multinomial-Poisson transformation and structured random effects, [Chapter 5](https://athowes.github.io/thesis/multi-agyw.html).
 If you have a complicated model which is not compatible with `R-INLA`, but would still like to use INLA-like methods, [Chapter 6](https://athowes.github.io/thesis/naomi-aghq.html).
 If you have such a model, get in touch!
 All of the methods are compatible with any model written in the (very general) [Template Model Builder](https://kaskr.github.io/adcomp/Introduction.html) R package (`TMB`).
 
 > I'm a HIV epidemiologist: which parts of the thesis might interest me?
 
-Primarily Chapter 5 will be of interest to you.
+Primarily [Chapter 5](https://athowes.github.io/thesis/multi-agyw.html) will be of interest to you.
 The [Global AIDS Strategy](https://www.unaids.org/en/Global-AIDS-Strategy-2021-2026) sets out goals for prioritisation of prevention programming for adolescent girls and young women according to risk behaviour and epidemic setting.
 To enable the strategy, I estimated risk group specific population sizes, prevalence and incidences at a district-level.
 I also used these estimates to evaluate the extent to which risk varies by age, behaviour, and geographic area.
