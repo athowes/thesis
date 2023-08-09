@@ -17,37 +17,53 @@ bibliography: references.bib
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe a novel Bayesian inference method I developed motivated the Naomi small-area estimation model
-This model has been used in workshops by over 35 countries in sub-Saharan Africa to produce estimates of HIV indicators.
-Facilitating fast and accurate inferences for a complex model, across varied data inputs, is a challenging task.
+In this chapter I describe a novel Bayesian inference method I developed.
+The method is motivated the Naomi small-area estimation model.
+Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce estimates of HIV indicators.
+Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 
-I began working on this project in 2020, and only began making significant progress after reading @stringer2021fast.
-Alex Stringer was subsequently kind enough to collaborate with me on this project, as well as host my visit to the University of Waterloo during the fall term of 2022.
+I began working on this project at the start of my PhD.
+However, it was only after I read @stringer2021fast that I began making progress.
+Alex Stringer later supervised by visit to the University of Waterloo.
 The results of this work are presented in @howes2023fast.
-Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf) and supported by the R package [`inf.utils`](https://athowes.github.io/inf.utils).
+Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf).
 
 ## Inference methods
 
-In a Bayesian analysis, the primary goal is to perform inference, that is obtain the posterior distribution $p(\bphi \, | \, \y)$.
-Inference is a reasonable goal because given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
-In this sense, the posterior distribution is sufficient for use in decision making.
+In a Bayesian analysis, the primary goal is to perform inference.
+That is, to obtain the posterior distribution
+\begin{equation}
+p(\bphi \, | \, \y) = \frac{p(\bphi, \y)}{p(\y)}.
+\end{equation}
+Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
+Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
 
-It is usually intractable to directly obtain the posterior distribution, because the denominator contains the integral
+It is usually intractable to directly obtain the posterior distribution.
+This is because the denominator contains an intractable integral called the posterior normalising constant
 \begin{equation}
 p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
 \end{equation}
-As such, approximations to the posterior distribution are typically used.
-Some of these approximations can be thought of as ways to approximate Equation \@ref(eq:evidence).
+For this reason, approximations to the posterior distribution $\tilde p(\bphi \, | \, \y)$ are typically used in place of the exact posterior distribution.
+Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
+\begin{equation}
+p(\bphi \, | \, \y) \propto p(\bphi, \y).
+\end{equation}
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
 
 ### The Laplace approximation
 
-Laplace's method may be used to approximate the posterior normalising constant [@tierney1986accurate].
-Let $h(\bphi) = \log p(\bphi, \y)$, taking $\y$ to be given, such that
+Laplace's method [@laplace1774memoire] is a technique used to approximate integrals of the form
+\begin{equation}
+\int \exp(C h(z)) \text{d}z,
+\end{equation}
+where $C > 0$ is a large constant and $h$ is a function which is twice-differentiable.
+The Laplace approximation [@tierney1986accurate] is obtained by application of Laplace's method to calculate the posterior normalising constant.
+Let $h(\bphi) = \log p(\bphi, \y)$ such that
 \begin{equation}
 p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
 \end{equation}
-The Laplace approximation follows by taking a second order Taylor approximation at $h$ at its posterior mode.
-More specifically, let
+Laplace's method involves approximating the function $h$ by its second order Taylor expansion evaluated at a maxima of $h$ to eliminate the first order term.
+Let
 \begin{equation}
 \hat \bphi = \argmax_{\bphi} h(\bphi)
 \end{equation}
@@ -56,34 +72,34 @@ be the posterior mode, and
 \hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
-Then the Laplace approximation to is given by
+The Laplace approximation is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}},
+&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}}.
 \end{align}
-where Equation \@ref(eq:la) is calculated using the known normalising constant of the Gaussian distribution
+Equation \@ref(eq:la) is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
 p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
 \end{equation}
-As such, the Laplace approximation may be thought of as approximating the posterior distribution using a Gaussian distribution $p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)$ and written as
+It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)$ such that
 \begin{equation}
 \tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
 \end{equation}
 
 #### The marginal Laplace approximation
 
-It may not be desirable to approximate the full joint posterior distribution using a Gaussian distribution.
-An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters using a Gaussian distribution.
+It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
 As before, let $\bphi = (\x, \btheta)$ where $\x$ is the latent field, and $\btheta$ are the hyperparameters.
-Applying a Laplace approximation to the latent field, we have $h(\x, \btheta) = \log p(\x, \btheta, \y)$ with posterior mode
+Applying an equivalent Laplace approximation to the latent field, we have $h(\x, \btheta) = \log p(\x, \btheta, \y)$ with posterior mode
 \begin{equation}
 \hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
 \end{equation}
-and equivalent Hessian matrix evaluated at the posterior mode
+and Hessian matrix evaluated at the posterior mode
 \begin{equation}
-\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \hat \x(\btheta)},
+\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \x(\btheta)}.
 \end{equation}
-where in both cases dependence on the hyperparameters $\btheta$ is made explicit.
+For both quantities cases dependence on the hyperparameters $\btheta$ is made explicit.
 The resulting marginal Laplace approximation is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\btheta, \y) &= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
@@ -94,27 +110,44 @@ where $\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat
 
 ### Quadrature
 
-Quadrature is another deterministic approach which can be used to approximate the posterior normalising constant.
+Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
+As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
+
 Let $\mathcal{Q}$ be a set of quadrature points $\z \in \mathcal{Q}$ and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 \begin{equation}
 \tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
 \end{equation}
 Quadrature methods are most effective when integrating over small dimensions.
-Supposing that $k$ quadrature points are used per dimension, then the number required in $d$ dimensions is $k^d$.
-This exponential increase in the number of points required is sometimes known as the curse of dimensionality.
+The reason why is that exponentially more quadrature points are required to cover each additional dimension.
+For even moderate dimension, this quickly becomes intractable.
 
 #### Gauss-Hermite quadrature
 
-Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule based on the theory of polynomial interpolation which is well-suited to integrating posterior distributions.
-Following @bilodeau2022stochastic let $H_k(z)$ be the $k$th Hermite polynomial
+Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule designed to integrate a certain class of functions exactly.
+These functions are the form $f(z) = \phi(z) P_\alpha(z)$, where $\phi(\cdot)$ is a standard normal density, and $P_\alpha(\cdot)$ is a polynomial of degree $\alpha$.
+
+Following the notation for GHQ established by @bilodeau2022stochastic for $z \in \mathbb{R}$, let $H_k(z)$ be the $k$th Hermite polynomial
 \begin{equation}
-H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
+H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2).
 \end{equation}
+The univariate GHQ rule has nodes $z \in \mathcal{Q}(1, k)$ given by the $k$ zeroes of the $k$th Hermite polynomial.
+The corresponding weighting function $\omega: \mathcal{Q}(1, k) \to \mathbb{R}$ is given by
+\begin{equation}
+\omega(z) = \frac{\phi(z) \cdot k!}{[H_{k + 1}(z)]^2}.
+\end{equation}
+
+Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
+In $d$ dimensions, the multivariate GHQ nodes $\z \in \mathcal{Q}(d, k)$ are defined by $\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)$.
+The corresponding weighting function $\omega: \mathcal{Q}(d, k) \to \mathbb{R}$ is given by $\omega(\z) = \prod_{j = 1}^d \omega(z_j)$.
 
 #### Adaptive quadrature
 
-In an adaptive quadrature rule, the nodes and weights are specified based on the integrand.
+In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
+Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
+No fixed quadrature rule can be expected to perform well in integrating any posterior distributions produced by observation of particular data.
+
+In adaptive GHQ (AGHQ).
 
 ### Integrated nested Laplace approximation
 
@@ -129,7 +162,7 @@ In `TMB` derivatives are obtained using automatic differentiation [@baydin2017au
 
 ### `R-INLA`
 
-The `R-INLA` software implements the INLA method
+The `R-INLA` software implements the INLA method.
 `R-INLA` uses a formula interface (e.g. `y ~ 1 + x`) to facilitate use of INLA for common models.
 This is a beneficial design choice for new users.
 For more advanced users, the formula interface can impose constraints on model choice.
@@ -138,14 +171,15 @@ For more advanced users, the formula interface can impose constraints on model c
 
 In this section, I implement the INLA method from scratch, using the `TMB` package.
 The result is universal in that it is compatible with any model with a `TMB` C++ template.
-Indeed @martino2019integrated note that "implementing INLA from scratch is a complex task", and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
-Further, the potential benefits of a more flexible INLA implementation using automatic differentiation where highlighted by @skaug2009approximate in discussion of @rue2009approximate.
+This opens the door for application of INLA to models like Naomi which are not compatible with `R-INLA`.
+Indeed, @martino2019integrated note that "implementing INLA from scratch is a complex task", and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
+The potential benefits of a more flexible INLA implementation based on automatic differentiation were noted by @skaug2009approximate in discussion of @rue2009approximate.
 
 ### Epilepsy example
 
-To demonstrate the implementation, I use the epilepsy generalised linear mixed model example from @spiegelhalter1996bugs.
-The model is based on that of @breslow1993approximate, itself a modification of @thall1990some, and the data are from an epilespy drug double-blind clinical trial [@leppik1985double].
-@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find that there is a difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters (Figure 3).
+I use the epilepsy generalised linear mixed model example from @spiegelhalter1996bugs to demonstrate the implementation.
+This model is based on that of @breslow1993approximate, a modification of @thall1990some, and the data are from an epilespy drug double-blind clinical trial [@leppik1985double].
+@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters.
 
 In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th visit.
@@ -161,23 +195,80 @@ The observations were modelled using a Poisson distribution $y_{ij} \sim \text{P
 where the prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
 The random effects are IID $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
 
-## Naomi model
+## The Naomi model
 
 The Naomi small-area estimation model [@eaton2021naomi] synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-Software has been developed for Naomi (\url{https://naomi.unaids.org}), allowing countries to input their data and interactively generate estimates during workshops as a part of a yearly process supported by UNAIDS.
-Creation of estimates by country teams, rather than external agencies or researchers, is an important and distinctive feature of the HIV response.
-Drawing on expertise closest to the data being modelled improves the accuracy of the process, as well as strengthening trust in the resulting estimates, creating a virtuous cycle of data quality, use and ownership [@noor2022country].
-
-Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and presents a challenging Bayesian inference problem.
-As well as hundreds of fixed and random effect parameters, Naomi has >20 hyperparameters: substantially more than the small number that can typically be handled by approaches like integrated nested Laplace approximations [INLA; @rue2009approximate].
-Moreover, observations depend on multiple structured additive predictors, such that Naomi falls into the class of extended latent Gaussian models [ELGMs; @stringer2022fast].
 
 ### Model structure
 
-We consider a simplified version defined only at the time of the most recent household survey with HIV testing, omitting nowcasting and temporal projection, as these time points involve limited inferences.
+I consider a simplified version of Naomi defined only at the time of the most recent household survey with HIV testing.
+This version omits nowcasting and temporal projection.
+These time points involve limited inferences.
+
+#### Household survey component \label{sec:household}
+
+Consider a country in sub-Saharan Africa where a household survey with complex survey design has taken place.
+Let $x \in \mathcal{X}$ index district, $a \in \mathcal{A}$ index five-year age group, and $s \in \mathcal{S}$ index sex.
+For ease of notation, let $i$ index the finest district-age-sex division included in the model.
+Let $I \subseteq \mathcal{X} \times \mathcal{A} \times \mathcal{S}$ be a set of indices $i$ for which an aggregate observation is reported, and $\mathcal{I}$ be the set of all $I$ such that $I \in \mathcal{I}$.
+
+Let $N_i \in \mathbb{N}$ be the known, fixed population size.
+HIV prevalence $\rho_i \in [0, 1]$, antiretroviral therapy (ART) coverage $\alpha_i \in [0, 1]$, and annual HIV incidence rate $\lambda_i > 0$ are modelled using linked regression equations.
+
+Independent logistic regression models are specified for HIV prevalence and ART coverage in the general population such that $\text{logit}(\rho_i) = \eta^\rho_i$ and $\text{logit}(\alpha_i) = \eta^\alpha_i$.
+HIV incidence rate is modelled on the log scale as $\log(\lambda_i) = \eta^\lambda_i$, and depends on adult HIV prevalence and adult ART coverage.
+Let $\kappa_i$ be the proportion recently infected among HIV positive persons.
+This proportion is linked to HIV incidence via
+\begin{equation}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \label{eq:kappa}
+\end{equation}
+where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are strongly informed by priors for the particular survey.
+
+These processes are each informed by household survey data.
+Weighted aggregate survey observations are calculated as
+\begin{equation*}
+\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j},
+\end{equation*}
+with individual responses $\theta_j \in \{0, 1\}$ and design weights $w_j$ for each of $\theta \in \{\rho, \alpha, \kappa\}$.
+The design weights are provided by the survey and aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
+The index $j$ runs across all individuals in strata $i \in I$ within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
+The weighted observed number of outcomes is $y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I}$ where
+\begin{equation*}
+m^{\theta}_I = \frac{\left(\sum_j w_j\right)^2}{\sum_j w_j^2},
+\end{equation*}
+is the Kish effective sample size (ESS) [@kish1965survey].
+As the Kish ESS is maximised by constant design weights, in exchange for reducing bias the ESS is reduced and hence variance increased.
+The weighted observed number of outcomes are modelled using a binomial working likelihood [@chen2014use] defined to operate on the reals
+\begin{equation*}
+y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}),
+\end{equation*}
+where $\theta_{I}$ are the following weighted aggregates
+\begin{equation*}
+\rho_{I} = \frac{\sum_{i \in I} N_i \rho_i}{\sum_{i \in I} N_i}, \quad
+\alpha_{I} = \frac{\sum_{i \in I} N_i \rho_i \alpha_i}{\sum_{i \in I} N_i \rho_i}, \quad
+\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}.
+\end{equation*}
 
 ### Connection to ELGMs
 
+## Extension of AGHQ to moderate dimensions
+
+The Naomi model has $m = 24$ hyperparameters.
+
+### AGHQ with variable levels
+
+### Principal components analysis
+
 ## Malawi case-study
+
+### NUTS convergence
+
+### Use of PCA-AGHQ
+
+### Model assessment
+
+### Inference comparison
+
+### Exceedance probabilities
 
 ## Discussion
