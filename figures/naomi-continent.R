@@ -148,3 +148,18 @@ map <- data %>%
 plot <- dotplot + map
 
 ggsave("figures/naomi-continent.png", h = 4, w = 6.25)
+
+#' Numbers for text
+data %>%
+  filter(
+    is_district,
+    sex == "both",
+    age_group == "Y015_049",
+    indicator == "prevalence",
+    substr(area_id, 1, 3) == "ZAF"
+  ) %>%
+  filter(
+    mean == max(mean) | mean == min(mean)
+  ) %>%
+  mutate(mean_pct = round(100 * mean)) %>%
+  pull(mean_pct, area_name)

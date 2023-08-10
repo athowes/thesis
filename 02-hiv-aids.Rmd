@@ -58,15 +58,15 @@ The most common mode of transmission is via unprotected anal or vaginal sex, tho
 Approximately `r custom_numbers_to_words(infections)` people have become infected with HIV, and of those `r custom_numbers_to_words(deaths)` have died of AIDS-related causes.
 
 ```{r}
-pepfar <- 85 * 1e9
+pepfar <- 100 * 1e9
 #' From https://www.theglobalfund.org/en/hivaids/
 global_fund <- round((24.2 + 5)) * 1e9
 ```
 
 <!-- A lot of effort going into it -->
-A major international effort has been made to address the epidemic, including by national governments, civil society organisations, pharmaceutical companies, research institutions, international agencies such as the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such as the President's Emergency Plan for AIDS Relief (PEPFAR; \$`r custom_numbers_to_words(pepfar)` invested) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM; \$`r custom_numbers_to_words(global_fund)` invested).
-A number of interventions have had a substantial impact on the course of the epidemic.
-These include:
+A global and multifaceted effort has been made to respond to the epidemic.
+Many groups have played pivotal roles in shaping the response, including local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
+Over $`r custom_numbers_to_words(pepfar)` has been invested by PEPFAR alone, constituting the "largest commitment by a single nation to address a single disease in history" [@pepfar2022].
 
 ```{r}
 #' From https://www.unaids.org/en/resources/presscentre/featurestories/2021/september/20210906_global-roll-out-hiv-treatment
@@ -75,34 +75,35 @@ condom_infections_averted <- 117 * 1e6
 vmmc_infections_averted <- 340 * 1e3
 ```
 
-<!-- The number of new infections estimated to have been averted by ART. -->
-<!-- VMMC: https://www.unaids.org/sites/default/files/media_asset/JC3022_VMMC_en.pdf -->
-
-* Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
-By taking ART daily, a person living with HIV can live a full and healthy life.
-Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022`% were accessing ART.
-ART is estimated to have averted `r custom_numbers_to_words(art_deaths_averted)` AIDS-related deaths.
-Further, ART reduces the amount of virus in the blood and genital secretions.
-If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually [@cohen2011prevention].
-For this reason, as well as saving lives, treatment also operates as prevention (TaSP).
-* Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as *Chlamydia trachomatis*, *Neisseria gonorroeae*, syphilis, and *Trichomonas vaginalis*.
-There has been a significant scale-up of condom usage since 1990, which is estimated to have averted `r custom_numbers_to_words(condom_infections_averted)` new HIV infections [@stover2021impact].
-Even so, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
-* Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
-Complete surgical removal of the foreskin has been found to result in a reduction of HIV incidence in men by 50-60% [@auvert2005randomized; @gray2007male; @bailey2007male].
-Based on this evidence, since 2007 VMMC has been recommended by WHO and UNAIDS as a key HIV intervention in high-prevalence settings.
-Scale up of VMMC across 15 priority countries between 2008 and 2019 was estimated to have already averted `r custom_numbers_to_words(vmmc_infections_averted)` new HIV infections, though the future number of new HIV infections averted is likely to be much higher.
-* Prevention of mother-to-child transmission
-* Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
-They are primarily useful in high risk settings.
-
 ```{r overall-picture, fig.cap="Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions combined comprise sub-Saharan Africa."}
 knitr::include_graphics("figures/overall-picture.png")
 ```
 
-The interventions above have had a significant impact on the course of the epidemic.
-Both the number of new HIV infections and number of AIDS-related deaths per year have fallen significantly since their peak (Figure \@ref(fig:overall-picture)).
-That said, there remains quite some distance to go in ending AIDS as a public health threat.
+<!-- The effort has translated into progress -->
+This combined effort has made a substantial impact on the course of the epidemic.
+Since their peak, the number of new HIV infections and AIDS-related deaths per year have both fallen significantly (Figure \@ref(fig:overall-picture)).
+This success has been due to a number of HIV prevention and treatment options.
+
+* Perhaps the most important HIV intervention, antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+A person living with HIV who takes ART daily can live a full and healthy life.
+Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022`% were accessing ART.
+A staggering `r custom_numbers_to_words(art_deaths_averted)` AIDS-related deaths are estimated to have been averted by ART.
+ART reduces the amount of virus in the blood and genital secretions.
+If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually [@cohen2011prevention].
+For this reason, as well as providing life saving treatment, ART also operates as prevention (TaSP).
+Particular efforts have been made to provide pregnant women with ART, which is estimated to reduce the chance of mother-to-child transmission (MTCT) by 25-35% in some settings [@siegfried2011antiretrovirals].
+* Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as *Chlamydia trachomatis*, *Neisseria gonorroeae*, syphilis, and *Trichomonas vaginalis*.
+There has been a significant scale-up of condom usage since 1990, which is estimated to have averted `r custom_numbers_to_words(condom_infections_averted)` new HIV infections [@stover2021impact].
+Even so, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
+* Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
+Three landmark randomised control trials [@auvert2005randomized; @gray2007male; @bailey2007male] found complete surgical removal of the foreskin to result in a 50-60% reduction of HIV incidence in men.
+Based on this evidence, VMMC has been recommended by WHO and UNAIDS as a key HIV intervention in high-prevalence settings since 2007.
+Scale up of VMMC across 15 priority countries between 2008 and 2019 was estimated to have already averted `r custom_numbers_to_words(vmmc_infections_averted)` new HIV infections, though the future number of new HIV infections averted is likely to be much higher.
+* Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
+They are primarily useful in high risk settings.
+
+It is important that progress is sustained.
+There remains some distance to go in ending AIDS as a public health threat.
 In 2022 there were `r custom_numbers_to_words(infections2022)` people newly infected with HIV and `r custom_numbers_to_words(deaths2022)` AIDS-related deaths [@unaids2022global].
 
 ```{r naomi-continent, fig.cap="Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These 2023 estimates were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \\texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO)."}
@@ -110,14 +111,14 @@ knitr::include_graphics("figures/naomi-continent.png")
 ```
 
 <!-- Uneven burden in space -->
-There is substantial geographic variation in disease burden, across multiple spatial scales.
+Disease burden varies substantially across multiple spatial scales.
 In some countries, the epidemic is concentrated within small populations, and HIV prevalence is low.
 In others, transmission is sustained in the general population, and HIV prevalence is higher.
-Most countries severely affected by HIV are in sub-Saharan Africa (SSA).
+Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA).
 It is estimated that `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of the `r custom_numbers_to_words(plhiv2022)` PLHIV worldwide live in SSA.
-For some countries in southern Africa, adult HIV prevalence (ages 15-49) is as high as 10% or more (Figure \@ref(fig:naomi-continent)).
-As well as variation at between countries, there is significant variation within countries at the district-level.
-For example, adult HIV prevalence in South Africa ranges from `r `7`% to `r `32`%.
+Adult HIV prevalence (ages 15-49) is higher than 10% (Figure \@ref(fig:naomi-continent)) in some countries in southern Africa.
+Just as there is variation between countries, there is variation within countries.
+For example, adult HIV prevalenceat the district municipality level in South Africa ranges from `r 6`% in Namakwa to `r 30`% in uMkhanyakude.
 
 <!-- Uneven burden across people -->
 In all countries, some groups of people are at much higher risk than others.
@@ -138,10 +139,7 @@ The precision public health paradigm [@khoury2016precision] is an extension of p
 <!-- What is surveillance and how can it be used to meet these needs -->
 HIV surveillance refers to the collection, analysis, interpretation and dissemination of data relating to HIV/AIDS.
 Surveillance can used to track epidemic indicators, identify at-risk populations, find drivers of transmission, and evaluate the impact of prevention and treatment programs.
-
-### HIV indicators
-
-Central indicators include:
+Important indicators include:
 
 * **HIV prevalence** is the proportion $\rho \in [0, 1]$ of the population who have HIV, typically written as a percentage.
 Interpreted alone, HIV prevalence can be misleading.
@@ -155,9 +153,8 @@ Planning, delivery, and evaluation of prevention programming relies on estimates
 * **ART coverage** is the proportion $\alpha \in [0, 1]$ of PLHIV who are on ART, typically written as a percentage.
 Estimates of ART coverage play a direct role in the provision of treatment services.
 
-### Challenges
-
 There are significant difficulties associated with obtaining reliable, timely, estimates of these indicators at an appropriate resolution.
+Among them:
 
 1. **Data sparsity**
 Collection of data is costly and time consuming.
@@ -174,8 +171,6 @@ Many indicators are rates or proportions, incorporating the population at risk i
 However, accurately estimating these denominators is usually itself a challenging task, and taking a ratio of uncertain quantities only goes to amplify the uncertainty.
 For example, ART coverage has PLHIV as the denominator, which itself has the population size as its denominator.
 
-### Statistical methods
-
 The above challenges make direct interpretation of data misleading, and foreground the importance of careful statistical modelling.
 
 1. **Borrowing information**
@@ -184,8 +179,6 @@ Although survey responses from women aged 20-24 are not directly informative abo
 Multiple sources of evidence can be combined to overcome limitations of any one data source.
 3. **Expert guidance**
 Expert epidemiological, demographic opinion can be used to improve estimates.
-
-### Future trends
 
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 
