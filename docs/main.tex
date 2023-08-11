@@ -275,12 +275,12 @@
 
 %%%%% ACKNOWLEDGEMENTS -- Nothing to do here except comment out if you don't want it.
 \begin{acknowledgements}
- 	I would like to start by thanking my supervisors Seth Flaxman and Jeff Eaton for their guidance and mentorship during the course of this research.
- I am grateful for the research environment offered by the HIV Inference Group, Modern Statistics and Statistical Machine Learning Centre for Doctoral Training, and Machine Learning and Global Health Network.
- The Effective Altruism community provided me a framework for deciding what to work on.
- Thanks to Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab, and Alex Stringer for hosting my visit to the University of Waterloo.
- Thank you to my parents and grandparents.
- This research was possible due to funding by the Bill \& Melinda Gates Foundation and EPSRC.
+ 	I would like to start by thanking my supervisors Seth Flaxman and Jeff Eaton for their guidance and mentorship.
+ I am grateful for the research environment offered by the Modern Statistics and Statistical Machine Learning Centre for Doctoral Training, HIV Inference Group, and Machine Learning and Global Health Network.
+ Thanks to Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab.
+ Thanks to Alex Stringer, and the Department of Statistics and Actuarial Science for hosting my visit to the University of Waterloo.
+ My sense for what is important to work on has been shaped by the Effective Altruism community.
+ This research was made possible by funding provided by the Bill \& Melinda Gates Foundation and EPSRC.
 
  \begin{flushright}
  Adam Howes \\
@@ -343,13 +343,15 @@ Together, the contributions in this thesis help to guide precision HIV policy in
 \adjustmtc
 \markboth{Introduction}{}
 
+
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.95\linewidth]{figures/introduction/gbd} 
 
 }
 
-\caption{HIV/AIDS is the largest cause of DALYs for non-infacts (>1 years) in SSA. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights used in the 2019 Global Burden of Disease study vary depending on severity of the condition. }\label{fig:gbd}
+\caption{HIV/AIDS is the largest cause of DALYs for non-infacts (\textgreater1 years) in SSA. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights used by the \textcite{ihme2019} vary depending on severity of the condition.}\label{fig:gbd}
 \end{figure}
 
 This thesis is about applied and methodological Bayesian statistics.
@@ -357,7 +359,7 @@ It is applied and methodological in that I am concerned first with real world qu
 It is Bayesian in that I arrive at conclusions based on data using probability models.
 
 The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
-The \textcite{ihme1} found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \ref{fig:gbd}).
+The \textcite{ihme2019} found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \ref{fig:gbd}).
 Using statistics to quantify the epidemic is an important part of the public health response, and the path towards disease control and elimination.
 However, there are numerous challenges involved in obtaining suitable estimates of relevant indicators.
 
@@ -397,13 +399,15 @@ The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
   Chapter \ref{conclusions}: Finally, I discuss avenues for future work, and my conclusions regarding the research, as well as its strengths and weaknesses.
 \end{itemize}
 
+
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.95\linewidth]{figures/introduction/chapter-flowchart} 
 
 }
 
-\caption{The chapters in this thesis are structured to depend on each other. The dashed line represents a recommended, but not required dependency. Though chronological order is recommended, Chapter 4, Chapter 5 and Chapter 6 may be read in any order as, for the most part, they correspond to separable research projects.}\label{fig:chapter-flowchart}
+\caption{The chapters in this thesis are structured to depend on each other. Dashed lines represents a recommended, but not required dependency. Though chronological order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq} may be read in any order as they correspond to separable research projects.}\label{fig:chapter-flowchart}
 \end{figure}
 
 \hypertarget{hiv-aids}{%
@@ -415,8 +419,7 @@ The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
 \hypertarget{background}{%
 \section{Background}\label{background}}
 
-HIV is a retrovirus which infects humans.
-If untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV is a retrovirus which infects humans, that if untreated can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or \emph{Pneumocystis} pneumonias.
 
@@ -426,9 +429,11 @@ Transmission occurs by exposure to specific bodily fluids of an infected person.
 The most common mode of transmission is via unprotected anal or vaginal sex, though transmission can also occur from a mother to her baby, or when drug injection equipment is shared.
 Approximately 86 million people have become infected with HIV, and of those 40 million have died of AIDS-related causes.
 
-A global and multifaceted effort has been made to respond to the epidemic.
+An ongoing global and multifaceted effort has been made to respond to the epidemic.
 Many groups have played pivotal roles in shaping the response, including local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
-Over \$100 billion has been invested by PEPFAR alone, constituting the ``largest commitment by a single nation to address a single disease in history'' \autocite{pepfar2022}.
+The investment of \$100 billion by PEPFAR constitutes the ``largest commitment by a single nation to address a single disease in history'' \autocite{pepfar2022}.
+
+
 
 \begin{figure}
 
@@ -436,20 +441,20 @@ Over \$100 billion has been invested by PEPFAR alone, constituting the ``largest
 
 }
 
-\caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions combined comprise sub-Saharan Africa.}\label{fig:overall-picture}
+\caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions comprise sub-Saharan Africa.}\label{fig:overall-picture}
 \end{figure}
 
 This combined effort has made a substantial impact on the course of the epidemic.
-Since their peak, the number of new HIV infections and AIDS-related deaths per year have both fallen significantly (Figure \ref{fig:overall-picture}).
-This success has been due to a number of HIV prevention and treatment options.
+The number of new HIV infections and AIDS-related deaths per year have both fallen significantly since their peak (Figure \ref{fig:overall-picture}).
+This success has been due to implementation of a range of HIV prevention and treatment options.
 
 \begin{itemize}
 \tightlist
 \item
-  Perhaps the most important HIV intervention, antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+  Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
   A person living with HIV who takes ART daily can live a full and healthy life.
   Of the 39 million people living with HIV (PLHIV) in 2022, around 76\% were accessing ART.
-  A staggering 16.5 million AIDS-related deaths are estimated to have been averted by ART.
+  A staggering 21 million AIDS-related deaths are estimated to have been averted by ART \autocite{unaids2023global}.
   ART reduces the amount of virus in the blood and genital secretions.
   If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually \autocite{cohen2011prevention}.
   For this reason, as well as providing life saving treatment, ART also operates as prevention (TaSP).
@@ -470,7 +475,9 @@ This success has been due to a number of HIV prevention and treatment options.
 
 It is important that progress is sustained.
 There remains some distance to go in ending AIDS as a public health threat.
-In 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths \autocite{unaids2022global}.
+In 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths, more than one every minute \autocite{unaids2022global}.
+
+
 
 \begin{figure}
 
@@ -478,7 +485,7 @@ In 2022 there were 1.3 million people newly infected with HIV and 630 thousand A
 
 }
 
-\caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These 2023 estimates were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
+\caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These estimates from 2023 were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results for the Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
 \end{figure}
 
 Disease burden varies substantially across multiple spatial scales.
@@ -488,14 +495,14 @@ Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA).
 It is estimated that 66\% of the 39 million PLHIV worldwide live in SSA.
 Adult HIV prevalence (ages 15-49) is higher than 10\% (Figure \ref{fig:naomi-continent}) in some countries in southern Africa.
 Just as there is variation between countries, there is variation within countries.
-For example, adult HIV prevalenceat the district municipality level in South Africa ranges from 6\% in Namakwa to 30\% in uMkhanyakude.
+For example, adult HIV prevalence at the district municipality level in South Africa ranges from 6\% in Namakwa to 30\% in uMkhanyakude.
 
-In all countries, some groups of people are at much higher risk than others.
+In all countries and contexts, some groups of people are at much higher risk than others.
 Groups of people at increased risk of HIV infection are known as key populations (KPs).
 Examples include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
-In concentrated settings, the majority of new HIV infections occur among KPs.
-In generalised settings like SSA, risk is more diffuse accross the population.
+In concentrated settings, the majority of new HIV infections occur in KPs and their sexual partners.
+In generalised settings like SSA, risk is more diffuse across the population.
 For example, adolescent girls and young women (AGYW) are a large demographic group at increased risk of HIV infection in SSA \autocite{risher2021age,monod2023growing}.
 
 For available resources to have the greatest impact, it is important that HIV interventions are prioritised \autocite{ord2013moral}.
@@ -542,22 +549,21 @@ Among them:
   When available, biomarker data can be used to overcome under-reporting, it may still be subject to measurement errors.
 \item
   \textbf{Missing data}
-  Many of the populations at greatest risk are difficult to reach, and not appear on household survey sampling frames.
-  Individuals included on the sampling frame may choose not to respond.
-\item
-  \textbf{Denominators and demography}
-  Many indicators are rates or proportions, which incorporate the population at risk in the denominator.
-  Accurately estimating these denominators is usually itself a challenging task.
-  Taking a ratio of uncertain quantities only goes to amplify the uncertainty.
-  For example, ART coverage has PLHIV as the denominator, which itself has the population size as its denominator.
+  Many KPs are difficult to reach, and do not appear on household survey sampling frames.
 \end{enumerate}
+
+Individuals included on the sampling frame may choose not to respond.
+4. \textbf{Denominators and demography}
+Many indicators are rates or proportions, which incorporate the population at risk in the denominator.
+Accurately estimating these denominators is usually itself a challenging task.
+Taking a ratio of uncertain quantities only goes to amplify the uncertainty.
+For example, ART coverage has PLHIV as the denominator, which itself has the population size as its denominator.
 
 The above challenges make direct interpretation of the data misleading.
 Careful statistical modelling is required to overcome these limitations.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\tightlist
 \item
   \textbf{Borrowing information}
   Data not directly about the indicator of interest, but judged to be indirectly related, can be used to help improve estimates when little direct data is available.
@@ -568,13 +574,7 @@ Careful statistical modelling is required to overcome these limitations.
 \item
   \textbf{Expert guidance}
   Expert epidemiological, demographic opinion can be used to improve estimates.
-\end{enumerate}
-
-Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
+  Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 \item
   \textbf{Greater reliance on routine health system data} Phasing out of nationally representative household surveys.
 \item
@@ -593,7 +593,7 @@ Aims for HIV response going forward, and surveillance capabilities are needed to
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed in Section \ref{sec:surveillance} because it allows principled and flexible integration of data and scientific knowledge.
+It is well suited for to the challenges posed by Section \ref{sec:surveillance} because it allows principled and flexible integration of data and scientific knowledge.
 In this section I provide brief overview.
 For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
 
@@ -609,7 +609,8 @@ The model is generative in the sense that one can simulate from it to generate d
 If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
 In this way, models can be built iteratively, with complexity added gradually.
 
-The model is usually constructed from two parts, known respectively as the likelihood \(p(\y \, | \, \bphi)\) and the prior distribution \(p(\bphi)\) whereby the joint distribution is obtained by the product \(p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)\).
+The model is usually constructed from two parts, known respectively as the likelihood \(p(\y \, | \, \bphi)\) and the prior distribution \(p(\bphi)\).
+The joint distribution is obtained by the product \(p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)\).
 The likelihood, as a function of \(\bphi\) with \(\y\) fixed, reflects the probability of observing the data when the true value of the parameters is \(\bphi\).
 The prior distribution encapsulates beliefs about the parameters \(\bphi\) before the data is observed.
 
@@ -622,22 +623,33 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 \hypertarget{bayesian-computation}{%
 \subsection{Bayesian computation}\label{bayesian-computation}}
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/conjugate} 
+
+}
+
+\caption{A simple example of Bayesian modelling and computation for the observation model \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) with prior \(\phi \sim \text{Gamma}(3, 1)\). Given observed data \(\y = (1, 2, 3)\) the posterior is available in closed form as \(\text{Gamma}(9, 4)\) because the model is so-called conjugate. Though it is unlikely that the best model for a particular problem will have the conjugacy property, conjugate models are still frequently used because of their convenience.}\label{fig:conjugate}
+\end{figure}
+
 The posterior distribution \(p(\bphi \, | \, \y)\) encapsulates probabilistic beliefs about the parameters given the observed data.
 Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \ref{eq:posterior} directly because of the integral \(p(\y) = \int p(\y, \bphi) \text{d}\bphi\) in the denominator, sometimes known as the marginal likelihood or evidence.
-As such, although the numerator is proportional to the posterior distribution \(p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)\) and easy to evaluate, it is typically difficult to evaluate the posterior distribution itself.
+Unfortunately, it is usually intractable to calculate Equation \eqref{eq:posterior} directly because of the integral \(p(\y) = \int p(\y, \bphi) \text{d}\bphi\) in the denominator, sometimes known as the marginal likelihood or evidence.
+As such, although it is easy to evaluate \(p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)\), it is typically difficult to evaluate the posterior distribution itself.
 
-A great variety of computational methods have been developed to tackle this problem.
+A variety of computational methods have been developed to tackle this problem.
 Briefly, the main categories are:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Sampling algorithms} Also known as Monte Carlo algorithms, these approaches look to generate samples from the posterior distribution.
+  \textbf{Sampling algorithms} Known as Monte Carlo \autocite{robert2005monte} algorithms after the casino, these approaches look to generate samples from the posterior distribution.
   The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
   In this thesis, I make use of the No-U-Turn sampler (NUTS), a Hamiltonian Monte Carlo (HMC) algorithm, implemented in the Stan probabilistic programming language (PPL).
 \item
@@ -748,18 +760,38 @@ with latent field and hyperparameter prior distributions as in the LGM case.
 The ELGM class is well suited to small-area estimation of HIV indicators.
 Indeed, this class of models is used throughout the thesis.
 While it can be transformed to an LGM using the Poisson-multinomial transformation \autocite{baker1994multinomial}, the multinomial logistic regression model used in Chapter \ref{multi-agyw} is naturally written as an ELGM in which each observation depends on the set of structured additive predictors corresponding to each multinomial observation.
-In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produce estimates of HIV indicators across over 35 countries is shown to have the features of an ELGM.
+In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
 
 \hypertarget{survey-methods}{%
 \section{Survey methods}\label{survey-methods}}
 
 Survey methods concern the design and analysis of survey data \autocite{lohr2009sampling}.
-In SSA, nationally representative household surveys, such as the Demographic and Health Surveys (DHS) \autocite{dhs} or Population-based HIV Impact Assessment (PHIA) \autocite{phia} surveys, provide the highest quality information about HIV.
-Talk about the DDC \autocite{meng2018statistical}.
-With regard to the DDC, discuss how survey weighting is helpful.
+Consider a population of individuals \(j = 1, \ldots, N\) with outcomes of interest \(y_j\).
+If a census were run, then the population population mean could be calculated as
+\begin{equation}
+\mu_N = \frac{1}{N} \sum_{j = 1}^N y_j.
+\end{equation}
+In practice, only a subset of the individuals will be sampled and their outcomes observed.
+Let \(R_j\) be an indicator for whether or not \(y_j\) is recorded.
+A weighted estimate of the population mean is
+\begin{equation}
+\mu_w = \frac{\sum_{j = 1}^N w_j R_j y_j}{\sum_{j = 1}^N w_j R_j},
+\end{equation}
+where \(w_j > 0\) are survey weights.
+The additive error of the weighted estimate may be decomposed as follows \autocite{meng2018statistical}
+\begin{equation}
+\mu_w - \mu_N = \rho_{Y, R} \times \sqrt{\frac{N - n}{n}} \times \sigma.
+\end{equation}
+Interpreting these three terms provides useful intuition about survey sampling.
+The data quality \(\rho_{Y, R}\) measures the correlation between the outcome of interest and the observation mechanism.
+The data quantity \(\sqrt{(N - n)/n}\).
+The problem difficultly \(\sigma\) measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used.
+
 Discuss how we weight then model following \textcite{chen2014use}.
 Discuss how we ignore clustering structure.
 Discuss how all of this isn't great and that someone should figure this out.
+
+Nationally representative household surveys, such as the Demographic and Health Surveys (DHS) or Population-based HIV Impact Assessment (PHIA) surveys, provide the highest quality widely relevant information about HIV.
 
 \hypertarget{beyond-borders}{%
 \chapter{Models for spatial structure}\label{beyond-borders}}
@@ -768,10 +800,9 @@ Discuss how all of this isn't great and that someone should figure this out.
 \markboth{Models for spatial structure}{}
 
 In this chapter, I present an investigation of spatial random effects specifications.
-This investigation was motivated by a particular instance of a fundamental question encountered during model construction.
-Namely, should the model be augmented to capture a feature we have prior belief exists?
+This investigation was motivated by a fundamental question encountered during model construction.
+Namely, should the model be augmented to capture a feature of the data that we believe exists?
 The results are presented in \textcite{howes2023beyond}.
-
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/beyond-borders}{\texttt{athowes/beyond-borders}}.
 
 \hypertarget{background-1}{%
@@ -779,6 +810,9 @@ Code for the analysis in this chapter is available from \href{https://github.com
 
 \hypertarget{models-based-on-adjacency}{%
 \section{Models based on adjacency}\label{models-based-on-adjacency}}
+
+\hypertarget{the-besag-model}{%
+\subsection{The Besag model}\label{the-besag-model}}
 
 Spatial structure can be encoded using a symmetric relation between areas.
 Let \(i \sim j\) if the areas \(A_i\) and \(A_j\) are adjacent or neighbouring.
@@ -806,7 +840,7 @@ The Markov property arises due to the conditional independence structure \(p(u_i
 This is reflected in the sparsity of \(\bR\) such that \(u_i \perp u_j \, | \, \bu_{-ij}\) if and only if \(R_{ij} = 0\).
 The structure matrix \(\bR\) may also be expressed as the Laplacian of the adjacency graph \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) with vertices \(v \in \mathcal{V}\) corresponding to each area and edges \(e \in \mathcal{E}\) between vertices \(i\) and \(j\) when \(i \sim j\).
 
-Rewriting Equation @ref\{eq:gmrf\}, the probability density function of \(\bu\) is
+Rewriting Equation \eqref{eq:gmrf}, the probability density function of \(\bu\) is
 \begin{equation}
     p(\bu)
     \propto \exp \left( -\frac{\tau_u}{2} \bu^\top \bR \bu \right)
@@ -814,6 +848,97 @@ Rewriting Equation @ref\{eq:gmrf\}, the probability density function of \(\bu\) 
 \end{equation}
 This density is a function of the pairwise differences \(u_i - u_j\) and so is invariant to the addition of a constant \(c\) to each entry \(p(\bu) = p(\bu + c\mathbf{1})\), leading to an improper uniform distribution on the average of the \(u_i\).
 If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and \(\text{rank}(\bR) = n - 1\), while if \(\mathcal{G}\) is disconnected, and composed of \(n_c \geq 2\) connected components with index sets \(I_1, \ldots, I_{n_c}\), then the corresponding structure matrix \(\bR\) has rank \(n - n_c\) and the density is invariant to the addition of a constant to each of the connected components \(p(\bu_{I}) = p(\bu_{I} + c\mathbf{1})\) where \(I = I_1, \ldots, I_{n_c}\).
+
+\hypertarget{best-practises-for-the-besag-model}{%
+\subsection{Best practises for the Besag model}\label{best-practises-for-the-besag-model}}
+
+\textcite{freni2018note} recommended three best practices:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The structure matrix \(\mathbf{R}\) should be rescaled to have generalised variance, defined by the geometric mean of the diagonal elements of its generalised inverse
+  \begin{equation}
+   \sigma^2_{\text{GV}}(\mathbf{R}) = \prod_{i = 1}^n (\mathbf{R}^-_{ii})^{1/n} = \exp \left( \frac{1}{n} \sum_{i = 1}^n \log (\mathbf{R}^-_{ii}) \right),
+  \end{equation}
+  equal to one, by replacing \(\mathbf{R}\) with \(\mathbf{R}^\star = \mathbf{R} / \sigma^2_{\text{GV}}(\mathbf{R})\).
+  As the diagonal elements \(R^-_{ii}\) correspond to marginal variances, the generalised variance gives a measure of the average marginal variance.
+  However, this measure, introduced by \textcite{sorbye2014scaling}, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
+  Scaling mitigates the influence of the adjacency graph on the variance of \(\bu\).
+  Allowing the variance to be controlled by \(\tau_u\) alone is important as it allows for consistent, interpretable prior selection.
+  When the adjacency graph is disconnected it is not appropriate to scale the structure matrix \(\mathbf{R}\) uniformly since for a given precision \(\tau_u\), local smoothing operates on each connected component independently.
+  As such, each connected component should be scaled independently to have generalised variance one giving \(\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)\) where \(\mathbf{R}_I\) is the sub-matrix of the structure matrix corresponding to index set \(I\).
+\item
+  When one of the connected components is a single area, known either as a singleton or an island, the probability density \(\exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)\) has no dependence on \(u_i\).
+  This is equivalent to using an improper prior \(p(u_i) \propto 1\) and can be avoided by setting each singleton to have independent Gaussian noise \(p(u_i) \sim \mathcal{N}(0, 1)\).
+\item
+  To avoid confounding of the spatial random effects with the intercept, it is recommended to place a sum-to-zero constraint on each non-singleton connected component.
+  In other words, for each \(|I| > 1\) that \(\sum_{i \in I} u_i = 0\).
+\end{enumerate}
+
+\hypertarget{the-reparameterised-besag-york-molliuxe9-model}{%
+\subsection{The reparameterised Besag-York-Mollié model}\label{the-reparameterised-besag-york-molliuxe9-model}}
+
+Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
+The Besag-York-Mollié (BYM) model of \textcite{besag1991bayesian} accounts for this in a natural way by decomposing the spatial random effect \(\bu = \bv + \w\) into a sum of an unstructured IID component \(\bv\) and a spatially structured Besag component \(\w\), each of which with their own respective precision parameters \(\tau_v\) and \(\tau_w\).
+The resulting distribution is
+\begin{equation}
+    \bu \sim \N(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \label{eq:bym}.
+\end{equation}
+Including both \(\bv\) and \(\w\) is intended to enable the model to learn the relative extent of the unstructured and structured components via \(\tau_v\) and \(\tau_w\).
+However, in this specification scaling of the Besag precision matrix \(\mathbf{Q}\) is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
+In particular, placing a joint prior \((\tau_v, \tau_w) \sim p(\tau_v, \tau_w)\) which doesn't privilege either component is more easily accomplished if \(\mathbf{Q}\) and \(\mathbf{I}\) have the same scale.
+Additionally, supposing we have a prior belief that the over-dispersion is primarily IID and \(\bv\) accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief using \(p(\tau_v, \tau_w)\), without inadvertently altering the prior about the overall variation.
+This highlights identifiability issues of the parameters \((\tau_v, \tau_w)\) resulting from them not being orthogonal.
+Building on the models of \textcite{leroux2000estimation} and \textcite{dean2001detecting} which tackle this identifiability problem, but do not scale the spatially structured noise, \textcite{simpson2017penalising} propose a reparameterisation \((\tau_v, \tau_w) \mapsto (\tau_u, \phi)\) of the BYM model known as the BYM2 model and given by
+\begin{align}
+\bu = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \bv + \sqrt{\phi} \, \w^\star \right), \label{eq:bym2}
+\end{align}
+where \(\tau_u\) is the marginal precision of \(\bu\), \(\phi \in [0, 1]\) gives the proportion of the marginal variance explained by each component, and \(\w^\star\) is a scaled version of \(\w\) with precision matrix given by the scaled structure matrix \(\mathbf{R}^\star\).
+When \(\phi = 0\) the random effects are IID, and when \(\phi = 1\) the random effects follow the Besag model.
+To borrow an analogy \autocite{rue2020comment} the parameterisation \((\tau_v, \tau_w)\) is like having one hot water and one cold water tap, whereas the parameterisation \((\tau_u, \phi)\) is like a mixer tap where the amount of water and its temperature can be adjusted separately.
+
+\hypertarget{concerns-about-the-besag-models-representation-of-space}{%
+\subsection{Concerns about the Besag model's representation of space}\label{concerns-about-the-besag-models-representation-of-space}}
+
+The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
+Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
+As such, I have a number of concerns about the model's applicability to this broader setting.
+This discussion is closely linked to the modifiable areal unit problem \autocite{openshow1979million}, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy \autocite{wakefield2010aggregation}.
+
+\hypertarget{adjacency-compression}{%
+\subsubsection{Adjacency compression}\label{adjacency-compression}}
+
+Summarising a geometry by an adjacency graph represents a loss of information.
+Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure).
+This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.\footnote{The regularity of realistic geometries may help to constrain each class to be more similar than it strictly has to be. In other words, although pathological geometries can be constructed, they are implausible in statistical practise and so not of great concern to us here.}
+Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
+In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
+On the other hand, the regions of a country, determined by political and geographic forces, tend to display greater irregularity.
+The appropriateness of adjacency compression therefore varies by the type of geometry common to the application setting.
+
+\hypertarget{mean-structure}{%
+\subsubsection{Mean structure}\label{mean-structure}}
+
+In the Besag model is all adjacent areas count equally.
+This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbours.
+Figure illustrates a number of heuristic features for neighbour importance, including length of shared border, and the proximity of centers of mass.
+
+\hypertarget{variance-structure}{%
+\subsubsection{Variance structure}\label{variance-structure}}
+
+In Equation \ref{eq:besag} the precision of \(u_i\) is proportional to its number of neighbours \(n_{\delta i}\).
+It follow that as \(n_{\delta i} \to \infty\) then \(\text{Var}(u_i) \to 0\).
+This is illustrated by Figure where the area on the right is repeatedly divided such that its number of neighbours increases.
+This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
+However, if the amount of information in the shaded area remains fixed, it is inappropriate that \(\text{Var}(u_1)\) should tend to zero as a result of drawing additional, arbitrary, boundaries.
+In the image analysis setting this modelling assumption is reasonable: each pixel represents a fixed amount of information and a higher pixel density represents a greater amount of information.
+On the other hand, in public health and epidemiology, drawing boundaries to create additional areas is not expected to correspond to a greater amount of information.
+
+Suppose we fit a Besag model upon identical data using each of the two geometries in Figure.
+If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance \(\sigma^2_u\) in geometry (ii) as compared with geometry (i) because there will appear to be less variation between neighbouring areas.
+This problem does not only apply locally: since the effect of \(\sigma^2_u\) applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
 \hypertarget{models-using-kernels}{%
 \section{Models using kernels}\label{models-using-kernels}}
@@ -843,7 +968,7 @@ Code for the analysis in this chapter is available from \href{https://github.com
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-Adolescent girls and young women (AGYW, defined here as females aged 15-29) are a demographic group at increased risk of HIV infection.
+Adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
 Table \ref{tab:agyw-reasons} gives the social and biological reasons for this disparity.
@@ -1403,7 +1528,7 @@ These findings underscore the importance of providing effective HIV prevention o
 
 In this chapter I describe a novel Bayesian inference method I developed.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce estimates of HIV indicators.
+Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce estimates of HIV indicators \autocite{unaids2023global}.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 
 I began working on this project at the start of my PhD.
@@ -1533,6 +1658,17 @@ The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\
 \hypertarget{adaptive-quadrature}{%
 \subsubsection{Adaptive quadrature}\label{adaptive-quadrature}}
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/naomi-aghq/aghq-demo} 
+
+}
+
+\caption{The Gauss-Hermite quadrature nodes \(\z \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
+\end{figure}
+
 In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
 Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
 No fixed quadrature rule can be expected to perform well in integrating any posterior distributions produced by observation of particular data.
@@ -1661,6 +1797,17 @@ The Naomi model has \(m = 24\) hyperparameters.
 
 \hypertarget{principal-components-analysis}{%
 \subsection{Principal components analysis}\label{principal-components-analysis}}
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/naomi-aghq/pca-demo} 
+
+}
+
+\caption{See Figure \ref{fig:aghq-demo}.}\label{fig:pca-demo}
+\end{figure}
 
 \hypertarget{malawi-case-study}{%
 \section{Malawi case-study}\label{malawi-case-study}}

@@ -45,8 +45,7 @@ coverage2022 <- 76
 ## Background
 
 <!-- What is HIV -->
-HIV is a retrovirus which infects humans.
-If untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV is a retrovirus which infects humans, that if untreated can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or *Pneumocystis* pneumonias.
 
@@ -64,30 +63,32 @@ global_fund <- round((24.2 + 5)) * 1e9
 ```
 
 <!-- A lot of effort going into it -->
-A global and multifaceted effort has been made to respond to the epidemic.
+An ongoing global and multifaceted effort has been made to respond to the epidemic.
 Many groups have played pivotal roles in shaping the response, including local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
-Over $`r custom_numbers_to_words(pepfar)` has been invested by PEPFAR alone, constituting the "largest commitment by a single nation to address a single disease in history" [@pepfar2022].
+The investment of $`r custom_numbers_to_words(pepfar)` by PEPFAR constitutes the "largest commitment by a single nation to address a single disease in history" [@pepfar2022].
 
 ```{r}
 #' From https://www.unaids.org/en/resources/presscentre/featurestories/2021/september/20210906_global-roll-out-hiv-treatment
-art_deaths_averted <- 16.5 * 1e6
+art_deaths_averted <- 21 * 1e6
 condom_infections_averted <- 117 * 1e6
 vmmc_infections_averted <- 340 * 1e3
 ```
 
-```{r overall-picture, fig.cap="Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\\%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions combined comprise sub-Saharan Africa."}
+(ref:overall-picture) Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68%. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa. These two regions comprise sub-Saharan Africa.
+
+```{r overall-picture, fig.cap="(ref:overall-picture)"}
 knitr::include_graphics("figures/hiv-aids/overall-picture.png")
 ```
 
 <!-- The effort has translated into progress -->
 This combined effort has made a substantial impact on the course of the epidemic.
-Since their peak, the number of new HIV infections and AIDS-related deaths per year have both fallen significantly (Figure \@ref(fig:overall-picture)).
-This success has been due to a number of HIV prevention and treatment options.
+The number of new HIV infections and AIDS-related deaths per year have both fallen significantly since their peak (Figure \@ref(fig:overall-picture)).
+This success has been due to implementation of a range of HIV prevention and treatment options.
 
-* Perhaps the most important HIV intervention, antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+* Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
 A person living with HIV who takes ART daily can live a full and healthy life.
 Of the `r custom_numbers_to_words(plhiv2022)` people living with HIV (PLHIV) in 2022, around `r coverage2022`% were accessing ART.
-A staggering `r custom_numbers_to_words(art_deaths_averted)` AIDS-related deaths are estimated to have been averted by ART.
+A staggering `r custom_numbers_to_words(art_deaths_averted)` AIDS-related deaths are estimated to have been averted by ART [@unaids2023global].
 ART reduces the amount of virus in the blood and genital secretions.
 If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually [@cohen2011prevention].
 For this reason, as well as providing life saving treatment, ART also operates as prevention (TaSP).
@@ -104,9 +105,11 @@ They are primarily useful in high risk settings.
 
 It is important that progress is sustained.
 There remains some distance to go in ending AIDS as a public health threat.
-In 2022 there were `r custom_numbers_to_words(infections2022)` people newly infected with HIV and `r custom_numbers_to_words(deaths2022)` AIDS-related deaths [@unaids2022global].
+In 2022 there were `r custom_numbers_to_words(infections2022)` people newly infected with HIV and `r custom_numbers_to_words(deaths2022)` AIDS-related deaths, more than one every minute [@unaids2022global].
 
-```{r naomi-continent, fig.cap="Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These 2023 estimates were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \\texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO)."}
+(ref:naomi-continent) Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These estimates from 2023 were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from `aidsinfo.unaids.org`. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results for the Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).
+
+```{r naomi-continent, fig.cap="(ref:naomi-continent)"}
 knitr::include_graphics("figures/hiv-aids/naomi-continent.png")
 ```
 
@@ -118,15 +121,15 @@ Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA).
 It is estimated that `r round(ssa_plhiv2022 / plhiv2022 * 100)`% of the `r custom_numbers_to_words(plhiv2022)` PLHIV worldwide live in SSA.
 Adult HIV prevalence (ages 15-49) is higher than 10% (Figure \@ref(fig:naomi-continent)) in some countries in southern Africa.
 Just as there is variation between countries, there is variation within countries.
-For example, adult HIV prevalenceat the district municipality level in South Africa ranges from `r 6`% in Namakwa to `r 30`% in uMkhanyakude.
+For example, adult HIV prevalence at the district municipality level in South Africa ranges from `r 6`% in Namakwa to `r 30`% in uMkhanyakude.
 
 <!-- Uneven burden across people -->
-In all countries, some groups of people are at much higher risk than others.
+In all countries and contexts, some groups of people are at much higher risk than others.
 Groups of people at increased risk of HIV infection are known as key populations (KPs).
 Examples include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP).
 KPs are often marginalised, and face legal and social issues.
-In concentrated settings, the majority of new HIV infections occur among KPs.
-In generalised settings like SSA, risk is more diffuse accross the population.
+In concentrated settings, the majority of new HIV infections occur in KPs and their sexual partners.
+In generalised settings like SSA, risk is more diffuse across the population.
 For example, adolescent girls and young women (AGYW) are a large demographic group at increased risk of HIV infection in SSA [@risher2021age; @monod2023growing].
 
 <!-- Prioritisation of interventions  -->
@@ -163,7 +166,9 @@ As a result, limited direct data might be available for the particular time, loc
 Individuals may be hesitant to disclose their HIV status, or report higher risk behaviours, due to social desirability bias and a fear of discrimination or stigma.
 When available, biomarker data can be used to overcome under-reporting, it may still be subject to measurement errors.
 3. **Missing data**
-Many of the populations at greatest risk are difficult to reach, and not appear on household survey sampling frames.
+Many KPs are difficult to reach, and do not appear on household survey sampling frames.
+
+
 Individuals included on the sampling frame may choose not to respond.
 4. **Denominators and demography**
 Many indicators are rates or proportions, which incorporate the population at risk in the denominator.
@@ -181,7 +186,6 @@ For example, if limited data is available for men aged 30-34, it may be reasonab
 Multiple sources of evidence can be combined to overcome limitations of any one data source.
 3. **Expert guidance**
 Expert epidemiological, demographic opinion can be used to improve estimates.
-
 Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
 
 1. **Greater reliance on routine health system data** Phasing out of nationally representative household surveys.

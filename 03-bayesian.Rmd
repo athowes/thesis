@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 ## Bayesian statistics
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed in Section \ref{sec:surveillance} because it allows principled and flexible integration of data and scientific knowledge.
+It is well suited for to the challenges posed by Section \ref{sec:surveillance} because it allows principled and flexible integration of data and scientific knowledge.
 In this section I provide brief overview.
 For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
 
@@ -49,7 +49,8 @@ The model is generative in the sense that one can simulate from it to generate d
 If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
 In this way, models can be built iteratively, with complexity added gradually. 
 
-The model is usually constructed from two parts, known respectively as the likelihood $p(\y \, | \, \bphi)$ and the prior distribution $p(\bphi)$ whereby the joint distribution is obtained by the product $p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)$.
+The model is usually constructed from two parts, known respectively as the likelihood $p(\y \, | \, \bphi)$ and the prior distribution $p(\bphi)$.
+The joint distribution is obtained by the product $p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)$.
 The likelihood, as a function of $\bphi$ with $\y$ fixed, reflects the probability of observing the data when the true value of the parameters is $\bphi$.
 The prior distribution encapsulates beliefs about the parameters $\bphi$ before the data is observed.
 
@@ -61,18 +62,24 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 ### Bayesian computation
 
+(ref:conjugate) A simple example of Bayesian modelling and computation for the observation model $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ with prior $\phi \sim \text{Gamma}(3, 1)$. Given observed data $\y = (1, 2, 3)$ the posterior is available in closed form as $\text{Gamma}(9, 4)$ because the model is so-called conjugate. Though it is unlikely that the best model for a particular problem will have the conjugacy property, conjugate models are still frequently used because of their convenience.
+
+```{r conjugate, fig.cap="(ref:conjugate)"}
+knitr::include_graphics("figures/bayesian/conjugate.png")
+```
+
 The posterior distribution $p(\bphi \, | \, \y)$ encapsulates probabilistic beliefs about the parameters given the observed data.
 Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \ref{eq:posterior} directly because of the integral $p(\y) = \int p(\y, \bphi) \text{d}\bphi$ in the denominator, sometimes known as the marginal likelihood or evidence.
-As such, although the numerator is proportional to the posterior distribution $p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)$ and easy to evaluate, it is typically difficult to evaluate the posterior distribution itself.
+Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the integral $p(\y) = \int p(\y, \bphi) \text{d}\bphi$ in the denominator, sometimes known as the marginal likelihood or evidence.
+As such, although it is easy to evaluate $p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)$, it is typically difficult to evaluate the posterior distribution itself.
 
-A great variety of computational methods have been developed to tackle this problem.
+A variety of computational methods have been developed to tackle this problem.
 Briefly, the main categories are:
 
-1. **Sampling algorithms** Also known as Monte Carlo algorithms, these approaches look to generate samples from the posterior distribution.
+1. **Sampling algorithms** Known as Monte Carlo [@robert2005monte] algorithms after the casino, these approaches look to generate samples from the posterior distribution.
 The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
 In this thesis, I make use of the No-U-Turn sampler (NUTS), a Hamiltonian Monte Carlo (HMC) algorithm, implemented in the Stan probabilistic programming language (PPL).
 2. **Variational Bayes** In variational Bayes, the posterior distribution is assumed to belong to a particular class of functions and use optimisation to choose the best member of that class.
@@ -174,14 +181,34 @@ with latent field and hyperparameter prior distributions as in the LGM case.
 The ELGM class is well suited to small-area estimation of HIV indicators.
 Indeed, this class of models is used throughout the thesis.
 While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial], the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is naturally written as an ELGM in which each observation depends on the set of structured additive predictors corresponding to each multinomial observation.
-In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators across over 35 countries is shown to have the features of an ELGM.
+In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
 
 ## Survey methods
 
 Survey methods concern the design and analysis of survey data [@lohr2009sampling].
-In SSA, nationally representative household surveys, such as the Demographic and Health Surveys (DHS) [@dhs] or Population-based HIV Impact Assessment (PHIA) [@phia] surveys, provide the highest quality information about HIV.
-Talk about the DDC [@meng2018statistical].
-With regard to the DDC, discuss how survey weighting is helpful.
+Consider a population of individuals $j = 1, \ldots, N$ with outcomes of interest $y_j$.
+If a census were run, then the population population mean could be calculated as
+\begin{equation}
+\mu_N = \frac{1}{N} \sum_{j = 1}^N y_j.
+\end{equation}
+In practice, only a subset of the individuals will be sampled and their outcomes observed.
+Let $R_j$ be an indicator for whether or not $y_j$ is recorded.
+A weighted estimate of the population mean is
+\begin{equation}
+\mu_w = \frac{\sum_{j = 1}^N w_j R_j y_j}{\sum_{j = 1}^N w_j R_j},
+\end{equation}
+where $w_j > 0$ are survey weights.
+The additive error of the weighted estimate may be decomposed as follows [@meng2018statistical]
+\begin{equation}
+\mu_w - \mu_N = \rho_{Y, R} \times \sqrt{\frac{N - n}{n}} \times \sigma.
+\end{equation}
+Interpreting these three terms provides useful intuition about survey sampling.
+The data quality $\rho_{Y, R}$ measures the correlation between the outcome of interest and the observation mechanism.
+The data quantity $\sqrt{(N - n)/n}$.
+The problem difficultly $\sigma$ measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used. 
+
 Discuss how we weight then model following @chen2014use.
 Discuss how we ignore clustering structure.
 Discuss how all of this isn't great and that someone should figure this out.
+
+Nationally representative household surveys, such as the Demographic and Health Surveys (DHS) or Population-based HIV Impact Assessment (PHIA) surveys, provide the highest quality widely relevant information about HIV.
