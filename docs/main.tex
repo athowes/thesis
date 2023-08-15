@@ -275,11 +275,11 @@
 
 %%%%% ACKNOWLEDGEMENTS -- Nothing to do here except comment out if you don't want it.
 \begin{acknowledgements}
- 	I would like to start by thanking my supervisors Seth Flaxman and Jeff Eaton for their guidance and mentorship.
- I am grateful for the research environment offered by the Modern Statistics and Statistical Machine Learning Centre for Doctoral Training, HIV Inference Group, and Machine Learning and Global Health Network.
+ 	I would like to start by thanking my supervisors Seth Flaxman and Jeff Eaton for their guidance and mentorship throughout the duration of this thesis.
+ I am grateful for the research environment offered by the Modern Statistics and Statistical Machine Learning Centre for Doctoral Training at Imperial and Oxford, the HIV Inference Group at Imperial, and the Machine Learning and Global Health Network.
  Thanks to Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab.
  Thanks to Alex Stringer, and the Department of Statistics and Actuarial Science for hosting my visit to the University of Waterloo.
- My sense for what is important to work on has been shaped by the Effective Altruism community.
+ My sense for what matters has been shaped, and arguably enriched, by the Effective Altruism community.
  This research was made possible by funding provided by the Bill \& Melinda Gates Foundation and EPSRC.
 
  \begin{flushright}
@@ -361,12 +361,12 @@ It is Bayesian in that I arrive at conclusions based on data using probability m
 The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
 The \textcite{ihme2019} found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \ref{fig:gbd}).
 Using statistics to quantify the epidemic is an important part of the public health response, and the path towards disease control and elimination.
-However, there are numerous challenges involved in obtaining suitable estimates of relevant indicators.
+However, there are substantial challenges involved in obtaining suitable estimates of relevant indicators.
 
 The estimates in this thesis are based on data recorded from national household surveys or routinely collected from healthcare facilities.
 An important feature of this data is its location and the time at which it was collected.
 While diverse, spatio-temporal data have distinctive commonalities.
-I draw on modelling techniques well suited for this kind of data.
+I draw on modelling techniques from spatio-temporal statistics.
 
 Computation is an essential part of modern statistical practice.
 Each project in this thesis, as well as the thesis itself, is accompanied by \(\textsc{R}\) code, hosted on GitHub.
@@ -381,7 +381,7 @@ The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
 \item
   Chapter \ref{hiv-aids}: I begin by providing background on the HIV/AIDS epidemic, as well as describing the challenges faced by surveillance efforts.
 \item
-  Chapter \ref{bayes-st}: I then introduce the statistical concepts and notation used throughout the thesis, focusing on Bayesian modelling and computation.
+  Chapter \ref{bayes-st}: I then introduce the statistical concepts and notation used throughout the thesis, focusing on Bayesian modelling and computation, spatio-temporal statistics, and survey methods.
 \item
   Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was designed with analysis of a grid of pixels in mind.
   In disease mapping, we work using the districts of a country, which are not a grid.
@@ -392,7 +392,7 @@ The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
   I estimate the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assess the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
 \item
   Chapter \ref{naomi-aghq}: The Naomi small-area estimation model \autocite{eaton2021naomi} is used by countries to estimate district-level HIV indicators.
-  Motivated by this model, I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
+  With this motivation, I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
   I apply the method to data from Malawi, and analyse the consequences of inference method choice for policy relevant outcomes.
   Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
 \item
@@ -419,7 +419,8 @@ The structure of this thesis (Figure \ref{fig:chapter-flowchart}) is as follows:
 \hypertarget{background}{%
 \section{Background}\label{background}}
 
-HIV is a retrovirus which infects humans, that if untreated can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+HIV is a retrovirus which infects humans.
+If untreated, HIV develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or \emph{Pneumocystis} pneumonias.
 
@@ -446,7 +447,7 @@ The investment of \$100 billion by PEPFAR constitutes the ``largest commitment b
 
 This combined effort has made a substantial impact on the course of the epidemic.
 The number of new HIV infections and AIDS-related deaths per year have both fallen significantly since their peak (Figure \ref{fig:overall-picture}).
-This success has been due to implementation of a range of HIV prevention and treatment options.
+This success has been due to implementation of a range of HIV prevention and treatment options, the most significant of which I describe below.
 
 \begin{itemize}
 \tightlist
@@ -462,20 +463,21 @@ This success has been due to implementation of a range of HIV prevention and tre
 \item
   Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as \emph{Chlamydia trachomatis}, \emph{Neisseria gonorroeae}, syphilis, and \emph{Trichomonas vaginalis}.
   There has been a significant scale-up of condom usage since 1990, which is estimated to have averted 117 million new HIV infections \autocite{stover2021impact}.
-  Even so, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
+  That said, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
 \item
   Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
   Three landmark randomised control trials \autocite{auvert2005randomized,gray2007male,bailey2007male} found complete surgical removal of the foreskin to result in a 50-60\% reduction of HIV incidence in men.
-  Based on this evidence, VMMC has been recommended by WHO and UNAIDS as a key HIV intervention in high-prevalence settings since 2007.
-  Scale up of VMMC across 15 priority countries between 2008 and 2019 was estimated to have already averted 340 thousand new HIV infections, though the future number of new HIV infections averted is likely to be much higher.
+  Based on this evidence, VMMC has been recommended since 2007 by the World Health Organization (WHO) and UNAIDS as a key HIV intervention in high-prevalence settings.
+  Scale up of VMMC across 15 priority countries between 2008 and 2019 is estimated to have already averted 340 thousand new HIV infections, though the future number of new HIV infections averted is likely to be much higher.
 \item
   Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
-  They are primarily useful in high risk settings.
+  More costly than some other prevention options, they are primarily useful in high risk settings.
 \end{itemize}
 
-It is important that progress is sustained.
+It is important that progress which has been made is sustained.
 There remains some distance to go in ending AIDS as a public health threat.
 In 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths, more than one every minute \autocite{unaids2022global}.
+A shortfall in HIV funding \autocite{economist2023triple}, disruption to HIV services caused by the COVID-19 pandemic, and increasingly difficult to meet targets.
 
 
 
@@ -487,6 +489,9 @@ In 2022 there were 1.3 million people newly infected with HIV and 630 thousand A
 
 \caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These estimates from 2023 were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \texttt{aidsinfo.unaids.org}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results for the Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
 \end{figure}
+
+For available resources to have the greatest impact, it is important that HIV interventions are prioritised.
+The precision public health paradigm \autocite{khoury2016precision} extends the principles of precision medicine to public health, and aims to provide the right interventions to the right population, in the right place, at the right time.
 
 Disease burden varies substantially across multiple spatial scales.
 In some countries, the epidemic is concentrated within small populations, and HIV prevalence is low.
@@ -505,9 +510,6 @@ In concentrated settings, the majority of new HIV infections occur in KPs and th
 In generalised settings like SSA, risk is more diffuse across the population.
 For example, adolescent girls and young women (AGYW) are a large demographic group at increased risk of HIV infection in SSA \autocite{risher2021age,monod2023growing}.
 
-For available resources to have the greatest impact, it is important that HIV interventions are prioritised \autocite{ord2013moral}.
-The precision public health paradigm \autocite{khoury2016precision} is an extension of precision medicine to public health, which looks to ensure the right interventions are provided to the right populations, in the right places, at the right times.
-
 \hypertarget{hiv-surveillance}{%
 \section{\texorpdfstring{HIV surveillance \label{sec:surveillance}}{HIV surveillance }}\label{hiv-surveillance}}
 
@@ -519,10 +521,9 @@ Important indicators include:
 \tightlist
 \item
   \textbf{HIV prevalence} is the proportion \(\rho \in [0, 1]\) of the population who have HIV, typically written as a percentage.
-  Interpreted alone, HIV prevalence can be misleading.
-  HIV prevalence increasing could be as a result of new infections, or as a result of more PLHIV remaining alive by taking treatment.
-  As such, HIV prevalence is primarily used in calculations of other indicators, rather than directly itself.
-  In some circumstances those other indicators can be difficult to estimate, and HIV prevalence can be a useful proxy.
+  Both new infections and more PLHIV remaining alive by taking treatment result in an increase in HIV prevalence.
+  As such, HIV prevalence should not be interpreted in isolation, and is primarily used indirectly to calculate other indicators, rather than directly in policy.
+  In some circumstances, when other indicators are difficult to estimate, HIV prevalence can be a useful proxy.
   The number of PLHIV is given by \(N\rho\), where \(N\) is the population size.
 \item
   \textbf{HIV incidence} is the rate \(\lambda \in \mathbb{R}\) of new HIV infections, typically written as number of new infections per 1000 person years.
@@ -530,10 +531,10 @@ Important indicators include:
   Planning, delivery, and evaluation of prevention programming relies on estimates of HIV incidence.
 \item
   \textbf{ART coverage} is the proportion \(\alpha \in [0, 1]\) of PLHIV who are on ART, typically written as a percentage.
-  Estimates of ART coverage play a direct role in the provision of treatment services.
+  Estimates of ART coverage play a direct role in the provision and target setting for treatment services.
 \end{itemize}
 
-There are significant difficulties associated with obtaining reliable, timely, estimates of these indicators at an appropriate resolution.
+There are significant difficulties associated with obtaining reliable, timely, estimates of these indicators at an appropriate spatial resolution.
 Among them:
 
 \begin{enumerate}
@@ -550,37 +551,44 @@ Among them:
 \item
   \textbf{Missing data}
   Many KPs are difficult to reach, and do not appear on household survey sampling frames.
+  Individuals included on the sampling frame may choose not to respond.
+\item
+  \textbf{Denominators and demography}
+  Many indicators are rates or proportions, which rely on estimates of the population at risk in the denominator.
+  Accurately estimating these denominators is itself a challenging task \autocite{tatem2017worldpop}.
+  Taking a ratio of uncertain quantities amplifies the uncertainty.
 \end{enumerate}
 
-Individuals included on the sampling frame may choose not to respond.
-4. \textbf{Denominators and demography}
-Many indicators are rates or proportions, which incorporate the population at risk in the denominator.
-Accurately estimating these denominators is usually itself a challenging task.
-Taking a ratio of uncertain quantities only goes to amplify the uncertainty.
-For example, ART coverage has PLHIV as the denominator, which itself has the population size as its denominator.
-
 The above challenges make direct interpretation of the data misleading.
-Careful statistical modelling is required to overcome these limitations.
+Along with Careful statistical modelling is required to overcome these limitations.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
   \textbf{Borrowing information}
-  Data not directly about the indicator of interest, but judged to be indirectly related, can be used to help improve estimates when little direct data is available.
-  For example, if limited data is available for men aged 30-34, it may be reasonable to make use of the data for men aged 35-39.
+  When little direct data is available, data judged to be indirectly related can be used to help improve estimation.
+  For example, if limited data is available for men aged 30-34 is a particular country, it is likely reasonable to make use of the data for men aged 35-39.
+  As well as over age groups, information can be borrowed between and within countries, and across times.
 \item
   \textbf{Evidence synthesis}
-  Multiple sources of evidence can be combined to overcome limitations of any one data source.
+  Multiple sources of evidence can be combined to overcome the limitations of any one data source.
+  For example, infrequently run household surveys can be complimented by up to date programmatic data.
 \item
   \textbf{Expert guidance}
-  Expert epidemiological, demographic opinion can be used to improve estimates.
-  Aims for HIV response going forward, and surveillance capabilities are needed to meet them.
+  Expert epidemiological, demographic, and local stakeholder guidance can be used to improve estimates.
+  Ensuring the quality of any data used in the estimation process is essential.
+\end{enumerate}
+
+Aims for HIV response going forward, and the surveillance capabilities needed to meet them.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
-  \textbf{Greater reliance on routine health system data} Phasing out of nationally representative household surveys.
+  \textbf{Greater reliance on routine health system data} It is not recommended to include HIV testing in nationally representative household surveys in low (\textless2\%) HIV prevalence settings \autocite{world2005guidelines}. Patient-level HIV data systems \autocite{world2017consolidated}. Case-based surveillance (CBS).
 \item
-  \textbf{Integration with other health programs}
-\item
-  \textbf{Use of mobile technologies}
+  \textbf{Integration with other health programs} Strengthen health systems.
 \end{enumerate}
 
 \hypertarget{bayes-st}{%
@@ -765,33 +773,91 @@ In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produ
 \hypertarget{survey-methods}{%
 \section{Survey methods}\label{survey-methods}}
 
-Survey methods concern the design and analysis of survey data \autocite{lohr2009sampling}.
-Consider a population of individuals \(j = 1, \ldots, N\) with outcomes of interest \(y_j\).
-If a census were run, then the population population mean could be calculated as
-\begin{equation}
-\mu_N = \frac{1}{N} \sum_{j = 1}^N y_j.
-\end{equation}
-In practice, only a subset of the individuals will be sampled and their outcomes observed.
-Let \(R_j\) be an indicator for whether or not \(y_j\) is recorded.
-A weighted estimate of the population mean is
-\begin{equation}
-\mu_w = \frac{\sum_{j = 1}^N w_j R_j y_j}{\sum_{j = 1}^N w_j R_j},
-\end{equation}
-where \(w_j > 0\) are survey weights.
-The additive error of the weighted estimate may be decomposed as follows \autocite{meng2018statistical}
-\begin{equation}
-\mu_w - \mu_N = \rho_{Y, R} \times \sqrt{\frac{N - n}{n}} \times \sigma.
-\end{equation}
-Interpreting these three terms provides useful intuition about survey sampling.
-The data quality \(\rho_{Y, R}\) measures the correlation between the outcome of interest and the observation mechanism.
-The data quantity \(\sqrt{(N - n)/n}\).
-The problem difficultly \(\sigma\) measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used.
+Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
+Demographic and Health Surveys (DHS) are funded by USAID and run every three to five years in most countries.
+Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run in high HIV burden countries.
 
-Discuss how we weight then model following \textcite{chen2014use}.
-Discuss how we ignore clustering structure.
+\hypertarget{survey-notation-and-key-terms}{%
+\subsection{Survey notation and key terms}\label{survey-notation-and-key-terms}}
+
+Consider a population of individuals \(i = 1, \ldots, N\) and outcomes of interest \(y_i\).
+If a census were run in, and all individuals responded, then the population mean \(\bar y\) could be calculated exactly by
+\begin{equation}
+\bar y = \frac{1}{N} \sum_{i = 1}^N y_i.
+\end{equation}
+In practice, running a census is impractical and rarely possible.
+Usually, only a subset of the individuals are sampled, and only a subset of those have their outcome recorded due to non-response.
+Let \(S_i\) be an indicator for whether or not individual \(i\) is sampled, and \(R_i\) be an indicator for whether or not \(y_i\) is recorded.
+If \(S_i = 0\) then \(R_i = 0\), but if \(S_i = 1\) then individual \(i\) may not respond such that \(R_i = 0\).
+The population mean may be estimated directly based on the recorded subset of the population by
+\begin{equation}
+\bar y_R = \frac{\sum_{i = 1}^N R_i y_i}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i y_i}{m_R}, \label{eq:direct}
+\end{equation}
+where \(m_R\) is the recorded sample size.
+
+A probability sample refers to the case when individuals are selected to be included in the survey at random.
+In a non-probability sample, inclusion or exclusion from the survey is deterministic.
+A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that \(\mathbb{P}(S_i = 1) = 1 / N\) for all \(i\).
+The survey design is called complex when the sampling probabilities for each individual vary, such that \(\mathbb{P}(S_i = 1) = \pi_i\) with \(\sum_{i = 1}^N \pi_i = 1\) and \(\pi_i > 0\) for all \(i\).
+Complex survey designs can offer both greater practicality and statistical efficiency than SRS.
+However, particular care is required in analysing data collected using complex survey designs.
+In particular, the direct estimator given in Equation \eqref{eq:direct}, which does not take into account the sampling probabilities, is biased even in the case of no non-response.
+That said, even for SRS, non-response is a ubiquitous problem which also must be treated with care.
+Let \(\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i\) be the probability of response of individual \(i\) given inclusion in the survey.
+
+\hypertarget{survey-design}{%
+\subsection{Survey design}\label{survey-design}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Stratification into administrative units
+\item
+  Primary sampling units (PSUs) and their populations
+\item
+  Sample PSUs proportional to their population
+\item
+  Select households using systematic sampling
+\item
+  Visit each household and interview all adults
+\end{enumerate}
+
+\hypertarget{survey-analysis}{%
+\subsection{Survey analysis}\label{survey-analysis}}
+
+Suppose a complex survey is run with sampling probabilities \(\pi_i\).
+Design weights \(\delta_i = 1 / \pi_i\) express the number of population units represented by the \(i\)th sampled unit.
+Non-response weights \(\gamma_i = 1 / \upsilon_i\) express the number of sampled units represented by the \(i\)th recorded unit.
+Survey weights \(\omega_i = \delta_i \times \gamma_i\) express the number of population units represented by the \(i\)th recorded unit.
+A weighted estimate \autocite{hajek1971discussion} of the population mean is then
+\begin{equation}
+\bar y_\omega = \frac{\sum_{j = 1}^N \omega_j R_j y_j}{\sum_{j = 1}^N \omega_j R_j}. \label{eq:hajek}
+\end{equation}
+
+Decomposing the additive error of Equation \eqref{eq:hajek} provides useful intuition as to the utility of survey weighting \autocite{meng2018statistical}
+\begin{align}
+\bar y_\omega - \bar y &= \frac{\mathbb{E}(R_i Y_i)}{\mathbb{E}(R_i)} - \mathbb{E}(Y_i) \\ 
+&= \frac{\mathbb{C}(R_i Y_i)}{\mathbb{E}(R_i)} \\
+&= \rho_{Y, R} \times \sqrt{\frac{N - m_R}{m_R}} \times \sigma_y.
+\end{align}
+The data quality \(\rho_{Y, R}\) measures the correlation between the outcome of interest and the recording mechanism.
+The data quantity \(\sqrt{(N - m_R)/m_R}\)
+The problem difficultly \(\sigma_y\) measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used.
+Under SRS then.
+
+The Kish effective sample size (ESS) \autocite{kish1965survey} is
+\begin{equation}
+m^\star = \frac{\left(\sum_{i = 1}^N \omega_i \right)^2}{\sum_{i = 1}^N \omega_i^2}.
+\end{equation}
+We weight then model following \textcite{chen2014use}.
+We ignore clustering structure.
 Discuss how all of this isn't great and that someone should figure this out.
 
-Nationally representative household surveys, such as the Demographic and Health Surveys (DHS) or Population-based HIV Impact Assessment (PHIA) surveys, provide the highest quality widely relevant information about HIV.
+\hypertarget{an-adaptive-design-proposal}{%
+\subsection{An adaptive design proposal}\label{an-adaptive-design-proposal}}
+
+\textcite{bradley2023alsd}
 
 \hypertarget{beyond-borders}{%
 \chapter{Models for spatial structure}\label{beyond-borders}}
@@ -1528,7 +1594,7 @@ These findings underscore the importance of providing effective HIV prevention o
 
 In this chapter I describe a novel Bayesian inference method I developed.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce estimates of HIV indicators \autocite{unaids2023global}.
+Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 
 I began working on this project at the start of my PhD.
