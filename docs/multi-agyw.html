@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>5 A model for risk group proportions | Bayesian spatio-temporal methods for small-area estimation of HIV indicators</title>
+  <meta name="description" content="5 A model for risk group proportions | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="5 A model for risk group proportions | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="5 A model for risk group proportions | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  
+  
+  
+
+<meta name="author" content="Adam Howes" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="beyond-borders.html"/>
+<link rel="next" href="naomi-aghq.html"/>
+<style type="text/css">
+p.abstract{
+  text-align: center;
+  font-weight: bold;
+}
+div.abstract{
+  margin: auto;
+  width: 90%;
+}
+</style>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="templates/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgments"><i class="fa fa-check"></i>Acknowledgments</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#chapter-overview"><i class="fa fa-check"></i><b>1.1</b> Chapter overview</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#hiv-surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance </a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-statistics"><i class="fa fa-check"></i><b>3.1</b> Bayesian statistics</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-modelling"><i class="fa fa-check"></i><b>3.1.1</b> Bayesian modelling</a></li>
+<li class="chapter" data-level="3.1.2" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-computation"><i class="fa fa-check"></i><b>3.1.2</b> Bayesian computation</a></li>
+<li class="chapter" data-level="3.1.3" data-path="bayes-st.html"><a href="bayes-st.html#interplay-between-modelling-and-computation"><i class="fa fa-check"></i><b>3.1.3</b> Interplay between modelling and computation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="bayes-st.html"><a href="bayes-st.html#spatio-temporal-statistics"><i class="fa fa-check"></i><b>3.2</b> Spatio-temporal statistics</a></li>
+<li class="chapter" data-level="3.3" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical-lgm-elgm"><i class="fa fa-check"></i><b>3.3</b> Model classes</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="bayes-st.html"><a href="bayes-st.html#mixed-effects-models"><i class="fa fa-check"></i><b>3.3.2</b> Mixed effects models</a></li>
+<li class="chapter" data-level="3.3.3" data-path="bayes-st.html"><a href="bayes-st.html#latent-gaussian-models"><i class="fa fa-check"></i><b>3.3.3</b> Latent Gaussian models</a></li>
+<li class="chapter" data-level="3.3.4" data-path="bayes-st.html"><a href="bayes-st.html#extended-latent-gaussian-models"><i class="fa fa-check"></i><b>3.3.4</b> Extended latent Gaussian models</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.4</b> Survey methods</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#survey-notation-and-key-terms"><i class="fa fa-check"></i><b>3.4.1</b> Survey notation and key terms</a></li>
+<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#survey-design"><i class="fa fa-check"></i><b>3.4.2</b> Survey design</a></li>
+<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#survey-analysis"><i class="fa fa-check"></i><b>3.4.3</b> Survey analysis</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="beyond-borders.html"><a href="beyond-borders.html"><i class="fa fa-check"></i><b>4</b> Models for spatial structure</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="beyond-borders.html"><a href="beyond-borders.html#background-1"><i class="fa fa-check"></i><b>4.1</b> Background</a></li>
+<li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#models-based-on-adjacency"><i class="fa fa-check"></i><b>4.2</b> Models based on adjacency</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.2.1</b> The Besag model</a></li>
+<li class="chapter" data-level="4.2.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.2.2</b> Best practises for the Besag model</a></li>
+<li class="chapter" data-level="4.2.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.2.3</b> The reparameterised Besag-York-Mollié model</a></li>
+<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s representation of space</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a></li>
+<li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.4</b> Simulation study</a></li>
+<li class="chapter" data-level="4.5" data-path="beyond-borders.html"><a href="beyond-borders.html#hiv-prevalence-study"><i class="fa fa-check"></i><b>4.5</b> HIV prevalence study</a></li>
+<li class="chapter" data-level="4.6" data-path="beyond-borders.html"><a href="beyond-borders.html#discussion"><i class="fa fa-check"></i><b>4.6</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="multi-agyw.html"><a href="multi-agyw.html"><i class="fa fa-check"></i><b>5</b> A model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-2"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
+<li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#data"><i class="fa fa-check"></i><b>5.2</b> Data</a></li>
+<li class="chapter" data-level="5.3" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions"><i class="fa fa-check"></i><b>5.3</b> Model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="multi-agyw.html"><a href="multi-agyw.html#st-multinomial"><i class="fa fa-check"></i><b>5.3.1</b> Spatio-temporal multinomial logistic regression</a></li>
+<li class="chapter" data-level="5.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#s-logistic"><i class="fa fa-check"></i><b>5.3.2</b> Spatial logistic regression</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Female sex worker population size adjustment</a></li>
+<li class="chapter" data-level="5.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#results"><i class="fa fa-check"></i><b>5.3.4</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi estimates</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections-reached"><i class="fa fa-check"></i><b>5.4.2</b> Expected new infections reached</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#results-1"><i class="fa fa-check"></i><b>5.4.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#discussion-1"><i class="fa fa-check"></i><b>5.5</b> Discussion</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#limitations"><i class="fa fa-check"></i><b>5.5.1</b> Limitations</a></li>
+<li class="chapter" data-level="5.5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#conclusion"><i class="fa fa-check"></i><b>5.5.2</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="naomi-aghq.html"><a href="naomi-aghq.html"><i class="fa fa-check"></i><b>6</b> Fast approximate Bayesian inference</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-methods"><i class="fa fa-check"></i><b>6.1</b> Inference methods</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#the-laplace-approximation"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
+<li class="chapter" data-level="6.1.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#quadrature"><i class="fa fa-check"></i><b>6.1.2</b> Quadrature</a></li>
+<li class="chapter" data-level="6.1.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#integrated-nested-laplace-approximation"><i class="fa fa-check"></i><b>6.1.3</b> Integrated nested Laplace approximation</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#software"><i class="fa fa-check"></i><b>6.2</b> Software</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#tmb"><i class="fa fa-check"></i><b>6.2.1</b> <code>TMB</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#r-inla"><i class="fa fa-check"></i><b>6.2.2</b> <code>R-INLA</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation"><i class="fa fa-check"></i><b>6.3</b> A universal INLA implementation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#epilepsy-example"><i class="fa fa-check"></i><b>6.3.1</b> Epilepsy example</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#the-naomi-model"><i class="fa fa-check"></i><b>6.4</b> The Naomi model</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-structure"><i class="fa fa-check"></i><b>6.4.1</b> Model structure</a></li>
+<li class="chapter" data-level="6.4.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#connection-to-elgms"><i class="fa fa-check"></i><b>6.4.2</b> Connection to ELGMs</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#extension-of-aghq-to-moderate-dimensions"><i class="fa fa-check"></i><b>6.5</b> Extension of AGHQ to moderate dimensions</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#aghq-with-variable-levels"><i class="fa fa-check"></i><b>6.5.1</b> AGHQ with variable levels</a></li>
+<li class="chapter" data-level="6.5.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#principal-components-analysis"><i class="fa fa-check"></i><b>6.5.2</b> Principal components analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#malawi-case-study"><i class="fa fa-check"></i><b>6.6</b> Malawi case-study</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#nuts-convergence"><i class="fa fa-check"></i><b>6.6.1</b> NUTS convergence</a></li>
+<li class="chapter" data-level="6.6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#use-of-pca-aghq"><i class="fa fa-check"></i><b>6.6.2</b> Use of PCA-AGHQ</a></li>
+<li class="chapter" data-level="6.6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-assessment"><i class="fa fa-check"></i><b>6.6.3</b> Model assessment</a></li>
+<li class="chapter" data-level="6.6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.6.4</b> Inference comparison</a></li>
+<li class="chapter" data-level="6.6.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.6.5</b> Exceedance probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.7</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>7</b> Future work and conclusions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#strengths"><i class="fa fa-check"></i><b>7.1</b> Strengths</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="conclusions.html"><a href="conclusions.html#chapter-refbeyond-borders"><i class="fa fa-check"></i><b>7.1.1</b> Chapter @ref(beyond-borders)</a></li>
+<li class="chapter" data-level="7.1.2" data-path="conclusions.html"><a href="conclusions.html#chapter-refmulti-agyw"><i class="fa fa-check"></i><b>7.1.2</b> Chapter @ref(multi-agyw)</a></li>
+<li class="chapter" data-level="7.1.3" data-path="conclusions.html"><a href="conclusions.html#chapter-refnaomi-aghq"><i class="fa fa-check"></i><b>7.1.3</b> Chapter @ref(naomi-aghq)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.2</b> Future work</a></li>
+<li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.3</b> Conclusions</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="spatial-structure.html"><a href="spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Spatial structure</a></li>
+<li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
+<li class="chapter" data-level="B.2" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#household-survey-data"><i class="fa fa-check"></i><b>B.2</b> Household survey data</a></li>
+<li class="chapter" data-level="B.3" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#spatial-analysis-levels"><i class="fa fa-check"></i><b>B.3</b> Spatial analysis levels</a></li>
+<li class="chapter" data-level="B.4" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#survey-questions-and-risk-group-allocation"><i class="fa fa-check"></i><b>B.4</b> Survey questions and risk group allocation</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html"><i class="fa fa-check"></i><b>C</b> Fast approximate Bayesian inference</a>
+<ul>
+<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a></li>
+<li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.2</b> Model assessment</a></li>
+<li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.3</b> AGHQ and PCA-AGHQ details</a></li>
+<li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.4</b> Normalising constant estimation</a></li>
+<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.5</b> Inference comparison</a></li>
+<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#mcmc-convergence-and-suitability"><i class="fa fa-check"></i><b>C.6</b> MCMC convergence and suitability</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p>Bayesian spatio-temporal methods for small-area estimation of HIV indicators</p></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="multi-agyw" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">5</span> A model for risk group proportions<a href="multi-agyw.html#multi-agyw" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
+<p>In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
+This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
+I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
+The results are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023spatio">2023</a>)</span>.
+Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries.
+Code for the analysis in this chapter is available from <a href="https://github.com/athowes/multi-agyw"><code>athowes/multi-agyw</code></a>.</p>
+<div id="background-2" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Background<a href="multi-agyw.html#background-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
+Though AGYW are only 28% of the population, they comprise 44% of new infections <span class="citation">(<a href="#ref-unaids2021update">UNAIDS 2021a</a>)</span>.
+HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
+Table <a href="multi-agyw.html#tab:agyw-reasons">5.1</a> gives the social and biological reasons for this disparity.
+On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming <span class="citation">(<a href="#ref-saul2018dreams">Saul et al. 2018</a>; <a href="#ref-global2018measurement">The Global Fund 2018</a>)</span>.</p>
+<table>
+<caption><span id="tab:agyw-reasons">Table 5.1: </span> AYGW are at higher risk of HIV infection as a result of interacting social and biological reasons.</caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Reason</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Structural vulnerability and power imbalances</td>
+<td>Gender inequality, lack of agency, economic factors, limited healthcare access, stigma and discrimination</td>
+</tr>
+<tr class="even">
+<td>Age patterns of sexual mixing, including a younger age at first sex</td>
+<td>Older male partners have higher prevalence of HIV</td>
+</tr>
+<tr class="odd">
+<td>Increased susceptibility to HIV infection</td>
+<td>Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells</td>
+</tr>
+</tbody>
+</table>
+<p>The Global AIDS Strategy 2021-2026 <span class="citation">(<a href="#ref-unaids2021global">UNAIDS 2021b</a>)</span> was adopted by the United Nations (UN) General Assembly in June 2021.
+It proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
+As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure <a href="multi-agyw.html#fig:risk-grid">5.1</a>).
+The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
+To implement the strategy, estimates of the size of each risk group are required.</p>
+<p>(ref:risk-grid) Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence.
+I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence.
+This figure is illustrative, and should not be interpreted quantitatively.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:risk-grid"></span>
+<img src="figures/multi-agyw/risk-grid.png" alt="(ref:risk-grid)" width="95%" />
+<p class="caption">
+Figure 5.1: (ref:risk-grid)
+</p>
+</div>
+</div>
+<div id="data" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Data<a href="multi-agyw.html#data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<table>
+<caption><span id="tab:risk-groups">Table 5.2: </span> HIV risk groups and assumed HIV incidence rate ratio for each risk group relative to AGYW with one cohabiting sexual partner.
+Among FSW, the incidence rate ratio depended on the level of HIV incidence among the general population.
+The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of ALPHA network data.
+Non-regular partners are defined to be non-cohabiting.
+The transactional sex risk group is adjusted during analysis to correspond to female sex worker, and incidence rate ratios among FSW were derived based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
+When the local HIV incidence in the general population is higher, the incidence rate ratio for FSW is lower.</caption>
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="34%" />
+<col width="27%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Risk group</th>
+<th>Description</th>
+<th>Local HIV incidence</th>
+<th>Incidence ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>None</td>
+<td>Not sexually active</td>
+<td>–</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td>Low</td>
+<td>One cohabiting partner</td>
+<td>–</td>
+<td>1.0 (Baseline)</td>
+</tr>
+<tr class="odd">
+<td>High</td>
+<td>Non-regular or multiple partner(s)</td>
+<td>–</td>
+<td>1.72</td>
+</tr>
+<tr class="even">
+<td>Very High</td>
+<td>Transactional sex (adjusted to correspond to female sex workers)</td>
+<td>0.1-0.3%, 0.3-1.0%, 1.0-3.0%, 1.0-3.0%</td>
+<td>13.0, 9.0, 6.0, 3.0</td>
+</tr>
+</tbody>
+</table>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:available-surveys"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/available-surveys.png" alt="Surveys used in my analysis by year, survey type, sample size, and whether the survey included a question about transactional sex." width="95%" />
+<p class="caption">
+Figure 5.2: Surveys used in my analysis by year, survey type, sample size, and whether the survey included a question about transactional sex.
+</p>
+</div>
+<p>I used household survey data from 13 designated AGYW priority countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+I included surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts.
+Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS) were included.</p>
+<p>For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
+These risk groups were (Table <a href="multi-agyw.html#tab:risk-groups">5.2</a>):</p>
+<ol style="list-style-type: decimal">
+<li>Not sexually active</li>
+<li>One cohabiting sexual partner</li>
+<li>Non-regular or multiple sexual partner(s), and</li>
+<li>AGYW who report transactional sex.</li>
+</ol>
+<p>In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
+Exact survey questions varied slightly across survey types and between survey phases.
+Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
+For their three most recent partners, respondents were also asked about the type of partnership.
+Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.</p>
+<p>Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
+In these surveys, 2.64% of women reported transactional sex.
+In surveys without such a question, women almost never (0.01%) answered that one of their three most recent partners was a sex work client.
+Due to this incomparability across surveys, I did not include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
+I instead focused on estimating the proportion of women who reported transactional sex at a district level, and subsequently adjusted these proportions to align to national estimates for the number of female sex workers.</p>
+<p>I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
+The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries.
+Exceptions are Cameroon and Kenya, where I conducted analysis one level higher at the department and county levels, respectively.
+I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).</p>
+</div>
+<div id="model-for-risk-group-proportions" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Model for risk group proportions<a href="multi-agyw.html#model-for-risk-group-proportions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>I took a two-stage modelling approach to estimate the four risk group proportions.
+Let the four risk groups be indexed by <span class="math inline">\(k \in \{1, 2, 3, 4\}\)</span>, and denote being in either the third or fourth risk group as <span class="math inline">\(k = 3^{+}\)</span>.
+First, using all the surveys, I used a spatio-temporal multinomial logistic regression model (Section <a href="multi-agyw.html#st-multinomial">5.3.1</a>) to estimate the proportion of AGYW in the risk groups <span class="math inline">\(k \in \{1, 2, 3^{+}\}\)</span>.
+Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model (Section <a href="multi-agyw.html#s-logistic">5.3.2</a>) to estimate the proportion of those in the <span class="math inline">\(k = 3^{+}\)</span> risk group that were in the <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 4\)</span> risk groups respectively.</p>
+<div id="st-multinomial" class="section level3 hasAnchor" number="5.3.1">
+<h3><span class="header-section-number">5.3.1</span> Spatio-temporal multinomial logistic regression<a href="multi-agyw.html#st-multinomial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let <span class="math inline">\(i \in \{1, \ldots, n\}\)</span> denote districts partitioning the 13 studied AGYW priority countries <span class="math inline">\(c[i] \in \{1, \ldots, 13\}\)</span>.
+Consider the years 1999-2018 denoted as <span class="math inline">\(t \in \{1, \ldots, T\}\)</span>, and age groups <span class="math inline">\(a \in \{\text{15--19}, \text{20--24}, \text{25--29}\}\)</span>.
+Let <span class="math inline">\(p_{itak} &gt; 0\)</span> with <span class="math inline">\(\sum_{k = 1}^{3^{+}} p_{itak} = 1\)</span>, be the probabilities of membership of risk group <span class="math inline">\(k\)</span>.</p>
+<div id="multinomial-logistic-regression" class="section level4 hasAnchor" number="5.3.1.1">
+<h4><span class="header-section-number">5.3.1.1</span> Multinomial logistic regression<a href="multi-agyw.html#multinomial-logistic-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>A baseline category multinomial logistic regression model is specified by
+<span class="math display">\[\begin{align}
+    \y_{ita} &amp;= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
+    \log \left( \frac{p_{itak}}{p_{ita1}} \right) &amp;= \eta_{itak}, \quad k = 2, 3^{+},
+\end{align}\]</span>
+where the number in risk group <span class="math inline">\(k\)</span> is <span class="math inline">\(y_{itak}\)</span>, the fixed sample size is <span class="math inline">\(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\)</span>, and <span class="math inline">\(k = 1\)</span> is chosen as the baseline category.
+This model is not an LGM, and is not possible to fit in <code>R-INLA</code>.</p>
+</div>
+<div id="the-multinomial-poisson-transformation" class="section level4 hasAnchor" number="5.3.1.2">
+<h4><span class="header-section-number">5.3.1.2</span> The multinomial-Poisson transformation<a href="multi-agyw.html#the-multinomial-poisson-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>I used the multinomial-Poisson transformation to enable inference with <code>R-INLA</code>.
+The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+The equivalent model is of the form
+<span class="math display">\[\begin{align}
+    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
+    \log(\kappa_{itak}) &amp;= \eta_{itak}. \label{eq:poisson2}
+\end{align}\]</span>
+The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed <span class="citation">(<a href="#ref-mccullagh1989generalized">McCullagh and Nelder 1989</a>)</span> as follows
+<span class="math display">\[\begin{equation}
+    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
+\end{equation}\]</span>
+where <span class="math inline">\(\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}\)</span>.
+Category probabilities may then be obtained using the softmax function
+<span class="math display">\[\begin{equation}
+    p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
+\end{equation}\]</span>
+Under the equivalent model, the sample sizes <span class="math inline">\(m_{ita} = \sum_k y_{itak}\)</span> are treated as random <span class="math inline">\(m_{ita} \sim \text{Poisson} \left( \kappa_{ita} \right)\)</span> rather than fixed.
+The joint distribution of <span class="math inline">\(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\)</span> is then
+<span class="math display">\[\begin{align}
+p(\mathbf{y}_{ita}, m_{ita}) &amp;= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
+&amp;= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
+&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \label{eq:prodpoisson}
+\end{align}\]</span>
+corresponding to the product of independent Poisson likelihoods as in Equation <a href="#eq:poisson1">(<strong>??</strong>)</a>.</p>
+<p>This model, with random sample sizes, is equivalent to a multinomial logistic regression model only when the normalisation constants <span class="math inline">\(m_{ita}\)</span> are recovered exactly.
+To ensure that this is the case, one approach is to include observation-specific random effects <span class="math inline">\(\theta_{ita}\)</span> in the equation for the linear predictor.
+Multiplying each of <span class="math inline">\(\{\kappa_{itak}\}_{k = 1}^{3^+}\)</span> by <span class="math inline">\(\exp(\theta_{ita})\)</span> has no effect on the category probabilities, but does provide the necessary flexibility for <span class="math inline">\(\kappa_{ita}\)</span> to recover <span class="math inline">\(m_{ita}\)</span> exactly.
+Although in theory an improper prior <span class="math inline">\(\theta_{ita} \propto 1\)</span> should be used, I found that in practise, by keeping <span class="math inline">\(\eta_{ita}\)</span> otherwise small using appropriate constraints, so that arbitrarily large values of <span class="math inline">\(\theta_{ita}\)</span> are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior.</p>
+</div>
+<div id="model-specifications" class="section level4 hasAnchor" number="5.3.1.3">
+<h4><span class="header-section-number">5.3.1.3</span> Model specifications<a href="multi-agyw.html#model-specifications" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>I considered four models for <span class="math inline">\(\eta_{ita}\)</span> in Equation <a href="#eq:poisson2">(<strong>??</strong>)</a> of the form
+<span class="math display">\[\begin{equation}
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
+\end{equation}\]</span>
+<!-- + \delta_{itk} -->
+Observation random effects <span class="math inline">\(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\)</span> were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid as described above.
+To capture country-specific proportion estimates for each category, I included category random effects <span class="math inline">\(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\)</span> and country-category random effects <span class="math inline">\(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\)</span>.
+Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects <span class="math inline">\(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.</p>
+<div id="spatial-random-effects" class="section level5 hasAnchor" number="5.3.1.3.1">
+<h5><span class="header-section-number">5.3.1.3.1</span> Spatial random effects<a href="multi-agyw.html#spatial-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>For the space-category <span class="math inline">\(u_{ik}\)</span> random effects I considered two specifications:</p>
+<ol style="list-style-type: decimal">
+<li>Independent and identically distributed (IID) <span class="math inline">\(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\)</span>,</li>
+<li>Besag <span class="citation">(<a href="#ref-besag1991bayesian">Besag, York, and Mollié 1991</a>)</span> grouped by category
+<span class="math display">\[
+\bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
+\]</span>
+The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\)</span> is given by the Kronecker product of the scaled Besag structure matrix <span class="math inline">\(\mathbf{R}^\star_b\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, and <span class="math inline">\({-}\)</span> denotes the generalised matrix inverse.
+I followed best practises for the Besag model as described in Chapter <a href="beyond-borders.html#beyond-borders">4</a>.</li>
+</ol>
+<p>In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
+I also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> in place of the Besag, but found that the proportion parameter posteriors tended to be highly peaked at the value one.
+For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.</p>
+</div>
+<div id="temporal-random-effects" class="section level5 hasAnchor" number="5.3.1.3.2">
+<h5><span class="header-section-number">5.3.1.3.2</span> Temporal random effects<a href="multi-agyw.html#temporal-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>For the year-category <span class="math inline">\(\gamma_{tk}\)</span> random effects I considered two specifications:</p>
+<ol style="list-style-type: decimal">
+<li>IID <span class="math inline">\(\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})\)</span>,</li>
+<li>First order autoregressive (AR1) grouped by category
+<span class="math display">\[
+\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
+\]</span>
+The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}\)</span> is given by the Kronecker product of a scaled AR1 structure matrix <span class="math inline">\(\mathbf{R}^\star_r\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.
+The AR1 structure matrix <span class="math inline">\(\mathbf{R}_r\)</span> is obtained by precision matrix of the random effects <span class="math inline">\(\mathbf{r} = (r_1, \ldots, r_T)^\top\)</span> specified by
+<span class="math display">\[\begin{align}
+r_1 &amp;\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
+r_t &amp;= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T,
+\end{align}\]</span>
+where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, 1)\)</span> and <span class="math inline">\(|\rho| &lt; 1\)</span>.</li>
+</ol>
+</div>
+<div id="priors" class="section level5 hasAnchor" number="5.3.1.3.3">
+<h5><span class="header-section-number">5.3.1.3.3</span> Priors<a href="multi-agyw.html#priors" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>All random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\)</span> were given independent penalised complexity (PC) priors <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> with base model <span class="math inline">\(\sigma = 0\)</span> given by <span class="math inline">\(p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)\)</span> where <span class="math inline">\(\nu = - \ln(0.01) / 2.5\)</span> such that <span class="math inline">\(\mathbb{P}(\sigma &gt; 2.5) = 0.01\)</span>.
+For the lag-one correlation parameter <span class="math inline">\(\rho\)</span>, I used the PC prior, as derived by <span class="citation">Sørbye and Rue (<a href="#ref-sorbye2017penalised">2017</a>)</span>, with base model <span class="math inline">\(\rho = 1\)</span> and condition <span class="math inline">\(\mathbb{P}(\rho &gt; 0 = 0.75)\)</span>.
+I chose the base model <span class="math inline">\(\rho = 1\)</span> corresponding to no change in behaviour over time, rather than the alternative <span class="math inline">\(\rho = 0\)</span> corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.</p>
+</div>
+</div>
+<div id="constraints" class="section level4 hasAnchor" number="5.3.1.4">
+<h4><span class="header-section-number">5.3.1.4</span> Constraints<a href="multi-agyw.html#constraints" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To ensure interpretable posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects.
+Together, these constraints are described in Table <a href="multi-agyw.html#tab:constraints">5.3</a>.</p>
+<table>
+<caption><span id="tab:constraints">Table 5.3: </span></caption>
+<thead>
+<tr class="header">
+<th>Random effects</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Category</td>
+<td><span class="math inline">\(\sum_k \beta_k = 0\)</span></td>
+</tr>
+<tr class="even">
+<td>Country</td>
+<td><span class="math inline">\(\sum_c \zeta_{ck} = 0, \, \forall \, k\)</span></td>
+</tr>
+<tr class="odd">
+<td>Age-country</td>
+<td><span class="math inline">\(\sum_a \alpha_{ack} = 0, \, \forall \, c, k\)</span></td>
+</tr>
+<tr class="even">
+<td>Spatial</td>
+<td><span class="math inline">\(\sum_i u_{ik} = 0, \, \forall \, k\)</span></td>
+</tr>
+<tr class="odd">
+<td>Temporal</td>
+<td><span class="math inline">\(\sum_t \gamma_{tk} = 0, \, \forall \, k\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="survey-weighted-likelihood" class="section level4 hasAnchor" number="5.3.1.5">
+<h4><span class="header-section-number">5.3.1.5</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>I accounted survey design using a weighted pseudo-likelihood where the observed counts <span class="math inline">\(y\)</span> are replaced by effective counts <span class="math inline">\(y^\star\)</span>, as described in Section <a href="bayes-st.html#survey">3.4</a>.
+These counts may not be integers, and as such the Poisson likelihood given in Equation <a href="#eq:poisson1">(<strong>??</strong>)</a> is not appropriate.
+Instead, I used a generalised Poisson pseudo-likelihood <span class="math inline">\(y^\star \sim \text{xPoisson}(\kappa)\)</span>, given by
+<span class="math display">\[\begin{equation}
+    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right).
+\end{equation}\]</span>
+This working likelihood is implemented by <code>family = "xPoisson"</code> in <code>R-INLA</code>, which accepts non-integer input.</p>
+</div>
+</div>
+<div id="s-logistic" class="section level3 hasAnchor" number="5.3.2">
+<h3><span class="header-section-number">5.3.2</span> Spatial logistic regression<a href="multi-agyw.html#s-logistic" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To estimate the proportion of those in the <span class="math inline">\(k = 3^{+}\)</span> risk group that were in the <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 4\)</span> risk groups respectively, I fit logistic regression models of the form
+<span class="math display">\[\begin{align}
+    y_{ia4} &amp;\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \label{eq:logistic-regression} \\
+    q_{ia} &amp;= \text{logit}^{-1} \left( \eta_{ia} \right),
+\end{align}\]</span>
+where <span class="math inline">\(q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}\)</span>.
+Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation <a href="#eq:logistic-regression">(<strong>??</strong>)</a>.
+As all such surveys occurred in 2013-2018, in the logistic regression model I assumed <span class="math inline">\(q_{ia}\)</span> to be constant over time.</p>
+<div id="model-specifications-1" class="section level4 hasAnchor" number="5.3.2.1">
+<h4><span class="header-section-number">5.3.2.1</span> Model specifications<a href="multi-agyw.html#model-specifications-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>I considered six logistic regression models.
+Each included a constant <span class="math inline">\(\beta_0 \sim \mathcal{N}(-2, 1^2)\)</span>, country random effects <span class="math inline">\(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\)</span>, and age-country random effects <span class="math inline">\(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.
+The prior on <span class="math inline">\(\beta_0\)</span> placed 95% prior probability on the range 2-50% for the percentage of those with non-regular or multiple partners who report transactional sex.
+I considered two specifications (IID, Besag) for the spatial random effects <span class="math inline">\(u_i\)</span>.
+To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever or in the last twelve months , available from <span class="citation">Hodgins et al. (<a href="#ref-hodgins2022population">2022</a>)</span>.
+For both random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\alpha, \tau_\zeta\}\)</span> I used the PC prior with base model <span class="math inline">\(\sigma = 0\)</span> and <span class="math inline">\(\mathbb{P}(\sigma &gt; 2.5 = 0.01)\)</span>.
+For the regression parameters <span class="math inline">\(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\)</span> I used the prior <span class="math inline">\(\beta \sim \mathcal{N}(0, 2.5^2)\)</span>.</p>
+</div>
+<div id="survey-weighted-likelihood-1" class="section level4 hasAnchor" number="5.3.2.2">
+<h4><span class="header-section-number">5.3.2.2</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>As with the multinomial regression model, I used survey weighted counts <span class="math inline">\(\{y_{itak}^\star\}\)</span> and sample sizes <span class="math inline">\(\{m_{itak}^\star\}\)</span>.
+I used a generalised binomial pseudo-likelihood <span class="math inline">\(y^\star \sim \text{xBinomial}(m^\star, q)\)</span>, as implemented by in , given by
+<span class="math display">\[\begin{equation}
+    p(y^\star \, | \, m^\star, q) =  \binom{\lfloor m^\star \rfloor}{\lfloor y^\star \rfloor} q^{y^\star} (1 - q)^{m^\star - y^\star}.
+\end{equation}\]</span>
+to extend the binomial distribution to non-integer weighted counts and sample sizes.</p>
+</div>
+</div>
+<div id="female-sex-worker-population-size-adjustment" class="section level3 hasAnchor" number="5.3.3">
+<h3><span class="header-section-number">5.3.3</span> Female sex worker population size adjustment<a href="multi-agyw.html#female-sex-worker-population-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Responding “yes” to the question “have you had sex in return for gifts, cash or anything else in the past 12 months” is not considered sufficient to constitute sex work.
+Recognising this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.</p>
+<p><span class="citation">Stevens et al. (<a href="#ref-stevens2022estimating">2022</a>)</span> used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
+I disaggregated these estimates by age as follows.
+First, I calculated the total sexually debuted population in each age group, in each country.
+To describe the distribution of age at first sex, I used skew logistic distributions <span class="citation">(<a href="#ref-nguyen2022trends">Nguyen and Eaton 2022</a>)</span> with cumulative distribution function given by
+<span class="math display">\[\begin{equation}
+F(x) = \left(1 + \exp(\kappa_c (\mu_c - x)) \right)^{- \gamma_c},
+\end{equation}\]</span>
+where <span class="math inline">\(\kappa_c, \mu_c, \gamma_c &gt; 0\)</span> are country-specific shape, shape and skewness parameters respectively.
+Next, I used the assumed <span class="math inline">\(\text{Gamma}(\alpha = 10.4, \beta = 0.36)\)</span> FSW age distribution in South Africa from the Thembisa model <span class="citation">(<a href="#ref-johnson2020thembisa">Johnson and Dorrington 2020</a>)</span> to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
+I assumed these ratios in South Africa were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
+The results obtained are shown in Figure <a href="multi-agyw.html#fig:age-disagg-fsw-line">5.3</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:age-disagg-fsw-line"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/age-disagg-fsw-line.png" alt="The disaggregation procedure I used produces a plausible age distirbution of FSW by country." width="95%" />
+<p class="caption">
+Figure 5.3: The disaggregation procedure I used produces a plausible age distirbution of FSW by country.
+</p>
+</div>
+</div>
+<div id="results" class="section level3 hasAnchor" number="5.3.4">
+<h3><span class="header-section-number">5.3.4</span> Results<a href="multi-agyw.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-assessment" class="section level4 hasAnchor" number="5.3.4.1">
+<h4><span class="header-section-number">5.3.4.1</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>To assess the calibration of the fitted model, I calculated the quantile <span class="math inline">\(q\)</span> of each observation within the posterior predictive distribution.
+For calibrated models, these quantiles, known as probability integral transform (PIT) values <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>; <a href="#ref-bosse2022scoringutils">Bosse et al. 2022</a>)</span>, should follow a uniform distribution <span class="math inline">\(q \sim \mathcal{U}[0, 1]\)</span>.
+To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.</p>
+<p>Using the PIT values, it is possible to calculate the empirical coverage of all <span class="math inline">\((1 - \alpha)100\)</span>% (equal-tailed) posterior predictive credible intervals.
+These empirical coverages can be compared to the nominal coverage <span class="math inline">\((1 - \alpha)\)</span> for each value of <span class="math inline">\(\alpha \in [0, 1]\)</span> to give empirical cumulative distribution function (ECDF) difference values.
+This approach has the advantage of considering all possible confidence values at once.
+<span class="citation">(<a href="#ref-sailynoja2021graphical"><strong>sailynoja2021graphical?</strong></a>)</span> develop binomial distribution-based simultaneous confidence bands for ECDF difference values which test uniformity.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:coverage"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/coverage.png" alt="Coverage." width="95%" />
+<p class="caption">
+Figure 5.4: Coverage.
+</p>
+</div>
+</div>
+<div id="variance-decomposition" class="section level4 hasAnchor" number="5.3.4.2">
+<h4><span class="header-section-number">5.3.4.2</span> Variance decomposition<a href="multi-agyw.html#variance-decomposition" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="estimates" class="section level4 hasAnchor" number="5.3.4.3">
+<h4><span class="header-section-number">5.3.4.3</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-continental-map"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-continental-map.png" alt="Map." width="95%" />
+<p class="caption">
+Figure 5.5: Map.
+</p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-within-between-country-variation"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-within-between-country-variation.png" alt="Dots." width="95%" />
+<p class="caption">
+Figure 5.6: Dots.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="prevalence-and-incidence-by-risk-group" class="section level2 hasAnchor" number="5.4">
+<h2><span class="header-section-number">5.4</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prevalence-and-incidence-by-risk-group" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="disaggregation-of-naomi-estimates" class="section level3 hasAnchor" number="5.4.1">
+<h3><span class="header-section-number">5.4.1</span> Disaggregation of Naomi estimates<a href="multi-agyw.html#disaggregation-of-naomi-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated HIV incidence <span class="math inline">\(\lambda_{iak}\)</span> and number of new HIV infections <span class="math inline">\(I_{iak}\)</span> stratified according to district, age group and risk group by linear disaggregation
+<span class="math display">\[\begin{align}
+    I_{ia} &amp;= \sum_k I_{iak} = \sum_k \lambda_{iak}N_{iak} \\
+    &amp;= 0 + \lambda_{ia2} N_{ia2} + \lambda_{ia3} N_{ia3} + \lambda_{ia4} N_{ia4} \\
+    &amp;= \lambda_{ia2} \left(N_{ia2}  + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}  \right).
+\end{align}\]</span>
+Risk group specific HIV incidence estimates are then given by
+<span class="math display">\[\begin{align}
+    \lambda_{ia1} &amp;= 0, \\
+    \lambda_{ia2} &amp;= I_{ia} / \left(N_{ia2} + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}\right), \\
+    \lambda_{ia3} &amp;= \text{RR}_{3} \lambda_{ia2}, \\
+    \lambda_{ia4} &amp;= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
+\end{align}\]</span>
+which I evaluated using Naomi model estimates of the number of new HIV infections <span class="math inline">\(I_{ia} = \lambda_{ia} N_{ia}\)</span>, HIV infection risk ratios <span class="math inline">\(\{\text{RR}_3, \text{RR}_4(\lambda_{ia})\}\)</span>, and risk group population sizes as above.
+The risk ratio <span class="math inline">\(\text{RR}_4(\lambda_{ia})\)</span> was defined as a function of general population incidence.
+The number of new HIV infections are then <span class="math inline">\(I_{iak} = \lambda_{iak} N_{iak}\)</span>.</p>
+</div>
+<div id="expected-new-infections-reached" class="section level3 hasAnchor" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections-reached" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population–that is for all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.
+As an illustration, for stratification just by age, I aggregated the number of new HIV infections and HIV incidence as such
+<span class="math display">\[\begin{align}
+    I_a &amp;= \sum_{ik} I_{iak}, \\
+    \lambda_a &amp;= I_a / \sum_{ik} N_{iak}.
+\end{align}\]</span>
+Under this stratification, individuals in each age group <span class="math inline">\(a\)</span> are prioritised according to the highest HIV incidence <span class="math inline">\(\lambda_a\)</span>.
+By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.</p>
+</div>
+<div id="results-1" class="section level3 hasAnchor" number="5.4.3">
+<h3><span class="header-section-number">5.4.3</span> Results<a href="multi-agyw.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:infections-reached"></span>
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/infections-reached.png" alt="Surveys." width="90%" />
+<p class="caption">
+Figure 5.7: Surveys.
+</p>
+</div>
+</div>
+</div>
+<div id="discussion-1" class="section level2 hasAnchor" number="5.5">
+<h2><span class="header-section-number">5.5</span> Discussion<a href="multi-agyw.html#discussion-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>I estimated the proportion of AGYW who fall into different risk groups at a district level in 13 sub-Saharan African countries.
+These estimates support consideration of differentiated prevention programming according to geographic locations and risk behaviour, as outlined in the Global AIDS Strategy.
+Systematic differences in risk by age groups, and variation within and between countries, explained the large majority of variation in risk group proportions.
+Changes over time were negligible in the overall variation in risk group proportions.
+The proportion of 15-19 year olds who are sexually active, and among women aged 20-29 years, norms around cohabitation especially varied across districts and countries.
+This variation underscores the need for these granular data to implement HIV prevention options aligned to local norms and risk behaviours.</p>
+<p>I considered four risk groups based on sexual behaviour, the most proximal determinant of risk.
+Other factors, such as condom usage or type of sexual act, may account for additional heterogeneity in risk from sexual behaviour.
+However, I did not include these factors in view of measurement difficulties, concerns about consistency across contexts, and the operational benefits of describing risk parsimoniously.
+Sexual behaviour confers risk only when AGYW reside in geographic locations where there is unsuppressed viral load among their potential partners.
+I did not include more distal determinants, such as school attendance, orphanhood, or gender empowerment, as I expect their effects on risk to largely be mediated by more proximal determinants.
+However, to effectively implement programming, it is crucial to understand these factors, as well as the broader structural barriers and limits to personal agency faced by AGYW.
+Importantly, programs must ensure that intervention prioritisation occurs without stigmatising or blaming AGYW.</p>
+<p>Brugh et al. <span class="citation">(<a href="#ref-brugh2021characterizing">Brugh et al. 2021</a>)</span> previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
+My work builds on Brugh et al. <span class="citation">(<a href="#ref-brugh2021characterizing">Brugh et al. 2021</a>)</span> by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.</p>
+<p>By considering a range of possible risk stratification strategies, I showed that successful implementation of a risk-stratified approach would allow substantially more of those at risk for infections to be identified before infection occurs.
+A considerable proportion of estimated new infections were among FSW, supporting the case for HIV programming efforts focused on key population groups <span class="citation">(<a href="#ref-baral2012burden">Baral et al. 2012</a>)</span>.
+There is substantial variation in the importance of prioritisation by age, location and behaviour within each country.
+This highlights the importance of understanding and tailoring HIV prevention efforts to country-specific contexts.
+By standardising our analysis across all 13 countries, I showed the additional efficiency benefits of resource allocation between countries.</p>
+<p>I found a geographic delineation in the proportion of women cohabiting between southern and eastern Africa, calling attention to a divide attributable to many cultural, social, and economic factors.
+The delineation does not represent a boundary between predominately Christian and Muslim populations, which is further north.
+I also note that the high numbers of adolescent girls aged 15-19 cohabiting in Mozambique is markedly different from the other countries <span class="citation">(<a href="#ref-unicef">UNICEF, n.d.</a>)</span>.</p>
+<p>My modelled estimates of risk group proportions improve upon direct survey results for three reasons.
+First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
+Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing.
+Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as our analysis of risk group specific prevalence and incidence).</p>
+<p>The final surveys included in our risk model model were conducted in 2018.
+The analysis may be updated with more surveys as they become available.
+I do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.</p>
+<p>My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the 0% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
+Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.</p>
+<p>Phylogenetic results from BDI are about transmission rather than incidence.
+Only age-sex structured not age-sex-behaviour.
+Does not undermine my work.</p>
+<div id="limitations" class="section level3 hasAnchor" number="5.5.1">
+<h3><span class="header-section-number">5.5.1</span> Limitations<a href="multi-agyw.html#limitations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>My analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population <span class="citation">(<a href="#ref-cleland2004monitoring">Cleland et al. 2004</a>)</span>.
+In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of my risk group proportion estimates.
+Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners <span class="citation">(<a href="#ref-nnko2004secretive">Nnko et al. 2004</a>; <a href="#ref-helleringer2011reliability">Helleringer et al. 2011</a>)</span> or may bias their reporting of sexual debut <span class="citation">(<a href="#ref-zaba2004age">Zaba et al. 2004</a>; <a href="#ref-wringe2009comparative">Wringe et al. 2009</a>; <a href="#ref-nguyen2022trends">Nguyen and Eaton 2022</a>)</span>.
+For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of my results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age <span class="citation">(<a href="#ref-glynn2011assessing">Glynn et al. 2011</a>)</span>, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
+If present, these reporting biases will also have distorted the estimates of infection risk ratios and prevalence ratios I used in my analysis, likely over-attributing risk to higher risk groups.</p>
+<p>I have the least confidence in my estimates for the FSW risk group.
+As well as having the smallest sample sizes, my transactional sex estimates do not overcome the difficulties of sampling hard to reach groups.
+I inherent any limitations of the national FSW estimates <span class="citation">(<a href="#ref-stevens2022estimating">Stevens et al. 2022</a>)</span> which I adjust my estimates of transactional sex to match.
+Furthermore, I do not consider seasonal migration patterns, which may particularly affect FSW size.
+More generally, I did not consider covariates potentially predictive of risk group proportions (such as sociodemographic characteristics, education, local economic activity, cultural and religious norms and attitudes), which are typically difficult to measure spatially.
+Identifying measurable correlates of risk, or particular settings in which time-concentrated HIV risk occurs, is an important area for further research to improve risk prioritisation and precision HIV programme delivery.</p>
+<p>The efficiency of each stratified prevention strategy depends on the ability of programmes to identify and effectively reach those in each strata.
+My analysis of new infections potentially averted assumed a “best-case” scenario where AGYW of every strata can be reached perfectly, and should therefore be interpreted as illustrating the potentially obtainable benefits rather than benefits which would be obtained from any specific intervention strategy.
+In practice, stratified prevention strategies are likely to be substantially less efficient than this best-case scenario.
+Factors I did not consider include the greater administrative burden of more complex strategies, variation in difficulty or feasibility of reaching individuals in each strata, variation in the range or effectiveness of interventions by strata, and changes in strata membership that may occur during the course of a year.
+Identifying and reaching behavioural strata may be particularly challenging.
+Empirical evaluations of behavioural risk screening tools have found only moderate discriminatory ability <span class="citation">(<a href="#ref-jia2022risk">Jia et al. 2022</a>)</span>, and risk behaviour may change rapidly among young populations, increasing the challenge to effectively deliver appropriately timed prevention packages.
+This consideration may motivate selecting risk groups based on easily observable attributes, such as attendance of a particular service or facility, rather than sexual behaviour.</p>
+<p>I did not engage with country experts or civil society organisations.
+This led to problems, including in Malawi.
+Future work should be better.</p>
+<!-- RE notes that it could be worth talking about the age patterns of sexual mixing, that I didn't consider them, and how they might effect intervention planning. -->
+</div>
+<div id="conclusion" class="section level3 hasAnchor" number="5.5.2">
+<h3><span class="header-section-number">5.5.2</span> Conclusion<a href="multi-agyw.html#conclusion" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I estimated the proportion of AGYW aged 15-19, 20-24 and 25-29 years in four sexual risk groups at a district-level in 13 priority countries and analyzed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
+Though subject to limitations, these estimates provide data that national HIV programmes can use to set targets and implement differentiated HIV prevention strategies as outlined in the Global AIDS Strategy.
+Successfully implementing this approach would result in more efficiently reaching a greater number of those at risk of infection.</p>
+<p>Among AGYW, there was systematic variation in sexual behaviour by age and location, but not over time.
+Age group variation was primarily attributable to age of sexual debut (ages 15-24).
+Spatial variation was particularly present between those who reported one cohabiting partner versus non-regular or multiple partners.
+Risk group proportions did not change substantially over time, indicating that norms relating to sexual behaviour are relatively static.
+These findings underscore the importance of providing effective HIV prevention options tailored to the needs of particular age groups, as well as local norms around sexual partnerships.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-baral2012burden" class="csl-entry">
+Baral, Stefan, Chris Beyrer, Kathryn Muessig, Tonia Poteat, Andrea L Wirtz, Michele R Decker, Susan G Sherman, and Deanna Kerrigan. 2012. <span>“<span class="nocase">Burden of HIV among female sex workers in low-income and middle-income countries: a systematic review and meta-analysis</span>.”</span> <em><span>The Lancet Infectious Diseases</span></em> 12 (7): 538–49.
+</div>
+<div id="ref-besag1991bayesian" class="csl-entry">
+Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
+</div>
+<div id="ref-bosse2022scoringutils" class="csl-entry">
+Bosse, Nikos I., Hugo Gruson, Anne Cori, Edwin van Leeuwen, Sebastian Funk, and Sam Abbott. 2022. <span>“Evaluating Forecasts with Scoringutils in r.”</span> arXiv. <a href="https://doi.org/10.48550/ARXIV.2205.07090">https://doi.org/10.48550/ARXIV.2205.07090</a>.
+</div>
+<div id="ref-brugh2021characterizing" class="csl-entry">
+Brugh, Kristen N, Quinn Lewis, Cameron Haddad, Jon Kumaresan, Timothy Essam, and Michelle S Li. 2021. <span>“Characterizing and Mapping the Spatial Variability of HIV Risk Among Adolescent Girls and Young Women: A Cross-County Analysis of Population-Based Surveys in Eswatini, Haiti, and Mozambique.”</span> <em>PLoS One</em> 16 (12): e0261520.
+</div>
+<div id="ref-cleland2004monitoring" class="csl-entry">
+Cleland, John, J Ties Boerma, Michel Caraël, and Sharon S Weir. 2004. <span>“Monitoring Sexual Behaviour in General Populations: A Synthesis of Lessons of the Past Decade.”</span> <em>Sexually Transmitted Infections</em> 80 (suppl 2): ii1–7.
+</div>
+<div id="ref-dawid1984present" class="csl-entry">
+Dawid, A Philip. 1984. <span>“Present Position and Potential Developments: Some Personal Views Statistical Theory the Prequential Approach.”</span> <em>Journal of the Royal Statistical Society: Series A (General)</em> 147 (2): 278–90.
+</div>
+<div id="ref-eaton2021naomi" class="csl-entry">
+Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oliver Stevens, Sumali Bajaj, Rob Ashton, et al. 2021. <span>“Naomi: A New Modelling Tool for Estimating HIV Epidemic Indicators at the District Level in Sub-Saharan Africa.”</span>
+</div>
+<div id="ref-glynn2011assessing" class="csl-entry">
+Glynn, Judith R, Ndoliwe Kayuni, Emmanuel Banda, Fiona Parrott, Sian Floyd, Monica Francis-Chizororo, Misheck Nkhata, et al. 2011. <span>“<span class="nocase">Assessing the validity of sexual behaviour reports in a whole population survey in rural Malawi</span>.”</span> <em><span>PLoS One</span></em> 6 (7): e22840.
+</div>
+<div id="ref-helleringer2011reliability" class="csl-entry">
+Helleringer, Stéphane, Hans-Peter Kohler, Linda Kalilani-Phiri, James Mkandawire, and Benjamin Armbruster. 2011. <span>“The Reliability of Sexual Partnership Histories: Implications for the Measurement of Partnership Concurrency During Surveys.”</span> <em>AIDS (London, England)</em> 25 (4): 503.
+</div>
+<div id="ref-hodgins2022population" class="csl-entry">
+Hodgins, Caroline, James Stannah, Salome Kuchukhidze, Lycias Zembe, Jeffrey W Eaton, Marie-Claude Boily, and Mathieu Maheu-Giroux. 2022. <span>“Population Sizes, HIV Prevalence, and HIV Prevention Among Men Who Paid for Sex in Sub-Saharan Africa (2000–2020): A Meta-Analysis of 87 Population-Based Surveys.”</span> <em>PLoS Medicine</em> 19 (1): e1003861.
+</div>
+<div id="ref-howes2023spatio" class="csl-entry">
+Howes, Adam, Kathryn A. Risher, Van Kính Nguyen, Oliver Stevens, Katherine M. Jia, Timothy M. Wolock, Rachel T. Esra, et al. 2023. <span>“<span class="nocase">Spatio-temporal estimates of HIV risk group proportions for adolescent girls and young women across 13 priority countries in sub-Saharan Africa</span>.”</span> <em>PLOS Global Public Health</em> 3 (4): 1–14. <a href="https://doi.org/10.1371/journal.pgph.0001731">https://doi.org/10.1371/journal.pgph.0001731</a>.
+</div>
+<div id="ref-jia2022risk" class="csl-entry">
+Jia, Katherine M, Hallie Eilerts, Olanrewaju Edun, Kevin Lam, Adam Howes, Matthew L Thomas, and Jeffrey W Eaton. 2022. <span>“<span class="nocase">Risk scores for predicting HIV incidence among adult heterosexual populations in sub-Saharan Africa: a systematic review and meta-analysis</span>.”</span> <em>Journal of the International AIDS Society</em> 25 (1): e25861.
+</div>
+<div id="ref-johnson2020thembisa" class="csl-entry">
+Johnson, L, and RE Dorrington. 2020. <span>“<span class="nocase">Thembisa version 4.3: A model for evaluating the impact of HIV/AIDS in South Africa</span>.”</span> <em>View Article</em>.
+</div>
+<div id="ref-mccullagh1989generalized" class="csl-entry">
+McCullagh, Peter, and John A Nelder. 1989. <em>Generalized Linear Models</em>. Routledge.
+</div>
+<div id="ref-nguyen2022trends" class="csl-entry">
+Nguyen, Van Kính, and Jeffrey W. Eaton. 2022. <span>“<span class="nocase">Trends and country-level variation in age at first sex in sub-Saharan Africa among birth cohorts entering adulthood between 1985 and 2020</span>.”</span> <em>BMC Public Health</em> 22 (1): 1120. <a href="https://doi.org/10.1186/s12889-022-13451-y">https://doi.org/10.1186/s12889-022-13451-y</a>.
+</div>
+<div id="ref-nnko2004secretive" class="csl-entry">
+Nnko, Soori, J Ties Boerma, Mark Urassa, Gabriel Mwaluko, and Basia Zaba. 2004. <span>“<span class="nocase">Secretive females or swaggering males?: An assessment of the quality of sexual partnership reporting in rural Tanzania</span>.”</span> <em><span>Social Science &amp; Medicine</span></em> 59 (2): 299–310.
+</div>
+<div id="ref-saul2018dreams" class="csl-entry">
+Saul, Janet, Gretchen Bachman, Shannon Allen, Nora F Toiv, Caroline Cooney, and Ta’Adhmeeka Beamon. 2018. <span>“<span class="nocase">The DREAMS core package of interventions: a comprehensive approach to preventing HIV among adolescent girls and young women</span>.”</span> <em>PLoS One</em> 13 (12): e0208167.
+</div>
+<div id="ref-simpson2017penalising" class="csl-entry">
+Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørbye, et al. 2017. <span>“<span class="nocase">Penalising model component complexity: A principled, practical approach to constructing priors</span>.”</span> <em>Statistical Science</em> 32 (1): 1–28.
+</div>
+<div id="ref-sorbye2017penalised" class="csl-entry">
+———. 2017. <span>“Penalised Complexity Priors for Stationary Autoregressive Processes.”</span> <em>Journal of Time Series Analysis</em> 38 (6): 923–35.
+</div>
+<div id="ref-stevens2022estimating" class="csl-entry">
+Stevens, Oliver, Keith Sabin, Sonia Arias Garcia, Kalai Willis, Abu Abdul-Quader, Anne McIntyre, Frances Cowan, et al. 2022. <span>“<span class="nocase">Estimating key population size, HIV prevalence, and ART coverage for sub-Saharan Africa at the national level</span>.”</span>
+</div>
+<div id="ref-global2018measurement" class="csl-entry">
+The Global Fund. 2018. <em><span class="nocase">The Global Fund Measurement Framework for Adolescent Girls and Young Women Programs</span></em>. <a href="https://www.theglobalfund.org/media/8076/me_adolescentsgirlsandyoungwomenprograms_frameworkmeasurement_en.pdf">https://www.theglobalfund.org/media/8076/me_adolescentsgirlsandyoungwomenprograms_frameworkmeasurement_en.pdf</a>.
+</div>
+<div id="ref-unaids2021update" class="csl-entry">
+UNAIDS. 2021a. <span>“<span class="nocase">2021 UNAIDS Global AIDS Update - Confronting Inequalities - Lessons for pandemic responses from 40 Years of AIDS</span>.”</span> Geneva, Switzerland.
+</div>
+<div id="ref-unaids2021global" class="csl-entry">
+UNAIDS. 2021b. <span>“Global AIDS Strategy 2021–2026. End Inequalities. End AIDS.”</span>
+</div>
+<div id="ref-unicef" class="csl-entry">
+UNICEF. n.d. <span>“<span class="nocase">Adolescent &amp; social norms situation in Mozambique</span>.”</span> <a href="https://www.unicef.org/mozambique/en/adolescent-social-norms">https://www.unicef.org/mozambique/en/adolescent-social-norms</a>.
+</div>
+<div id="ref-wringe2009comparative" class="csl-entry">
+Wringe, A, I Cremin, J Todd, N McGrath, I Kasamba, K Herbst, P Mushore, B Żaba, and E Slaymaker. 2009. <span>“Comparative Assessment of the Quality of Age-at-Event Reporting in Three HIV Cohort Studies in Sub-Saharan Africa.”</span> <em>Sexually Transmitted Infections</em> 85 (Suppl 1): i56–63.
+</div>
+<div id="ref-zaba2004age" class="csl-entry">
+Zaba, Basia, Elizabeth Pisani, Emma Slaymaker, and J Ties Boerma. 2004. <span>“Age at First Sex: Understanding Recent Trends in African Demographic Surveys.”</span> <em>Sexually Transmitted Infections</em> 80 (suppl 2): ii28–35.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="beyond-borders.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="naomi-aghq.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ulyngs/oxforddown/tree/master/05-multi-agyw.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

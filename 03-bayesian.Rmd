@@ -62,7 +62,11 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 ### Bayesian computation
 
-(ref:conjugate) A simple example of Bayesian modelling and computation for the observation model $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ with prior $\phi \sim \text{Gamma}(3, 1)$. Given observed data $\y = (1, 2, 3)$ the posterior is available in closed form as $\text{Gamma}(9, 4)$ because the model is so-called conjugate. Though it is unlikely that the best model for a particular problem will have the conjugacy property, conjugate models are still frequently used because of their convenience.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model.
+The likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution is $\phi \sim \text{Gamma}(3, 1)$.
+Given observed data $\y = (1, 2, 3)$ the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$.
+This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution.
+Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
@@ -73,16 +77,21 @@ Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the integral $p(\y) = \int p(\y, \bphi) \text{d}\bphi$ in the denominator, sometimes known as the marginal likelihood or evidence.
+Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the potentially high-dimensional integral $p(\y) = \int p(\y, \bphi) \text{d}\bphi$ in the denominator, sometimes known as the marginal likelihood or evidence.
 As such, although it is easy to evaluate $p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)$, it is typically difficult to evaluate the posterior distribution itself.
 
 A variety of computational methods have been developed to tackle this problem.
-Briefly, the main categories are:
+The main categories are:
 
-1. **Sampling algorithms** Known as Monte Carlo [@robert2005monte] algorithms after the casino, these approaches look to generate samples from the posterior distribution.
+1. **Sampling algorithms** These approaches look to generate samples from the posterior distribution, and are known as Monte Carlo methods, named after the casino [@robert2005monte].
 The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
-In this thesis, I make use of the No-U-Turn sampler (NUTS), a Hamiltonian Monte Carlo (HMC) algorithm, implemented in the Stan probabilistic programming language (PPL).
-2. **Variational Bayes** In variational Bayes, the posterior distribution is assumed to belong to a particular class of functions and use optimisation to choose the best member of that class.
+In this thesis, I use of the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
+Other approaches include importance sampling and sequential Monte Carlo.
+2. **Variational inference** In variational inference (VI), the posterior distribution is assumed to belong to a particular class of functions.
+Optimisation algorithms are then used to choose the best member of that class.
+Though VI is fast, it may not be accurate [@yao2018yes].
+3. **Expectation maximisation**
+4. **Deterministic approximations** These approximations are the subject of Chapter \@ref(naomi-aghq).
 
 ### Interplay between modelling and computation
 
@@ -103,25 +112,25 @@ Similarly, data may be associated to a point $t \in \mathcal{T}$ or period of ti
 
 Spatio-temporal data has some important properties.
 Foremost among them is correlation structure.
-Tobler's first law of geography, earlier expressed by @fisher1936design, is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
+Tobler's first law of geography, also expressed by @fisher1936design, is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
 This law extends not only to space but also time.
+
+<!-- Add figure here to demonstrate spatial data -->
 
 ## Model classes {#hierarchical-lgm-elgm}
 
 ### Hierarchical models {#hierarchical}
 
-```{r hierarchical-structure, fig.cap="Data often has a hierarchical structure."}
+(ref:hierarchical-structure) A simple example of group structure within data. Each individual $i = 1, \ldots, n$ is associated to $m_i$ observations $y_{i1}, \ldots, y_{im_i}$.
+
+```{r hierarchical-structure, fig.cap="(ref:hierarchical-structure)"}
 knitr::include_graphics("figures/bayesian/hierarchical-structure.pdf")
 ```
 
-Real world data usually has hierarchical structure.
-For example, we might have a study (Figure \ref{fig:hierarchical-structure}) where each individual $j = 1, \ldots, J$ has a group of $n_j$ observations.
-Then, it would be inappropriate to treat all $\sum_j n_j$ observations as being independent and identically distributed (IID).
-Observations belonging to the same group, that is of the same individual, are likely to be more similar than observations from different groups, which refer to different individuals.
-
-Bayesian hierarchical or multilevel models, comprised of multiple stages, allow handling data of this sort.
-For example, in a three-stage hierarchical model, we partition the parameters so that $\bphi = (\x, \btheta)$.
-I refer to $\x = (x_1, \ldots, x_N)$ as the latent field, and $\btheta = (\theta_1, \ldots, \theta_m)$ as the hyperparameters.
+Often it is natural to group some observations together.
+Bayesian hierarchical or multilevel models, comprised of multiple stages, allow for natural handling data of this sort, even with complex nested or crossed grouping structures.
+In a three-stage hierarchical model, we partition the parameters so that $\bphi = (\x, \btheta)$.
+I refer to $\x = (x_1, \ldots, x_n)$ as the latent field, and $\btheta = (\theta_1, \ldots, \theta_m)$ as the hyperparameters.
 The generative model for data $\y$ is then
 \begin{align}
 \y &\sim p(\y \, | \, \x, \btheta), \\
@@ -129,20 +138,50 @@ The generative model for data $\y$ is then
 \btheta &\sim p(\btheta),
 \end{align}
 with posterior distribution proportional to $p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)$.
-Referring back to the previous example, we may informally think about the latent field as modelling properties of individuals, and the hyperparameters as modelling shared properties of individuals or the observation process.
+
+For example, Figure \@ref(fig:hierarchical-structure) illustrates a case where each individual $i = 1, \ldots, n$ in a study is observed $m_i$ times.
+Observations of the same individual $y_{i1}, \ldots y_{im_i}$ are grouped together, and likely to have more similar properties than observations in different groups.
+
+1. **Complete pooling** In this model, the group structure is ignored and all $\sum_{i = 1}^n m_i$ observations are treated as independent and identically distributed
+\begin{align}
+y_{ij} \sim \mathcal{N}(\mu, \sigma), \\
+(\mu, \sigma) \sim p(\mu, \sigma).
+\end{align}
+2. **No pooling** Alternatively, the groups can be modelled entirely separately with group specific mean $\mu_i$ and standard deviation $\sigma_i$ parameters
+\begin{align}
+y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\
+(\mu_i, \sigma_i) \sim p(\mu_i, \sigma_i).
+\end{align}
+3. **Partial pooling** In this model, some amount of information is shared between the groups
+\begin{align}
+y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\
+\mu_i &= \beta + u_i, \\
+\beta &\sim p(\beta), \\
+\bu &\sim p(\bu), \\
+\sigma &\sim p(\sigma),
+\end{align}
+where the vector $\bu = (u_1, \ldots, u_n)$.
 
 ### Mixed effects models
 
-Fixed effects refer to parts of the latent field which are constant across groups.
-Random effects refer to parts of the latent field which vary across groups.
-Though these terms have notoriously many different definitions [@gelman2005analysis], I nonetheless find them useful to introduce here.
-No pooling, partial pooling, complete pooling.
-Structured random effects.
+Fixed effects refer to those elements of the latent field which are constant across groups.
+Random effects refer to those elements of the latent field which vary across groups.
+These terms have notoriously many different and incompatible definitions which can cause confusion [@gelman2005analysis].
+I nonetheless find them useful to introduce here.
+
+For concreteness, in the partial pooling model above, the latent field is $\x = (\beta, u_1, \ldots, u_n)$.
+The scalar $\beta$ is a fixed effect which applies to all $n$ groups.
+The vector $\bu$ are random effects which alter the mean differently for each group.
+The only hyperparameter is the standard deviation $\theta = \sigma$.
+
+Random effects can also be structured to share information between some groups more than others.
+In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
+Spatial random effects are the subject of Chapter \@ref(beyond-borders).
 
 ### Latent Gaussian models
 
-Latent Gaussian models [LGMs; @rue2009approximate] are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
-More specifically, in an LGM, the likelihood is given by
+Latent Gaussian models [LGMs; @rue2009approximate] are a class of three-stage Bayesian hierarchical models in which the middle layer is Gaussian.
+To be more precise, in an LGM, the likelihood is given by
 \begin{align*}
 y_i &\sim p(y_i \, | \, \eta_i, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
@@ -155,22 +194,17 @@ The structured additive predictor $\eta_i$ may include an intercept $\beta_0$, f
 The parameters $\beta_0$, $\{\beta_j\}$, $\{f_k(\cdot)\}$ are each assigned Gaussian prior distributions, and can be collected into a vector $\x \in \mathbb{R}^N$ such that $\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})$ where $\btheta_2 \in \mathbb{R}^{s_2}$ are further hyperparameters, again with $s_2$ assumed small.
 Let $\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m$ with $m = s_1 + s_2$ be all hyperparameters, with prior distribution $p(\btheta)$.
 
-Spatio-temporal data are well suited to being modelled with LGMs.
-
 ### Extended latent Gaussian models
 
 <!-- Strictly speaking, many-to-one is not an issue for `R-INLA`, the latent field is implemented as a concatenation of many vectors already e.g. for $\eta_i = \beta_0 + \phi_i$ with $i = 1, \ldots, n$ the latent field is $(\eta_1, \ldots, \eta_n, \beta_0, \phi_1, \ldots, \phi_n)^\top$ of dimension $2n + 1$ -->
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 <!-- Thesis work of [Follestad](https://cds.cern.ch/record/639625/files/sis-2003-305.pdf) that stayed as a preprint -->
 
-Some models used in small-area estimation fall outside the LGM class.
-<!-- There are other complex models from [ecology](https://www.bioss.ac.uk/rsse/2013/September2013slides-Illian.pdf) that can't currently be fit using `R-INLA` -->
-Many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by @stringer2021fast.
-By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
+Extended latent Gaussian models [ELGMs; @stringer2021fast] facilitate modelling of LGMs with greater non-linearities.
 In particular, the structured additive predictor is redefined as $\bmeta = (\eta_1, \ldots \eta_{N_n})$, where $N_n \in \mathbb{N}$ is a function of $n$, and it is possible that $N_n \neq n$.
 Each mean response $\mu_i$ now depends on some subset $\mathcal{J}_i \subseteq [N_n]$ of indices of $\bmeta$, with $\cup_{i = 1}^n \mathcal{J}_i = [N_n]$ and $1 \leq |\mathcal{J}_i| \leq N_n$, where $[N_n] = \{1, \ldots, N_n\}$.
 The inverse link function $g(\cdot)$ is redefined for each observation to be a possibly many-to-one mapping $g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}$, such that $\mu_i = g_i(\bmeta_{\mathcal{J}_i})$.
-Put together, ELGMs are then of the form
+Put together, ELGMs are of the form
 \begin{align*}
 y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
@@ -180,43 +214,49 @@ with latent field and hyperparameter prior distributions as in the LGM case.
 
 The ELGM class is well suited to small-area estimation of HIV indicators.
 Indeed, this class of models is used throughout the thesis.
-While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial], the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is naturally written as an ELGM in which each observation depends on the set of structured additive predictors corresponding to each multinomial observation.
+While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial] the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is naturally written as an ELGM where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
 In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
 
-## Survey methods
+## Survey methods {#survey}
 
 Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
 Demographic and Health Surveys (DHS) are funded by USAID and run every three to five years in most countries.
-Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run in high HIV burden countries.
+Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every two to three years in high HIV burden countries.
 
 ### Survey notation and key terms
 
-Consider a population of individuals $i = 1, \ldots, N$ and outcomes of interest $y_i$.
-If a census were run in, and all individuals responded, then the population mean $\bar y$ could be calculated exactly by
+Consider a population of individuals $i = 1, \ldots, N$ with outcomes of interest $y_i$.
+A census is a type of survey where all individuals are sampled.
+Supposing responses from all individuals were recorded, then the population mean of $G_i = G(y_i)$, where $G$ is some function, could be calculated based on the census by
 \begin{equation}
-\bar y = \frac{1}{N} \sum_{i = 1}^N y_i.
+\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}
-In practice, running a census is impractical and rarely possible.
-Usually, only a subset of the individuals are sampled, and only a subset of those have their outcome recorded due to non-response.
+
+In practice, it is impractically expensive to run a census.
+Instead, only a subset of the individuals are sampled.
+Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
 Let $S_i$ be an indicator for whether or not individual $i$ is sampled, and $R_i$ be an indicator for whether or not $y_i$ is recorded.
-If $S_i = 0$ then $R_i = 0$, but if $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
+If $S_i = 0$ then $R_i = 0$.
+If $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
 The population mean may be estimated directly based on the recorded subset of the population by
 \begin{equation}
-\bar y_R = \frac{\sum_{i = 1}^N R_i y_i}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i y_i}{m_R}, \label{eq:direct}
+\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i G(y_i)}{m_R}, \label{eq:direct}
 \end{equation}
-where $m_R$ is the recorded sample size.
+where $m_R = \sum_{i = 1}^N R_i$ is the recorded sample size.
 
 A probability sample refers to the case when individuals are selected to be included in the survey at random.
 In a non-probability sample, inclusion or exclusion from the survey is deterministic.
-A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that $\mathbb{P}(S_i = 1) = 1 / N$ for all $i$.
-The survey design is called complex when the sampling probabilities for each individual vary, such that $\mathbb{P}(S_i = 1) = \pi_i$ with $\sum_{i = 1}^N \pi_i = 1$ and $\pi_i > 0$ for all $i$.
-Complex survey designs can offer both greater practicality and statistical efficiency than SRS.
+A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that $P(S_i = 1) = 1 / N$.
+The survey design is called complex when the sampling probabilities for each individual vary, such that $P(S_i = 1) = \pi_i$ with $\sum_{i = 1}^N \pi_i = 1$ and $\pi_i > 0$.
+
+Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
-In particular, the direct estimator given in Equation \@ref(eq:direct), which does not take into account the sampling probabilities, is biased even in the case of no non-response.
-That said, even for SRS, non-response is a ubiquitous problem which also must be treated with care.
-Let $\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i$ be the probability of response of individual $i$ given inclusion in the survey.
+Under a complex design, then not taking into account the sampling probabilities will result in bias, even in the case of no nonresponse.
+Even for a SRS, the problem of nonresponse is almost ubiquitous, and can result in analogous bias to ignoring the survey design.
 
 ### Survey design
+
+<!-- Add figure here to demonstrate sampling of DHS data -->
 
 1. Stratification into administrative units
 2. Primary sampling units (PSUs) and their populations
@@ -227,33 +267,31 @@ Let $\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i$ be the probability of res
 ### Survey analysis
 
 Suppose a complex survey is run with sampling probabilities $\pi_i$.
-Design weights $\delta_i = 1 / \pi_i$ express the number of population units represented by the $i$th sampled unit.
-Non-response weights $\gamma_i = 1 / \upsilon_i$ express the number of sampled units represented by the $i$th recorded unit. 
-Survey weights $\omega_i = \delta_i \times \gamma_i$ express the number of population units represented by the $i$th recorded unit.
-A weighted estimate [@hajek1971discussion] of the population mean is then
-\begin{equation}
-\bar y_\omega = \frac{\sum_{j = 1}^N \omega_j R_j y_j}{\sum_{j = 1}^N \omega_j R_j}. \label{eq:hajek}
-\end{equation}
+The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to give more weight to the responses provided by those unlikely to be included.
+This can be achieved using design weights $\delta_i = 1 / \pi_i$, which can be thought of as the number of individuals in the population represented by the $i$th sampled individual.
+Let $P(R_i = 1 \, | \, S_i = 1) = \upsilon_i$ be the probability of response for sampled individual $i$.
+The problem of nonresponse can be treated in the same way using nonresponse weights $\gamma_i = 1 / \upsilon_i$, which analogously can be thought of as the number of sampled individuals represented by the $i$th recorded individual.
+Multiplying the design and nonresponse weights gives survey weights $\omega_i = \delta_i \times \gamma_i$.
 
-Decomposing the additive error of Equation \@ref(eq:hajek) provides useful intuition as to the utility of survey weighting [@meng2018statistical]
+A weighted estimate [@hajek1971discussion] of the population mean using the survey weights $\omega_i$ is given by
+\begin{equation}
+\bar G_\omega = \frac{\sum_{i = 1}^N \omega_j R_i G(y_i)}{\sum_{i = 1}^N \omega_i R_i}. \label{eq:hajek}
+\end{equation}
+Decomposing the additive error of this estimate provides useful intuition as to the potential benefits of survey weighting.
+Following @meng2018statistical then under SRS
 \begin{align}
-\bar y_\omega - \bar y &= \frac{\mathbb{E}(R_i Y_i)}{\mathbb{E}(R_i)} - \mathbb{E}(Y_i) \\ 
-&= \frac{\mathbb{C}(R_i Y_i)}{\mathbb{E}(R_i)} \\
-&= \rho_{Y, R} \times \sqrt{\frac{N - m_R}{m_R}} \times \sigma_y.
+\bar G_\omega - \bar G &= \frac{\mathbb{E}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} - \mathbb{E}(G_i) = \frac{\mathbb{C}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} \\ 
+&= \rho_{R_\omega, G} \times \sqrt{\frac{N - m_{R_\omega}}{m_{R_\omega}}} \times \sigma_G,
 \end{align}
-The data quality $\rho_{Y, R}$ measures the correlation between the outcome of interest and the recording mechanism.
-The data quantity $\sqrt{(N - m_R)/m_R}$
-The problem difficultly $\sigma_y$ measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used.
-Under SRS then.
+where $R_\omega = \omega R$.
+The data defect correlation (DDC) $\rho_{R_\omega, G}$ measures the correlation between the weighted recording mechanism and given function of the outcome of interest.
+To minimise the DDC then $G \perp \!\!\! \perp R_\omega$.
+The data scarcity $\sigma_{R_\omega} = \sqrt{(N - m_{R_\omega})/m_{R_\omega}}$ measures the effective proportion of the population who have been recorded.
+The problem difficultly $\sigma_G$ measures the intrinsic difficulty of the estimation problem, and is independent of the sampling or analysis method.
 
-The Kish effective sample size (ESS) [@kish1965survey] is
-\begin{equation}
-m^\star = \frac{\left(\sum_{i = 1}^N \omega_i \right)^2}{\sum_{i = 1}^N \omega_i^2}.
-\end{equation}
+For simplicity, let $G(y_i) = y_i$ and each $y_i \in \{0, 1\}$.
 We weight then model following @chen2014use.
+
+While this approach acknowledges the survey design, it has some important limitations.
 We ignore clustering structure.
-Discuss how all of this isn't great and that someone should figure this out.
-
-### An adaptive design proposal
-
-@bradley2023alsd
+All of this isn't great and that someone should figure this out [@gelman2007struggles].

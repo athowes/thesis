@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Fast approximate Bayesian inference | Bayesian spatio-temporal methods for small-area estimation of HIV indicators</title>
+  <meta name="description" content="6 Fast approximate Bayesian inference | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Fast approximate Bayesian inference | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Fast approximate Bayesian inference | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
+  
+  
+  
+
+<meta name="author" content="Adam Howes" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="multi-agyw.html"/>
+<link rel="next" href="conclusions.html"/>
+<style type="text/css">
+p.abstract{
+  text-align: center;
+  font-weight: bold;
+}
+div.abstract{
+  margin: auto;
+  width: 90%;
+}
+</style>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="templates/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgments"><i class="fa fa-check"></i>Acknowledgments</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#chapter-overview"><i class="fa fa-check"></i><b>1.1</b> Chapter overview</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#hiv-surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance </a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-statistics"><i class="fa fa-check"></i><b>3.1</b> Bayesian statistics</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-modelling"><i class="fa fa-check"></i><b>3.1.1</b> Bayesian modelling</a></li>
+<li class="chapter" data-level="3.1.2" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-computation"><i class="fa fa-check"></i><b>3.1.2</b> Bayesian computation</a></li>
+<li class="chapter" data-level="3.1.3" data-path="bayes-st.html"><a href="bayes-st.html#interplay-between-modelling-and-computation"><i class="fa fa-check"></i><b>3.1.3</b> Interplay between modelling and computation</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="bayes-st.html"><a href="bayes-st.html#spatio-temporal-statistics"><i class="fa fa-check"></i><b>3.2</b> Spatio-temporal statistics</a></li>
+<li class="chapter" data-level="3.3" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical-lgm-elgm"><i class="fa fa-check"></i><b>3.3</b> Model classes</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="bayes-st.html"><a href="bayes-st.html#mixed-effects-models"><i class="fa fa-check"></i><b>3.3.2</b> Mixed effects models</a></li>
+<li class="chapter" data-level="3.3.3" data-path="bayes-st.html"><a href="bayes-st.html#latent-gaussian-models"><i class="fa fa-check"></i><b>3.3.3</b> Latent Gaussian models</a></li>
+<li class="chapter" data-level="3.3.4" data-path="bayes-st.html"><a href="bayes-st.html#extended-latent-gaussian-models"><i class="fa fa-check"></i><b>3.3.4</b> Extended latent Gaussian models</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.4</b> Survey methods</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#survey-notation-and-key-terms"><i class="fa fa-check"></i><b>3.4.1</b> Survey notation and key terms</a></li>
+<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#survey-design"><i class="fa fa-check"></i><b>3.4.2</b> Survey design</a></li>
+<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#survey-analysis"><i class="fa fa-check"></i><b>3.4.3</b> Survey analysis</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="beyond-borders.html"><a href="beyond-borders.html"><i class="fa fa-check"></i><b>4</b> Models for spatial structure</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="beyond-borders.html"><a href="beyond-borders.html#background-1"><i class="fa fa-check"></i><b>4.1</b> Background</a></li>
+<li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#models-based-on-adjacency"><i class="fa fa-check"></i><b>4.2</b> Models based on adjacency</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.2.1</b> The Besag model</a></li>
+<li class="chapter" data-level="4.2.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.2.2</b> Best practises for the Besag model</a></li>
+<li class="chapter" data-level="4.2.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.2.3</b> The reparameterised Besag-York-Mollié model</a></li>
+<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s representation of space</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a></li>
+<li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.4</b> Simulation study</a></li>
+<li class="chapter" data-level="4.5" data-path="beyond-borders.html"><a href="beyond-borders.html#hiv-prevalence-study"><i class="fa fa-check"></i><b>4.5</b> HIV prevalence study</a></li>
+<li class="chapter" data-level="4.6" data-path="beyond-borders.html"><a href="beyond-borders.html#discussion"><i class="fa fa-check"></i><b>4.6</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="multi-agyw.html"><a href="multi-agyw.html"><i class="fa fa-check"></i><b>5</b> A model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-2"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
+<li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#data"><i class="fa fa-check"></i><b>5.2</b> Data</a></li>
+<li class="chapter" data-level="5.3" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions"><i class="fa fa-check"></i><b>5.3</b> Model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="multi-agyw.html"><a href="multi-agyw.html#st-multinomial"><i class="fa fa-check"></i><b>5.3.1</b> Spatio-temporal multinomial logistic regression</a></li>
+<li class="chapter" data-level="5.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#s-logistic"><i class="fa fa-check"></i><b>5.3.2</b> Spatial logistic regression</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Female sex worker population size adjustment</a></li>
+<li class="chapter" data-level="5.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#results"><i class="fa fa-check"></i><b>5.3.4</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi estimates</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections-reached"><i class="fa fa-check"></i><b>5.4.2</b> Expected new infections reached</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#results-1"><i class="fa fa-check"></i><b>5.4.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#discussion-1"><i class="fa fa-check"></i><b>5.5</b> Discussion</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#limitations"><i class="fa fa-check"></i><b>5.5.1</b> Limitations</a></li>
+<li class="chapter" data-level="5.5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#conclusion"><i class="fa fa-check"></i><b>5.5.2</b> Conclusion</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="naomi-aghq.html"><a href="naomi-aghq.html"><i class="fa fa-check"></i><b>6</b> Fast approximate Bayesian inference</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-methods"><i class="fa fa-check"></i><b>6.1</b> Inference methods</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#the-laplace-approximation"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
+<li class="chapter" data-level="6.1.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#quadrature"><i class="fa fa-check"></i><b>6.1.2</b> Quadrature</a></li>
+<li class="chapter" data-level="6.1.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#integrated-nested-laplace-approximation"><i class="fa fa-check"></i><b>6.1.3</b> Integrated nested Laplace approximation</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#software"><i class="fa fa-check"></i><b>6.2</b> Software</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#tmb"><i class="fa fa-check"></i><b>6.2.1</b> <code>TMB</code></a></li>
+<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#r-inla"><i class="fa fa-check"></i><b>6.2.2</b> <code>R-INLA</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation"><i class="fa fa-check"></i><b>6.3</b> A universal INLA implementation</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#epilepsy-example"><i class="fa fa-check"></i><b>6.3.1</b> Epilepsy example</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#the-naomi-model"><i class="fa fa-check"></i><b>6.4</b> The Naomi model</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-structure"><i class="fa fa-check"></i><b>6.4.1</b> Model structure</a></li>
+<li class="chapter" data-level="6.4.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#connection-to-elgms"><i class="fa fa-check"></i><b>6.4.2</b> Connection to ELGMs</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#extension-of-aghq-to-moderate-dimensions"><i class="fa fa-check"></i><b>6.5</b> Extension of AGHQ to moderate dimensions</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#aghq-with-variable-levels"><i class="fa fa-check"></i><b>6.5.1</b> AGHQ with variable levels</a></li>
+<li class="chapter" data-level="6.5.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#principal-components-analysis"><i class="fa fa-check"></i><b>6.5.2</b> Principal components analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#malawi-case-study"><i class="fa fa-check"></i><b>6.6</b> Malawi case-study</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#nuts-convergence"><i class="fa fa-check"></i><b>6.6.1</b> NUTS convergence</a></li>
+<li class="chapter" data-level="6.6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#use-of-pca-aghq"><i class="fa fa-check"></i><b>6.6.2</b> Use of PCA-AGHQ</a></li>
+<li class="chapter" data-level="6.6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-assessment"><i class="fa fa-check"></i><b>6.6.3</b> Model assessment</a></li>
+<li class="chapter" data-level="6.6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.6.4</b> Inference comparison</a></li>
+<li class="chapter" data-level="6.6.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.6.5</b> Exceedance probabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.7</b> Discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>7</b> Future work and conclusions</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#strengths"><i class="fa fa-check"></i><b>7.1</b> Strengths</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="conclusions.html"><a href="conclusions.html#chapter-refbeyond-borders"><i class="fa fa-check"></i><b>7.1.1</b> Chapter @ref(beyond-borders)</a></li>
+<li class="chapter" data-level="7.1.2" data-path="conclusions.html"><a href="conclusions.html#chapter-refmulti-agyw"><i class="fa fa-check"></i><b>7.1.2</b> Chapter @ref(multi-agyw)</a></li>
+<li class="chapter" data-level="7.1.3" data-path="conclusions.html"><a href="conclusions.html#chapter-refnaomi-aghq"><i class="fa fa-check"></i><b>7.1.3</b> Chapter @ref(naomi-aghq)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.2</b> Future work</a></li>
+<li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.3</b> Conclusions</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="spatial-structure.html"><a href="spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Spatial structure</a></li>
+<li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
+<ul>
+<li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
+<li class="chapter" data-level="B.2" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#household-survey-data"><i class="fa fa-check"></i><b>B.2</b> Household survey data</a></li>
+<li class="chapter" data-level="B.3" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#spatial-analysis-levels"><i class="fa fa-check"></i><b>B.3</b> Spatial analysis levels</a></li>
+<li class="chapter" data-level="B.4" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#survey-questions-and-risk-group-allocation"><i class="fa fa-check"></i><b>B.4</b> Survey questions and risk group allocation</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html"><i class="fa fa-check"></i><b>C</b> Fast approximate Bayesian inference</a>
+<ul>
+<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a></li>
+<li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.2</b> Model assessment</a></li>
+<li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.3</b> AGHQ and PCA-AGHQ details</a></li>
+<li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.4</b> Normalising constant estimation</a></li>
+<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.5</b> Inference comparison</a></li>
+<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#mcmc-convergence-and-suitability"><i class="fa fa-check"></i><b>C.6</b> MCMC convergence and suitability</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"><p>Bayesian spatio-temporal methods for small-area estimation of HIV indicators</p></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="naomi-aghq" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">6</span> Fast approximate Bayesian inference<a href="naomi-aghq.html#naomi-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
+<p>In this chapter I describe a novel Bayesian inference method I developed.
+The method is motivated the Naomi small-area estimation model.
+Over 35 countries have used the Naomi model software () to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023</a>)</span>.
+Ensuring fast and accurate Bayesian inferences in this setting is challenging.</p>
+<p>I began working on this project at the start of my PhD.
+However, it was only after I read <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span> that I began making progress.
+Alex Stringer later supervised by visit to the University of Waterloo.
+The results of this work are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
+Code for the analysis in this chapter is available from <a href="https://github.com/athowes/elgm-inf"><code>athowes/naomi-aghq</code></a>.</p>
+<div id="inference-methods" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Inference methods<a href="naomi-aghq.html#inference-methods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In a Bayesian analysis, the primary goal is to perform inference.
+That is, to obtain the posterior distribution
+<span class="math display">\[\begin{equation}
+p(\bphi \, | \, \y) = \frac{p(\bphi, \y)}{p(\y)}.
+\end{equation}\]</span>
+Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
+Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.</p>
+<p>It is usually intractable to directly obtain the posterior distribution.
+This is because the denominator contains an intractable integral called the posterior normalising constant
+<span class="math display">\[\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
+\end{equation}\]</span>
+For this reason, approximations to the posterior distribution <span class="math inline">\(\tilde p(\bphi \, | \, \y)\)</span> are typically used in place of the exact posterior distribution.
+Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
+<span class="math display">\[\begin{equation}
+p(\bphi \, | \, \y) \propto p(\bphi, \y).
+\end{equation}\]</span>
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.</p>
+<div id="the-laplace-approximation" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> The Laplace approximation<a href="naomi-aghq.html#the-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Laplace’s method <span class="citation">(<a href="#ref-laplace1774memoire">Laplace 1774</a>)</span> is a technique used to approximate integrals of the form
+<span class="math display">\[\begin{equation}
+\int \exp(C h(z)) \text{d}z,
+\end{equation}\]</span>
+where <span class="math inline">\(C &gt; 0\)</span> is a large constant and <span class="math inline">\(h\)</span> is a function which is twice-differentiable.
+The Laplace approximation <span class="citation">(<a href="#ref-tierney1986accurate">Tierney and Kadane 1986</a>)</span> is obtained by application of Laplace’s method to calculate the posterior normalising constant.
+Let <span class="math inline">\(h(\bphi) = \log p(\bphi, \y)\)</span> such that
+<span class="math display">\[\begin{equation}
+p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
+\end{equation}\]</span>
+Laplace’s method involves approximating the function <span class="math inline">\(h\)</span> by its second order Taylor expansion evaluated at a maxima of <span class="math inline">\(h\)</span> to eliminate the first order term.
+Let
+<span class="math display">\[\begin{equation}
+\hat \bphi = \argmax_{\bphi} h(\bphi)
+\end{equation}\]</span>
+be the posterior mode, and
+<span class="math display">\[\begin{equation}
+\hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
+\end{equation}\]</span>
+be the Hessian matrix evaluated at the posterior mode.
+The Laplace approximation is then
+<span class="math display">\[\begin{align}
+\tilde p_{\texttt{LA}}(\y) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
+&amp;= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}}.
+\end{align}\]</span>
+Equation <a href="#eq:la">(<strong>??</strong>)</a> is calculated using the known normalising constant of the Gaussian distribution
+<span class="math display">\[\begin{equation}
+p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+\end{equation}\]</span>
+It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution <span class="math inline">\(p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)\)</span> such that
+<span class="math display">\[\begin{equation}
+\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
+\end{equation}\]</span></p>
+<div id="the-marginal-laplace-approximation" class="section level4 hasAnchor" number="6.1.1.1">
+<h4><span class="header-section-number">6.1.1.1</span> The marginal Laplace approximation<a href="naomi-aghq.html#the-marginal-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
+As before, let <span class="math inline">\(\bphi = (\x, \btheta)\)</span> where <span class="math inline">\(\x\)</span> is the latent field, and <span class="math inline">\(\btheta\)</span> are the hyperparameters.
+Applying an equivalent Laplace approximation to the latent field, we have <span class="math inline">\(h(\x, \btheta) = \log p(\x, \btheta, \y)\)</span> with posterior mode
+<span class="math display">\[\begin{equation}
+\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\end{equation}\]</span>
+and Hessian matrix evaluated at the posterior mode
+<span class="math display">\[\begin{equation}
+\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \x(\btheta)}.
+\end{equation}\]</span>
+For both quantities cases dependence on the hyperparameters <span class="math inline">\(\btheta\)</span> is made explicit.
+The resulting marginal Laplace approximation is then
+<span class="math display">\[\begin{align}
+\tilde p_{\texttt{LA}}(\btheta, \y) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
+&amp;= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
+&amp;= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+\end{align}\]</span>
+where <span class="math inline">\(\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})\)</span> is a Gaussian approximation to the marginal posterior of the latent field.</p>
+</div>
+</div>
+<div id="quadrature" class="section level3 hasAnchor" number="6.1.2">
+<h3><span class="header-section-number">6.1.2</span> Quadrature<a href="naomi-aghq.html#quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
+As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.</p>
+<p>Let <span class="math inline">\(\mathcal{Q}\)</span> be a set of quadrature points <span class="math inline">\(\z \in \mathcal{Q}\)</span> and <span class="math inline">\(\omega: \mathbb{R}^d \to \mathbb{R}\)</span> be a weighting function.
+Then a quadrature approximation to the posterior normalising constant is given by
+<span class="math display">\[\begin{equation}
+\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
+\end{equation}\]</span>
+Quadrature methods are most effective when integrating over small dimensions.
+The reason why is that exponentially more quadrature points are required to cover each additional dimension.
+For even moderate dimension, this quickly becomes intractable.</p>
+<div id="gauss-hermite-quadrature" class="section level4 hasAnchor" number="6.1.2.1">
+<h4><span class="header-section-number">6.1.2.1</span> Gauss-Hermite quadrature<a href="naomi-aghq.html#gauss-hermite-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate a certain class of functions exactly.
+These functions are the form <span class="math inline">\(f(z) = \phi(z) P_\alpha(z)\)</span>, where <span class="math inline">\(\phi(\cdot)\)</span> is a standard normal density, and <span class="math inline">\(P_\alpha(\cdot)\)</span> is a polynomial of degree <span class="math inline">\(\alpha\)</span>.</p>
+<p>Following the notation for GHQ established by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> for <span class="math inline">\(z \in \mathbb{R}\)</span>, let <span class="math inline">\(H_k(z)\)</span> be the <span class="math inline">\(k\)</span>th Hermite polynomial
+<span class="math display">\[\begin{equation}
+H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2).
+\end{equation}\]</span>
+The univariate GHQ rule has nodes <span class="math inline">\(z \in \mathcal{Q}(1, k)\)</span> given by the <span class="math inline">\(k\)</span> zeroes of the <span class="math inline">\(k\)</span>th Hermite polynomial.
+The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\)</span> is given by
+<span class="math display">\[\begin{equation}
+\omega(z) = \frac{\phi(z) \cdot k!}{[H_{k + 1}(z)]^2}.
+\end{equation}\]</span></p>
+<p>Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
+In <span class="math inline">\(d\)</span> dimensions, the multivariate GHQ nodes <span class="math inline">\(\z \in \mathcal{Q}(d, k)\)</span> are defined by <span class="math inline">\(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\)</span>.
+The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\)</span> is given by <span class="math inline">\(\omega(\z) = \prod_{j = 1}^d \omega(z_j)\)</span>.</p>
+</div>
+<div id="adaptive-quadrature" class="section level4 hasAnchor" number="6.1.2.2">
+<h4><span class="header-section-number">6.1.2.2</span> Adaptive quadrature<a href="naomi-aghq.html#adaptive-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:aghq-demo"></span>
+<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\z \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
+<p class="caption">
+Figure 6.1: The Gauss-Hermite quadrature nodes <span class="math inline">\(\z \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
+</p>
+</div>
+<p>In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
+Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
+No fixed quadrature rule can be expected to perform well in integrating any posterior distributions produced by observation of particular data.</p>
+<p>In adaptive GHQ (AGHQ).</p>
+</div>
+</div>
+<div id="integrated-nested-laplace-approximation" class="section level3 hasAnchor" number="6.1.3">
+<h3><span class="header-section-number">6.1.3</span> Integrated nested Laplace approximation<a href="naomi-aghq.html#integrated-nested-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The integrated nested Laplace approximation (INLA) method <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> combines marginal Laplace approximations with quadrature to enable approximation of posterior marginal distributions.</p>
+</div>
+</div>
+<div id="software" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Software<a href="naomi-aghq.html#software" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="tmb" class="section level3 hasAnchor" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> <code>TMB</code><a href="naomi-aghq.html#tmb" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Template Model Builder [TMB, or when referring to the software <code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an <span class="math inline">\(\textsc{R}\)</span> package which implements the Laplace approximation.
+In <code>TMB</code> derivatives are obtained using automatic differentiation <span class="citation">(<a href="#ref-baydin2017automatic">Baydin et al. 2017</a>)</span>.</p>
+</div>
+<div id="r-inla" class="section level3 hasAnchor" number="6.2.2">
+<h3><span class="header-section-number">6.2.2</span> <code>R-INLA</code><a href="naomi-aghq.html#r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <code>R-INLA</code> software implements the INLA method.
+<code>R-INLA</code> uses a formula interface (e.g. <code>y ~ 1 + x</code>) to facilitate use of INLA for common models.
+This is a beneficial design choice for new users.
+For more advanced users, the formula interface can impose constraints on model choice.</p>
+</div>
+</div>
+<div id="a-universal-inla-implementation" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this section, I implement the INLA method from scratch, using the <code>TMB</code> package.
+The result is universal in that it is compatible with any model with a <code>TMB</code> C++ template.
+This opens the door for application of INLA to models like Naomi which are not compatible with <code>R-INLA</code>.
+Indeed, <span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task”, and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
+The potential benefits of a more flexible INLA implementation based on automatic differentiation were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.</p>
+<div id="epilepsy-example" class="section level3 hasAnchor" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Epilepsy example<a href="naomi-aghq.html#epilepsy-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I use the epilepsy generalised linear mixed model example from <span class="citation">Spiegelhalter et al. (<a href="#ref-spiegelhalter1996bugs">1996</a>)</span> to demonstrate the implementation.
+This model is based on that of <span class="citation">Breslow and Clayton (<a href="#ref-breslow1993approximate">1993</a>)</span>, a modification of <span class="citation">Thall and Vail (<a href="#ref-thall1990some">1990</a>)</span>, and the data are from an epilespy drug double-blind clinical trial <span class="citation">(<a href="#ref-leppik1985double">Leppik et al. 1985</a>)</span>.
+<span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters.</p>
+<p>In the trial, patients <span class="math inline">\(i = 1, \ldots, 59\)</span> were each assigned either the new drug <span class="math inline">\(\texttt{Trt}_i = 1\)</span> or placebo <span class="math inline">\(\texttt{Trt}_i = 0\)</span>.
+Each patient made four visits the clinic <span class="math inline">\(j = 1, \ldots, 4\)</span>, and the observations <span class="math inline">\(y_{ij}\)</span> are the number of seizures of the <span class="math inline">\(i\)</span>th person in the two weeks preceding their <span class="math inline">\(j\)</span>th visit.
+The covariates used in the model were age <span class="math inline">\(\texttt{Age}_i\)</span>, baseline seizure counts <span class="math inline">\(\texttt{Base}_i\)</span> and an indicator for the final clinic visit <span class="math inline">\(\texttt{V}_4\)</span>, which were all centered.
+The observations were modelled using a Poisson distribution <span class="math inline">\(y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})\)</span> with linear predictor
+<span class="math display">\[\begin{align*}
+\eta_{ij}
+&amp;= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
+   \beta_{\texttt{Trt} \times \texttt{Base}} \texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4) \\
+&amp;+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
+   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4],
+\end{align*}\]</span>
+where the prior distribution on each of the regression parameters, including the intercept, was <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span>.
+The random effects are IID <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> with precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
+</div>
+</div>
+<div id="the-naomi-model" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> The Naomi model<a href="naomi-aghq.html#the-naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.</p>
+<div id="model-structure" class="section level3 hasAnchor" number="6.4.1">
+<h3><span class="header-section-number">6.4.1</span> Model structure<a href="naomi-aghq.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I consider a simplified version of Naomi defined only at the time of the most recent household survey with HIV testing.
+This version omits nowcasting and temporal projection.
+These time points involve limited inferences.</p>
+<div id="household-survey-component" class="section level4 hasAnchor" number="6.4.1.1">
+<h4><span class="header-section-number">6.4.1.1</span> Household survey component <a href="naomi-aghq.html#household-survey-component" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Consider a country in sub-Saharan Africa where a household survey with complex survey design has taken place.
+Let <span class="math inline">\(x \in \mathcal{X}\)</span> index district, <span class="math inline">\(a \in \mathcal{A}\)</span> index five-year age group, and <span class="math inline">\(s \in \mathcal{S}\)</span> index sex.
+For ease of notation, let <span class="math inline">\(i\)</span> index the finest district-age-sex division included in the model.
+Let <span class="math inline">\(I \subseteq \mathcal{X} \times \mathcal{A} \times \mathcal{S}\)</span> be a set of indices <span class="math inline">\(i\)</span> for which an aggregate observation is reported, and <span class="math inline">\(\mathcal{I}\)</span> be the set of all <span class="math inline">\(I\)</span> such that <span class="math inline">\(I \in \mathcal{I}\)</span>.</p>
+<p>Let <span class="math inline">\(N_i \in \mathbb{N}\)</span> be the known, fixed population size.
+HIV prevalence <span class="math inline">\(\rho_i \in [0, 1]\)</span>, antiretroviral therapy (ART) coverage <span class="math inline">\(\alpha_i \in [0, 1]\)</span>, and annual HIV incidence rate <span class="math inline">\(\lambda_i &gt; 0\)</span> are modelled using linked regression equations.</p>
+<p>Independent logistic regression models are specified for HIV prevalence and ART coverage in the general population such that <span class="math inline">\(\text{logit}(\rho_i) = \eta^\rho_i\)</span> and <span class="math inline">\(\text{logit}(\alpha_i) = \eta^\alpha_i\)</span>.
+HIV incidence rate is modelled on the log scale as <span class="math inline">\(\log(\lambda_i) = \eta^\lambda_i\)</span>, and depends on adult HIV prevalence and adult ART coverage.
+Let <span class="math inline">\(\kappa_i\)</span> be the proportion recently infected among HIV positive persons.
+This proportion is linked to HIV incidence via
+<span class="math display">\[\begin{equation}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \label{eq:kappa}
+\end{equation}\]</span>
+where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are strongly informed by priors for the particular survey.</p>
+<p>These processes are each informed by household survey data.
+Weighted aggregate survey observations are calculated as
+<span class="math display">\[\begin{equation*}
+\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j},
+\end{equation*}\]</span>
+with individual responses <span class="math inline">\(\theta_j \in \{0, 1\}\)</span> and design weights <span class="math inline">\(w_j\)</span> for each of <span class="math inline">\(\theta \in \{\rho, \alpha, \kappa\}\)</span>.
+The design weights are provided by the survey and aim to reduce bias by decreasing possible correlation between response and recording mechanism <span class="citation">(<a href="#ref-meng2018statistical">Meng 2018</a>)</span>.
+The index <span class="math inline">\(j\)</span> runs across all individuals in strata <span class="math inline">\(i \in I\)</span> within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
+The weighted observed number of outcomes is <span class="math inline">\(y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I}\)</span> where
+<span class="math display">\[\begin{equation*}
+m^{\theta}_I = \frac{\left(\sum_j w_j\right)^2}{\sum_j w_j^2},
+\end{equation*}\]</span>
+is the Kish effective sample size (ESS) <span class="citation">(<a href="#ref-kish1965survey">Kish 1965</a>)</span>.
+As the Kish ESS is maximised by constant design weights, in exchange for reducing bias the ESS is reduced and hence variance increased.
+The weighted observed number of outcomes are modelled using a binomial working likelihood <span class="citation">(<a href="#ref-chen2014use">Chen, Wakefield, and Lumely 2014</a>)</span> defined to operate on the reals
+<span class="math display">\[\begin{equation*}
+y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}),
+\end{equation*}\]</span>
+where <span class="math inline">\(\theta_{I}\)</span> are the following weighted aggregates
+<span class="math display">\[\begin{equation*}
+\rho_{I} = \frac{\sum_{i \in I} N_i \rho_i}{\sum_{i \in I} N_i}, \quad
+\alpha_{I} = \frac{\sum_{i \in I} N_i \rho_i \alpha_i}{\sum_{i \in I} N_i \rho_i}, \quad
+\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}.
+\end{equation*}\]</span></p>
+</div>
+</div>
+<div id="connection-to-elgms" class="section level3 hasAnchor" number="6.4.2">
+<h3><span class="header-section-number">6.4.2</span> Connection to ELGMs<a href="naomi-aghq.html#connection-to-elgms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+</div>
+<div id="extension-of-aghq-to-moderate-dimensions" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Extension of AGHQ to moderate dimensions<a href="naomi-aghq.html#extension-of-aghq-to-moderate-dimensions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Naomi model has <span class="math inline">\(m = 24\)</span> hyperparameters.</p>
+<div id="aghq-with-variable-levels" class="section level3 hasAnchor" number="6.5.1">
+<h3><span class="header-section-number">6.5.1</span> AGHQ with variable levels<a href="naomi-aghq.html#aghq-with-variable-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="principal-components-analysis" class="section level3 hasAnchor" number="6.5.2">
+<h3><span class="header-section-number">6.5.2</span> Principal components analysis<a href="naomi-aghq.html#principal-components-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pca-demo"></span>
+<img src="figures/naomi-aghq/pca-demo.png" alt="See Figure 6.1." width="95%" />
+<p class="caption">
+Figure 6.2: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.1</a>.
+</p>
+</div>
+</div>
+</div>
+<div id="malawi-case-study" class="section level2 hasAnchor" number="6.6">
+<h2><span class="header-section-number">6.6</span> Malawi case-study<a href="naomi-aghq.html#malawi-case-study" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:figB"></span>
+<img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="Naomi output." width="95%" />
+<p class="caption">
+Figure 6.3: Naomi output.
+</p>
+</div>
+<div id="nuts-convergence" class="section level3 hasAnchor" number="6.6.1">
+<h3><span class="header-section-number">6.6.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.6.2">
+<h3><span class="header-section-number">6.6.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="model-assessment" class="section level3 hasAnchor" number="6.6.3">
+<h3><span class="header-section-number">6.6.3</span> Model assessment<a href="naomi-aghq.html#model-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="inference-comparison" class="section level3 hasAnchor" number="6.6.4">
+<h3><span class="header-section-number">6.6.4</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.6.5">
+<h3><span class="header-section-number">6.6.5</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+</div>
+<div id="discussion-2" class="section level2 hasAnchor" number="6.7">
+<h2><span class="header-section-number">6.7</span> Discussion<a href="naomi-aghq.html#discussion-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-baydin2017automatic" class="csl-entry">
+Baydin, Atılım Günes, Barak A Pearlmutter, Alexey Andreyevich Radul, and Jeffrey Mark Siskind. 2017. <span>“<span class="nocase">Automatic differentiation in machine learning: a survey</span>.”</span> <em>The Journal of Machine Learning Research</em> 18 (1): 5595–5637.
+</div>
+<div id="ref-bilodeau2022stochastic" class="csl-entry">
+Bilodeau, Blair, Alex Stringer, and Yanbo Tang. 2022. <span>“Stochastic Convergence Rates and Applications of Adaptive Quadrature in Bayesian Inference.”</span> <em>Journal of the American Statistical Association</em>, 1–11.
+</div>
+<div id="ref-breslow1993approximate" class="csl-entry">
+Breslow, Norman E, and David G Clayton. 1993. <span>“Approximate Inference in Generalized Linear Mixed Models.”</span> <em>Journal of the American Statistical Association</em> 88 (421): 9–25.
+</div>
+<div id="ref-chen2014use" class="csl-entry">
+Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“The Use of Sampling Weights in Bayesian Hierarchical Models for Small Area Estimation.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 11: 33–43.
+</div>
+<div id="ref-davis1975methods" class="csl-entry">
+Davis, Philip J, and Philip Rabinowitz. 1975. <em>Methods of Numerical Integration</em>. Academic Press.
+</div>
+<div id="ref-eaton2021naomi" class="csl-entry">
+Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oliver Stevens, Sumali Bajaj, Rob Ashton, et al. 2021. <span>“Naomi: A New Modelling Tool for Estimating HIV Epidemic Indicators at the District Level in Sub-Saharan Africa.”</span>
+</div>
+<div id="ref-howes2023fast" class="csl-entry">
+Howes, Adam, Alex Stringer, Seth R. Flaxman, and Jeffrey W. Eaton. 2023+. <span>“<span class="nocase">Fast approximate Bayesian inference of HIV indicators using PCA adaptive Gauss-Hermite quadrature</span>,”</span> 2023+.
+</div>
+<div id="ref-kish1965survey" class="csl-entry">
+Kish, Leslie. 1965. <em>Survey Sampling</em>. 04; HN29, K5.
+</div>
+<div id="ref-kristensen2016tmb" class="csl-entry">
+Kristensen, Kasper, Anders Nielsen, Casper W Berg, Hans Skaug, Bradley M Bell, et al. 2016. <span>“TMB: Automatic Differentiation and Laplace Approximation.”</span> <em>Journal of Statistical Software</em> 70 (i05).
+</div>
+<div id="ref-laplace1774memoire" class="csl-entry">
+Laplace, P. S. 1774. <span>“Memoire Sur La Probabilite de Causes Par Les Evenements.”</span> <em>Memoire de l’Academie Royale Des Sciences</em>.
+</div>
+<div id="ref-leppik1985double" class="csl-entry">
+Leppik, IE, FE Dreifuss, T Bowman-Cloyd, N Santilli, M Jacobs, C Crosby, J Cloyd, et al. 1985. <span>“A Double-Blind Crossover Evaluation of Progabide in Partial Seizures.”</span> <em>Neurology</em> 35 (4): 285.
+</div>
+<div id="ref-martino2019integrated" class="csl-entry">
+Martino, Sara, and Andrea Riebler. 2019. <span>“Integrated Nested Laplace Approximations (INLA).”</span> <em>arXiv Preprint arXiv:1907.01248</em>.
+</div>
+<div id="ref-meng2018statistical" class="csl-entry">
+Meng, Xiao-Li. 2018. <span>“Statistical Paradises and Paradoxes in Big Data (i) Law of Large Populations, Big Data Paradox, and the 2016 Us Presidential Election.”</span> <em>The Annals of Applied Statistics</em> 12 (2): 685–726.
+</div>
+<div id="ref-rue2009approximate" class="csl-entry">
+Rue, Håvard, Sara Martino, and Nicolas Chopin. 2009. <span>“<span class="nocase">Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations</span>.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92.
+</div>
+<div id="ref-skaug2009approximate" class="csl-entry">
+Skaug, Hans J. 2009. <span>“<span class="nocase">Discussion of "Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations"</span>.”</span> In <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, 71:319–92. 2. Wiley Online Library.
+</div>
+<div id="ref-spiegelhalter1996bugs" class="csl-entry">
+Spiegelhalter, David, Andrew Thomas, Nicky Best, and Wally Gilks. 1996. <span>“BUGS 0.5 Examples.”</span> <em>MRC Biostatistics Unit, Institute of Public Health, Cambridge, UK</em> 256.
+</div>
+<div id="ref-stringer2021fast" class="csl-entry">
+Stringer, Alex, Patrick Brown, and Jamie Stafford. 2021. <span>“Fast, Scalable Approximations to Posterior Distributions in Extended Latent Gaussian Models.”</span> <em>arXiv Preprint arXiv:2103.07425</em>.
+</div>
+<div id="ref-thall1990some" class="csl-entry">
+Thall, Peter F, and Stephen C Vail. 1990. <span>“Some Covariance Models for Longitudinal Count Data with Overdispersion.”</span> <em>Biometrics</em>, 657–71.
+</div>
+<div id="ref-tierney1986accurate" class="csl-entry">
+Tierney, Luke, and Joseph B Kadane. 1986. <span>“<span class="nocase">Accurate approximations for posterior moments and marginal densities</span>.”</span> <em>Journal of the American Statistical Association</em> 81 (393): 82–86.
+</div>
+<div id="ref-unaids2023global" class="csl-entry">
+———. 2023. <span>“The Path That Ends AIDS: UNAIDS Global AIDS Update 2023.”</span> <a href="https://www.unaids.org/en/resources/documents/2023/global-aids-update-2023" class="uri">https://www.unaids.org/en/resources/documents/2023/global-aids-update-2023</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="multi-agyw.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ulyngs/oxforddown/tree/master/06-naomi-aghq.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

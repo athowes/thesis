@@ -270,7 +270,7 @@
 
 %%%%% DEDICATION -- If you'd like one, un-comment the following.
 \begin{dedication}
-  \textit{For someone, or something}
+  \textit{For someone, or something.}
 \end{dedication}
 
 %%%%% ACKNOWLEDGEMENTS -- Nothing to do here except comment out if you don't want it.
@@ -297,7 +297,7 @@ Limitations of available data make obtaining these estimates difficult.
 I develop and apply Bayesian spatio-temporal methods to meet this challenge.
 First, I examine models for area-level spatial structure.
 Second, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
-Finally, I develop a novel Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
+Finally, I develop a novel deterministic Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
 Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
 \end{abstract}
 
@@ -544,23 +544,30 @@ Among them:
   \textbf{Data sparsity}
   Collection of data is costly and time consuming.
   As a result, limited direct data might be available for the particular time, location, and sub-population of interest.
-\item
-  \textbf{Survey biases}
-  Individuals may be hesitant to disclose their HIV status, or report higher risk behaviours, due to social desirability bias and a fear of discrimination or stigma.
-  When available, biomarker data can be used to overcome under-reporting, it may still be subject to measurement errors.
+  For example, in many countries the last household survey conducted is several years out of date.
 \item
   \textbf{Missing data}
   Many KPs are difficult to reach, and do not appear on household survey sampling frames.
   Individuals included on the sampling frame may choose not to respond.
+  Mismatch of the sampling frame to the target population, sampling error, and non-response can all be characterised as issues of missing data.
+  Note that I characterise data sparsity as referring to limited study availability, and missing data as referring to the shortfalls of any given study.
+\item
+  \textbf{Survey biases}
+  Individuals may be hesitant to disclose their HIV status, or report higher risk behaviours, due to social desirability bias and a fear of discrimination or stigma.
+  When available, biomarker data can be used to overcome under-reporting, but still may be subject to measurement errors.
 \item
   \textbf{Denominators and demography}
   Many indicators are rates or proportions, which rely on estimates of the population at risk in the denominator.
   Accurately estimating these denominators is itself a challenging task \autocite{tatem2017worldpop}.
-  Taking a ratio of uncertain quantities amplifies the uncertainty.
+  Taking a ratio of uncertain quantities amplifies uncertainty, but is rarely properly accounted for.
+\item
+  \textbf{Reliance on epidemiological parameters}
+  Indicators often rely on estimates of epidemiological parameters obtained from cohort studies.
+  Application of these parameters, which may not generalise to the setting of interest, is often coarse and without proper accounting for uncertainty.
 \end{enumerate}
 
-The above challenges make direct interpretation of the data misleading.
-Along with Careful statistical modelling is required to overcome these limitations.
+The above challenges make direct interpretation of the data often misleading.
+Careful statistical modelling is required to overcome these limitations.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -633,13 +640,21 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 
 
+
+
+
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/conjugate} 
 
 }
 
-\caption{A simple example of Bayesian modelling and computation for the observation model \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) with prior \(\phi \sim \text{Gamma}(3, 1)\). Given observed data \(\y = (1, 2, 3)\) the posterior is available in closed form as \(\text{Gamma}(9, 4)\) because the model is so-called conjugate. Though it is unlikely that the best model for a particular problem will have the conjugacy property, conjugate models are still frequently used because of their convenience.}\label{fig:conjugate}
+\caption{An example of Bayesian modelling and computation for a simple one parameter model.
+The likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution is \(\phi \sim \text{Gamma}(3, 1)\).
+Given observed data \(\y = (1, 2, 3)\) the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\).
+This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution.
+Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding.}\label{fig:conjugate}
 \end{figure}
 
 The posterior distribution \(p(\bphi \, | \, \y)\) encapsulates probabilistic beliefs about the parameters given the observed data.
@@ -647,21 +662,28 @@ Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \eqref{eq:posterior} directly because of the integral \(p(\y) = \int p(\y, \bphi) \text{d}\bphi\) in the denominator, sometimes known as the marginal likelihood or evidence.
+Unfortunately, it is usually intractable to calculate Equation \eqref{eq:posterior} directly because of the potentially high-dimensional integral \(p(\y) = \int p(\y, \bphi) \text{d}\bphi\) in the denominator, sometimes known as the marginal likelihood or evidence.
 As such, although it is easy to evaluate \(p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)\), it is typically difficult to evaluate the posterior distribution itself.
 
 A variety of computational methods have been developed to tackle this problem.
-Briefly, the main categories are:
+The main categories are:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Sampling algorithms} Known as Monte Carlo \autocite{robert2005monte} algorithms after the casino, these approaches look to generate samples from the posterior distribution.
+  \textbf{Sampling algorithms} These approaches look to generate samples from the posterior distribution, and are known as Monte Carlo methods, named after the casino \autocite{robert2005monte}.
   The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
-  In this thesis, I make use of the No-U-Turn sampler (NUTS), a Hamiltonian Monte Carlo (HMC) algorithm, implemented in the Stan probabilistic programming language (PPL).
+  In this thesis, I use of the No-U-Turn sampler {[}NUTS; \textcite{hoffman2014no}{]}, a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
+  Other approaches include importance sampling and sequential Monte Carlo.
 \item
-  \textbf{Variational Bayes} In variational Bayes, the posterior distribution is assumed to belong to a particular class of functions and use optimisation to choose the best member of that class.
+  \textbf{Variational inference} In variational inference (VI), the posterior distribution is assumed to belong to a particular class of functions.
+  Optimisation algorithms are then used to choose the best member of that class.
+  Though VI is fast, it may not be accurate \autocite{yao2018yes}.
+\item
+  \textbf{Expectation maximisation}
+\item
+  \textbf{Deterministic approximations} These approximations are the subject of Chapter \ref{naomi-aghq}.
 \end{enumerate}
 
 \hypertarget{interplay-between-modelling-and-computation}{%
@@ -685,7 +707,7 @@ Similarly, data may be associated to a point \(t \in \mathcal{T}\) or period of 
 
 Spatio-temporal data has some important properties.
 Foremost among them is correlation structure.
-Tobler's first law of geography, earlier expressed by \textcite{fisher1936design}, is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
+Tobler's first law of geography, also expressed by \textcite{fisher1936design}, is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
 This law extends not only to space but also time.
 
 \hypertarget{hierarchical-lgm-elgm}{%
@@ -694,23 +716,21 @@ This law extends not only to space but also time.
 \hypertarget{hierarchical}{%
 \subsection{Hierarchical models}\label{hierarchical}}
 
+
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/hierarchical-structure} 
 
 }
 
-\caption{Data often has a hierarchical structure.}\label{fig:hierarchical-structure}
+\caption{A simple example of group structure within data. Each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\).}\label{fig:hierarchical-structure}
 \end{figure}
 
-Real world data usually has hierarchical structure.
-For example, we might have a study (Figure \ref{fig:hierarchical-structure}) where each individual \(j = 1, \ldots, J\) has a group of \(n_j\) observations.
-Then, it would be inappropriate to treat all \(\sum_j n_j\) observations as being independent and identically distributed (IID).
-Observations belonging to the same group, that is of the same individual, are likely to be more similar than observations from different groups, which refer to different individuals.
-
-Bayesian hierarchical or multilevel models, comprised of multiple stages, allow handling data of this sort.
-For example, in a three-stage hierarchical model, we partition the parameters so that \(\bphi = (\x, \btheta)\).
-I refer to \(\x = (x_1, \ldots, x_N)\) as the latent field, and \(\btheta = (\theta_1, \ldots, \theta_m)\) as the hyperparameters.
+Often it is natural to group some observations together.
+Bayesian hierarchical or multilevel models, comprised of multiple stages, allow for natural handling data of this sort, even with complex nested or crossed grouping structures.
+In a three-stage hierarchical model, we partition the parameters so that \(\bphi = (\x, \btheta)\).
+I refer to \(\x = (x_1, \ldots, x_n)\) as the latent field, and \(\btheta = (\theta_1, \ldots, \theta_m)\) as the hyperparameters.
 The generative model for data \(\y\) is then
 \begin{align}
 \y &\sim p(\y \, | \, \x, \btheta), \\
@@ -718,22 +738,59 @@ The generative model for data \(\y\) is then
 \btheta &\sim p(\btheta),
 \end{align}
 with posterior distribution proportional to \(p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)\).
-Referring back to the previous example, we may informally think about the latent field as modelling properties of individuals, and the hyperparameters as modelling shared properties of individuals or the observation process.
+
+For example, Figure \ref{fig:hierarchical-structure} illustrates a case where each individual \(i = 1, \ldots, n\) in a study is observed \(m_i\) times.
+Observations of the same individual \(y_{i1}, \ldots y_{im_i}\) are grouped together, and likely to have more similar properties than observations in different groups.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Complete pooling} In this model, the group structure is ignored and all \(\sum_{i = 1}^n m_i\) observations are treated as independent and identically distributed
+  \begin{align}
+  y_{ij} \sim \mathcal{N}(\mu, \sigma), \\
+  (\mu, \sigma) \sim p(\mu, \sigma).
+  \end{align}
+\item
+  \textbf{No pooling} Alternatively, the groups can be modelled entirely separately with group specific mean \(\mu_i\) and standard deviation \(\sigma_i\) parameters
+  \begin{align}
+  y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\
+  (\mu_i, \sigma_i) \sim p(\mu_i, \sigma_i).
+  \end{align}
+\item
+  \textbf{Partial pooling} In this model, some amount of information is shared between the groups
+  \begin{align}
+  y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\
+  \mu_i &= \beta + u_i, \\
+  \beta &\sim p(\beta), \\
+  \bu &\sim p(\bu), \\
+  \sigma &\sim p(\sigma),
+  \end{align}
+  where the vector \(\bu = (u_1, \ldots, u_n)\).
+\end{enumerate}
 
 \hypertarget{mixed-effects-models}{%
 \subsection{Mixed effects models}\label{mixed-effects-models}}
 
-Fixed effects refer to parts of the latent field which are constant across groups.
-Random effects refer to parts of the latent field which vary across groups.
-Though these terms have notoriously many different definitions \autocite{gelman2005analysis}, I nonetheless find them useful to introduce here.
-No pooling, partial pooling, complete pooling.
-Structured random effects.
+Fixed effects refer to those elements of the latent field which are constant across groups.
+Random effects refer to those elements of the latent field which vary across groups.
+These terms have notoriously many different and incompatible definitions which can cause confusion \autocite{gelman2005analysis}.
+I nonetheless find them useful to introduce here.
+
+For concreteness, in the partial pooling model above, the latent field is \(\x = (\beta, u_1, \ldots, u_n)\).
+The scalar \(\beta\) is a fixed effect which applies to all \(n\) groups.
+The vector \(\bu\) are random effects which alter the mean differently for each group.
+The only hyperparameter is the standard deviation \(\theta = \sigma\).
+
+Random effects can also be structured to share information between some groups more than others.
+In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
+Spatial random effects are the subject of Chapter \ref{beyond-borders}.
 
 \hypertarget{latent-gaussian-models}{%
 \subsection{Latent Gaussian models}\label{latent-gaussian-models}}
 
-Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which, loosely speaking, the middle layer is Gaussian.
-More specifically, in an LGM, the likelihood is given by
+Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which the middle layer is Gaussian.
+To be more precise, in an LGM, the likelihood is given by
 \begin{align*}
 y_i &\sim p(y_i \, | \, \eta_i, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
@@ -746,18 +803,14 @@ The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\
 The parameters \(\beta_0\), \(\{\beta_j\}\), \(\{f_k(\cdot)\}\) are each assigned Gaussian prior distributions, and can be collected into a vector \(\x \in \mathbb{R}^N\) such that \(\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})\) where \(\btheta_2 \in \mathbb{R}^{s_2}\) are further hyperparameters, again with \(s_2\) assumed small.
 Let \(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m\) with \(m = s_1 + s_2\) be all hyperparameters, with prior distribution \(p(\btheta)\).
 
-Spatio-temporal data are well suited to being modelled with LGMs.
-
 \hypertarget{extended-latent-gaussian-models}{%
 \subsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
 
-Some models used in small-area estimation fall outside the LGM class.
-Many of these models do fit into the class of extended latent Gaussian models (ELGMs) as proposed by \textcite{stringer2021fast}.
-By allowing many-to-one link functions, ELGMs facilitate modelling of non-linearities.
+Extended latent Gaussian models {[}ELGMs; \textcite{stringer2021fast}{]} facilitate modelling of LGMs with greater non-linearities.
 In particular, the structured additive predictor is redefined as \(\bmeta = (\eta_1, \ldots \eta_{N_n})\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
 Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\), where \([N_n] = \{1, \ldots, N_n\}\).
 The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\).
-Put together, ELGMs are then of the form
+Put together, ELGMs are of the form
 \begin{align*}
 y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
@@ -767,43 +820,47 @@ with latent field and hyperparameter prior distributions as in the LGM case.
 
 The ELGM class is well suited to small-area estimation of HIV indicators.
 Indeed, this class of models is used throughout the thesis.
-While it can be transformed to an LGM using the Poisson-multinomial transformation \autocite{baker1994multinomial}, the multinomial logistic regression model used in Chapter \ref{multi-agyw} is naturally written as an ELGM in which each observation depends on the set of structured additive predictors corresponding to each multinomial observation.
+While it can be transformed to an LGM using the Poisson-multinomial transformation \autocite{baker1994multinomial} the multinomial logistic regression model used in Chapter \ref{multi-agyw} is naturally written as an ELGM where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
 In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
 
-\hypertarget{survey-methods}{%
-\section{Survey methods}\label{survey-methods}}
+\hypertarget{survey}{%
+\section{Survey methods}\label{survey}}
 
 Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
 Demographic and Health Surveys (DHS) are funded by USAID and run every three to five years in most countries.
-Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run in high HIV burden countries.
+Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every two to three years in high HIV burden countries.
 
 \hypertarget{survey-notation-and-key-terms}{%
 \subsection{Survey notation and key terms}\label{survey-notation-and-key-terms}}
 
-Consider a population of individuals \(i = 1, \ldots, N\) and outcomes of interest \(y_i\).
-If a census were run in, and all individuals responded, then the population mean \(\bar y\) could be calculated exactly by
+Consider a population of individuals \(i = 1, \ldots, N\) with outcomes of interest \(y_i\).
+A census is a type of survey where all individuals are sampled.
+Supposing responses from all individuals were recorded, then the population mean of \(G_i = G(y_i)\), where \(G\) is some function, could be calculated based on the census by
 \begin{equation}
-\bar y = \frac{1}{N} \sum_{i = 1}^N y_i.
+\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}
-In practice, running a census is impractical and rarely possible.
-Usually, only a subset of the individuals are sampled, and only a subset of those have their outcome recorded due to non-response.
+
+In practice, it is impractically expensive to run a census.
+Instead, only a subset of the individuals are sampled.
+Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
 Let \(S_i\) be an indicator for whether or not individual \(i\) is sampled, and \(R_i\) be an indicator for whether or not \(y_i\) is recorded.
-If \(S_i = 0\) then \(R_i = 0\), but if \(S_i = 1\) then individual \(i\) may not respond such that \(R_i = 0\).
+If \(S_i = 0\) then \(R_i = 0\).
+If \(S_i = 1\) then individual \(i\) may not respond such that \(R_i = 0\).
 The population mean may be estimated directly based on the recorded subset of the population by
 \begin{equation}
-\bar y_R = \frac{\sum_{i = 1}^N R_i y_i}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i y_i}{m_R}, \label{eq:direct}
+\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i G(y_i)}{m_R}, \label{eq:direct}
 \end{equation}
-where \(m_R\) is the recorded sample size.
+where \(m_R = \sum_{i = 1}^N R_i\) is the recorded sample size.
 
 A probability sample refers to the case when individuals are selected to be included in the survey at random.
 In a non-probability sample, inclusion or exclusion from the survey is deterministic.
-A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that \(\mathbb{P}(S_i = 1) = 1 / N\) for all \(i\).
-The survey design is called complex when the sampling probabilities for each individual vary, such that \(\mathbb{P}(S_i = 1) = \pi_i\) with \(\sum_{i = 1}^N \pi_i = 1\) and \(\pi_i > 0\) for all \(i\).
-Complex survey designs can offer both greater practicality and statistical efficiency than SRS.
+A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that \(P(S_i = 1) = 1 / N\).
+The survey design is called complex when the sampling probabilities for each individual vary, such that \(P(S_i = 1) = \pi_i\) with \(\sum_{i = 1}^N \pi_i = 1\) and \(\pi_i > 0\).
+
+Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
-In particular, the direct estimator given in Equation \eqref{eq:direct}, which does not take into account the sampling probabilities, is biased even in the case of no non-response.
-That said, even for SRS, non-response is a ubiquitous problem which also must be treated with care.
-Let \(\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i\) be the probability of response of individual \(i\) given inclusion in the survey.
+Under a complex design, then not taking into account the sampling probabilities will result in bias, even in the case of no nonresponse.
+Even for a SRS, the problem of nonresponse is almost ubiquitous, and can result in analogous bias to ignoring the survey design.
 
 \hypertarget{survey-design}{%
 \subsection{Survey design}\label{survey-design}}
@@ -827,37 +884,34 @@ Let \(\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i\) be the probability of r
 \subsection{Survey analysis}\label{survey-analysis}}
 
 Suppose a complex survey is run with sampling probabilities \(\pi_i\).
-Design weights \(\delta_i = 1 / \pi_i\) express the number of population units represented by the \(i\)th sampled unit.
-Non-response weights \(\gamma_i = 1 / \upsilon_i\) express the number of sampled units represented by the \(i\)th recorded unit.
-Survey weights \(\omega_i = \delta_i \times \gamma_i\) express the number of population units represented by the \(i\)th recorded unit.
-A weighted estimate \autocite{hajek1971discussion} of the population mean is then
-\begin{equation}
-\bar y_\omega = \frac{\sum_{j = 1}^N \omega_j R_j y_j}{\sum_{j = 1}^N \omega_j R_j}. \label{eq:hajek}
-\end{equation}
+The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to give more weight to the responses provided by those unlikely to be included.
+This can be achieved using design weights \(\delta_i = 1 / \pi_i\), which can be thought of as the number of individuals in the population represented by the \(i\)th sampled individual.
+Let \(P(R_i = 1 \, | \, S_i = 1) = \upsilon_i\) be the probability of response for sampled individual \(i\).
+The problem of nonresponse can be treated in the same way using nonresponse weights \(\gamma_i = 1 / \upsilon_i\), which analogously can be thought of as the number of sampled individuals represented by the \(i\)th recorded individual.
+Multiplying the design and nonresponse weights gives survey weights \(\omega_i = \delta_i \times \gamma_i\).
 
-Decomposing the additive error of Equation \eqref{eq:hajek} provides useful intuition as to the utility of survey weighting \autocite{meng2018statistical}
+A weighted estimate \autocite{hajek1971discussion} of the population mean using the survey weights \(\omega_i\) is given by
+\begin{equation}
+\bar G_\omega = \frac{\sum_{i = 1}^N \omega_j R_i G(y_i)}{\sum_{i = 1}^N \omega_i R_i}. \label{eq:hajek}
+\end{equation}
+Decomposing the additive error of this estimate provides useful intuition as to the potential benefits of survey weighting.
+Following \textcite{meng2018statistical} then under SRS
 \begin{align}
-\bar y_\omega - \bar y &= \frac{\mathbb{E}(R_i Y_i)}{\mathbb{E}(R_i)} - \mathbb{E}(Y_i) \\ 
-&= \frac{\mathbb{C}(R_i Y_i)}{\mathbb{E}(R_i)} \\
-&= \rho_{Y, R} \times \sqrt{\frac{N - m_R}{m_R}} \times \sigma_y.
+\bar G_\omega - \bar G &= \frac{\mathbb{E}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} - \mathbb{E}(G_i) = \frac{\mathbb{C}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} \\ 
+&= \rho_{R_\omega, G} \times \sqrt{\frac{N - m_{R_\omega}}{m_{R_\omega}}} \times \sigma_G,
 \end{align}
-The data quality \(\rho_{Y, R}\) measures the correlation between the outcome of interest and the recording mechanism.
-The data quantity \(\sqrt{(N - m_R)/m_R}\)
-The problem difficultly \(\sigma_y\) measures the intrinsic difficulty of the estimation problem, and is entirely independent of the sampling or analysis methods used.
-Under SRS then.
+where \(R_\omega = \omega R\).
+The data defect correlation (DDC) \(\rho_{R_\omega, G}\) measures the correlation between the weighted recording mechanism and given function of the outcome of interest.
+To minimise the DDC then \(G \perp \!\!\! \perp R_\omega\).
+The data scarcity \(\sigma_{R_\omega} = \sqrt{(N - m_{R_\omega})/m_{R_\omega}}\) measures the effective proportion of the population who have been recorded.
+The problem difficultly \(\sigma_G\) measures the intrinsic difficulty of the estimation problem, and is independent of the sampling or analysis method.
 
-The Kish effective sample size (ESS) \autocite{kish1965survey} is
-\begin{equation}
-m^\star = \frac{\left(\sum_{i = 1}^N \omega_i \right)^2}{\sum_{i = 1}^N \omega_i^2}.
-\end{equation}
+For simplicity, let \(G(y_i) = y_i\) and each \(y_i \in \{0, 1\}\).
 We weight then model following \textcite{chen2014use}.
+
+While this approach acknowledges the survey design, it has some important limitations.
 We ignore clustering structure.
-Discuss how all of this isn't great and that someone should figure this out.
-
-\hypertarget{an-adaptive-design-proposal}{%
-\subsection{An adaptive design proposal}\label{an-adaptive-design-proposal}}
-
-\textcite{bradley2023alsd}
+All of this isn't great and that someone should figure this out \autocite{gelman2007struggles}.
 
 \hypertarget{beyond-borders}{%
 \chapter{Models for spatial structure}\label{beyond-borders}}
@@ -866,8 +920,8 @@ Discuss how all of this isn't great and that someone should figure this out.
 \markboth{Models for spatial structure}{}
 
 In this chapter, I present an investigation of spatial random effects specifications.
-This investigation was motivated by a fundamental question encountered during model construction.
-Namely, should the model be augmented to capture a feature of the data that we believe exists?
+My investigation was motivated by a fundamental question encountered during model construction.
+Namely, should the model be augmented to capture a conjectured feature of the data?
 The results are presented in \textcite{howes2023beyond}.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/beyond-borders}{\texttt{athowes/beyond-borders}}.
 
@@ -1026,18 +1080,19 @@ This problem does not only apply locally: since the effect of \(\sigma^2_u\) app
 
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-My primary role was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
+I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in \textcite{howes2023spatio}.
-Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries to guide policy.
+Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}}.
 
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-Adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
+In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
 Table \ref{tab:agyw-reasons} gives the social and biological reasons for this disparity.
+On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming \autocite{saul2018dreams,global2018measurement}.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
@@ -1066,11 +1121,15 @@ Age patterns of sexual mixing, including a younger age at first sex & Older male
 Increased susceptibility to HIV infection & Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells \\
 \end{longtable}
 
-On this basis, AGYW have been identified as a priority population for HIV prevention services \autocite{saul2018dreams,global2018measurement}.
-The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
+The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021.
+It proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
 As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
 To implement the strategy, estimates of the size of each risk group are required.
+
+
+
+
 
 \begin{figure}
 
@@ -1078,7 +1137,9 @@ To implement the strategy, estimates of the size of each risk group are required
 
 }
 
-\caption{Risk depends on both individual-level risk behaviour and population-level HIV incidence.}\label{fig:risk-grid}
+\caption{Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence.
+I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence.
+This figure is illustrative, and should not be interpreted quantitatively.}\label{fig:risk-grid}
 \end{figure}
 
 \hypertarget{data}{%
@@ -1127,13 +1188,15 @@ High & Non-regular or multiple partner(s) & -- & 1.72 \\
 Very High & Transactional sex (adjusted to correspond to female sex workers) & 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, 1.0-3.0\% & 13.0, 9.0, 6.0, 3.0 \\
 \end{longtable}
 
+
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.95\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/available-surveys} 
 
 }
 
-\caption{Surveys.}\label{fig:available-surveys}
+\caption{Surveys used in my analysis by year, survey type, sample size, and whether the survey included a question about transactional sex.}\label{fig:available-surveys}
 \end{figure}
 
 I used household survey data from 13 designated AGYW priority countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
@@ -1202,18 +1265,19 @@ This model is not an LGM, and is not possible to fit in \texttt{R-INLA}.
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
 
-I use the multinomial-Poisson transformation to enable inference with \texttt{R-INLA}.
-The transformation reframes a given multinomial logisitic regression model as an equivalent Poisson log-linear model of the form
+I used the multinomial-Poisson transformation to enable inference with \texttt{R-INLA}.
+The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+The equivalent model is of the form
 \begin{align}
     y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
     \log(\kappa_{itak}) &= \eta_{itak}. \label{eq:poisson2}
 \end{align}
-The basis of the transformation is that, conditional on their sum, Poisson counts are jointly multinomially distributed \autocite{mccullagh1989generalized} as follows
+The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed \autocite{mccullagh1989generalized} as follows
 \begin{equation}
     \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
 \end{equation}
 where \(\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}\).
-Category probabilities are then obtained by the softmax function
+Category probabilities may then be obtained using the softmax function
 \begin{equation}
     p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
 \end{equation}
@@ -1222,11 +1286,11 @@ The joint distribution of \(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \,
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \label{eq:prodpoisson}
+&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \label{eq:prodpoisson}
 \end{align}
 corresponding to the product of independent Poisson likelihoods as in Equation \eqref{eq:poisson1}.
 
-This model, including random sample sizes, is equivalent to the multinomial logistic regression only when the normalisation constants \(m_{ita}\) are recovered exactly.
+This model, with random sample sizes, is equivalent to a multinomial logistic regression model only when the normalisation constants \(m_{ita}\) are recovered exactly.
 To ensure that this is the case, one approach is to include observation-specific random effects \(\theta_{ita}\) in the equation for the linear predictor.
 Multiplying each of \(\{\kappa_{itak}\}_{k = 1}^{3^+}\) by \(\exp(\theta_{ita})\) has no effect on the category probabilities, but does provide the necessary flexibility for \(\kappa_{ita}\) to recover \(m_{ita}\) exactly.
 Although in theory an improper prior \(\theta_{ita} \propto 1\) should be used, I found that in practise, by keeping \(\eta_{ita}\) otherwise small using appropriate constraints, so that arbitrarily large values of \(\theta_{ita}\) are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior.
@@ -1236,35 +1300,29 @@ Although in theory an improper prior \(\theta_{ita} \propto 1\) should be used, 
 
 I considered four models for \(\eta_{ita}\) in Equation \eqref{eq:poisson2} of the form
 \begin{equation}
-\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \phi_{ik} + \gamma_{tk}.
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
-Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid.
+Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid as described above.
 To capture country-specific proportion estimates for each category, I included category random effects \(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\) and country-category random effects \(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\).
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects \(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
 
 \hypertarget{spatial-random-effects}{%
 \paragraph{Spatial random effects}\label{spatial-random-effects}}
 
-For the space-category \(\phi_{ik}\) random effects I considered two specifications:
+For the space-category \(u_{ik}\) random effects I considered two specifications:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Independent and identically distributed (IID) \(\phi_{ik} \sim \mathcal{N}(0, \tau_\phi^{-1})\),
+  Independent and identically distributed (IID) \(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\),
 \item
   Besag \autocite{besag1991bayesian} grouped by category
   \[
-  \bphi = (\phi_{11}, \ldots, \phi_{n1}, \ldots, \phi_{1{3^{+}}}, \ldots \phi_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\phi)^{-}).
+  \bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
   \]
-  The scaled structure matrix \(\mathbf{R}^\star_\phi = \mathbf{R}^\star_b \otimes \mathbf{I}\) is given by the Kronecker product of the scaled Besag structure matrix \(\mathbf{R}^\star_b\) and the identity matrix \(\mathbf{I}\), and \({-}\) denotes the generalised matrix inverse.
-  Scaling of the structure matrix to have generalised variance one ensures interpretable priors may be placed on the precision parameter \autocite{sorbye2014scaling}.
-  I followed the further recommendations of \textcite{freni2018note} with regard to disconnected adjacency graphs, singletons and constraints.
-  The Besag structure matrix \(\mathbf{R}_b\) was obtained by the precision matrix of the random effects \(\mathbf{b} = (b_1, \ldots, b_n)^\top\) with full conditionals
-  \begin{equation}
-  b_i \, | \, \mathbf{b}_{-i} \sim \N\left(\frac{\sum_{j: j \sim i} b_j}{n_{\delta i}}, \frac{1}{n_{\delta i}}\right),
-  \end{equation}
-  where \(j \sim i\) if the districts \(A_i\) and \(A_j\) are adjacent, and \(n_{\delta i}\) is the number of districts adjacent to \(A_i\).
+  The scaled structure matrix \(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\) is given by the Kronecker product of the scaled Besag structure matrix \(\mathbf{R}^\star_b\) and the identity matrix \(\mathbf{I}\), and \({-}\) denotes the generalised matrix inverse.
+  I followed best practises for the Besag model as described in Chapter \ref{beyond-borders}.
 \end{enumerate}
 
 In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
@@ -1280,11 +1338,11 @@ For the year-category \(\gamma_{tk}\) random effects I considered two specificat
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  IID \(\phi_{tk} \sim \mathcal{N}(0, \tau_\phi^{-1})\),
+  IID \(\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})\),
 \item
   First order autoregressive (AR1) grouped by category
   \[
-  \bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\gamma)^{-}).
+  \bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
   \]
   The scaled structure matrix \(\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}\) is given by the Kronecker product of a scaled AR1 structure matrix \(\mathbf{R}^\star_r\) and the identity matrix \(\mathbf{I}\).
   The AR1 structure matrix \(\mathbf{R}_r\) is obtained by precision matrix of the random effects \(\mathbf{r} = (r_1, \ldots, r_T)^\top\) specified by
@@ -1298,50 +1356,46 @@ For the year-category \(\gamma_{tk}\) random effects I considered two specificat
 \hypertarget{priors}{%
 \paragraph{Priors}\label{priors}}
 
-All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_\phi, \tau_\gamma\}\) were given independent penalised complexity (PC) priors \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by \(p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)\) where \(\nu = - \ln(0.01) / 2.5\) such that \(\mathbb{P}(\sigma > 2.5) = 0.01\).
+All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\) were given independent penalised complexity (PC) priors \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by \(p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)\) where \(\nu = - \ln(0.01) / 2.5\) such that \(\mathbb{P}(\sigma > 2.5) = 0.01\).
 For the lag-one correlation parameter \(\rho\), I used the PC prior, as derived by \textcite{sorbye2017penalised}, with base model \(\rho = 1\) and condition \(\mathbb{P}(\rho > 0 = 0.75)\).
 I chose the base model \(\rho = 1\) corresponding to no change in behaviour over time, rather than the alternative \(\rho = 0\) corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.
 
 \hypertarget{constraints}{%
 \subsubsection{Constraints}\label{constraints}}
 
-To ensure interpretable posterior inferences relating to the random effects, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+To ensure interpretable posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
 For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects.
-Together, these were:
+Together, these constraints are described in Table \ref{tab:constraints}.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Category \(\sum_k \beta_k = 0\),
-\item
-  Country \(\sum_c \zeta_{ck} = 0, \, \forall \, k\),
-\item
-  Age-country \(\sum_a \alpha_{ack} = 0, \, \forall \, c, k\),
-\item
-  Spatial \(\sum_i \phi_{ik} = 0, \, \forall \, k\),
-\item
-  Temporal \(\sum_t \gamma_{tk} = 0, \, \forall \, k\).
-\end{enumerate}
+\begin{longtable}[]{@{}ll@{}}
+\caption{\label{tab:constraints}}\tabularnewline
+\toprule\noalign{}
+Random effects & Constraints \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Random effects & Constraints \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Category & \(\sum_k \beta_k = 0\) \\
+Country & \(\sum_c \zeta_{ck} = 0, \, \forall \, k\) \\
+Age-country & \(\sum_a \alpha_{ack} = 0, \, \forall \, c, k\) \\
+Spatial & \(\sum_i u_{ik} = 0, \, \forall \, k\) \\
+Temporal & \(\sum_t \gamma_{tk} = 0, \, \forall \, k\) \\
+\end{longtable}
 
 \hypertarget{survey-weighted-likelihood}{%
 \subsubsection{Survey weighted likelihood}\label{survey-weighted-likelihood}}
 
-I included surveys which use a complex design, in which each individual has an unequal probability of being included in the sample.
-For example the DHS often employs a two-stage cluster design, first taking an urban rural stratified sample of ennumeration areas, before selecting households from each ennumeration area using systematic sampling \autocite{measure2012sampling}.
-
-To account for this aspect of survey design, I use a weighted pseudo-likelihood where the observed counts \(y\) are replaced by effective counts \(y^\star\) calculated using the survey weights \(w_j\) of all individuals \(j\) in the corresponding strata.
-I multiplied direct estimates produced using the \texttt{survey} package \autocite{JSSv009i08} by the Kish effective sample size \autocite{kish1965survey}
-\begin{equation}
-    m^\star = \frac{\left(\sum_j w_j \right)^2}{\sum_j {w_j}^2}
-\end{equation}
-to obtain \(y^\star\).
-These counts may not be integers, and as such the Poisson likelihood I used in Equation \eqref{eq:poisson1} is not appropriate.
+I accounted survey design using a weighted pseudo-likelihood where the observed counts \(y\) are replaced by effective counts \(y^\star\), as described in Section \ref{survey}.
+These counts may not be integers, and as such the Poisson likelihood given in Equation \eqref{eq:poisson1} is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPoisson}(\kappa)\), given by
 \begin{equation}
-    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
+    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right).
 \end{equation}
-as implemented by \texttt{family\ =\ "xPoisson"} in \texttt{R-INLA}, which accepts non-integer input.
+This working likelihood is implemented by \texttt{family\ =\ "xPoisson"} in \texttt{R-INLA}, which accepts non-integer input.
 
 \hypertarget{s-logistic}{%
 \subsection{Spatial logistic regression}\label{s-logistic}}
@@ -1361,7 +1415,7 @@ As all such surveys occurred in 2013-2018, in the logistic regression model I as
 I considered six logistic regression models.
 Each included a constant \(\beta_0 \sim \mathcal{N}(-2, 1^2)\), country random effects \(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\), and age-country random effects \(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
 The prior on \(\beta_0\) placed 95\% prior probability on the range 2-50\% for the percentage of those with non-regular or multiple partners who report transactional sex.
-I considered two specifications (IID, Besag) for the spatial random effects \(\phi_i\).
+I considered two specifications (IID, Besag) for the spatial random effects \(u_i\).
 To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent}, available from \textcite{hodgins2022population}.
 For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) I used the PC prior with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
 For the regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) I used the prior \(\beta \sim \mathcal{N}(0, 2.5^2)\).
@@ -1987,6 +2041,42 @@ Avenues for future work include:
 \hypertarget{a-model-for-risk-group-proportions}{%
 \chapter{A model for risk group proportions}\label{a-model-for-risk-group-proportions}}
 
+\hypertarget{the-global-aids-strategy}{%
+\section{The Global AIDS Strategy}\label{the-global-aids-strategy}}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Prioritisation strata & Criterion  \\
+\midrule
+Low & 0.3-1.0\% incidence and low-risk behaviour, or $<$0.3\% incidence and high-risk behaviour \\
+Moderate & 1.0-3.0\% incidence and low-risk behaviour, or 0.3-1.0\% incidence and high-risk behaviour \\
+High & 1.0-3.0\% incidence and high-risk behaviour \\
+Very high & $>$3.0\% incidence \\
+\bottomrule
+\end{tabularx}
+\caption{Prioritisation strata according to HIV incidence in the general population and behavioural risk.}
+\label{tab:unaids-strategy-prioritisation}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{p{8cm}XXXX}
+\toprule
+Intervention & Low & Moderate & High & Very High \\
+\midrule
+Condoms and lube for those with non-regular partners(s) with unknown STI status and not on PrEP & 50\% & 70\% & 95\% & 95\% \\
+STI screening and treatment & 10\% & 10\% & 80\% & 80\% \\
+Access to PEP & - & - & 50\% & 90\% \\
+PrEP use & - & 5\% & 50\% & 50\% \\
+Economic empowerment & - & - & 20\% & 20\% \\
+\bottomrule
+\end{tabularx}
+\caption{Commitments to be met for each intervention in terms of proportion of the prioritisation strata reached. The symbol "-" represents no commitment.}
+\label{tab:unaids-strategy-targets}
+\end{table}
+
 \hypertarget{household-survey-data}{%
 \section{Household survey data}\label{household-survey-data}}
 
@@ -2099,7 +2189,7 @@ Total &  &  &  & $9826$ & $8563$ & $7347$ & $25736$ \\
 \midrule 
 Total &  &  &  & $106397$ & $95253$ & $82518$ & $284168$ \\ 
 \bottomrule
-\caption{All of the surveys that we used in our analysis and their sample sizes, disaggregated by respondent age.}
+\caption{All of the surveys that used in the analysis and their sample sizes, disaggregated by respondent age.}
 \label{tab:surveys-used}
 \end{longtable}
 
@@ -2116,7 +2206,7 @@ ZMB2002DHS & No GPS coordinates available to place survey clusters within distri
 \bottomrule
 \end{tabularx}
 \label{tab:surveys-excluded}
-\caption{All of that surveys that were excluded from our analysis.}
+\caption{All of that surveys that were excluded from the analysis.}
 \end{table}
 
 \hypertarget{spatial-analysis-levels}{%
@@ -2144,7 +2234,44 @@ Zimbabwe & 63 & 2 \\
 \bottomrule
 \end{tabularx}
 \label{tab:area-levels}
-\caption{The numer of areas and analysis levels for each country that were used in our analysis.}
+\caption{The numer of areas and analysis levels for each country that were used in the analysis.}
+\end{table}
+
+\hypertarget{survey-questions-and-risk-group-allocation}{%
+\section{Survey questions and risk group allocation}\label{survey-questions-and-risk-group-allocation}}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Variable(s) & Description \\
+\midrule
+\texttt{v501} & Current marital status of the respondent. \\
+\texttt{v529} & Computed time since last sexual intercourse. \\
+\texttt{v531} & Age at first sexual intercourse--imputed. \\
+\texttt{v766b} & Number of sexual partners during the last 12 months (including husband). \\
+\texttt{v767[a, b, c]} & Relationship with last three sexual partners. Options are: spouse, boyfriend not living with respondent, other friend, casual acquaintance, relative, commercial sex worker, live-in partner, other. \\
+\texttt{v791a} & Had sex in return for gifts, cash or anything else in the past 12 months. Asked only to women 15-24 who are not in a union. \\
+\bottomrule
+\end{tabularx}
+\caption{The survey questions included in AIDS Indicator Survey (AIS) and Demographic and Health Surveys (DHS).}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Variable(s) & Description \\
+\midrule
+\texttt{part12monum} & Number of sexual partners during the last 12 months (including husband). \\
+\texttt{part12modkr} & Reason for leaving \texttt{part12monum} blank. \\
+\texttt{partlivew[1, 2, 3]} & Does the person you had sex with live in this household? \\
+\texttt{partrelation[1, 2, 3]} & Relationship with last three sexual partners. Options are: husband, live-in partner, partner (not living with), ex-spouse/partner, friend/acquaintance, sex worker, sex worker client, stranger, other, don't know, refused. \\
+\texttt{sellsx12mo} & Had sex for money and/or gifts in the last 12 months. \\
+\texttt{buysx12mo} & Paid money or given gifts for sex in the last 12 months. \\
+\bottomrule
+\end{tabularx}
+\caption{The survey questions included in Population-Based HIV Impact Assessment (PHIA) surveys.}
 \end{table}
 
 \hypertarget{fast-approximate-bayesian-inference}{%

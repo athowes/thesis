@@ -34,17 +34,18 @@ resource_version <- "20230627-144735-3da88508"
 
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-My primary role was to develop the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
+I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in @howes2023spatio.
-Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries to guide policy.
+Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries.
 Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
 
 ## Background
 
-Adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
+In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28% of the population, they comprise 44% of new infections [@unaids2021update].
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
 Table \@ref(tab:agyw-reasons) gives the social and biological reasons for this disparity.
+On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming [@saul2018dreams; @global2018measurement].
 
 | Reason      | Description |
 | ----------- | ----------- |
@@ -54,13 +55,17 @@ Table \@ref(tab:agyw-reasons) gives the social and biological reasons for this d
 
 Table: (\#tab:agyw-reasons) AYGW are at higher risk of HIV infection as a result of interacting social and biological reasons.
 
-On this basis, AGYW have been identified as a priority population for HIV prevention services [@saul2018dreams; @global2018measurement].
-The Global AIDS Strategy 2021-2026 [@unaids2021global] proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
+The Global AIDS Strategy 2021-2026 [@unaids2021global] was adopted by the United Nations (UN) General Assembly in June 2021.
+It proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
 As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure \@ref(fig:risk-grid)).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
 To implement the strategy, estimates of the size of each risk group are required.
 
-```{r risk-grid, fig.cap="Risk depends on both individual-level risk behaviour and population-level HIV incidence."}
+(ref:risk-grid) Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence.
+I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence.
+This figure is illustrative, and should not be interpreted quantitatively.
+
+```{r risk-grid, fig.cap="(ref:risk-grid)"}
 knitr::include_graphics("figures/multi-agyw/risk-grid.png")
 ```
 
@@ -80,7 +85,9 @@ Non-regular partners are defined to be non-cohabiting.
 The transactional sex risk group is adjusted during analysis to correspond to female sex worker, and incidence rate ratios among FSW were derived based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
 When the local HIV incidence in the general population is higher, the incidence rate ratio for FSW is lower.
 
-```{r available-surveys, fig.cap="Surveys."}
+(ref:available-surveys) Surveys used in my analysis by year, survey type, sample size, and whether the survey included a question about transactional sex.
+
+```{r available-surveys, fig.cap="(ref:available-surveys)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
 ```
 
@@ -138,18 +145,19 @@ This model is not an LGM, and is not possible to fit in `R-INLA`.
 
 #### The multinomial-Poisson transformation
 
-I use the multinomial-Poisson transformation to enable inference with `R-INLA`.
-The transformation reframes a given multinomial logisitic regression model as an equivalent Poisson log-linear model of the form
+I used the multinomial-Poisson transformation to enable inference with `R-INLA`.
+The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+The equivalent model is of the form
 \begin{align}
     y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
     \log(\kappa_{itak}) &= \eta_{itak}. \label{eq:poisson2}
 \end{align}
-The basis of the transformation is that, conditional on their sum, Poisson counts are jointly multinomially distributed [@mccullagh1989generalized] as follows
+The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed [@mccullagh1989generalized] as follows
 \begin{equation}
     \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
 \end{equation}
 where $\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}$.
-Category probabilities are then obtained by the softmax function
+Category probabilities may then be obtained using the softmax function
 \begin{equation}
     p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
 \end{equation}
@@ -158,11 +166,11 @@ The joint distribution of $p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, 
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \label{eq:prodpoisson}
+&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \label{eq:prodpoisson}
 \end{align}
 corresponding to the product of independent Poisson likelihoods as in Equation \@ref(eq:poisson1).
 
-This model, including random sample sizes, is equivalent to the multinomial logistic regression only when the normalisation constants $m_{ita}$ are recovered exactly.
+This model, with random sample sizes, is equivalent to a multinomial logistic regression model only when the normalisation constants $m_{ita}$ are recovered exactly.
 To ensure that this is the case, one approach is to include observation-specific random effects $\theta_{ita}$ in the equation for the linear predictor.
 Multiplying each of $\{\kappa_{itak}\}_{k = 1}^{3^+}$ by $\exp(\theta_{ita})$ has no effect on the category probabilities, but does provide the necessary flexibility for $\kappa_{ita}$ to recover $m_{ita}$ exactly.
 Although in theory an improper prior $\theta_{ita} \propto 1$ should be used, I found that in practise, by keeping $\eta_{ita}$ otherwise small using appropriate constraints, so that arbitrarily large values of $\theta_{ita}$ are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior.
@@ -171,30 +179,24 @@ Although in theory an improper prior $\theta_{ita} \propto 1$ should be used, I 
 
 I considered four models for $\eta_{ita}$ in Equation \@ref(eq:poisson2) of the form
 \begin{equation}
-\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \phi_{ik} + \gamma_{tk}.
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
 <!-- + \delta_{itk} -->
-Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid.
+Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid as described above.
 To capture country-specific proportion estimates for each category, I included category random effects $\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})$ and country-category random effects $\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})$.
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects $\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})$.
 
 ##### Spatial random effects
 
-For the space-category $\phi_{ik}$ random effects I considered two specifications:
+For the space-category $u_{ik}$ random effects I considered two specifications:
 
-1. Independent and identically distributed (IID) $\phi_{ik} \sim \mathcal{N}(0, \tau_\phi^{-1})$,
+1. Independent and identically distributed (IID) $u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})$,
 2. Besag [@besag1991bayesian] grouped by category
 $$
-\bphi = (\phi_{11}, \ldots, \phi_{n1}, \ldots, \phi_{1{3^{+}}}, \ldots \phi_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\phi)^{-}).
+\bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
 $$
-The scaled structure matrix $\mathbf{R}^\star_\phi = \mathbf{R}^\star_b \otimes \mathbf{I}$ is given by the Kronecker product of the scaled Besag structure matrix $\mathbf{R}^\star_b$ and the identity matrix $\mathbf{I}$, and ${-}$ denotes the generalised matrix inverse.
-Scaling of the structure matrix to have generalised variance one ensures interpretable priors may be placed on the precision parameter [@sorbye2014scaling].
-I followed the further recommendations of @freni2018note with regard to disconnected adjacency graphs, singletons and constraints.
-The Besag structure matrix $\mathbf{R}_b$ was obtained by the precision matrix of the random effects $\mathbf{b} = (b_1, \ldots, b_n)^\top$ with full conditionals
-\begin{equation}
-b_i \, | \, \mathbf{b}_{-i} \sim \N\left(\frac{\sum_{j: j \sim i} b_j}{n_{\delta i}}, \frac{1}{n_{\delta i}}\right),
-\end{equation}
-where $j \sim i$ if the districts $A_i$ and $A_j$ are adjacent, and $n_{\delta i}$ is the number of districts adjacent to $A_i$.
+The scaled structure matrix $\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}$ is given by the Kronecker product of the scaled Besag structure matrix $\mathbf{R}^\star_b$ and the identity matrix $\mathbf{I}$, and ${-}$ denotes the generalised matrix inverse.
+I followed best practises for the Besag model as described in Chapter \@ref(beyond-borders).
 
 In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
 I also tested using the BYM2 model [@simpson2017penalising] in place of the Besag, but found that the proportion parameter posteriors tended to be highly peaked at the value one.
@@ -204,10 +206,10 @@ For simplicity and to avoid numerical issues, by using Besag random effects I ef
 
 For the year-category $\gamma_{tk}$ random effects I considered two specifications:
 
-1. IID $\phi_{tk} \sim \mathcal{N}(0, \tau_\phi^{-1})$,
+1. IID $\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})$,
 2. First order autoregressive (AR1) grouped by category
 $$
-\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\phi \mathbf{R}^\star_\gamma)^{-}).
+\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
 $$
 The scaled structure matrix $\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}$ is given by the Kronecker product of a scaled AR1 structure matrix $\mathbf{R}^\star_r$ and the identity matrix $\mathbf{I}$.
 The AR1 structure matrix $\mathbf{R}_r$ is obtained by precision matrix of the random effects $\mathbf{r} = (r_1, \ldots, r_T)^\top$ specified by
@@ -219,39 +221,36 @@ where $\epsilon_t \sim \mathcal{N}(0, 1)$ and $|\rho| < 1$.
 
 ##### Priors
 
-All random effect precision parameters $\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_\phi, \tau_\gamma\}$ were given independent penalised complexity (PC) priors [@simpson2017penalising] with base model $\sigma = 0$ given by $p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)$ where $\nu = - \ln(0.01) / 2.5$ such that  $\mathbb{P}(\sigma > 2.5) = 0.01$.
+All random effect precision parameters $\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}$ were given independent penalised complexity (PC) priors [@simpson2017penalising] with base model $\sigma = 0$ given by $p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)$ where $\nu = - \ln(0.01) / 2.5$ such that  $\mathbb{P}(\sigma > 2.5) = 0.01$.
 For the lag-one correlation parameter $\rho$, I used the PC prior, as derived by @sorbye2017penalised, with base model $\rho = 1$ and condition $\mathbb{P}(\rho > 0 = 0.75)$.
 I chose the base model $\rho = 1$ corresponding to no change in behaviour over time, rather than the alternative $\rho = 0$ corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.
 
 #### Constraints
 
-To ensure interpretable posterior inferences relating to the random effects, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+To ensure interpretable posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
 For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects.
-Together, these were:
+Together, these constraints are described in Table \@ref(tab:constraints).
 
-1. Category $\sum_k \beta_k = 0$,
-2. Country $\sum_c \zeta_{ck} = 0, \, \forall \, k$,
-3. Age-country $\sum_a \alpha_{ack} = 0, \, \forall \, c, k$,
-4. Spatial $\sum_i \phi_{ik} = 0, \, \forall \, k$,
-5. Temporal $\sum_t \gamma_{tk} = 0, \, \forall \, k$.
+
+| Random effects | Constraints |
+| -------------- | ----------- |
+| Category       | $\sum_k \beta_k = 0$ |
+| Country        | $\sum_c \zeta_{ck} = 0, \, \forall \, k$ |
+| Age-country    | $\sum_a \alpha_{ack} = 0, \, \forall \, c, k$ |
+| Spatial        | $\sum_i u_{ik} = 0, \, \forall \, k$ |
+| Temporal       | $\sum_t \gamma_{tk} = 0, \, \forall \, k$ |
+
+Table: (\#tab:constraints)
 
 #### Survey weighted likelihood
 
-I included surveys which use a complex design, in which each individual has an unequal probability of being included in the sample.
-For example the DHS often employs a two-stage cluster design, first taking an urban rural stratified sample of ennumeration areas, before selecting households from each ennumeration area using systematic sampling [@measure2012sampling].
-
-To account for this aspect of survey design, I use a weighted pseudo-likelihood where the observed counts $y$ are replaced by effective counts $y^\star$ calculated using the survey weights $w_j$ of all individuals $j$ in the corresponding strata.
-I multiplied direct estimates produced using the `survey` package [@JSSv009i08] by the Kish effective sample size [@kish1965survey]
-\begin{equation}
-    m^\star = \frac{\left(\sum_j w_j \right)^2}{\sum_j {w_j}^2}
-\end{equation}
-to obtain $y^\star$.
-These counts may not be integers, and as such the Poisson likelihood I used in Equation \@ref(eq:poisson1) is not appropriate.
+I accounted survey design using a weighted pseudo-likelihood where the observed counts $y$ are replaced by effective counts $y^\star$, as described in Section \@ref(survey).
+These counts may not be integers, and as such the Poisson likelihood given in Equation \@ref(eq:poisson1) is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood $y^\star \sim \text{xPoisson}(\kappa)$, given by
 \begin{equation}
-    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
+    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right).
 \end{equation}
-as implemented by `family = "xPoisson"` in `R-INLA`, which accepts non-integer input.
+This working likelihood is implemented by `family = "xPoisson"` in `R-INLA`, which accepts non-integer input.
 
 ### Spatial logistic regression {#s-logistic}
 
@@ -269,7 +268,7 @@ As all such surveys occurred in 2013-2018, in the logistic regression model I as
 I considered six logistic regression models.
 Each included a constant $\beta_0 \sim \mathcal{N}(-2, 1^2)$, country random effects $\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})$, and age-country random effects $\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})$.
 The prior on $\beta_0$ placed 95\% prior probability on the range `r 100 * round(plogis(-4), 2)`-`r 100 * round(plogis(0), 2)`\% for the percentage of those with non-regular or multiple partners who report transactional sex.
-I considered two specifications (IID, Besag) for the spatial random effects $\phi_i$.
+I considered two specifications (IID, Besag) for the spatial random effects $u_i$.
 To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent}, available from @hodgins2022population.
 For both random effect precision parameters $\tau \in \{\tau_\alpha, \tau_\zeta\}$ I used the PC prior with base model $\sigma = 0$ and $\mathbb{P}(\sigma > 2.5 = 0.01)$.
 For the regression parameters $\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}$ I used the prior $\beta \sim \mathcal{N}(0, 2.5^2)$.
