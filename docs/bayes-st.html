@@ -111,7 +111,7 @@ div.csl-indent {
 <li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
-<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#hiv-surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance </a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
 <ul>
@@ -264,23 +264,24 @@ div.csl-indent {
 <div id="bayesian-statistics" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Bayesian statistics<a href="bayes-st.html#bayesian-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed by Section <span class="math inline">\(\ref{sec:surveillance}\)</span> because it allows principled and flexible integration of data and scientific knowledge.
+It is well suited for to the challenges posed by Section <a href="hiv-aids.html#surveillance">2.2</a> because it allows principled and flexible integration of data and scientific knowledge.
 In this section I provide brief overview.
 For a more complete introduction, I recommend <span class="citation">McElreath (<a href="#ref-mcelreath2020statistical">2020</a>)</span> or <span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>.</p>
 <div id="bayesian-modelling" class="section level3 hasAnchor" number="3.1.1">
 <h3><span class="header-section-number">3.1.1</span> Bayesian modelling<a href="bayes-st.html#bayesian-modelling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model <span class="math inline">\(p(\y, \bphi)\)</span> for the observed data <span class="math inline">\(\y = (y_1, \ldots, y_n)\)</span> together with parameters <span class="math inline">\(\bphi = (\phi_1, \ldots, \phi_d)\)</span>, where <span class="math inline">\(n\)</span> is the dimension of the data and <span class="math inline">\(d\)</span> is the number of parameters.
+This is achieved by the construction of a generative model <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span> for the observed data <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)\)</span> together with parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\)</span>.
+Here <span class="math inline">\(n\)</span> is the dimension of the data and <span class="math inline">\(d\)</span> is the number of parameters.
 The model is generative in the sense that one can simulate from it to generate draws
 <span class="math display">\[\begin{equation}
-(\y, \bphi) \sim p(\y, \bphi)
+(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
 \end{equation}\]</span>
 If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
 In this way, models can be built iteratively, with complexity added gradually.</p>
-<p>The model is usually constructed from two parts, known respectively as the likelihood <span class="math inline">\(p(\y \, | \, \bphi)\)</span> and the prior distribution <span class="math inline">\(p(\bphi)\)</span>.
-The joint distribution is obtained by the product <span class="math inline">\(p(\y, \bphi) = p(\y \, | \, \bphi) p(\bphi)\)</span>.
-The likelihood, as a function of <span class="math inline">\(\bphi\)</span> with <span class="math inline">\(\y\)</span> fixed, reflects the probability of observing the data when the true value of the parameters is <span class="math inline">\(\bphi\)</span>.
-The prior distribution encapsulates beliefs about the parameters <span class="math inline">\(\bphi\)</span> before the data is observed.</p>
+<p>The model is usually constructed from two parts, known respectively as the likelihood <span class="math inline">\(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})\)</span> and the prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}})\)</span>.
+The joint distribution is obtained by the product <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>.
+The likelihood, as a function of <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> with <span class="math inline">\(\mathbf{y}\)</span> fixed, reflects the probability of observing the data when the true value of the parameters is <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.
+The prior distribution encapsulates beliefs about the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> before the data is observed.</p>
 <p>Recommendations for specifying the prior distribution vary.
 A central issue is the extent to which subjective information should be incorporated into the prior distribution, and thereby influence the posterior distribution.
 Proponents of the objective Bayesian paradigm suggest that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
@@ -289,31 +290,26 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 </div>
 <div id="bayesian-computation" class="section level3 hasAnchor" number="3.1.2">
 <h3><span class="header-section-number">3.1.2</span> Bayesian computation<a href="bayes-st.html#bayesian-computation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model.
-The likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>.
-Given observed data <span class="math inline">\(\y = (1, 2, 3)\)</span> the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>.
-This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution.
-Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding.</p>
+
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:conjugate"></span>
-<img src="figures/bayesian/conjugate.png" alt="(ref:conjugate)" width="95%" />
+<img src="figures/bayesian/conjugate.png" alt="An example of Bayesian modelling and computation for a simple one parameter model. The likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution is \(\phi \sim \text{Gamma}(3, 1)\). Given observed data \(\mathbf{y} = (1, 2, 3)\) the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution. Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding." width="95%" />
 <p class="caption">
-Figure 3.1: (ref:conjugate)
+Figure 3.1: An example of Bayesian modelling and computation for a simple one parameter model. The likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>. Given observed data <span class="math inline">\(\mathbf{y} = (1, 2, 3)\)</span> the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution. Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding.
 </p>
 </div>
-<p>The posterior distribution <span class="math inline">\(p(\bphi \, | \, \y)\)</span> encapsulates probabilistic beliefs about the parameters given the observed data.
+<p>The posterior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> encapsulates probabilistic beliefs about the parameters given the observed data.
 Using the eponymous Bayes’ theorem, it is given by
-<span class="math display">\[\begin{equation}
-p(\bphi \, | \, \y) = \frac{p(\y \, | \, \bphi) p(\bphi)}{p(\y)}. \label{eq:posterior}
+<span class="math display" id="eq:posterior">\[\begin{equation}
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \tag{3.1}
 \end{equation}\]</span>
-Unfortunately, it is usually intractable to calculate Equation <a href="#eq:posterior">(<strong>??</strong>)</a> directly because of the potentially high-dimensional integral <span class="math inline">\(p(\y) = \int p(\y, \bphi) \text{d}\bphi\)</span> in the denominator, sometimes known as the marginal likelihood or evidence.
-As such, although it is easy to evaluate <span class="math inline">\(p(\bphi \, | \, \y) \propto p(\y \, | \, \bphi) p(\bphi)\)</span>, it is typically difficult to evaluate the posterior distribution itself.</p>
+Unfortunately, it is usually intractable to calculate Equation <a href="bayes-st.html#eq:posterior">(3.1)</a> directly because of the potentially high-dimensional integral <span class="math inline">\(p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}\)</span> in the denominator, sometimes known as the marginal likelihood or evidence.
+As such, although it is easy to evaluate <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>, it is typically difficult to evaluate the posterior distribution itself.</p>
 <p>A variety of computational methods have been developed to tackle this problem.
 The main categories are:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Sampling algorithms</strong> These approaches look to generate samples from the posterior distribution, and are known as Monte Carlo methods, named after the casino <span class="citation">(<a href="#ref-robert2005monte">Robert and Casella 2005</a>)</span>.
 The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
-In this thesis, I use of the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
-Other approaches include importance sampling and sequential Monte Carlo.</li>
+In this thesis, I make use of the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).</li>
 <li><strong>Variational inference</strong> In variational inference (VI), the posterior distribution is assumed to belong to a particular class of functions.
 Optimisation algorithms are then used to choose the best member of that class.
 Though VI is fast, it may not be accurate <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span>.</li>
@@ -350,24 +346,25 @@ This law extends not only to space but also time.</p>
 <h3><span class="header-section-number">3.3.1</span> Hierarchical models<a href="bayes-st.html#hierarchical" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:hierarchical-structure"></span>
-<embed src="figures/bayesian/hierarchical-structure.pdf" title="A simple example of group structure within data. Each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>." width="95%" type="application/pdf" />
+<img src="figures/bayesian/hierarchical-structure.png" alt="A simple example of group structure within data. Each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\)." width="95%" />
 <p class="caption">
 Figure 3.2: A simple example of group structure within data. Each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>.
 </p>
 </div>
 <p>Often it is natural to group some observations together.
 Bayesian hierarchical or multilevel models, comprised of multiple stages, allow for natural handling data of this sort, even with complex nested or crossed grouping structures.
-In a three-stage hierarchical model, we partition the parameters so that <span class="math inline">\(\bphi = (\x, \btheta)\)</span>.
-I refer to <span class="math inline">\(\x = (x_1, \ldots, x_n)\)</span> as the latent field, and <span class="math inline">\(\btheta = (\theta_1, \ldots, \theta_m)\)</span> as the hyperparameters.
-The generative model for data <span class="math inline">\(\y\)</span> is then
+In a three-stage hierarchical model, we partition the parameters so that <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.
+I refer to <span class="math inline">\(\mathbf{x} = (x_1, \ldots, x_n)\)</span> as the latent field, and <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)\)</span> as the hyperparameters.
+The generative model for data <span class="math inline">\(\mathbf{y}\)</span> is then
 <span class="math display">\[\begin{align}
-\y &amp;\sim p(\y \, | \, \x, \btheta), \\
-\x &amp;\sim p(\x \, | \, \btheta), \\
-\btheta &amp;\sim p(\btheta),
+\mathbf{y} &amp;\sim p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
+\mathbf{x} &amp;\sim p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}), \\
+\boldsymbol{\mathbf{\theta}} &amp;\sim p(\boldsymbol{\mathbf{\theta}}),
 \end{align}\]</span>
-with posterior distribution proportional to <span class="math inline">\(p(\x, \btheta \, | \, \y) \propto p(\y \, | \, \x, \btheta) p(\x \, | \, \btheta) p(\btheta)\)</span>.</p>
+with posterior distribution proportional to <span class="math inline">\(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\)</span>.</p>
 <p>For example, Figure <a href="bayes-st.html#fig:hierarchical-structure">3.2</a> illustrates a case where each individual <span class="math inline">\(i = 1, \ldots, n\)</span> in a study is observed <span class="math inline">\(m_i\)</span> times.
-Observations of the same individual <span class="math inline">\(y_{i1}, \ldots y_{im_i}\)</span> are grouped together, and likely to have more similar properties than observations in different groups.</p>
+Observations <span class="math inline">\(y_{i1}, \ldots y_{im_i}\)</span> of the same individual are grouped together, and are more likely to have more similar properties than observations of different individuals.
+Hierarchical models often control over if and how information is shared between groups.</p>
 <ol style="list-style-type: decimal">
 <li><strong>Complete pooling</strong> In this model, the group structure is ignored and all <span class="math inline">\(\sum_{i = 1}^n m_i\)</span> observations are treated as independent and identically distributed
 <span class="math display">\[\begin{align}
@@ -384,21 +381,21 @@ y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\
 y_{ij} &amp;\sim \mathcal{N}(\mu_i, \sigma), \\
 \mu_i &amp;= \beta + u_i, \\
 \beta &amp;\sim p(\beta), \\
-\bu &amp;\sim p(\bu), \\
+\mathbf{u} &amp;\sim p(\mathbf{u}), \\
 \sigma &amp;\sim p(\sigma),
 \end{align}\]</span>
-where the vector <span class="math inline">\(\bu = (u_1, \ldots, u_n)\)</span>.</li>
+where the vector <span class="math inline">\(\mathbf{u} = (u_1, \ldots, u_n)\)</span>.</li>
 </ol>
 </div>
 <div id="mixed-effects-models" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Mixed effects models<a href="bayes-st.html#mixed-effects-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Fixed effects refer to those elements of the latent field which are constant across groups.
 Random effects refer to those elements of the latent field which vary across groups.
-These terms have notoriously many different and incompatible definitions which can cause confusion <span class="citation">(<a href="#ref-gelman2005analysis">Gelman 2005</a>)</span>.
+These terms have notoriously many different, and incompatible, definitions which can cause confusion <span class="citation">(<a href="#ref-gelman2005analysis">Gelman 2005</a>)</span>.
 I nonetheless find them useful to introduce here.</p>
-<p>For concreteness, in the partial pooling model above, the latent field is <span class="math inline">\(\x = (\beta, u_1, \ldots, u_n)\)</span>.
+<p>For concreteness, in the partial pooling model above, the latent field is <span class="math inline">\(\mathbf{x} = (\beta, u_1, \ldots, u_n)\)</span>.
 The scalar <span class="math inline">\(\beta\)</span> is a fixed effect which applies to all <span class="math inline">\(n\)</span> groups.
-The vector <span class="math inline">\(\bu\)</span> are random effects which alter the mean differently for each group.
+The vector <span class="math inline">\(\mathbf{u}\)</span> are random effects which alter the mean differently for each group.
 The only hyperparameter is the standard deviation <span class="math inline">\(\theta = \sigma\)</span>.</p>
 <p>Random effects can also be structured to share information between some groups more than others.
 In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
@@ -409,16 +406,16 @@ Spatial random effects are the subject of Chapter <a href="beyond-borders.html#b
 <p>Latent Gaussian models [LGMs; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] are a class of three-stage Bayesian hierarchical models in which the middle layer is Gaussian.
 To be more precise, in an LGM, the likelihood is given by
 <span class="math display">\[\begin{align*}
-y_i &amp;\sim p(y_i \, | \, \eta_i, \btheta_1), \quad i = 1, \ldots, n, \\
+y_i &amp;\sim p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
 \mu_i &amp;= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
 \eta_i &amp;= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}).
 \end{align*}\]</span>
-The likelihood is given by a product <span class="math inline">\(p(\y \, | \, \bmeta, \btheta_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \btheta_1)\)</span>, where <span class="math inline">\(\bmeta = (\eta_1, \ldots, \eta_n)\)</span>.
+The likelihood is given by a product <span class="math inline">\(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\eta}}, \boldsymbol{\mathbf{\theta}}_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1)\)</span>, where <span class="math inline">\(\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots, \eta_n)\)</span>.
 Each response has conditional mean <span class="math inline">\(\mu_i\)</span> with inverse link function <span class="math inline">\(g: \mathbb{R} \to \mathbb{R}\)</span> such that <span class="math inline">\(\mu_i = g(\eta_i)\)</span>.
-The vector <span class="math inline">\(\btheta_1 \in \mathbb{R}^{s_1}\)</span>, with <span class="math inline">\(s_1\)</span> assumed small, are additional parameters of the likelihood.
+The vector <span class="math inline">\(\boldsymbol{\mathbf{\theta}}_1 \in \mathbb{R}^{s_1}\)</span>, with <span class="math inline">\(s_1\)</span> assumed small, are additional parameters of the likelihood.
 The structured additive predictor <span class="math inline">\(\eta_i\)</span> may include an intercept <span class="math inline">\(\beta_0\)</span>, fixed effects <span class="math inline">\(\beta_j\)</span> of the covariates <span class="math inline">\(z_{ji}\)</span>, and random effects <span class="math inline">\(f_k(\cdot)\)</span> of the covariates <span class="math inline">\(u_{ki}\)</span>.
-The parameters <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\{\beta_j\}\)</span>, <span class="math inline">\(\{f_k(\cdot)\}\)</span> are each assigned Gaussian prior distributions, and can be collected into a vector <span class="math inline">\(\x \in \mathbb{R}^N\)</span> such that <span class="math inline">\(\x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\btheta_2)^{-1})\)</span> where <span class="math inline">\(\btheta_2 \in \mathbb{R}^{s_2}\)</span> are further hyperparameters, again with <span class="math inline">\(s_2\)</span> assumed small.
-Let <span class="math inline">\(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^m\)</span> with <span class="math inline">\(m = s_1 + s_2\)</span> be all hyperparameters, with prior distribution <span class="math inline">\(p(\btheta)\)</span>.</p>
+The parameters <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\{\beta_j\}\)</span>, <span class="math inline">\(\{f_k(\cdot)\}\)</span> are each assigned Gaussian prior distributions, and can be collected into a vector <span class="math inline">\(\mathbf{x} \in \mathbb{R}^N\)</span> such that <span class="math inline">\(\mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1})\)</span> where <span class="math inline">\(\boldsymbol{\mathbf{\theta}}_2 \in \mathbb{R}^{s_2}\)</span> are further hyperparameters, again with <span class="math inline">\(s_2\)</span> assumed small.
+Let <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbol{\mathbf{\theta}}_2) \in \mathbb{R}^m\)</span> with <span class="math inline">\(m = s_1 + s_2\)</span> be all hyperparameters, with prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}})\)</span>.</p>
 </div>
 <div id="extended-latent-gaussian-models" class="section level3 hasAnchor" number="3.3.4">
 <h3><span class="header-section-number">3.3.4</span> Extended latent Gaussian models<a href="bayes-st.html#extended-latent-gaussian-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -426,13 +423,13 @@ Let <span class="math inline">\(\btheta = (\btheta_1, \btheta_2) \in \mathbb{R}^
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 <!-- Thesis work of [Follestad](https://cds.cern.ch/record/639625/files/sis-2003-305.pdf) that stayed as a preprint -->
 <p>Extended latent Gaussian models [ELGMs; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span>] facilitate modelling of LGMs with greater non-linearities.
-In particular, the structured additive predictor is redefined as <span class="math inline">\(\bmeta = (\eta_1, \ldots \eta_{N_n})\)</span>, where <span class="math inline">\(N_n \in \mathbb{N}\)</span> is a function of <span class="math inline">\(n\)</span>, and it is possible that <span class="math inline">\(N_n \neq n\)</span>.
-Each mean response <span class="math inline">\(\mu_i\)</span> now depends on some subset <span class="math inline">\(\mathcal{J}_i \subseteq [N_n]\)</span> of indices of <span class="math inline">\(\bmeta\)</span>, with <span class="math inline">\(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\)</span> and <span class="math inline">\(1 \leq |\mathcal{J}_i| \leq N_n\)</span>, where <span class="math inline">\([N_n] = \{1, \ldots, N_n\}\)</span>.
-The inverse link function <span class="math inline">\(g(\cdot)\)</span> is redefined for each observation to be a possibly many-to-one mapping <span class="math inline">\(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\)</span>, such that <span class="math inline">\(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\)</span>.
+In particular, the structured additive predictor is redefined as <span class="math inline">\(\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots \eta_{N_n})\)</span>, where <span class="math inline">\(N_n \in \mathbb{N}\)</span> is a function of <span class="math inline">\(n\)</span>, and it is possible that <span class="math inline">\(N_n \neq n\)</span>.
+Each mean response <span class="math inline">\(\mu_i\)</span> now depends on some subset <span class="math inline">\(\mathcal{J}_i \subseteq [N_n]\)</span> of indices of <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>, with <span class="math inline">\(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\)</span> and <span class="math inline">\(1 \leq |\mathcal{J}_i| \leq N_n\)</span>, where <span class="math inline">\([N_n] = \{1, \ldots, N_n\}\)</span>.
+The inverse link function <span class="math inline">\(g(\cdot)\)</span> is redefined for each observation to be a possibly many-to-one mapping <span class="math inline">\(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\)</span>, such that <span class="math inline">\(\mu_i = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i})\)</span>.
 Put together, ELGMs are of the form
 <span class="math display">\[\begin{align*}
-y_i &amp;\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \btheta_1), \quad i = 1, \ldots, n, \\
-\mu_i &amp;= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
+y_i &amp;\sim p(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
+\mu_i &amp;= \mathbb{E}(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}) = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}), \\
 \eta_j &amp;= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j = 1, \ldots, N_n,
 \end{align*}\]</span>
 with latent field and hyperparameter prior distributions as in the LGM case.</p>
@@ -445,17 +442,18 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 <div id="survey" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Survey methods<a href="bayes-st.html#survey" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
-Demographic and Health Surveys (DHS) are funded by USAID and run every three to five years in most countries.
+Demographic and Health Surveys (DHS) are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
 Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every two to three years in high HIV burden countries.</p>
 <div id="survey-notation-and-key-terms" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Survey notation and key terms<a href="bayes-st.html#survey-notation-and-key-terms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Consider a population of individuals <span class="math inline">\(i = 1, \ldots, N\)</span> with outcomes of interest <span class="math inline">\(y_i\)</span>.
 A census is a type of survey where all individuals are sampled.
-Supposing responses from all individuals were recorded, then the population mean of <span class="math inline">\(G_i = G(y_i)\)</span>, where <span class="math inline">\(G\)</span> is some function, could be calculated based on the census by
+Supposing responses from all individuals were recorded, then the population means can be calculated direct.
+For example, if <span class="math inline">\(G_i = G(y_i)\)</span> then the population mean of <span class="math inline">\(G\)</span> is
 <span class="math display">\[\begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}\]</span></p>
-<p>In practice, it is impractically expensive to run a census.
+<p>In practice, it is usually too expensive to run a census.
 Instead, only a subset of the individuals are sampled.
 Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
 Let <span class="math inline">\(S_i\)</span> be an indicator for whether or not individual <span class="math inline">\(i\)</span> is sampled, and <span class="math inline">\(R_i\)</span> be an indicator for whether or not <span class="math inline">\(y_i\)</span> is recorded.
@@ -463,7 +461,7 @@ If <span class="math inline">\(S_i = 0\)</span> then <span class="math inline">\
 If <span class="math inline">\(S_i = 1\)</span> then individual <span class="math inline">\(i\)</span> may not respond such that <span class="math inline">\(R_i = 0\)</span>.
 The population mean may be estimated directly based on the recorded subset of the population by
 <span class="math display">\[\begin{equation}
-\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i G(y_i)}{m_R}, \label{eq:direct}
+\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
 \end{equation}\]</span>
 where <span class="math inline">\(m_R = \sum_{i = 1}^N R_i\)</span> is the recorded sample size.</p>
 <p>A probability sample refers to the case when individuals are selected to be included in the survey at random.
@@ -472,24 +470,37 @@ A simple random sample (SRS) is a probability sample where the sampling probabil
 The survey design is called complex when the sampling probabilities for each individual vary, such that <span class="math inline">\(P(S_i = 1) = \pi_i\)</span> with <span class="math inline">\(\sum_{i = 1}^N \pi_i = 1\)</span> and <span class="math inline">\(\pi_i &gt; 0\)</span>.</p>
 <p>Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
-Under a complex design, then not taking into account the sampling probabilities will result in bias, even in the case of no nonresponse.
-Even for a SRS, the problem of nonresponse is almost ubiquitous, and can result in analogous bias to ignoring the survey design.</p>
+Under a complex design, failing to take into account the unequal sampling probabilities will result in bias.
+That said, even for a SRS, bias can be caused by nonresponse.</p>
 </div>
 <div id="survey-design" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Survey design<a href="bayes-st.html#survey-design" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <!-- Add figure here to demonstrate sampling of DHS data -->
-<ol style="list-style-type: decimal">
-<li>Stratification into administrative units</li>
-<li>Primary sampling units (PSUs) and their populations</li>
-<li>Sample PSUs proportional to their population</li>
-<li>Select households using systematic sampling</li>
-<li>Visit each household and interview all adults</li>
-</ol>
+<p>The DHS <span class="citation">(<a href="#ref-measure2012sampling">DHS 2012</a>)</span> employs a two-stage sampling procedure.
+In the first stage, ennumeration areas (EAs) from a recently conducted census are typically used as the primary sampling unit (PSU).
+The EAs are then stratified by region, as well as urban-rural.
+After appropriate sample sizes are determined, EAs sampled with probability proportional to size (PPS) measured
+In the second stage, the secondary sampling units (SSUs) are households.
+All households in the selected EAs are listed, before being sampled systematically.
+Finally, each selected household is visited, and all adults are interviewed.</p>
+<p>The probability an individual is sampled is equal to the probability their household is sampled.
+The first-stage sampling probability of the <span class="math inline">\(j\)</span>th cluster in stratum <span class="math inline">\(h\)</span> given by
+<span class="math display">\[
+\pi_{1hj} = n_h \times \frac{N_{hj}}{\sum_j N_{hj}},
+\]</span>
+where <span class="math inline">\(N_{hj}\)</span> is the number of households and <span class="math inline">\(n_h\)</span> be the number of clusters selected in stratum <span class="math inline">\(h\)</span>.
+The second-stage sampling probability each household within the <span class="math inline">\(i\)</span>th cluster in stratum <span class="math inline">\(h\)</span> is
+<span class="math display">\[
+\pi_{1hj} = \frac{n_{hj}}{N_{hj}},
+\]</span>
+where <span class="math inline">\(n_{hj}\)</span> is the numer of households selected in cluster <span class="math inline">\(j\)</span> and stratum <span class="math inline">\(h\)</span>.
+That is, each household in the cluster has equal selection probability.
+The overall selection probability of each household in cluster <span class="math inline">\(j\)</span> of stratum <span class="math inline">\(h\)</span> is <span class="math inline">\(\pi_{hi} = \pi_{1hj} \times \pi_{2hj}\)</span>.</p>
 </div>
 <div id="survey-analysis" class="section level3 hasAnchor" number="3.4.3">
 <h3><span class="header-section-number">3.4.3</span> Survey analysis<a href="bayes-st.html#survey-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Suppose a complex survey is run with sampling probabilities <span class="math inline">\(\pi_i\)</span>.
-The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to give more weight to the responses provided by those unlikely to be included.
+The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to overweight the responses of those unlikely to be included, and underweight the responses of those likely to be included.
 This can be achieved using design weights <span class="math inline">\(\delta_i = 1 / \pi_i\)</span>, which can be thought of as the number of individuals in the population represented by the <span class="math inline">\(i\)</span>th sampled individual.
 Let <span class="math inline">\(P(R_i = 1 \, | \, S_i = 1) = \upsilon_i\)</span> be the probability of response for sampled individual <span class="math inline">\(i\)</span>.
 The problem of nonresponse can be treated in the same way using nonresponse weights <span class="math inline">\(\gamma_i = 1 / \upsilon_i\)</span>, which analogously can be thought of as the number of sampled individuals represented by the <span class="math inline">\(i\)</span>th recorded individual.
@@ -510,8 +521,8 @@ To minimise the DDC then <span class="math inline">\(G \perp \!\!\! \perp R_\ome
 The data scarcity <span class="math inline">\(\sigma_{R_\omega} = \sqrt{(N - m_{R_\omega})/m_{R_\omega}}\)</span> measures the effective proportion of the population who have been recorded.
 The problem difficultly <span class="math inline">\(\sigma_G\)</span> measures the intrinsic difficulty of the estimation problem, and is independent of the sampling or analysis method.</p>
 <p>For simplicity, let <span class="math inline">\(G(y_i) = y_i\)</span> and each <span class="math inline">\(y_i \in \{0, 1\}\)</span>.
-We weight then model following <span class="citation">Chen, Wakefield, and Lumely (<a href="#ref-chen2014use">2014</a>)</span>.</p>
-<p>While this approach acknowledges the survey design, it has some important limitations.
+We weight then model following <span class="citation">Chen, Wakefield, and Lumely (<a href="#ref-chen2014use">2014</a>)</span>.
+While this approach acknowledges the survey design, it has some important limitations.
 We ignore clustering structure.
 All of this isn’t great and that someone should figure this out <span class="citation">(<a href="#ref-gelman2007struggles">Gelman 2007</a>)</span>.</p>
 
@@ -531,6 +542,9 @@ Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“The Use of Sampling
 </div>
 <div id="ref-cressie2015statistics" class="csl-entry">
 Cressie, Noel, and Christopher K Wikle. 2015. <em>Statistics for Spatio-Temporal Data</em>. John Wiley &amp; Sons.
+</div>
+<div id="ref-measure2012sampling" class="csl-entry">
+DHS. 2012. <span>“<span class="nocase">Sampling and Household Listing Manual: Demographic and Health Surveys Methodology</span>.”</span>
 </div>
 <div id="ref-duane1987hybrid" class="csl-entry">
 Duane, Simon, Anthony D Kennedy, Brian J Pendleton, and Duncan Roweth. 1987. <span>“<span>Hybrid Monte Carlo</span>.”</span> <em>Physics Letters B</em> 195 (2): 216–22.
