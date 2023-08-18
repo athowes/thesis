@@ -111,7 +111,12 @@ div.csl-indent {
 <li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
-<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#challenges"><i class="fa fa-check"></i><b>2.2.1</b> Challenges</a></li>
+<li class="chapter" data-level="2.2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#statistical-approaches"><i class="fa fa-check"></i><b>2.2.2</b> Statistical approaches</a></li>
+<li class="chapter" data-level="2.2.3" data-path="hiv-aids.html"><a href="hiv-aids.html#future-directions"><i class="fa fa-check"></i><b>2.2.3</b> Future directions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
 <ul>
@@ -414,7 +419,7 @@ Let <span class="math inline">\(p_{itak} &gt; 0\)</span> with <span class="math 
 <h4><span class="header-section-number">5.3.1.1</span> Multinomial logistic regression<a href="multi-agyw.html#multinomial-logistic-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>A baseline category multinomial logistic regression model is specified by
 <span class="math display">\[\begin{align}
-    \y_{ita} &amp;= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
+    \mathbf{y}_{ita} &amp;= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &amp;= \eta_{itak}, \quad k = 2, 3^{+},
 \end{align}\]</span>
 where the number in risk group <span class="math inline">\(k\)</span> is <span class="math inline">\(y_{itak}\)</span>, the fixed sample size is <span class="math inline">\(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\)</span>, and <span class="math inline">\(k = 1\)</span> is chosen as the baseline category.
@@ -425,9 +430,9 @@ This model is not an LGM, and is not possible to fit in <code>R-INLA</code>.</p>
 <p>I used the multinomial-Poisson transformation to enable inference with <code>R-INLA</code>.
 The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
 The equivalent model is of the form
-<span class="math display">\[\begin{align}
-    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
-    \log(\kappa_{itak}) &amp;= \eta_{itak}. \label{eq:poisson2}
+<span class="math display" id="eq:poisson2" id="eq:poisson1">\[\begin{align}
+    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \tag{5.1} \\
+    \log(\kappa_{itak}) &amp;= \eta_{itak}. \tag{5.2}
 \end{align}\]</span>
 The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed <span class="citation">(<a href="#ref-mccullagh1989generalized">McCullagh and Nelder 1989</a>)</span> as follows
 <span class="math display">\[\begin{equation}
@@ -440,12 +445,12 @@ Category probabilities may then be obtained using the softmax function
 \end{equation}\]</span>
 Under the equivalent model, the sample sizes <span class="math inline">\(m_{ita} = \sum_k y_{itak}\)</span> are treated as random <span class="math inline">\(m_{ita} \sim \text{Poisson} \left( \kappa_{ita} \right)\)</span> rather than fixed.
 The joint distribution of <span class="math inline">\(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\)</span> is then
-<span class="math display">\[\begin{align}
+<span class="math display" id="eq:prodpoisson">\[\begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &amp;= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &amp;= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \label{eq:prodpoisson}
+&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \tag{5.3}
 \end{align}\]</span>
-corresponding to the product of independent Poisson likelihoods as in Equation <a href="#eq:poisson1">(<strong>??</strong>)</a>.</p>
+corresponding to the product of independent Poisson likelihoods as in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a>.</p>
 <p>This model, with random sample sizes, is equivalent to a multinomial logistic regression model only when the normalisation constants <span class="math inline">\(m_{ita}\)</span> are recovered exactly.
 To ensure that this is the case, one approach is to include observation-specific random effects <span class="math inline">\(\theta_{ita}\)</span> in the equation for the linear predictor.
 Multiplying each of <span class="math inline">\(\{\kappa_{itak}\}_{k = 1}^{3^+}\)</span> by <span class="math inline">\(\exp(\theta_{ita})\)</span> has no effect on the category probabilities, but does provide the necessary flexibility for <span class="math inline">\(\kappa_{ita}\)</span> to recover <span class="math inline">\(m_{ita}\)</span> exactly.
@@ -453,7 +458,7 @@ Although in theory an improper prior <span class="math inline">\(\theta_{ita} \p
 </div>
 <div id="model-specifications" class="section level4 hasAnchor" number="5.3.1.3">
 <h4><span class="header-section-number">5.3.1.3</span> Model specifications<a href="multi-agyw.html#model-specifications" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>I considered four models for <span class="math inline">\(\eta_{ita}\)</span> in Equation <a href="#eq:poisson2">(<strong>??</strong>)</a> of the form
+<p>I considered four models for <span class="math inline">\(\eta_{ita}\)</span> in Equation <a href="multi-agyw.html#eq:poisson2">(5.2)</a> of the form
 <span class="math display">\[\begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}\]</span>
@@ -468,7 +473,7 @@ Heterogeneity in risk group proportions by age was allowed by including age-coun
 <li>Independent and identically distributed (IID) <span class="math inline">\(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\)</span>,</li>
 <li>Besag <span class="citation">(<a href="#ref-besag1991bayesian">Besag, York, and Mollié 1991</a>)</span> grouped by category
 <span class="math display">\[
-\bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
+\mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
 \]</span>
 The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\)</span> is given by the Kronecker product of the scaled Besag structure matrix <span class="math inline">\(\mathbf{R}^\star_b\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, and <span class="math inline">\({-}\)</span> denotes the generalised matrix inverse.
 I followed best practises for the Besag model as described in Chapter <a href="beyond-borders.html#beyond-borders">4</a>.</li>
@@ -484,7 +489,7 @@ For simplicity and to avoid numerical issues, by using Besag random effects I ef
 <li>IID <span class="math inline">\(\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})\)</span>,</li>
 <li>First order autoregressive (AR1) grouped by category
 <span class="math display">\[
-\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
+\boldsymbol{\mathbf{\gamma}} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
 \]</span>
 The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}\)</span> is given by the Kronecker product of a scaled AR1 structure matrix <span class="math inline">\(\mathbf{R}^\star_r\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.
 The AR1 structure matrix <span class="math inline">\(\mathbf{R}_r\)</span> is obtained by precision matrix of the random effects <span class="math inline">\(\mathbf{r} = (r_1, \ldots, r_T)^\top\)</span> specified by
@@ -542,7 +547,7 @@ Together, these constraints are described in Table <a href="multi-agyw.html#tab:
 <div id="survey-weighted-likelihood" class="section level4 hasAnchor" number="5.3.1.5">
 <h4><span class="header-section-number">5.3.1.5</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>I accounted survey design using a weighted pseudo-likelihood where the observed counts <span class="math inline">\(y\)</span> are replaced by effective counts <span class="math inline">\(y^\star\)</span>, as described in Section <a href="bayes-st.html#survey">3.4</a>.
-These counts may not be integers, and as such the Poisson likelihood given in Equation <a href="#eq:poisson1">(<strong>??</strong>)</a> is not appropriate.
+These counts may not be integers, and as such the Poisson likelihood given in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a> is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood <span class="math inline">\(y^\star \sim \text{xPoisson}(\kappa)\)</span>, given by
 <span class="math display">\[\begin{equation}
     p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right).
@@ -553,12 +558,12 @@ This working likelihood is implemented by <code>family = "xPoisson"</code> in <c
 <div id="s-logistic" class="section level3 hasAnchor" number="5.3.2">
 <h3><span class="header-section-number">5.3.2</span> Spatial logistic regression<a href="multi-agyw.html#s-logistic" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To estimate the proportion of those in the <span class="math inline">\(k = 3^{+}\)</span> risk group that were in the <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 4\)</span> risk groups respectively, I fit logistic regression models of the form
-<span class="math display">\[\begin{align}
-    y_{ia4} &amp;\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \label{eq:logistic-regression} \\
+<span class="math display" id="eq:logistic-regression">\[\begin{align}
+    y_{ia4} &amp;\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \tag{5.4} \\
     q_{ia} &amp;= \text{logit}^{-1} \left( \eta_{ia} \right),
 \end{align}\]</span>
 where <span class="math inline">\(q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}\)</span>.
-Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation <a href="#eq:logistic-regression">(<strong>??</strong>)</a>.
+Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation <a href="multi-agyw.html#eq:logistic-regression">(5.4)</a>.
 As all such surveys occurred in 2013-2018, in the logistic regression model I assumed <span class="math inline">\(q_{ia}\)</span> to be constant over time.</p>
 <div id="model-specifications-1" class="section level4 hasAnchor" number="5.3.2.1">
 <h4><span class="header-section-number">5.3.2.1</span> Model specifications<a href="multi-agyw.html#model-specifications-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>

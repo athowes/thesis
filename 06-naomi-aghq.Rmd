@@ -23,7 +23,7 @@ resource_version <- "20230811-095752-5b8181d8"
 
 In this chapter I describe a novel Bayesian inference method I developed.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators [@unaids2023global].
+Over 35 countries have used the Naomi model software (`https://naomi.unaids.org`) to produce subnational estimates of HIV indicators [@unaids2023global].
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 
 I began working on this project at the start of my PhD.
@@ -37,7 +37,7 @@ Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](h
 In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 \begin{equation}
-p(\bphi \, | \, \y) = \frac{p(\bphi, \y)}{p(\y)}.
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}.
 \end{equation}
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
@@ -45,12 +45,12 @@ Given a loss function, the posterior loss of a decision depends on the data only
 It is usually intractable to directly obtain the posterior distribution.
 This is because the denominator contains an intractable integral called the posterior normalising constant
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:evidence)
 \end{equation}
-For this reason, approximations to the posterior distribution $\tilde p(\bphi \, | \, \y)$ are typically used in place of the exact posterior distribution.
+For this reason, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
 Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
 \begin{equation}
-p(\bphi \, | \, \y) \propto p(\bphi, \y).
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
 \end{equation}
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
 
@@ -62,65 +62,65 @@ Laplace's method [@laplace1774memoire] is a technique used to approximate integr
 \end{equation}
 where $C > 0$ is a large constant and $h$ is a function which is twice-differentiable.
 The Laplace approximation [@tierney1986accurate] is obtained by application of Laplace's method to calculate the posterior normalising constant.
-Let $h(\bphi) = \log p(\bphi, \y)$ such that
+Let $h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})$ such that
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}
 Laplace's method involves approximating the function $h$ by its second order Taylor expansion evaluated at a maxima of $h$ to eliminate the first order term.
 Let
 \begin{equation}
-\hat \bphi = \argmax_{\bphi} h(\bphi)
+\hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}})
 \end{equation}
 be the posterior mode, and
 \begin{equation}
-\hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
+\hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
 The Laplace approximation is then
 \begin{align}
-\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}}.
+\tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:la) \\
+&= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}
 Equation \@ref(eq:la) is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
-p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}
-It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)$ such that
+It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ such that
 \begin{equation}
-\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
+\tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}
 
 #### The marginal Laplace approximation
 
 It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
 An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
-As before, let $\bphi = (\x, \btheta)$ where $\x$ is the latent field, and $\btheta$ are the hyperparameters.
-Applying an equivalent Laplace approximation to the latent field, we have $h(\x, \btheta) = \log p(\x, \btheta, \y)$ with posterior mode
+As before, let $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ where $\mathbf{x}$ is the latent field, and $\boldsymbol{\mathbf{\theta}}$ are the hyperparameters.
+Applying an equivalent Laplace approximation to the latent field, we have $h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ with posterior mode
 \begin{equation}
-\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})
 \end{equation}
 and Hessian matrix evaluated at the posterior mode
 \begin{equation}
-\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \x(\btheta)}.
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-For both quantities cases dependence on the hyperparameters $\btheta$ is made explicit.
+For both quantities cases dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit.
 The resulting marginal Laplace approximation is then
 \begin{align}
-\tilde p_{\texttt{LA}}(\btheta, \y) &= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
-&= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
-&= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} (\#eq:marginalla) \\
+&= \exp(h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \mathbf{y})) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) |^{1/2}} \\
+&= \frac{p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
 \end{align}
-where $\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})$ is a Gaussian approximation to the marginal posterior of the latent field.
+where $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ is a Gaussian approximation to the marginal posterior of the latent field.
 
 ### Quadrature
 
 Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 
-Let $\mathcal{Q}$ be a set of quadrature points $\z \in \mathcal{Q}$ and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
+Let $\mathcal{Q}$ be a set of quadrature points $\mathbf{z} \in \mathcal{Q}$ and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 \begin{equation}
-\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
+\tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}
 Quadrature methods are most effective when integrating over small dimensions.
 The reason why is that exponentially more quadrature points are required to cover each additional dimension.
@@ -142,12 +142,12 @@ The corresponding weighting function $\omega: \mathcal{Q}(1, k) \to \mathbb{R}$ 
 \end{equation}
 
 Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
-In $d$ dimensions, the multivariate GHQ nodes $\z \in \mathcal{Q}(d, k)$ are defined by $\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)$.
-The corresponding weighting function $\omega: \mathcal{Q}(d, k) \to \mathbb{R}$ is given by $\omega(\z) = \prod_{j = 1}^d \omega(z_j)$.
+In $d$ dimensions, the multivariate GHQ nodes $\mathbf{z} \in \mathcal{Q}(d, k)$ are defined by $\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)$.
+The corresponding weighting function $\omega: \mathcal{Q}(d, k) \to \mathbb{R}$ is given by $\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)$.
 
 #### Adaptive quadrature
 
-(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\z \in \mathcal{Q}(2, 3)$ for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is $f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$.
+(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is $f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$.
 
 ```{r aghq-demo, fig.cap="(ref:aghq-demo)"}
 knitr::include_graphics("figures/naomi-aghq/aghq-demo.png")
@@ -167,7 +167,7 @@ The integrated nested Laplace approximation (INLA) method [@rue2009approximate] 
 
 ### `TMB`
 
-Template Model Builder [TMB, or when referring to the software `TMB`; @kristensen2016tmb] is an $\textsc{R}$ package which implements the Laplace approximation.
+Template Model Builder [TMB, or when referring to the software `TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
 In `TMB` derivatives are obtained using automatic differentiation [@baydin2017automatic].
 
 ### `R-INLA`
@@ -230,7 +230,7 @@ HIV incidence rate is modelled on the log scale as $\log(\lambda_i) = \eta^\lamb
 Let $\kappa_i$ be the proportion recently infected among HIV positive persons.
 This proportion is linked to HIV incidence via
 \begin{equation}
-\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \label{eq:kappa}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), (\#eq:kappa)
 \end{equation}
 where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are strongly informed by priors for the particular survey.
 

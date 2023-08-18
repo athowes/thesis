@@ -111,7 +111,12 @@ div.csl-indent {
 <li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
-<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#challenges"><i class="fa fa-check"></i><b>2.2.1</b> Challenges</a></li>
+<li class="chapter" data-level="2.2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#statistical-approaches"><i class="fa fa-check"></i><b>2.2.2</b> Statistical approaches</a></li>
+<li class="chapter" data-level="2.2.3" data-path="hiv-aids.html"><a href="hiv-aids.html#future-directions"><i class="fa fa-check"></i><b>2.2.3</b> Future directions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
 <ul>
@@ -277,14 +282,14 @@ Code for the analysis in this chapter is available from <a href="https://github.
 Let <span class="math inline">\(i \sim j\)</span> if the areas <span class="math inline">\(A_i\)</span> and <span class="math inline">\(A_j\)</span> are adjacent or neighbouring.
 Adjacency is often defined by a shared border, though other choices are possible <span class="citation">(<a href="#ref-paciorek2013spatial">Paciorek et al. 2013</a>)</span>.
 The Besag model <span class="citation">(<a href="#ref-besag1991bayesian">Besag, York, and Mollié 1991</a>)</span> is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the <span class="math inline">\(i\)</span>th spatial random effect is given by
-<span class="math display">\[\begin{equation}
-    u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \label{eq:besag}
+<span class="math display" id="eq:besag">\[\begin{equation}
+    u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \tag{4.1}
 \end{equation}\]</span>
 where <span class="math inline">\(\delta i\)</span> is the set of neighbours of <span class="math inline">\(A_i\)</span> with cardinality <span class="math inline">\(n_{\delta i} = |\delta i|\)</span> and <span class="math inline">\(\mathbf{u}_{-i}\)</span> is the vector of spatial random effects with the <span class="math inline">\(i\)</span>th entry removed.
 The conditional mean of the random effect <span class="math inline">\(u_i\)</span> is the average of its neighbours <span class="math inline">\(\{u_j\}_{j \sim i}\)</span> and the precision <span class="math inline">\(n_{\delta i}\tau_u\)</span> is proportional to the number of neighbours <span class="math inline">\(n_{\delta i}\)</span>.
 By Brook’s lemma <span class="citation">(<a href="#ref-rue2005gaussian">Havard Rue and Held 2005</a>)</span> the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
-<span class="math display">\[\begin{equation}
-    \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}), \label{eq:gmrf}
+<span class="math display" id="eq:gmrf">\[\begin{equation}
+    \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}), \tag{4.2}
 \end{equation}\]</span>
 where <span class="math inline">\(\mathbf{R}^{-}\)</span> is the generalised inverse of the rank-deficient structure matrix <span class="math inline">\(\mathbf{R}\)</span>, so-called because it defines the structure of the precision matrix, with entries
 <span class="math display">\[\begin{equation}
@@ -298,11 +303,11 @@ where <span class="math inline">\(\mathbf{R}^{-}\)</span> is the generalised inv
 The Markov property arises due to the conditional independence structure <span class="math inline">\(p(u_i \, | \, \mathbf{u}_{-i}) = p(u_i \, | \, \mathbf{u}_{\delta i})\)</span> whereby each area only depends on its neighbours.
 This is reflected in the sparsity of <span class="math inline">\(\mathbf{R}\)</span> such that <span class="math inline">\(u_i \perp u_j \, | \, \mathbf{u}_{-ij}\)</span> if and only if <span class="math inline">\(R_{ij} = 0\)</span>.
 The structure matrix <span class="math inline">\(\mathbf{R}\)</span> may also be expressed as the Laplacian of the adjacency graph <span class="math inline">\(\mathcal{G} = (\mathcal{V}, \mathcal{E})\)</span> with vertices <span class="math inline">\(v \in \mathcal{V}\)</span> corresponding to each area and edges <span class="math inline">\(e \in \mathcal{E}\)</span> between vertices <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> when <span class="math inline">\(i \sim j\)</span>.</p>
-<p>Rewriting Equation <a href="#eq:gmrf">(<strong>??</strong>)</a>, the probability density function of <span class="math inline">\(\mathbf{u}\)</span> is
-<span class="math display">\[\begin{equation}
+<p>Rewriting Equation <a href="beyond-borders.html#eq:gmrf">(4.2)</a>, the probability density function of <span class="math inline">\(\mathbf{u}\)</span> is
+<span class="math display" id="eq:pdfu">\[\begin{equation}
     p(\mathbf{u})
     \propto \exp \left( -\frac{\tau_u}{2} \mathbf{u}^\top \mathbf{R} \mathbf{u} \right)
-    \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). \label{eq:pdfu}
+    \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). \tag{4.3}
 \end{equation}\]</span>
 This density is a function of the pairwise differences <span class="math inline">\(u_i - u_j\)</span> and so is invariant to the addition of a constant <span class="math inline">\(c\)</span> to each entry <span class="math inline">\(p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})\)</span>, leading to an improper uniform distribution on the average of the <span class="math inline">\(u_i\)</span>.
 If <span class="math inline">\(\mathcal{G}\)</span> is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and <span class="math inline">\(\text{rank}(\mathbf{R}) = n - 1\)</span>, while if <span class="math inline">\(\mathcal{G}\)</span> is disconnected, and composed of <span class="math inline">\(n_c \geq 2\)</span> connected components with index sets <span class="math inline">\(I_1, \ldots, I_{n_c}\)</span>, then the corresponding structure matrix <span class="math inline">\(\mathbf{R}\)</span> has rank <span class="math inline">\(n - n_c\)</span> and the density is invariant to the addition of a constant to each of the connected components <span class="math inline">\(p(\mathbf{u}_{I}) = p(\mathbf{u}_{I} + c\mathbf{1})\)</span> where <span class="math inline">\(I = I_1, \ldots, I_{n_c}\)</span>.</p>
@@ -319,9 +324,11 @@ equal to one, by replacing <span class="math inline">\(\mathbf{R}\)</span> with 
 As the diagonal elements <span class="math inline">\(R^-_{ii}\)</span> correspond to marginal variances, the generalised variance gives a measure of the average marginal variance.
 However, this measure, introduced by <span class="citation">Sørbye and Rue (<a href="#ref-sorbye2014scaling">2014</a>)</span>, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
 Scaling mitigates the influence of the adjacency graph on the variance of <span class="math inline">\(\mathbf{u}\)</span>.
-Allowing the variance to be controlled by <span class="math inline">\(\tau_u\)</span> alone is important as it allows for consistent, interpretable prior selection.
-When the adjacency graph is disconnected it is not appropriate to scale the structure matrix <span class="math inline">\(\mathbf{R}\)</span> uniformly since for a given precision <span class="math inline">\(\tau_u\)</span>, local smoothing operates on each connected component independently.
-As such, each connected component should be scaled independently to have generalised variance one giving <span class="math inline">\(\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)\)</span> where <span class="math inline">\(\mathbf{R}_I\)</span> is the sub-matrix of the structure matrix corresponding to index set <span class="math inline">\(I\)</span>.</li>
+Allowing the variance to be controlled by <span class="math inline">\(\tau_u\)</span> alone is important as it allows for consistent, interpretable prior selection.</li>
+</ol>
+<p>When the adjacency graph is disconnected it is not appropriate to scale the structure matrix <span class="math inline">\(\mathbf{R}\)</span> uniformly since for a given precision <span class="math inline">\(\tau_u\)</span>, local smoothing operates on each connected component independently.
+As such, each connected component should be scaled independently to have generalised variance one giving <span class="math inline">\(\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)\)</span> where <span class="math inline">\(\mathbf{R}_I\)</span> is the sub-matrix of the structure matrix corresponding to index set <span class="math inline">\(I\)</span>.</p>
+<ol start="2" style="list-style-type: decimal">
 <li>When one of the connected components is a single area, known either as a singleton or an island, the probability density <span class="math inline">\(\exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)\)</span> has no dependence on <span class="math inline">\(u_i\)</span>.
 This is equivalent to using an improper prior <span class="math inline">\(p(u_i) \propto 1\)</span> and can be avoided by setting each singleton to have independent Gaussian noise <span class="math inline">\(p(u_i) \sim \mathcal{N}(0, 1)\)</span>.</li>
 <li>To avoid confounding of the spatial random effects with the intercept, it is recommended to place a sum-to-zero constraint on each non-singleton connected component.
@@ -333,21 +340,21 @@ In other words, for each <span class="math inline">\(|I| &gt; 1\)</span> that <s
 <p>Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
 The Besag-York-Mollié (BYM) model of <span class="citation">Besag, York, and Mollié (<a href="#ref-besag1991bayesian">1991</a>)</span> accounts for this in a natural way by decomposing the spatial random effect <span class="math inline">\(\mathbf{u} = \mathbf{v} + \mathbf{w}\)</span> into a sum of an unstructured IID component <span class="math inline">\(\mathbf{v}\)</span> and a spatially structured Besag component <span class="math inline">\(\mathbf{w}\)</span>, each of which with their own respective precision parameters <span class="math inline">\(\tau_v\)</span> and <span class="math inline">\(\tau_w\)</span>.
 The resulting distribution is
-<span class="math display">\[\begin{equation}
-    \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \label{eq:bym}.
+<span class="math display" id="eq:bym">\[\begin{equation}
+    \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \tag{4.4}.
 \end{equation}\]</span>
 Including both <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> is intended to enable the model to learn the relative extent of the unstructured and structured components via <span class="math inline">\(\tau_v\)</span> and <span class="math inline">\(\tau_w\)</span>.
 However, in this specification scaling of the Besag precision matrix <span class="math inline">\(\mathbf{Q}\)</span> is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
 In particular, placing a joint prior <span class="math inline">\((\tau_v, \tau_w) \sim p(\tau_v, \tau_w)\)</span> which doesn’t privilege either component is more easily accomplished if <span class="math inline">\(\mathbf{Q}\)</span> and <span class="math inline">\(\mathbf{I}\)</span> have the same scale.
 Additionally, supposing we have a prior belief that the over-dispersion is primarily IID and <span class="math inline">\(\mathbf{v}\)</span> accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief using <span class="math inline">\(p(\tau_v, \tau_w)\)</span>, without inadvertently altering the prior about the overall variation.
 This highlights identifiability issues of the parameters <span class="math inline">\((\tau_v, \tau_w)\)</span> resulting from them not being orthogonal.
-Building on the models of <span class="citation">(<a href="#ref-leroux2000estimation"><strong>leroux2000estimation?</strong></a>)</span> and <span class="citation">Dean, Ugarte, and Militino (<a href="#ref-dean2001detecting">2001</a>)</span> which tackle this identifiability problem, but do not scale the spatially structured noise, <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span> propose a reparameterisation <span class="math inline">\((\tau_v, \tau_w) \mapsto (\tau_u, \phi)\)</span> of the BYM model known as the BYM2 model and given by
-<span class="math display">\[\begin{align}
-\mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \label{eq:bym2}
+Building on the models of <span class="citation">Leroux, Lei, and Breslow (<a href="#ref-leroux2000estimation">2000</a>)</span> and <span class="citation">Dean, Ugarte, and Militino (<a href="#ref-dean2001detecting">2001</a>)</span> which tackle this identifiability problem, but do not scale the spatially structured noise, <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span> propose a reparameterisation <span class="math inline">\((\tau_v, \tau_w) \mapsto (\tau_u, \phi)\)</span> of the BYM model known as the BYM2 model and given by
+<span class="math display" id="eq:bym2">\[\begin{align}
+\mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \tag{4.5}
 \end{align}\]</span>
 where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <span class="math inline">\(\mathbf{u}\)</span>, <span class="math inline">\(\phi \in [0, 1]\)</span> gives the proportion of the marginal variance explained by each component, and <span class="math inline">\(\mathbf{w}^\star\)</span> is a scaled version of <span class="math inline">\(\mathbf{w}\)</span> with precision matrix given by the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star\)</span>.
 When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
-To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue, n.d.</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
+To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue 2020</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
 </div>
 <div id="concerns-about-the-besag-models-representation-of-space" class="section level3 hasAnchor" number="4.2.4">
 <h3><span class="header-section-number">4.2.4</span> Concerns about the Besag model’s representation of space<a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -373,7 +380,7 @@ Figure illustrates a number of heuristic features for neighbour importance, incl
 </div>
 <div id="variance-structure" class="section level4 hasAnchor" number="4.2.4.3">
 <h4><span class="header-section-number">4.2.4.3</span> Variance structure<a href="beyond-borders.html#variance-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>In Equation <span class="math inline">\(\ref{eq:besag}\)</span> the precision of <span class="math inline">\(u_i\)</span> is proportional to its number of neighbours <span class="math inline">\(n_{\delta i}\)</span>.
+<p>In Equation <a href="beyond-borders.html#eq:besag">(4.1)</a> the precision of <span class="math inline">\(u_i\)</span> is proportional to its number of neighbours <span class="math inline">\(n_{\delta i}\)</span>.
 It follow that as <span class="math inline">\(n_{\delta i} \to \infty\)</span> then <span class="math inline">\(\text{Var}(u_i) \to 0\)</span>.
 This is illustrated by Figure where the area on the right is repeatedly divided such that its number of neighbours increases.
 This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
@@ -414,6 +421,9 @@ Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue. 2018. <span>“A No
 <div id="ref-howes2023beyond" class="csl-entry">
 Howes, Adam, Jeffrey W. Eaton, and Seth R. Flaxman. 2023+. <span>“<span class="nocase">Beyond borders: evaluating the suitability of spatial adjacency for small-area estimation</span>,”</span> 2023+.
 </div>
+<div id="ref-leroux2000estimation" class="csl-entry">
+Leroux, Brian G, Xingye Lei, and Norman Breslow. 2000. <span>“Estimation of Disease Rates in Small Areas: A New Mixed Model for Spatial Dependence.”</span> In <em>Statistical Models in Epidemiology, the Environment, and Clinical Trials</em>, 179–91. Springer.
+</div>
 <div id="ref-openshow1979million" class="csl-entry">
 Openshaw, S, and P. J. Taylor. 1979. <span>“A Million or so Correlation Coefficients, Three Experiments on the Modifiable Areal Unit Problem.”</span> <em>Statistical Applications in the Spatial Science</em>, 127–44.
 </div>
@@ -421,7 +431,7 @@ Openshaw, S, and P. J. Taylor. 1979. <span>“A Million or so Correlation Coeffi
 Paciorek, Christopher J et al. 2013. <span>“Spatial Models for Point and Areal Data Using Markov Random Fields on a Fine Grid.”</span> <em>Electronic Journal of Statistics</em> 7: 946–72.
 </div>
 <div id="ref-rue2020comment" class="csl-entry">
-Rue, Håvard. n.d. <span>“Comment on r-INLA Discussion Group Thread.”</span> <a href="https://groups.google.com/g/r-inla-discussion-group/c/l2fSYlbbJJM/m/8vUCjrO_BAAJ">https://groups.google.com/g/r-inla-discussion-group/c/l2fSYlbbJJM/m/8vUCjrO_BAAJ</a>.
+Rue, Håvard. 2020. <span>“Comment on r-INLA Discussion Group Thread.”</span>
 </div>
 <div id="ref-rue2005gaussian" class="csl-entry">
 Rue, Havard, and Leonhard Held. 2005. <em><span class="nocase">Gaussian Markov random fields: theory and applications</span></em>. CRC press.

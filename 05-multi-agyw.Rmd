@@ -137,7 +137,7 @@ Let $p_{itak} > 0$ with $\sum_{k = 1}^{3^{+}} p_{itak} = 1$, be the probabilitie
 
 A baseline category multinomial logistic regression model is specified by
 \begin{align}
-    \y_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
+    \mathbf{y}_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &= \eta_{itak}, \quad k = 2, 3^{+},
 \end{align}
 where the number in risk group $k$ is $y_{itak}$, the fixed sample size is $m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}$, and $k = 1$ is chosen as the baseline category.
@@ -149,8 +149,8 @@ I used the multinomial-Poisson transformation to enable inference with `R-INLA`.
 The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
 The equivalent model is of the form
 \begin{align}
-    y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
-    \log(\kappa_{itak}) &= \eta_{itak}. \label{eq:poisson2}
+    y_{itak} &\sim \text{Poisson}(\kappa_{itak}), (\#eq:poisson1) \\
+    \log(\kappa_{itak}) &= \eta_{itak}. (\#eq:poisson2)
 \end{align}
 The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed [@mccullagh1989generalized] as follows
 \begin{equation}
@@ -166,7 +166,7 @@ The joint distribution of $p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, 
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \label{eq:prodpoisson}
+&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), (\#eq:prodpoisson)
 \end{align}
 corresponding to the product of independent Poisson likelihoods as in Equation \@ref(eq:poisson1).
 
@@ -193,7 +193,7 @@ For the space-category $u_{ik}$ random effects I considered two specifications:
 1. Independent and identically distributed (IID) $u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})$,
 2. Besag [@besag1991bayesian] grouped by category
 $$
-\bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
+\mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
 $$
 The scaled structure matrix $\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}$ is given by the Kronecker product of the scaled Besag structure matrix $\mathbf{R}^\star_b$ and the identity matrix $\mathbf{I}$, and ${-}$ denotes the generalised matrix inverse.
 I followed best practises for the Besag model as described in Chapter \@ref(beyond-borders).
@@ -209,7 +209,7 @@ For the year-category $\gamma_{tk}$ random effects I considered two specificatio
 1. IID $\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})$,
 2. First order autoregressive (AR1) grouped by category
 $$
-\bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
+\boldsymbol{\mathbf{\gamma}} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
 $$
 The scaled structure matrix $\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}$ is given by the Kronecker product of a scaled AR1 structure matrix $\mathbf{R}^\star_r$ and the identity matrix $\mathbf{I}$.
 The AR1 structure matrix $\mathbf{R}_r$ is obtained by precision matrix of the random effects $\mathbf{r} = (r_1, \ldots, r_T)^\top$ specified by
@@ -256,7 +256,7 @@ This working likelihood is implemented by `family = "xPoisson"` in `R-INLA`, whi
 
 To estimate the proportion of those in the $k = 3^{+}$ risk group that were in the $k = 3$ and $k = 4$ risk groups respectively, I fit logistic regression models of the form
 \begin{align}
-    y_{ia4} &\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \label{eq:logistic-regression} \\
+    y_{ia4} &\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), (\#eq:logistic-regression) \\
     q_{ia} &= \text{logit}^{-1} \left( \eta_{ia} \right), 
 \end{align}
 where $q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}$.

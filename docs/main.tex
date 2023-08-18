@@ -538,6 +538,9 @@ Important indicators include:
   Estimates of ART coverage play a direct role in the provision and target setting for treatment services.
 \end{itemize}
 
+\hypertarget{challenges}{%
+\subsection{Challenges}\label{challenges}}
+
 Obtaining reliable, timely, estimates of these indicators at an appropriate spatial resolution is challenging.
 Among the most significant difficulties are:
 
@@ -573,7 +576,10 @@ Among the most significant difficulties are:
   Further, they are typically applied coarsely, and without proper accounting for uncertainty.
 \end{enumerate}
 
-The above challenges make direct interpretation of the data often misleading.
+\hypertarget{statistical-approaches}{%
+\subsection{Statistical approaches}\label{statistical-approaches}}
+
+The challenges above make direct interpretation of the data often misleading.
 Careful statistical modelling is required to overcome these limitations.
 
 \begin{enumerate}
@@ -593,6 +599,9 @@ Careful statistical modelling is required to overcome these limitations.
   Expert epidemiological, demographic, and local stakeholder guidance can be used to improve estimates.
   Ensuring the quality of any data used in the estimation process is essential.
 \end{enumerate}
+
+\hypertarget{future-directions}{%
+\subsection{Future directions}\label{future-directions}}
 
 Aims for HIV response going forward, and the surveillance capabilities needed to meet them.
 
@@ -739,7 +748,8 @@ The generative model for data \(\mathbf{y}\) is then
 with posterior distribution proportional to \(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\).
 
 For example, Figure \ref{fig:hierarchical-structure} illustrates a case where each individual \(i = 1, \ldots, n\) in a study is observed \(m_i\) times.
-Observations of the same individual \(y_{i1}, \ldots y_{im_i}\) are grouped together, and likely to have more similar properties than observations in different groups.
+Observations \(y_{i1}, \ldots y_{im_i}\) of the same individual are grouped together, and are more likely to have more similar properties than observations of different individuals.
+Hierarchical models often control over if and how information is shared between groups.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -762,10 +772,10 @@ Observations of the same individual \(y_{i1}, \ldots y_{im_i}\) are grouped toge
   y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\
   \mu_i &= \beta + u_i, \\
   \beta &\sim p(\beta), \\
-  \bu &\sim p(\bu), \\
+  \mathbf{u} &\sim p(\mathbf{u}), \\
   \sigma &\sim p(\sigma),
   \end{align}
-  where the vector \(\bu = (u_1, \ldots, u_n)\).
+  where the vector \(\mathbf{u} = (u_1, \ldots, u_n)\).
 \end{enumerate}
 
 \hypertarget{mixed-effects-models}{%
@@ -773,12 +783,12 @@ Observations of the same individual \(y_{i1}, \ldots y_{im_i}\) are grouped toge
 
 Fixed effects refer to those elements of the latent field which are constant across groups.
 Random effects refer to those elements of the latent field which vary across groups.
-These terms have notoriously many different and incompatible definitions which can cause confusion \autocite{gelman2005analysis}.
+These terms have notoriously many different, and incompatible, definitions which can cause confusion \autocite{gelman2005analysis}.
 I nonetheless find them useful to introduce here.
 
 For concreteness, in the partial pooling model above, the latent field is \(\mathbf{x} = (\beta, u_1, \ldots, u_n)\).
 The scalar \(\beta\) is a fixed effect which applies to all \(n\) groups.
-The vector \(\bu\) are random effects which alter the mean differently for each group.
+The vector \(\mathbf{u}\) are random effects which alter the mean differently for each group.
 The only hyperparameter is the standard deviation \(\theta = \sigma\).
 
 Random effects can also be structured to share information between some groups more than others.
@@ -795,7 +805,7 @@ y_i &\sim p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \l
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
 \eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}).
 \end{align*}
-The likelihood is given by a product \(p(\mathbf{y} \, | \, \bmeta, \boldsymbol{\mathbf{\theta}}_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1)\), where \(\bmeta = (\eta_1, \ldots, \eta_n)\).
+The likelihood is given by a product \(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\eta}}, \boldsymbol{\mathbf{\theta}}_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1)\), where \(\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots, \eta_n)\).
 Each response has conditional mean \(\mu_i\) with inverse link function \(g: \mathbb{R} \to \mathbb{R}\) such that \(\mu_i = g(\eta_i)\).
 The vector \(\boldsymbol{\mathbf{\theta}}_1 \in \mathbb{R}^{s_1}\), with \(s_1\) assumed small, are additional parameters of the likelihood.
 The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\), fixed effects \(\beta_j\) of the covariates \(z_{ji}\), and random effects \(f_k(\cdot)\) of the covariates \(u_{ki}\).
@@ -806,13 +816,13 @@ Let \(\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbo
 \subsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
 
 Extended latent Gaussian models {[}ELGMs; \textcite{stringer2021fast}{]} facilitate modelling of LGMs with greater non-linearities.
-In particular, the structured additive predictor is redefined as \(\bmeta = (\eta_1, \ldots \eta_{N_n})\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
-Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\bmeta\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\), where \([N_n] = \{1, \ldots, N_n\}\).
-The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\bmeta_{\mathcal{J}_i})\).
+In particular, the structured additive predictor is redefined as \(\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots \eta_{N_n})\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
+Each mean response \(\mu_i\) now depends on some subset \(\mathcal{J}_i \subseteq [N_n]\) of indices of \(\boldsymbol{\mathbf{\eta}}\), with \(\cup_{i = 1}^n \mathcal{J}_i = [N_n]\) and \(1 \leq |\mathcal{J}_i| \leq N_n\), where \([N_n] = \{1, \ldots, N_n\}\).
+The inverse link function \(g(\cdot)\) is redefined for each observation to be a possibly many-to-one mapping \(g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}\), such that \(\mu_i = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i})\).
 Put together, ELGMs are of the form
 \begin{align*}
-y_i &\sim p(y_i \, | \, \bmeta_{\mathcal{J}_i}, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
-\mu_i &= \mathbb{E}(y_i \, | \, \bmeta_{\mathcal{J}_i}) = g_i(\bmeta_{\mathcal{J}_i}), \\
+y_i &\sim p(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
+\mu_i &= \mathbb{E}(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}) = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}), \\
 \eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j = 1, \ldots, N_n,
 \end{align*}
 with latent field and hyperparameter prior distributions as in the LGM case.
@@ -826,7 +836,7 @@ In Chapter \ref{naomi-aghq}, the Naomi small-area estimation model used to produ
 \section{Survey methods}\label{survey}}
 
 Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
-Demographic and Health Surveys (DHS) are funded by USAID and run every three to five years in most countries.
+Demographic and Health Surveys (DHS) are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
 Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every two to three years in high HIV burden countries.
 
 \hypertarget{survey-notation-and-key-terms}{%
@@ -834,12 +844,13 @@ Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and r
 
 Consider a population of individuals \(i = 1, \ldots, N\) with outcomes of interest \(y_i\).
 A census is a type of survey where all individuals are sampled.
-Supposing responses from all individuals were recorded, then the population mean of \(G_i = G(y_i)\), where \(G\) is some function, could be calculated based on the census by
+Supposing responses from all individuals were recorded, then the population means can be calculated direct.
+For example, if \(G_i = G(y_i)\) then the population mean of \(G\) is
 \begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}
 
-In practice, it is impractically expensive to run a census.
+In practice, it is usually too expensive to run a census.
 Instead, only a subset of the individuals are sampled.
 Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
 Let \(S_i\) be an indicator for whether or not individual \(i\) is sampled, and \(R_i\) be an indicator for whether or not \(y_i\) is recorded.
@@ -847,7 +858,7 @@ If \(S_i = 0\) then \(R_i = 0\).
 If \(S_i = 1\) then individual \(i\) may not respond such that \(R_i = 0\).
 The population mean may be estimated directly based on the recorded subset of the population by
 \begin{equation}
-\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i} = \frac{\sum_{i = 1}^N R_i G(y_i)}{m_R}, \label{eq:direct}
+\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
 \end{equation}
 where \(m_R = \sum_{i = 1}^N R_i\) is the recorded sample size.
 
@@ -858,32 +869,39 @@ The survey design is called complex when the sampling probabilities for each ind
 
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
-Under a complex design, then not taking into account the sampling probabilities will result in bias, even in the case of no nonresponse.
-Even for a SRS, the problem of nonresponse is almost ubiquitous, and can result in analogous bias to ignoring the survey design.
+Under a complex design, failing to take into account the unequal sampling probabilities will result in bias.
+That said, even for a SRS, bias can be caused by nonresponse.
 
 \hypertarget{survey-design}{%
 \subsection{Survey design}\label{survey-design}}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Stratification into administrative units
-\item
-  Primary sampling units (PSUs) and their populations
-\item
-  Sample PSUs proportional to their population
-\item
-  Select households using systematic sampling
-\item
-  Visit each household and interview all adults
-\end{enumerate}
+The DHS \autocite{measure2012sampling} employs a two-stage sampling procedure.
+In the first stage, ennumeration areas (EAs) from a recently conducted census are typically used as the primary sampling unit (PSU).
+The EAs are then stratified by region, as well as urban-rural.
+After appropriate sample sizes are determined, EAs sampled with probability proportional to size (PPS) measured
+In the second stage, the secondary sampling units (SSUs) are households.
+All households in the selected EAs are listed, before being sampled systematically.
+Finally, each selected household is visited, and all adults are interviewed.
+
+The probability an individual is sampled is equal to the probability their household is sampled.
+The first-stage sampling probability of the \(j\)th cluster in stratum \(h\) given by
+\begin{equation}
+\pi_{1hj} = n_h \times \frac{N_{hj}}{\sum_j N_{hj}},
+\end{equation}
+where \(N_{hj}\) is the number of households and \(n_h\) be the number of clusters selected in stratum \(h\).
+The second-stage sampling probability each household within the \(i\)th cluster in stratum \(h\) is
+\begin{equation}
+\pi_{1hj} = \frac{n_{hj}}{N_{hj}},
+\end{equation}
+where \(n_{hj}\) is the numer of households selected in cluster \(j\) and stratum \(h\).
+That is, each household in the cluster has equal selection probability.
+The overall selection probability of each household in cluster \(j\) of stratum \(h\) is \(\pi_{hi} = \pi_{1hj} \times \pi_{2hj}\).
 
 \hypertarget{survey-analysis}{%
 \subsection{Survey analysis}\label{survey-analysis}}
 
 Suppose a complex survey is run with sampling probabilities \(\pi_i\).
-The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to give more weight to the responses provided by those unlikely to be included.
+The most popular method for taking into account that some individuals are more likely to be included in the survey than others is to overweight the responses of those unlikely to be included, and underweight the responses of those likely to be included.
 This can be achieved using design weights \(\delta_i = 1 / \pi_i\), which can be thought of as the number of individuals in the population represented by the \(i\)th sampled individual.
 Let \(P(R_i = 1 \, | \, S_i = 1) = \upsilon_i\) be the probability of response for sampled individual \(i\).
 The problem of nonresponse can be treated in the same way using nonresponse weights \(\gamma_i = 1 / \upsilon_i\), which analogously can be thought of as the number of sampled individuals represented by the \(i\)th recorded individual.
@@ -907,7 +925,6 @@ The problem difficultly \(\sigma_G\) measures the intrinsic difficulty of the es
 
 For simplicity, let \(G(y_i) = y_i\) and each \(y_i \in \{0, 1\}\).
 We weight then model following \textcite{chen2014use}.
-
 While this approach acknowledges the survey design, it has some important limitations.
 We ignore clustering structure.
 All of this isn't great and that someone should figure this out \autocite{gelman2007struggles}.
@@ -938,15 +955,15 @@ Let \(i \sim j\) if the areas \(A_i\) and \(A_j\) are adjacent or neighbouring.
 Adjacency is often defined by a shared border, though other choices are possible \autocite{paciorek2013spatial}.
 The Besag model \autocite{besag1991bayesian} is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the \(i\)th spatial random effect is given by
 \begin{equation}
-    u_i \, | \, \bu_{-i} \sim \N \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \label{eq:besag}
+    u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \label{eq:besag}
 \end{equation}
-where \(\delta i\) is the set of neighbours of \(A_i\) with cardinality \(n_{\delta i} = |\delta i|\) and \(\bu_{-i}\) is the vector of spatial random effects with the \(i\)th entry removed.
+where \(\delta i\) is the set of neighbours of \(A_i\) with cardinality \(n_{\delta i} = |\delta i|\) and \(\mathbf{u}_{-i}\) is the vector of spatial random effects with the \(i\)th entry removed.
 The conditional mean of the random effect \(u_i\) is the average of its neighbours \(\{u_j\}_{j \sim i}\) and the precision \(n_{\delta i}\tau_u\) is proportional to the number of neighbours \(n_{\delta i}\).
 By Brook's lemma \autocite{rue2005gaussian} the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
 \begin{equation}
-    \bu \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \bR^{-}), \label{eq:gmrf}
+    \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}), \label{eq:gmrf}
 \end{equation}
-where \(\bR^{-}\) is the generalised inverse of the rank-deficient structure matrix \(\bR\), so-called because it defines the structure of the precision matrix, with entries
+where \(\mathbf{R}^{-}\) is the generalised inverse of the rank-deficient structure matrix \(\mathbf{R}\), so-called because it defines the structure of the precision matrix, with entries
 \begin{equation}
     R_{ij} =
     \begin{cases}
@@ -955,18 +972,18 @@ where \(\bR^{-}\) is the generalised inverse of the rank-deficient structure mat
         0, & \text{otherwise.}
     \end{cases}
 \end{equation}
-The Markov property arises due to the conditional independence structure \(p(u_i \, | \, \bu_{-i}) = p(u_i \, | \, \bu_{\delta i})\) whereby each area only depends on its neighbours.
-This is reflected in the sparsity of \(\bR\) such that \(u_i \perp u_j \, | \, \bu_{-ij}\) if and only if \(R_{ij} = 0\).
-The structure matrix \(\bR\) may also be expressed as the Laplacian of the adjacency graph \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) with vertices \(v \in \mathcal{V}\) corresponding to each area and edges \(e \in \mathcal{E}\) between vertices \(i\) and \(j\) when \(i \sim j\).
+The Markov property arises due to the conditional independence structure \(p(u_i \, | \, \mathbf{u}_{-i}) = p(u_i \, | \, \mathbf{u}_{\delta i})\) whereby each area only depends on its neighbours.
+This is reflected in the sparsity of \(\mathbf{R}\) such that \(u_i \perp u_j \, | \, \mathbf{u}_{-ij}\) if and only if \(R_{ij} = 0\).
+The structure matrix \(\mathbf{R}\) may also be expressed as the Laplacian of the adjacency graph \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) with vertices \(v \in \mathcal{V}\) corresponding to each area and edges \(e \in \mathcal{E}\) between vertices \(i\) and \(j\) when \(i \sim j\).
 
-Rewriting Equation \eqref{eq:gmrf}, the probability density function of \(\bu\) is
+Rewriting Equation \eqref{eq:gmrf}, the probability density function of \(\mathbf{u}\) is
 \begin{equation}
-    p(\bu)
-    \propto \exp \left( -\frac{\tau_u}{2} \bu^\top \bR \bu \right)
+    p(\mathbf{u})
+    \propto \exp \left( -\frac{\tau_u}{2} \mathbf{u}^\top \mathbf{R} \mathbf{u} \right)
     \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). \label{eq:pdfu}
 \end{equation}
-This density is a function of the pairwise differences \(u_i - u_j\) and so is invariant to the addition of a constant \(c\) to each entry \(p(\bu) = p(\bu + c\mathbf{1})\), leading to an improper uniform distribution on the average of the \(u_i\).
-If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and \(\text{rank}(\bR) = n - 1\), while if \(\mathcal{G}\) is disconnected, and composed of \(n_c \geq 2\) connected components with index sets \(I_1, \ldots, I_{n_c}\), then the corresponding structure matrix \(\bR\) has rank \(n - n_c\) and the density is invariant to the addition of a constant to each of the connected components \(p(\bu_{I}) = p(\bu_{I} + c\mathbf{1})\) where \(I = I_1, \ldots, I_{n_c}\).
+This density is a function of the pairwise differences \(u_i - u_j\) and so is invariant to the addition of a constant \(c\) to each entry \(p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})\), leading to an improper uniform distribution on the average of the \(u_i\).
+If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and \(\text{rank}(\mathbf{R}) = n - 1\), while if \(\mathcal{G}\) is disconnected, and composed of \(n_c \geq 2\) connected components with index sets \(I_1, \ldots, I_{n_c}\), then the corresponding structure matrix \(\mathbf{R}\) has rank \(n - n_c\) and the density is invariant to the addition of a constant to each of the connected components \(p(\mathbf{u}_{I}) = p(\mathbf{u}_{I} + c\mathbf{1})\) where \(I = I_1, \ldots, I_{n_c}\).
 
 \hypertarget{best-practises-for-the-besag-model}{%
 \subsection{Best practises for the Besag model}\label{best-practises-for-the-besag-model}}
@@ -984,10 +1001,17 @@ If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can
   equal to one, by replacing \(\mathbf{R}\) with \(\mathbf{R}^\star = \mathbf{R} / \sigma^2_{\text{GV}}(\mathbf{R})\).
   As the diagonal elements \(R^-_{ii}\) correspond to marginal variances, the generalised variance gives a measure of the average marginal variance.
   However, this measure, introduced by \textcite{sorbye2014scaling}, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
-  Scaling mitigates the influence of the adjacency graph on the variance of \(\bu\).
+  Scaling mitigates the influence of the adjacency graph on the variance of \(\mathbf{u}\).
   Allowing the variance to be controlled by \(\tau_u\) alone is important as it allows for consistent, interpretable prior selection.
-  When the adjacency graph is disconnected it is not appropriate to scale the structure matrix \(\mathbf{R}\) uniformly since for a given precision \(\tau_u\), local smoothing operates on each connected component independently.
-  As such, each connected component should be scaled independently to have generalised variance one giving \(\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)\) where \(\mathbf{R}_I\) is the sub-matrix of the structure matrix corresponding to index set \(I\).
+\end{enumerate}
+
+When the adjacency graph is disconnected it is not appropriate to scale the structure matrix \(\mathbf{R}\) uniformly since for a given precision \(\tau_u\), local smoothing operates on each connected component independently.
+As such, each connected component should be scaled independently to have generalised variance one giving \(\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)\) where \(\mathbf{R}_I\) is the sub-matrix of the structure matrix corresponding to index set \(I\).
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
 \item
   When one of the connected components is a single area, known either as a singleton or an island, the probability density \(\exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)\) has no dependence on \(u_i\).
   This is equivalent to using an improper prior \(p(u_i) \propto 1\) and can be avoided by setting each singleton to have independent Gaussian noise \(p(u_i) \sim \mathcal{N}(0, 1)\).
@@ -1000,21 +1024,21 @@ If \(\mathcal{G}\) is connected, in that by traversing the edges, any vertex can
 \subsection{The reparameterised Besag-York-Mollié model}\label{the-reparameterised-besag-york-molliuxe9-model}}
 
 Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
-The Besag-York-Mollié (BYM) model of \textcite{besag1991bayesian} accounts for this in a natural way by decomposing the spatial random effect \(\bu = \bv + \w\) into a sum of an unstructured IID component \(\bv\) and a spatially structured Besag component \(\w\), each of which with their own respective precision parameters \(\tau_v\) and \(\tau_w\).
+The Besag-York-Mollié (BYM) model of \textcite{besag1991bayesian} accounts for this in a natural way by decomposing the spatial random effect \(\mathbf{u} = \mathbf{v} + \mathbf{w}\) into a sum of an unstructured IID component \(\mathbf{v}\) and a spatially structured Besag component \(\mathbf{w}\), each of which with their own respective precision parameters \(\tau_v\) and \(\tau_w\).
 The resulting distribution is
 \begin{equation}
-    \bu \sim \N(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \label{eq:bym}.
+    \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \label{eq:bym}.
 \end{equation}
-Including both \(\bv\) and \(\w\) is intended to enable the model to learn the relative extent of the unstructured and structured components via \(\tau_v\) and \(\tau_w\).
+Including both \(\mathbf{v}\) and \(\mathbf{w}\) is intended to enable the model to learn the relative extent of the unstructured and structured components via \(\tau_v\) and \(\tau_w\).
 However, in this specification scaling of the Besag precision matrix \(\mathbf{Q}\) is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
 In particular, placing a joint prior \((\tau_v, \tau_w) \sim p(\tau_v, \tau_w)\) which doesn't privilege either component is more easily accomplished if \(\mathbf{Q}\) and \(\mathbf{I}\) have the same scale.
-Additionally, supposing we have a prior belief that the over-dispersion is primarily IID and \(\bv\) accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief using \(p(\tau_v, \tau_w)\), without inadvertently altering the prior about the overall variation.
+Additionally, supposing we have a prior belief that the over-dispersion is primarily IID and \(\mathbf{v}\) accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief using \(p(\tau_v, \tau_w)\), without inadvertently altering the prior about the overall variation.
 This highlights identifiability issues of the parameters \((\tau_v, \tau_w)\) resulting from them not being orthogonal.
 Building on the models of \textcite{leroux2000estimation} and \textcite{dean2001detecting} which tackle this identifiability problem, but do not scale the spatially structured noise, \textcite{simpson2017penalising} propose a reparameterisation \((\tau_v, \tau_w) \mapsto (\tau_u, \phi)\) of the BYM model known as the BYM2 model and given by
 \begin{align}
-\bu = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \bv + \sqrt{\phi} \, \w^\star \right), \label{eq:bym2}
+\mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \label{eq:bym2}
 \end{align}
-where \(\tau_u\) is the marginal precision of \(\bu\), \(\phi \in [0, 1]\) gives the proportion of the marginal variance explained by each component, and \(\w^\star\) is a scaled version of \(\w\) with precision matrix given by the scaled structure matrix \(\mathbf{R}^\star\).
+where \(\tau_u\) is the marginal precision of \(\mathbf{u}\), \(\phi \in [0, 1]\) gives the proportion of the marginal variance explained by each component, and \(\mathbf{w}^\star\) is a scaled version of \(\mathbf{w}\) with precision matrix given by the scaled structure matrix \(\mathbf{R}^\star\).
 When \(\phi = 0\) the random effects are IID, and when \(\phi = 1\) the random effects follow the Besag model.
 To borrow an analogy \autocite{rue2020comment} the parameterisation \((\tau_v, \tau_w)\) is like having one hot water and one cold water tap, whereas the parameterisation \((\tau_u, \phi)\) is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
@@ -1047,7 +1071,7 @@ Figure illustrates a number of heuristic features for neighbour importance, incl
 \hypertarget{variance-structure}{%
 \subsubsection{Variance structure}\label{variance-structure}}
 
-In Equation \ref{eq:besag} the precision of \(u_i\) is proportional to its number of neighbours \(n_{\delta i}\).
+In Equation \eqref{eq:besag} the precision of \(u_i\) is proportional to its number of neighbours \(n_{\delta i}\).
 It follow that as \(n_{\delta i} \to \infty\) then \(\text{Var}(u_i) \to 0\).
 This is illustrated by Figure where the area on the right is repeatedly divided such that its number of neighbours increases.
 This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
@@ -1255,7 +1279,7 @@ Let \(p_{itak} > 0\) with \(\sum_{k = 1}^{3^{+}} p_{itak} = 1\), be the probabil
 
 A baseline category multinomial logistic regression model is specified by
 \begin{align}
-    \y_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
+    \mathbf{y}_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &= \eta_{itak}, \quad k = 2, 3^{+},
 \end{align}
 where the number in risk group \(k\) is \(y_{itak}\), the fixed sample size is \(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\), and \(k = 1\) is chosen as the baseline category.
@@ -1318,7 +1342,7 @@ For the space-category \(u_{ik}\) random effects I considered two specifications
 \item
   Besag \autocite{besag1991bayesian} grouped by category
   \[
-  \bu = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
+  \mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
   \]
   The scaled structure matrix \(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\) is given by the Kronecker product of the scaled Besag structure matrix \(\mathbf{R}^\star_b\) and the identity matrix \(\mathbf{I}\), and \({-}\) denotes the generalised matrix inverse.
   I followed best practises for the Besag model as described in Chapter \ref{beyond-borders}.
@@ -1341,7 +1365,7 @@ For the year-category \(\gamma_{tk}\) random effects I considered two specificat
 \item
   First order autoregressive (AR1) grouped by category
   \[
-  \bm{\gamma} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
+  \boldsymbol{\mathbf{\gamma}} = (\gamma_{11}, \ldots, \gamma_{13^{+}}, \ldots, \gamma_{T1}, \ldots, \gamma_{T3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\gamma \mathbf{R}^\star_\gamma)^{-}).
   \]
   The scaled structure matrix \(\mathbf{R}^\star_\gamma = \mathbf{R}^\star_r \otimes \mathbf{I}\) is given by the Kronecker product of a scaled AR1 structure matrix \(\mathbf{R}^\star_r\) and the identity matrix \(\mathbf{I}\).
   The AR1 structure matrix \(\mathbf{R}_r\) is obtained by precision matrix of the random effects \(\mathbf{r} = (r_1, \ldots, r_T)^\top\) specified by
@@ -1662,7 +1686,7 @@ Code for the analysis in this chapter is available from \href{https://github.com
 In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 \begin{equation}
-p(\bphi \, | \, \y) = \frac{p(\bphi, \y)}{p(\y)}.
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}.
 \end{equation}
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
@@ -1670,12 +1694,12 @@ Given a loss function, the posterior loss of a decision depends on the data only
 It is usually intractable to directly obtain the posterior distribution.
 This is because the denominator contains an intractable integral called the posterior normalising constant
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} \label{eq:evidence}
 \end{equation}
-For this reason, approximations to the posterior distribution \(\tilde p(\bphi \, | \, \y)\) are typically used in place of the exact posterior distribution.
+For this reason, approximations to the posterior distribution \(\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\) are typically used in place of the exact posterior distribution.
 Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
 \begin{equation}
-p(\bphi \, | \, \y) \propto p(\bphi, \y).
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
 \end{equation}
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
 
@@ -1688,32 +1712,32 @@ Laplace's method \autocite{laplace1774memoire} is a technique used to approximat
 \end{equation}
 where \(C > 0\) is a large constant and \(h\) is a function which is twice-differentiable.
 The Laplace approximation \autocite{tierney1986accurate} is obtained by application of Laplace's method to calculate the posterior normalising constant.
-Let \(h(\bphi) = \log p(\bphi, \y)\) such that
+Let \(h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})\) such that
 \begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}
 Laplace's method involves approximating the function \(h\) by its second order Taylor expansion evaluated at a maxima of \(h\) to eliminate the first order term.
 Let
 \begin{equation}
-\hat \bphi = \argmax_{\bphi} h(\bphi)
+\hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}})
 \end{equation}
 be the posterior mode, and
 \begin{equation}
-\hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
+\hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
 The Laplace approximation is then
 \begin{align}
-\tilde p_{\texttt{LA}}(\y) &= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}}.
+\tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \label{eq:la} \\
+&= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}
 Equation \eqref{eq:la} is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
-p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}
-It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution \(p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)\) such that
+It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\) such that
 \begin{equation}
-\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
+\tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}
 
 \hypertarget{the-marginal-laplace-approximation}{%
@@ -1721,23 +1745,23 @@ It follows that the Laplace approximation may be thought of as approximating the
 
 It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
 An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
-As before, let \(\bphi = (\x, \btheta)\) where \(\x\) is the latent field, and \(\btheta\) are the hyperparameters.
-Applying an equivalent Laplace approximation to the latent field, we have \(h(\x, \btheta) = \log p(\x, \btheta, \y)\) with posterior mode
+As before, let \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\) where \(\mathbf{x}\) is the latent field, and \(\boldsymbol{\mathbf{\theta}}\) are the hyperparameters.
+Applying an equivalent Laplace approximation to the latent field, we have \(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) with posterior mode
 \begin{equation}
-\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})
 \end{equation}
 and Hessian matrix evaluated at the posterior mode
 \begin{equation}
-\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \x(\btheta)}.
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-For both quantities cases dependence on the hyperparameters \(\btheta\) is made explicit.
+For both quantities cases dependence on the hyperparameters \(\boldsymbol{\mathbf{\theta}}\) is made explicit.
 The resulting marginal Laplace approximation is then
 \begin{align}
-\tilde p_{\texttt{LA}}(\btheta, \y) &= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
-&= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
-&= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \label{eq:marginalla} \\
+&= \exp(h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \mathbf{y})) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) |^{1/2}} \\
+&= \frac{p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
 \end{align}
-where \(\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})\) is a Gaussian approximation to the marginal posterior of the latent field.
+where \(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\) is a Gaussian approximation to the marginal posterior of the latent field.
 
 \hypertarget{quadrature}{%
 \subsection{Quadrature}\label{quadrature}}
@@ -1745,10 +1769,10 @@ where \(\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \ha
 Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 
-Let \(\mathcal{Q}\) be a set of quadrature points \(\z \in \mathcal{Q}\) and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
+Let \(\mathcal{Q}\) be a set of quadrature points \(\mathbf{z} \in \mathcal{Q}\) and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 \begin{equation}
-\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
+\tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}
 Quadrature methods are most effective when integrating over small dimensions.
 The reason why is that exponentially more quadrature points are required to cover each additional dimension.
@@ -1771,8 +1795,8 @@ The corresponding weighting function \(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\
 \end{equation}
 
 Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
-In \(d\) dimensions, the multivariate GHQ nodes \(\z \in \mathcal{Q}(d, k)\) are defined by \(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\).
-The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\) is given by \(\omega(\z) = \prod_{j = 1}^d \omega(z_j)\).
+In \(d\) dimensions, the multivariate GHQ nodes \(\mathbf{z} \in \mathcal{Q}(d, k)\) are defined by \(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\).
+The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\) is given by \(\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)\).
 
 \hypertarget{adaptive-quadrature}{%
 \subsubsection{Adaptive quadrature}\label{adaptive-quadrature}}
@@ -1785,7 +1809,7 @@ The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\
 
 }
 
-\caption{The Gauss-Hermite quadrature nodes \(\z \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
+\caption{The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
 \end{figure}
 
 In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
@@ -1805,7 +1829,7 @@ The integrated nested Laplace approximation (INLA) method \autocite{rue2009appro
 \hypertarget{tmb}{%
 \subsection{\texorpdfstring{\texttt{TMB}}{TMB}}\label{tmb}}
 
-Template Model Builder {[}TMB, or when referring to the software \texttt{TMB}; \textcite{kristensen2016tmb}{]} is an \(\textsc{R}\) package which implements the Laplace approximation.
+Template Model Builder {[}TMB, or when referring to the software \texttt{TMB}; \textcite{kristensen2016tmb}{]} is an R package which implements the Laplace approximation.
 In \texttt{TMB} derivatives are obtained using automatic differentiation \autocite{baydin2017automatic}.
 
 \hypertarget{r-inla}{%
@@ -2290,6 +2314,8 @@ Variable(s) & Description \\
 
 \hypertarget{inference-comparison-1}{%
 \section{Inference comparison}\label{inference-comparison-1}}
+
+\autocite{blangiardo2015spatial}
 
 \hypertarget{mcmc-convergence-and-suitability}{%
 \section{MCMC convergence and suitability}\label{mcmc-convergence-and-suitability}}

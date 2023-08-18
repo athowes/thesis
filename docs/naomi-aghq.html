@@ -111,7 +111,12 @@ div.csl-indent {
 <li class="chapter" data-level="2" data-path="hiv-aids.html"><a href="hiv-aids.html"><i class="fa fa-check"></i><b>2</b> The HIV/AIDS epidemic</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
-<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a></li>
+<li class="chapter" data-level="2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#surveillance"><i class="fa fa-check"></i><b>2.2</b> HIV surveillance</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="hiv-aids.html"><a href="hiv-aids.html#challenges"><i class="fa fa-check"></i><b>2.2.1</b> Challenges</a></li>
+<li class="chapter" data-level="2.2.2" data-path="hiv-aids.html"><a href="hiv-aids.html#statistical-approaches"><i class="fa fa-check"></i><b>2.2.2</b> Statistical approaches</a></li>
+<li class="chapter" data-level="2.2.3" data-path="hiv-aids.html"><a href="hiv-aids.html#future-directions"><i class="fa fa-check"></i><b>2.2.3</b> Future directions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="bayes-st.html"><a href="bayes-st.html"><i class="fa fa-check"></i><b>3</b> Bayesian spatio-temporal statistics</a>
 <ul>
@@ -263,7 +268,7 @@ div.csl-indent {
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <p>In this chapter I describe a novel Bayesian inference method I developed.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software () to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span>.
+Over 35 countries have used the Naomi model software (<code>https://naomi.unaids.org</code>) to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span>.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.</p>
 <p>I began working on this project at the start of my PhD.
 However, it was only after I read <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span> that I began making progress.
@@ -275,19 +280,19 @@ Code for the analysis in this chapter is available from <a href="https://github.
 <p>In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 <span class="math display">\[\begin{equation}
-p(\bphi \, | \, \y) = \frac{p(\bphi, \y)}{p(\y)}.
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}.
 \end{equation}\]</span>
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.</p>
 <p>It is usually intractable to directly obtain the posterior distribution.
 This is because the denominator contains an intractable integral called the posterior normalising constant
-<span class="math display">\[\begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi \label{eq:evidence}
+<span class="math display" id="eq:evidence">\[\begin{equation}
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.1}
 \end{equation}\]</span>
-For this reason, approximations to the posterior distribution <span class="math inline">\(\tilde p(\bphi \, | \, \y)\)</span> are typically used in place of the exact posterior distribution.
+For this reason, approximations to the posterior distribution <span class="math inline">\(\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> are typically used in place of the exact posterior distribution.
 Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
 <span class="math display">\[\begin{equation}
-p(\bphi \, | \, \y) \propto p(\bphi, \y).
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
 \end{equation}\]</span>
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.</p>
 <div id="the-laplace-approximation" class="section level3 hasAnchor" number="6.1.1">
@@ -298,64 +303,64 @@ Other approximate Bayesian inference methods can more directly be thought of as 
 \end{equation}\]</span>
 where <span class="math inline">\(C &gt; 0\)</span> is a large constant and <span class="math inline">\(h\)</span> is a function which is twice-differentiable.
 The Laplace approximation <span class="citation">(<a href="#ref-tierney1986accurate">Tierney and Kadane 1986</a>)</span> is obtained by application of Laplace’s method to calculate the posterior normalising constant.
-Let <span class="math inline">\(h(\bphi) = \log p(\bphi, \y)\)</span> such that
+Let <span class="math inline">\(h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})\)</span> such that
 <span class="math display">\[\begin{equation}
-p(\y) = \int_{\mathbb{R}^d} p(\y, \bphi) \text{d}\bphi = \int_{\mathbb{R}^d} \exp(h(\bphi)) \text{d}\bphi.
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}\]</span>
 Laplace’s method involves approximating the function <span class="math inline">\(h\)</span> by its second order Taylor expansion evaluated at a maxima of <span class="math inline">\(h\)</span> to eliminate the first order term.
 Let
 <span class="math display">\[\begin{equation}
-\hat \bphi = \argmax_{\bphi} h(\bphi)
+\hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}})
 \end{equation}\]</span>
 be the posterior mode, and
 <span class="math display">\[\begin{equation}
-\hat {\Hb} = - \frac{\partial^2}{\partial \bphi \partial \bphi^\top} h(\bphi) \rvert_{\bphi = \hat \bphi}
+\hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}
 \end{equation}\]</span>
 be the Hessian matrix evaluated at the posterior mode.
 The Laplace approximation is then
-<span class="math display">\[\begin{align}
-\tilde p_{\texttt{LA}}(\y) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat \bphi, \y) - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right) \text{d}\bphi \label{eq:la} \\
-&amp;= p(\hat \bphi, \y) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb} |^{1/2}}.
+<span class="math display" id="eq:la">\[\begin{align}
+\tilde p_{\texttt{LA}}(\mathbf{y}) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.2} \\
+&amp;= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}\]</span>
-Equation <a href="#eq:la">(<strong>??</strong>)</a> is calculated using the known normalising constant of the Gaussian distribution
+Equation <a href="naomi-aghq.html#eq:la">(6.2)</a> is calculated using the known normalising constant of the Gaussian distribution
 <span class="math display">\[\begin{equation}
-p_\texttt{G}(\bphi \, | \, \y) = \mathcal{N}(\bphi \, | \, \hat \bphi, \hat {\Hb}^{-1}) = \frac{| \hat {\Hb} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\bphi - \hat \bphi)^\top \hat {\Hb} (\bphi - \hat \bphi) \right).
+p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}\]</span>
-It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution <span class="math inline">\(p(\bphi \, | \, \y) \approx p_\texttt{G}(\bphi \, | \, \y)\)</span> such that
+It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> such that
 <span class="math display">\[\begin{equation}
-\tilde p_{\texttt{LA}}(\y) = \frac{p(\bphi, \y)}{p_\texttt{G}(\bphi \, | \, \y)} \Big\rvert_{\bphi = \hat \bphi}.
+\tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}\]</span></p>
 <div id="the-marginal-laplace-approximation" class="section level4 hasAnchor" number="6.1.1.1">
 <h4><span class="header-section-number">6.1.1.1</span> The marginal Laplace approximation<a href="naomi-aghq.html#the-marginal-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
 An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
-As before, let <span class="math inline">\(\bphi = (\x, \btheta)\)</span> where <span class="math inline">\(\x\)</span> is the latent field, and <span class="math inline">\(\btheta\)</span> are the hyperparameters.
-Applying an equivalent Laplace approximation to the latent field, we have <span class="math inline">\(h(\x, \btheta) = \log p(\x, \btheta, \y)\)</span> with posterior mode
+As before, let <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> where <span class="math inline">\(\mathbf{x}\)</span> is the latent field, and <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> are the hyperparameters.
+Applying an equivalent Laplace approximation to the latent field, we have <span class="math inline">\(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> with posterior mode
 <span class="math display">\[\begin{equation}
-\hat \x(\btheta) = \argmax_{\x} h(\x, \btheta)
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})
 \end{equation}\]</span>
 and Hessian matrix evaluated at the posterior mode
 <span class="math display">\[\begin{equation}
-\hat {\Hb}(\btheta) = - \frac{\partial^2}{\partial \x \partial \x^\top} h(\x, \btheta) \rvert_{\x = \hat \x(\btheta)}.
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}\]</span>
-For both quantities cases dependence on the hyperparameters <span class="math inline">\(\btheta\)</span> is made explicit.
+For both quantities cases dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit.
 The resulting marginal Laplace approximation is then
-<span class="math display">\[\begin{align}
-\tilde p_{\texttt{LA}}(\btheta, \y) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat \x(\btheta), \btheta, \y) - \frac{1}{2} (\x - \hat \x(\btheta))^\top \hat {\Hb}(\btheta) (\x - \hat \x(\btheta)) \right) \text{d}\x \label{eq:marginalla} \\
-&amp;= \exp(h(\hat \x(\btheta), \y)) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\Hb}(\btheta) |^{1/2}} \\
-&amp;= \frac{p(\x, \btheta, \y)}{\tilde p_\texttt{G}(\x \, | \, \btheta, \y)} \Big\rvert_{\x = \hat \x(\btheta)},
+<span class="math display" id="eq:marginalla">\[\begin{align}
+\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \tag{6.3} \\
+&amp;= \exp(h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \mathbf{y})) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) |^{1/2}} \\
+&amp;= \frac{p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
 \end{align}\]</span>
-where <span class="math inline">\(\tilde p_\texttt{G}(\x \, | \, \btheta, \y) = \mathcal{N}(\x \, | \, \hat \x(\btheta), \hat{\Hb}(\btheta)^{-1})\)</span> is a Gaussian approximation to the marginal posterior of the latent field.</p>
+where <span class="math inline">\(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\)</span> is a Gaussian approximation to the marginal posterior of the latent field.</p>
 </div>
 </div>
 <div id="quadrature" class="section level3 hasAnchor" number="6.1.2">
 <h3><span class="header-section-number">6.1.2</span> Quadrature<a href="naomi-aghq.html#quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.</p>
-<p>Let <span class="math inline">\(\mathcal{Q}\)</span> be a set of quadrature points <span class="math inline">\(\z \in \mathcal{Q}\)</span> and <span class="math inline">\(\omega: \mathbb{R}^d \to \mathbb{R}\)</span> be a weighting function.
+<p>Let <span class="math inline">\(\mathcal{Q}\)</span> be a set of quadrature points <span class="math inline">\(\mathbf{z} \in \mathcal{Q}\)</span> and <span class="math inline">\(\omega: \mathbb{R}^d \to \mathbb{R}\)</span> be a weighting function.
 Then a quadrature approximation to the posterior normalising constant is given by
 <span class="math display">\[\begin{equation}
-\tilde p_{\mathcal{Q}}(\y) = \sum_{\z \in \mathcal{Q}} p(\y, \z) \omega(\z).
+\tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}\]</span>
 Quadrature methods are most effective when integrating over small dimensions.
 The reason why is that exponentially more quadrature points are required to cover each additional dimension.
@@ -374,16 +379,16 @@ The corresponding weighting function <span class="math inline">\(\omega: \mathca
 \omega(z) = \frac{\phi(z) \cdot k!}{[H_{k + 1}(z)]^2}.
 \end{equation}\]</span></p>
 <p>Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
-In <span class="math inline">\(d\)</span> dimensions, the multivariate GHQ nodes <span class="math inline">\(\z \in \mathcal{Q}(d, k)\)</span> are defined by <span class="math inline">\(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\)</span>.
-The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\)</span> is given by <span class="math inline">\(\omega(\z) = \prod_{j = 1}^d \omega(z_j)\)</span>.</p>
+In <span class="math inline">\(d\)</span> dimensions, the multivariate GHQ nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(d, k)\)</span> are defined by <span class="math inline">\(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\)</span>.
+The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\)</span> is given by <span class="math inline">\(\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)\)</span>.</p>
 </div>
 <div id="adaptive-quadrature" class="section level4 hasAnchor" number="6.1.2.2">
 <h4><span class="header-section-number">6.1.2.2</span> Adaptive quadrature<a href="naomi-aghq.html#adaptive-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:aghq-demo"></span>
-<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\z \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
+<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
 <p class="caption">
-Figure 6.1: The Gauss-Hermite quadrature nodes <span class="math inline">\(\z \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
+Figure 6.1: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
 </p>
 </div>
 <p>In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
@@ -401,7 +406,7 @@ No fixed quadrature rule can be expected to perform well in integrating any post
 <h2><span class="header-section-number">6.2</span> Software<a href="naomi-aghq.html#software" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="tmb" class="section level3 hasAnchor" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> <code>TMB</code><a href="naomi-aghq.html#tmb" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Template Model Builder [TMB, or when referring to the software <code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an <span class="math inline">\(\textsc{R}\)</span> package which implements the Laplace approximation.
+<p>Template Model Builder [TMB, or when referring to the software <code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an R package which implements the Laplace approximation.
 In <code>TMB</code> derivatives are obtained using automatic differentiation <span class="citation">(<a href="#ref-baydin2017automatic">Baydin et al. 2017</a>)</span>.</p>
 </div>
 <div id="r-inla" class="section level3 hasAnchor" number="6.2.2">
@@ -459,8 +464,8 @@ HIV prevalence <span class="math inline">\(\rho_i \in [0, 1]\)</span>, antiretro
 HIV incidence rate is modelled on the log scale as <span class="math inline">\(\log(\lambda_i) = \eta^\lambda_i\)</span>, and depends on adult HIV prevalence and adult ART coverage.
 Let <span class="math inline">\(\kappa_i\)</span> be the proportion recently infected among HIV positive persons.
 This proportion is linked to HIV incidence via
-<span class="math display">\[\begin{equation}
-\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \label{eq:kappa}
+<span class="math display" id="eq:kappa">\[\begin{equation}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.4}
 \end{equation}\]</span>
 where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are strongly informed by priors for the particular survey.</p>
 <p>These processes are each informed by household survey data.
