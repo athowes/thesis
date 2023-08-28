@@ -279,7 +279,7 @@
  I am grateful for the research environment offered by the Modern Statistics and Statistical Machine Learning Centre for Doctoral Training at Imperial and Oxford, the HIV Inference Group at Imperial, and the Machine Learning and Global Health Network.
  Thanks to Mike McLaren, Kevin Esvelt, the Nucleic Acid Observatory team, and the Sculpting Evolution lab for hosting my visit to the MIT Media Lab.
  Thanks to Alex Stringer, and the Department of Statistics and Actuarial Science for hosting my visit to the University of Waterloo.
- My sense for what matters has been shaped, and arguably enriched, by the Effective Altruism community.
+ My sense for what matters has been shaped (arguably improved) by the Effective Altruism community.
  This research was made possible by funding provided by the Bill \& Melinda Gates Foundation and EPSRC.
 
  \begin{flushright}
@@ -344,7 +344,7 @@ Together, the contributions in this thesis help to guide precision HIV policy in
 \markboth{Introduction}{}
 
 This thesis is about applied and methodological Bayesian statistics.
-It is applied and methodological in that I am concerned first with real world questions and second with the means to answer them.
+It is applied and methodological in that I am concerned with real world questions and the means to answer them.
 It is Bayesian in that I arrive at conclusions based on data using probability models.
 
 
@@ -359,14 +359,14 @@ It is Bayesian in that I arrive at conclusions based on data using probability m
 \end{figure}
 
 The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
-The \textcite{ihme2019} found HIV to be the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older (Figure \ref{fig:gbd}).
+HIV is the largest cause of disability adjusted life years (DALYs) in SSA among those one year and older {[}\textcite{ihme2019}; Figure \ref{fig:gbd}{]}.
 Using statistics to quantify the epidemic is an important part of the public health response, and the path towards disease control and elimination.
 However, there are substantial challenges involved in obtaining suitable estimates of relevant indicators.
 
 The estimates in this thesis are based on data recorded from national household surveys or routinely collected from healthcare facilities.
 An important feature of this data is its location and the time at which it was collected.
-While diverse, spatio-temporal data have distinctive commonalities.
-I draw on modelling techniques from spatio-temporal statistics.
+While diverse, spatio-temporal data have distinctive commonalities which reoccur across settings.
+As such, I draw on modelling techniques from spatio-temporal statistics.
 
 Computation is an essential part of modern statistical practice.
 Each project in this thesis, as well as the thesis itself, is accompanied by R code, hosted on GitHub.
@@ -718,6 +718,28 @@ Foremost among them is correlation structure.
 Tobler's first law of geography, also expressed by \textcite{fisher1936design}, is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
 This law extends not only to space but also time.
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/zmb-maps} 
+
+}
+
+\caption{To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from \href{https://github.com/athowes/zambia-unaids}{\texttt{athowes/zambia-unaids}}.}\label{fig:zmb-maps}
+\end{figure}
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/zmb-scatter} 
+
+}
+
+\caption{The estimates from surveys with higher sample size have higher Pearson correlation coefficient (\(R\)) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \ref{fig:zmb-maps}.}\label{fig:zmb-scatter}
+\end{figure}
+
 \hypertarget{hierarchical-lgm-elgm}{%
 \section{Model classes}\label{hierarchical-lgm-elgm}}
 
@@ -844,7 +866,7 @@ Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and r
 
 Consider a population of individuals \(i = 1, \ldots, N\) with outcomes of interest \(y_i\).
 A census is a type of survey where all individuals are sampled.
-Supposing responses from all individuals were recorded, then the population means can be calculated direct.
+Supposing responses from all individuals were recorded, then any population means can be calculated directly.
 For example, if \(G_i = G(y_i)\) then the population mean of \(G\) is
 \begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
@@ -852,7 +874,7 @@ For example, if \(G_i = G(y_i)\) then the population mean of \(G\) is
 
 In practice, it is usually too expensive to run a census.
 Instead, only a subset of the individuals are sampled.
-Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
 Let \(S_i\) be an indicator for whether or not individual \(i\) is sampled, and \(R_i\) be an indicator for whether or not \(y_i\) is recorded.
 If \(S_i = 0\) then \(R_i = 0\).
 If \(S_i = 1\) then individual \(i\) may not respond such that \(R_i = 0\).
@@ -870,7 +892,7 @@ The survey design is called complex when the sampling probabilities for each ind
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
 Under a complex design, failing to take into account the unequal sampling probabilities will result in bias.
-That said, even for a SRS, bias can be caused by nonresponse.
+That said, even for a SRS, nonresponse can cause analogous bias.
 
 \hypertarget{survey-design}{%
 \subsection{Survey design}\label{survey-design}}
@@ -1105,7 +1127,8 @@ In this chapter I describe an application of Bayesian spatio-temporal statistics
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in \textcite{howes2023spatio}.
-Kathryn has also created a spreadsheet tool using the estimates which is now being used by countries.
+Kathryn has also created a spreadsheet tool (\texttt{https://hivtools.unaids.org/pse/}) using the estimates.
+This tool is being used by countries, and continues to be developed.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{athowes/multi-agyw}}.
 
 \hypertarget{background-2}{%
@@ -1114,43 +1137,15 @@ Code for the analysis in this chapter is available from \href{https://github.com
 In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-Table \ref{tab:agyw-reasons} gives the social and biological reasons for this disparity.
+The social and biological reasons for this disparity include structural vulnerabilites and power imbalances, age patterns of sexual mixing, younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming \autocite{saul2018dreams,global2018measurement}.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\caption{\label{tab:agyw-reasons} AYGW are at higher risk of HIV infection as a result of interacting social and biological reasons.}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Reason
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Description
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Reason
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Description
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Structural vulnerability and power imbalances & Gender inequality, lack of agency, economic factors, limited healthcare access, stigma and discrimination \\
-Age patterns of sexual mixing, including a younger age at first sex & Older male partners have higher prevalence of HIV \\
-Increased susceptibility to HIV infection & Immature reproductive tract, including a thinner cervical lining and higher levels of immune cells \\
-\end{longtable}
 
 The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021.
 It proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
-As risk depends on both factors, prioritisation of prevention services is more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
+Risk of acquiring HIV depends on both factors.
+As such, prioritisation of prevention services is more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
-To implement the strategy, estimates of the size of each risk group are required.
-
-
+Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.
 
 
 
@@ -1160,34 +1155,27 @@ To implement the strategy, estimates of the size of each risk group are required
 
 }
 
-\caption{Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence.
-I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence.
-This figure is illustrative, and should not be interpreted quantitatively.}\label{fig:risk-grid}
+\caption{Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. This figure is adapted from a presentation I gave for High Impact Medicine, and is intended to be illustrative, rather than interpreted quantitatively.}\label{fig:risk-grid}
 \end{figure}
 
 \hypertarget{data}{%
 \section{Data}\label{data}}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1818}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3455}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2727}}@{}}
-\caption{\label{tab:risk-groups} HIV risk groups and assumed HIV incidence rate ratio for each risk group relative to AGYW with one cohabiting sexual partner.
-Among FSW, the incidence rate ratio depended on the level of HIV incidence among the general population.
-The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of ALPHA network data.
-Non-regular partners are defined to be non-cohabiting.
-The transactional sex risk group is adjusted during analysis to correspond to female sex worker, and incidence rate ratios among FSW were derived based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
-When the local HIV incidence in the general population is higher, the incidence rate ratio for FSW is lower.}\tabularnewline
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3056}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4167}}@{}}
+\caption{\label{tab:risk-groups} HIV risk groups and HIV incidence rate ratios relative to AGYW with one cohabiting sexual partner.
+The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of longitudinal data \autocite{slaymaker2020croi}.
+Among FSW, the incidence rate ratio (25.0, 13.0, 9.0, 6.0, 3.0) depended on the level of HIV incidence among the general population (\textless0.1\%, 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, \textgreater3.0\%), such that higher local HIV incidence in the general population corresponds to a lower incidence rate ratio for FSW.
+These estimates were derived by UNAIDS based on patterns of relative HIV prevalence among FSW compared to general population prevalence.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Risk group
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Description
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Local HIV incidence
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Incidence ratio
+Incidence rate ratio
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
@@ -1197,18 +1185,16 @@ Risk group
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Description
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Local HIV incidence
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Incidence ratio
+Incidence rate ratio
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-None & Not sexually active & -- & 0.0 \\
-Low & One cohabiting partner & -- & 1.0 (Baseline) \\
-High & Non-regular or multiple partner(s) & -- & 1.72 \\
-Very High & Transactional sex (adjusted to correspond to female sex workers) & 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, 1.0-3.0\% & 13.0, 9.0, 6.0, 3.0 \\
+None & Not sexually active & 0.0 \\
+Low & One cohabiting sexual partner & 1.0 (baseline) \\
+High & Non-regular or multiple partner(s) & 1.72 \\
+Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 3.0-25.0 (varies depending on local HIV incidence) \\
 \end{longtable}
 
 
@@ -1219,14 +1205,17 @@ Very High & Transactional sex (adjusted to correspond to female sex workers) & 0
 
 }
 
-\caption{Surveys used in my analysis by year, survey type, sample size, and whether the survey included a question about transactional sex.}\label{fig:available-surveys}
+\caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex.}\label{fig:available-surveys}
 \end{figure}
 
-I used household survey data from 13 designated AGYW priority countries: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
-I included surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts.
-Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS) were included.
+I used household survey data from 13 countries identified by the GFATM as priority countries for implementation of AGYW HIV prevention: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+Surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts were included.
+There were 46 suitable surveys (Figure \ref{fig:available-surveys}), with a total sample size of 274,970 women aged 15-29 years.
+Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
+The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
+Included surveys comprise Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS).
 
-For each survey, I classified respondents into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
+For each survey, respondents were classified into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
 These risk groups were (Table \ref{tab:risk-groups}):
 
 \begin{enumerate}
@@ -1239,7 +1228,7 @@ These risk groups were (Table \ref{tab:risk-groups}):
 \item
   Non-regular or multiple sexual partner(s), and
 \item
-  AGYW who report transactional sex.
+  Reporting transactional sex.
 \end{enumerate}
 
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
@@ -1247,12 +1236,14 @@ Exact survey questions varied slightly across survey types and between survey ph
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
 Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
+Full survey questions used are provided in Appendix \ref{survey-questions}.
 
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64\% of women reported transactional sex.
 In surveys without such a question, women almost never (0.01\%) answered that one of their three most recent partners was a sex work client.
-Due to this incomparability across surveys, I did not include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
-I instead focused on estimating the proportion of women who reported transactional sex at a district level, and subsequently adjusted these proportions to align to national estimates for the number of female sex workers.
+As a result of this incomparability, it was not not appropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
+Of the total 46 surveys included in the analysis, 12 had a specific transactional sex question, with a total sample size of 62,853 (28,753 aged 15-19 years, 26,324 aged 20-24 years, and 7,776 aged 25-29 years.
+There were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
 
 I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
 The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries.
@@ -1271,31 +1262,32 @@ Then, using only those surveys with a specific transactional sex question, I fit
 \subsection{Spatio-temporal multinomial logistic regression}\label{st-multinomial}}
 
 Let \(i \in \{1, \ldots, n\}\) denote districts partitioning the 13 studied AGYW priority countries \(c[i] \in \{1, \ldots, 13\}\).
-Consider the years 1999-2018 denoted as \(t \in \{1, \ldots, T\}\), and age groups \(a \in \{\text{15--19}, \text{20--24}, \text{25--29}\}\).
+Consider the years 1999-2018 denoted as \(t \in \{1, \ldots, T\}\), and age groups \(a \in \{\text{15-19}, \text{20-24}, \text{25-29}\}\).
 Let \(p_{itak} > 0\) with \(\sum_{k = 1}^{3^{+}} p_{itak} = 1\), be the probabilities of membership of risk group \(k\).
 
 \hypertarget{multinomial-logistic-regression}{%
 \subsubsection{Multinomial logistic regression}\label{multinomial-logistic-regression}}
 
-A baseline category multinomial logistic regression model is specified by
+A standard multinomial logistic regression model \autocite[e.g.][]{gelman2013bayesian} is specified by
 \begin{align}
     \mathbf{y}_{ita} &= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &= \eta_{itak}, \quad k = 2, 3^{+},
 \end{align}
 where the number in risk group \(k\) is \(y_{itak}\), the fixed sample size is \(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\), and \(k = 1\) is chosen as the baseline category.
-This model is not an LGM, and is not possible to fit in \texttt{R-INLA}.
+This model is not an LGM.
+I used the multinomial-Poisson transformation to perform inference using the INLA \autocite{rue2009approximate} algorithm via the \texttt{R-INLA} package \autocite{martins2013bayesian}.
+INLA has comparable accuracy and is substantially more computationally tractable than MCMC for GLMMs defined over 940 districts, 20 years, 3 age groups, and 4 risk groups.
 
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
 
-I used the multinomial-Poisson transformation to enable inference with \texttt{R-INLA}.
-The transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+The multinomial-Poisson transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
 The equivalent model is of the form
 \begin{align}
     y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
     \log(\kappa_{itak}) &= \eta_{itak}. \label{eq:poisson2}
 \end{align}
-The transformation works because conditional on their sum Poisson counts are jointly multinomially distributed \autocite{mccullagh1989generalized} as follows
+The basis of the transformation is that conditional on their sum Poisson counts are jointly multinomially distributed \autocite{mccullagh1989generalized} as follows
 \begin{equation}
     \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
 \end{equation}
@@ -1304,7 +1296,10 @@ Category probabilities may then be obtained using the softmax function
 \begin{equation}
     p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
 \end{equation}
-Under the equivalent model, the sample sizes \(m_{ita} = \sum_k y_{itak}\) are treated as random \(m_{ita} \sim \text{Poisson} \left( \kappa_{ita} \right)\) rather than fixed.
+Under the equivalent model, the sample sizes \(m_{ita}\) are treated as random rather than fixed such that
+\begin{equation}
+m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right).
+\end{equation}
 The joint distribution of \(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\) is then
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
@@ -1313,19 +1308,65 @@ p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita
 \end{align}
 corresponding to the product of independent Poisson likelihoods as in Equation \eqref{eq:poisson1}.
 
-This model, with random sample sizes, is equivalent to a multinomial logistic regression model only when the normalisation constants \(m_{ita}\) are recovered exactly.
-To ensure that this is the case, one approach is to include observation-specific random effects \(\theta_{ita}\) in the equation for the linear predictor.
+The random sample size model is equivalent to a multinomial logistic regression model only when the normalisation constants \(m_{ita}\) are recovered exactly.
+To ensure that this is the case, observation-specific random effects \(\theta_{ita}\) can be included in the equation for the linear predictor.
 Multiplying each of \(\{\kappa_{itak}\}_{k = 1}^{3^+}\) by \(\exp(\theta_{ita})\) has no effect on the category probabilities, but does provide the necessary flexibility for \(\kappa_{ita}\) to recover \(m_{ita}\) exactly.
-Although in theory an improper prior \(\theta_{ita} \propto 1\) should be used, I found that in practise, by keeping \(\eta_{ita}\) otherwise small using appropriate constraints, so that arbitrarily large values of \(\theta_{ita}\) are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior.
+Although in theory an improper prior distribution \(\theta_{ita} \propto 1\) should be used, I found that in practise, by keeping \(\eta_{ita}\) otherwise small using appropriate constraints, so that arbitrarily large values of \(\theta_{ita}\) are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.
 
 \hypertarget{model-specifications}{%
 \subsubsection{Model specifications}\label{model-specifications}}
 
-I considered four models for \(\eta_{ita}\) in Equation \eqref{eq:poisson2} of the form
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0202}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1818}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2020}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1818}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1919}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2222}}@{}}
+\caption{\label{tab:multinomial-models} Four multinomial regression models were considered. Observation random effects \(\theta_{ita}\), included in all models, are omitted from this table.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category \(\beta_k\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Country \(\zeta_{ck}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Age \(\alpha_{ack}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Spatial \(\phi_{ik}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Temporal \(\gamma_{tk}\)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category \(\beta_k\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Country \(\zeta_{ck}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Age \(\alpha_{ack}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Spatial \(\phi_{ik}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Temporal \(\gamma_{tk}\)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+M1 & IID & IID & IID & IID & IID \\
+M2 & IID & IID & IID & Besag & IID \\
+M3 & IID & IID & IID & IID & AR1 \\
+M4 & IID & IID & IID & Besag & AR1 \\
+\end{longtable}
+
+I considered four models (Table \ref{tab:multinomial-models}) for \(\eta_{ita}\) in the equivalent Poisson log-linear model (Equation \eqref{eq:poisson2}) of the form
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
-Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) were included in all models I considered, and are required for the multinomial-Poisson transformation to be valid as described above.
+Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) with a vague prior distribution were included in all models I considered to ensure the transformation is valid.
 To capture country-specific proportion estimates for each category, I included category random effects \(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\) and country-category random effects \(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\).
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects \(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
 
@@ -1345,7 +1386,7 @@ For the space-category \(u_{ik}\) random effects I considered two specifications
   \mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
   \]
   The scaled structure matrix \(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\) is given by the Kronecker product of the scaled Besag structure matrix \(\mathbf{R}^\star_b\) and the identity matrix \(\mathbf{I}\), and \({-}\) denotes the generalised matrix inverse.
-  I followed best practises for the Besag model as described in Chapter \ref{beyond-borders}.
+  I followed best practices for the Besag model as described in Chapter \ref{beyond-borders}.
 \end{enumerate}
 
 In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
@@ -1376,22 +1417,25 @@ For the year-category \(\gamma_{tk}\) random effects I considered two specificat
   where \(\epsilon_t \sim \mathcal{N}(0, 1)\) and \(|\rho| < 1\).
 \end{enumerate}
 
-\hypertarget{priors}{%
-\paragraph{Priors}\label{priors}}
+\hypertarget{prior-distributions}{%
+\paragraph{Prior distributions}\label{prior-distributions}}
 
-All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\) were given independent penalised complexity (PC) priors \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by \(p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)\) where \(\nu = - \ln(0.01) / 2.5\) such that \(\mathbb{P}(\sigma > 2.5) = 0.01\).
-For the lag-one correlation parameter \(\rho\), I used the PC prior, as derived by \textcite{sorbye2017penalised}, with base model \(\rho = 1\) and condition \(\mathbb{P}(\rho > 0 = 0.75)\).
+All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\) were given independent penalised complexity (PC) prior distributions \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by
+\begin{equation}
+p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)
+\end{equation}
+where \(\nu = - \ln(0.01) / 2.5\) such that \(\mathbb{P}(\sigma > 2.5) = 0.01\).
+For the lag-one correlation parameter \(\rho\), I used the PC prior distribution, as derived by \textcite{sorbye2017penalised}, with base model \(\rho = 1\) and condition \(\mathbb{P}(\rho > 0 = 0.75)\).
 I chose the base model \(\rho = 1\) corresponding to no change in behaviour over time, rather than the alternative \(\rho = 0\) corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.
 
 \hypertarget{constraints}{%
 \subsubsection{Constraints}\label{constraints}}
 
-To ensure interpretable posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
-For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects.
-Together, these constraints are described in Table \ref{tab:constraints}.
+To faciliate interpretability of the posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects (Table \ref{tab:constraints}).
 
 \begin{longtable}[]{@{}ll@{}}
-\caption{\label{tab:constraints}}\tabularnewline
+\caption{\label{tab:constraints} Applying sum-to-zero constraints to interaction effects ensures that the main effect is not interfered with.}\tabularnewline
 \toprule\noalign{}
 Random effects & Constraints \\
 \midrule\noalign{}
@@ -1414,11 +1458,18 @@ Temporal & \(\sum_t \gamma_{tk} = 0, \, \forall \, k\) \\
 
 I accounted survey design using a weighted pseudo-likelihood where the observed counts \(y\) are replaced by effective counts \(y^\star\), as described in Section \ref{survey}.
 These counts may not be integers, and as such the Poisson likelihood given in Equation \eqref{eq:poisson1} is not appropriate.
-Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPoisson}(\kappa)\), given by
+Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPoisson}(\kappa)\) given by
 \begin{equation}
-    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right).
+    p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
 \end{equation}
-This working likelihood is implemented by \texttt{family\ =\ "xPoisson"} in \texttt{R-INLA}, which accepts non-integer input.
+to extend the Poisson distribution to non-integer weighted counts.
+This working likelihood is implemented by \texttt{family\ =\ "xPoisson"} in \texttt{R-INLA}.
+
+\hypertarget{model-selection}{%
+\subsubsection{Model selection}\label{model-selection}}
+
+I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion \autocite{pettit1990conditional}.
+For reference, I also computed the deviance information criterion (DIC) \autocite{spiegelhalter2002bayesian} and widely applicable information criterion (WAIC) \autocite{watanabe2013widely}.
 
 \hypertarget{s-logistic}{%
 \subsection{Spatial logistic regression}\label{s-logistic}}
@@ -1428,48 +1479,109 @@ To estimate the proportion of those in the \(k = 3^{+}\) risk group that were in
     y_{ia4} &\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \label{eq:logistic-regression} \\
     q_{ia} &= \text{logit}^{-1} \left( \eta_{ia} \right), 
 \end{align}
-where \(q_{ia} = p_{ia4} / (p_{ia3} + p_{ia4}) = p_{ia4} / p_{ia{3^+}}\).
-Taking this two-step approach allowed me to include all surveys in the multinomial regression model, but only those surveys with a specific transactional sex question in Equation \eqref{eq:logistic-regression}.
-As all such surveys occurred in 2013-2018, in the logistic regression model I assumed \(q_{ia}\) to be constant over time.
+where
+\begin{equation}
+q_{ia} = \frac{p_{ia4}}{p_{ia3} + p_{ia4}} = \frac{p_{ia4}}{p_{ia{3^+}}}.
+\end{equation}
+This two-step approach allowed all surveys to be included in the multinomial regression model, but only those surveys with a specific transactional sex question to be included in the logistic regression model.
+As all such surveys occurred in the years 2013-2018 (Figure \ref{fig:available-surveys}), I assumed \(q_{ia}\) to be constant with respect to time.
 
 \hypertarget{model-specifications-1}{%
 \subsubsection{Model specifications}\label{model-specifications-1}}
 
-I considered six logistic regression models.
-Each included a constant \(\beta_0 \sim \mathcal{N}(-2, 1^2)\), country random effects \(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\), and age-country random effects \(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
-The prior on \(\beta_0\) placed 95\% prior probability on the range 2-50\% for the percentage of those with non-regular or multiple partners who report transactional sex.
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0241}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2289}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2289}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2048}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1928}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1205}}@{}}
+\caption{\label{tab:logistic-models} Six logistic regression models were considered. The covariate \texttt{cfswever} denotes the proportion of men who have ever paid for sex and \texttt{cfswrecent} denotes the proportion of men who have paid for sex in the past 12 months.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Intercept \(\beta_0\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Country \(\zeta_{c}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Age \(\alpha_{ac}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Spatial \(u_{i}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Covariates
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Intercept \(\beta_0\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Country \(\zeta_{c}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Age \(\alpha_{ac}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Spatial \(u_{i}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Covariates
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+L1 & Constant & IID & IID & IID & None \\
+L2 & Constant & IID & IID & Besag & None \\
+L3 & Constant & IID & IID & IID & \texttt{cfswever} \\
+L4 & Constant & IID & IID & Besag & \texttt{cfswever} \\
+L5 & Constant & IID & IID & IID & \texttt{cfswrecent} \\
+L6 & Constant & IID & IID & Besag & \texttt{cfswrecent} \\
+\end{longtable}
+
+I considered six logistic regression models (Table \ref{tab:logistic-models}).
+Each included a constant intercept \(\beta_0 \sim \mathcal{N}(-2, 1^2)\), country random effects \(\zeta_{c} \sim \mathcal{N}(0, \tau_\zeta^{-1})\), and age-country random effects \(\alpha_{ac} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
+The Gaussian prior distribution on \(\beta_0\) placed 95\% prior probability on the range 2-50\% for the percentage of those with non-regular or multiple partners who report transactional sex.
 I considered two specifications (IID, Besag) for the spatial random effects \(u_i\).
-To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent}, available from \textcite{hodgins2022population}.
-For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) I used the PC prior with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
-For the regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) I used the prior \(\beta \sim \mathcal{N}(0, 2.5^2)\).
+To aid estimation with sparse data, I also considered national-level covariates for the proportion of men who have paid for sex ever \texttt{cfswever} or in the last twelve months \texttt{cfswrecent} \autocite{hodgins2022population}.
+For both random effect precision parameters \(\tau \in \{\tau_\alpha, \tau_\zeta\}\) I used the PC prior distribution with base model \(\sigma = 0\) and \(\mathbb{P}(\sigma > 2.5 = 0.01)\).
+For both regression parameters \(\beta \in \{\beta_\texttt{cfswever}, \beta_\texttt{cfswrecent}\}\) I used the prior distribution \(\beta \sim \mathcal{N}(0, 2.5^2)\).
 
 \hypertarget{survey-weighted-likelihood-1}{%
 \subsubsection{Survey weighted likelihood}\label{survey-weighted-likelihood-1}}
 
-As with the multinomial regression model, I used survey weighted counts \(\{y_{itak}^\star\}\) and sample sizes \(\{m_{itak}^\star\}\).
-I used a generalised binomial pseudo-likelihood \(y^\star \sim \text{xBinomial}(m^\star, q)\), as implemented by \texttt{family = "xBinomial"} in \texttt{R-INLA}, given by
+As with the multinomial regression model, I used survey weighted counts \(y^\star\) and sample sizes \(m^\star\).
+I used a generalised binomial pseudo-likelihood \(y^\star \sim \text{xBinomial}(m^\star, q)\) given by
 \begin{equation}
-    p(y^\star \, | \, m^\star, q) =  \binom{\lfloor m^\star \rfloor}{\lfloor y^\star \rfloor} q^{y^\star} (1 - q)^{m^\star - y^\star}.
+    p(y^\star \, | \, m^\star, q) =  \binom{\lfloor m^\star \rfloor}{\lfloor y^\star \rfloor} q^{y^\star} (1 - q)^{m^\star - y^\star}
 \end{equation}
 to extend the binomial distribution to non-integer weighted counts and sample sizes.
+This working likelihood is implemented by \texttt{family\ =\ "xBinomial"} in \texttt{R-INLA}.
+
+\hypertarget{model-selection-1}{%
+\subsubsection{Model selection}\label{model-selection-1}}
+
+I selected the model including Besag spatial effects and \texttt{cfswrecent} covariates according to the CPO criterion.
+All results, including DIC and WAIC, are presented in Table.
+Inclusion of Besag spatial random effects, rather than IID, consistently improved performance.
+Benefits from inclusion of covariates were more marginal.
+As some countries had no suitable surveys, inclusion of covariate information is favourable such that the estimates in these countries are based on some country-specific data.
 
 \hypertarget{female-sex-worker-population-size-adjustment}{%
 \subsection{Female sex worker population size adjustment}\label{female-sex-worker-population-size-adjustment}}
 
-Responding ``yes'' to the question ``have you had sex in return for gifts, cash or anything else in the past 12 months'' is not considered sufficient to constitute sex work.
-Recognising this, I adjusted the estimates obtained based on the survey to match FSW population size estimates obtained via alternative methods.
+Having had sex ``in return for gifts, cash or anything else in the past 12 months'' is not considered sufficient to constitute sex work.
+As such, I adjusted the estimates obtained based on the transactional sex survey question to match alternative FSW population size estimates.
 
 \textcite{stevens2022estimating} used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
 I disaggregated these estimates by age as follows.
-First, I calculated the total sexually debuted population in each age group, in each country.
+First, I calculated the total sexually debuted population in each age group, by country.
 To describe the distribution of age at first sex, I used skew logistic distributions \autocite{nguyen2022trends} with cumulative distribution function given by
 \begin{equation}
 F(x) = \left(1 + \exp(\kappa_c (\mu_c - x)) \right)^{- \gamma_c},
 \end{equation}
 where \(\kappa_c, \mu_c, \gamma_c > 0\) are country-specific shape, shape and skewness parameters respectively.
 Next, I used the assumed \(\text{Gamma}(\alpha = 10.4, \beta = 0.36)\) FSW age distribution in South Africa from the Thembisa model \autocite{johnson2020thembisa} to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
-I assumed these ratios in South Africa were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
-The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
+I assumed the South African ratios were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
+The resutling age trends obtained (Figure \ref{fig:age-disagg-fsw-line}) reflect country-level variation in demographics and age-at-first-sex.
 
 \begin{figure}
 
@@ -1477,7 +1589,7 @@ The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
 
 }
 
-\caption{The disaggregation procedure I used produces a plausible age distirbution of FSW by country.}\label{fig:age-disagg-fsw-line}
+\caption{The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups.}\label{fig:age-disagg-fsw-line}
 \end{figure}
 
 \hypertarget{results}{%
@@ -1489,11 +1601,14 @@ The results obtained are shown in Figure \ref{fig:age-disagg-fsw-line}.
 To assess the calibration of the fitted model, I calculated the quantile \(q\) of each observation within the posterior predictive distribution.
 For calibrated models, these quantiles, known as probability integral transform (PIT) values \autocite{dawid1984present,bosse2022scoringutils}, should follow a uniform distribution \(q \sim \mathcal{U}[0, 1]\).
 To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
-
-Using the PIT values, it is possible to calculate the empirical coverage of all \((1 - \alpha)100\)\% (equal-tailed) posterior predictive credible intervals.
+Using the PIT values, it is possible to calculate the empirical coverage of all \((1 - \alpha)100\)\% equal-tailed posterior predictive credible intervals.
 These empirical coverages can be compared to the nominal coverage \((1 - \alpha)\) for each value of \(\alpha \in [0, 1]\) to give empirical cumulative distribution function (ECDF) difference values.
 This approach has the advantage of considering all possible confidence values at once.
-\textcite{sailynoja2021graphical} develop binomial distribution-based simultaneous confidence bands for ECDF difference values which test uniformity.
+To test for uniformity, I used the binomial distribution based simultaneous confidence bands for ECDF difference values developed by \textcite{sailynoja2021graphical}.
+I found the only significant deviation from uniformity occurred in the right-hand tail of the one cohabiting partner risk group.
+That is to say, the proportion of the PIT values which were greater than 0.95 was significantly more than would be expected under a calibrated model.
+
+
 
 \begin{figure}
 
@@ -1501,14 +1616,16 @@ This approach has the advantage of considering all possible confidence values at
 
 }
 
-\caption{Coverage.}\label{fig:coverage}
+\caption{Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.}\label{fig:coverage}
 \end{figure}
-
-\hypertarget{variance-decomposition}{%
-\subsubsection{Variance decomposition}\label{variance-decomposition}}
 
 \hypertarget{estimates}{%
 \subsubsection{Estimates}\label{estimates}}
+
+Figure \ref{fig:aaa-variance-proportions} and Figure \ref{fig:3p1-within-between-country-variation} show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.
+In subsequent results, all estimates refer to this year, unless otherwise indicated.
+
+
 
 \begin{figure}
 
@@ -1516,8 +1633,10 @@ This approach has the advantage of considering all possible confidence values at
 
 }
 
-\caption{Map.}\label{fig:3p1-continental-map}
+\caption{The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis.}\label{fig:3p1-continental-map}
 \end{figure}
+
+
 
 \begin{figure}
 
@@ -1525,7 +1644,21 @@ This approach has the advantage of considering all possible confidence values at
 
 }
 
-\caption{Dots.}\label{fig:3p1-within-between-country-variation}
+\caption{National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows).}\label{fig:3p1-within-between-country-variation}
+\end{figure}
+
+\hypertarget{variance-decomposition}{%
+\subsubsection{Variance decomposition}\label{variance-decomposition}}
+
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/aaa-variance-proportions} 
+
+}
+
+\caption{Figure caption.}\label{fig:aaa-variance-proportions}
 \end{figure}
 
 \hypertarget{prevalence-and-incidence-by-risk-group}{%
@@ -1578,7 +1711,7 @@ By cumulatively summing the expected infections, for each fraction of the total 
 \hypertarget{discussion-1}{%
 \section{Discussion}\label{discussion-1}}
 
-I estimated the proportion of AGYW who fall into different risk groups at a district level in 13 sub-Saharan African countries.
+In this chapter, I estimated the proportion of AGYW who fall into different risk groups at a district level in 13 sub-Saharan African countries.
 These estimates support consideration of differentiated prevention programming according to geographic locations and risk behaviour, as outlined in the Global AIDS Strategy.
 Systematic differences in risk by age groups, and variation within and between countries, explained the large majority of variation in risk group proportions.
 Changes over time were negligible in the overall variation in risk group proportions.
@@ -1593,14 +1726,14 @@ I did not include more distal determinants, such as school attendance, orphanhoo
 However, to effectively implement programming, it is crucial to understand these factors, as well as the broader structural barriers and limits to personal agency faced by AGYW.
 Importantly, programs must ensure that intervention prioritisation occurs without stigmatising or blaming AGYW.
 
-Brugh et al. \autocite{brugh2021characterizing} previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
-My work builds on Brugh et al. \autocite{brugh2021characterizing} by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.
+\textcite{brugh2021characterizing} previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
+This work builds on \textcite{brugh2021characterizing} by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.
 
 By considering a range of possible risk stratification strategies, I showed that successful implementation of a risk-stratified approach would allow substantially more of those at risk for infections to be identified before infection occurs.
 A considerable proportion of estimated new infections were among FSW, supporting the case for HIV programming efforts focused on key population groups \autocite{baral2012burden}.
 There is substantial variation in the importance of prioritisation by age, location and behaviour within each country.
 This highlights the importance of understanding and tailoring HIV prevention efforts to country-specific contexts.
-By standardising our analysis across all 13 countries, I showed the additional efficiency benefits of resource allocation between countries.
+By standardising the analysis across all 13 countries, I showed the additional efficiency benefits of resource allocation between countries.
 
 I found a geographic delineation in the proportion of women cohabiting between southern and eastern Africa, calling attention to a divide attributable to many cultural, social, and economic factors.
 The delineation does not represent a boundary between predominately Christian and Muslim populations, which is further north.
@@ -1609,9 +1742,9 @@ I also note that the high numbers of adolescent girls aged 15-19 cohabiting in M
 My modelled estimates of risk group proportions improve upon direct survey results for three reasons.
 First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
 Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing.
-Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as our analysis of risk group specific prevalence and incidence).
+Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as the analysis of risk group specific prevalence and incidence).
 
-The final surveys included in our risk model model were conducted in 2018.
+The final surveys included in the risk model model were conducted in 2018.
 The analysis may be updated with more surveys as they become available.
 I do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.
 
@@ -1625,7 +1758,7 @@ Does not undermine my work.
 \hypertarget{limitations}{%
 \subsection{Limitations}\label{limitations}}
 
-My analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
+This analysis was subject to challenges shared by most approaches to monitoring sexual behaviour in the general population \autocite{cleland2004monitoring}.
 In particular, under-reporting of higher risk sexual behaviours among AGYW could affect the validity of my risk group proportion estimates.
 Due to social stigma or disapproval, respondents may be reluctant to report non-marital partners \autocite{nnko2004secretive,helleringer2011reliability} or may bias their reporting of sexual debut \autocite{zaba2004age,wringe2009comparative,nguyen2022trends}.
 For guidance of resource allocation, differing rates of under-reporting by country, district, year or age group are particularly concerning to the applicability of my results; and, while it may be reasonable to assume a constant rate over space-time, the same cannot be said for age, where aspects of under-reporting have been shown to decline as respondents age \autocite{glynn2011assessing}, suggesting that the elevated risks I found faced by younger women are likely a conservative estimate.
@@ -1671,7 +1804,7 @@ These findings underscore the importance of providing effective HIV prevention o
 
 In this chapter I describe a novel Bayesian inference method I developed.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software (\url{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
+Over 35 countries have used the Naomi model software (\texttt{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 
 I began working on this project at the start of my PhD.
@@ -2260,8 +2393,8 @@ Zimbabwe & 63 & 2 \\
 \caption{The numer of areas and analysis levels for each country that were used in the analysis.}
 \end{table}
 
-\hypertarget{survey-questions-and-risk-group-allocation}{%
-\section{Survey questions and risk group allocation}\label{survey-questions-and-risk-group-allocation}}
+\hypertarget{survey-questions}{%
+\section{Survey questions and risk group allocation}\label{survey-questions}}
 
 \begin{table}[h]
 \centering
@@ -2297,6 +2430,17 @@ Variable(s) & Description \\
 \caption{The survey questions included in Population-Based HIV Impact Assessment (PHIA) surveys.}
 \end{table}
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/category-flowchart} 
+
+}
+
+\caption{Flowchart describing allocation of survey respondents to HIV risk groups.}\label{fig:category-flowchart}
+\end{figure}
+
 \hypertarget{fast-approximate-bayesian-inference}{%
 \chapter{Fast approximate Bayesian inference}\label{fast-approximate-bayesian-inference}}
 
@@ -2314,8 +2458,6 @@ Variable(s) & Description \\
 
 \hypertarget{inference-comparison-1}{%
 \section{Inference comparison}\label{inference-comparison-1}}
-
-\autocite{blangiardo2015spatial}
 
 \hypertarget{mcmc-convergence-and-suitability}{%
 \section{MCMC convergence and suitability}\label{mcmc-convergence-and-suitability}}

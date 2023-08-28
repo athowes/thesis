@@ -234,7 +234,7 @@ div.csl-indent {
 <li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
 <li class="chapter" data-level="B.2" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#household-survey-data"><i class="fa fa-check"></i><b>B.2</b> Household survey data</a></li>
 <li class="chapter" data-level="B.3" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#spatial-analysis-levels"><i class="fa fa-check"></i><b>B.3</b> Spatial analysis levels</a></li>
-<li class="chapter" data-level="B.4" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#survey-questions-and-risk-group-allocation"><i class="fa fa-check"></i><b>B.4</b> Survey questions and risk group allocation</a></li>
+<li class="chapter" data-level="B.4" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#survey-questions"><i class="fa fa-check"></i><b>B.4</b> Survey questions and risk group allocation</a></li>
 </ul></li>
 <li class="chapter" data-level="C" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html"><i class="fa fa-check"></i><b>C</b> Fast approximate Bayesian inference</a>
 <ul>
@@ -343,7 +343,20 @@ Similarly, data may be associated to a point <span class="math inline">\(t \in \
 Foremost among them is correlation structure.
 Tobler’s first law of geography, also expressed by <span class="citation">Fisher (<a href="#ref-fisher1936design">1936</a>)</span>, is that “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.
 This law extends not only to space but also time.</p>
-<!-- Add figure here to demonstrate spatial data -->
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:zmb-maps"></span>
+<img src="figures/bayesian/zmb-maps.png" alt="To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from athowes/zambia-unaids." width="95%" />
+<p class="caption">
+Figure 3.2: To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from <a href="https://github.com/athowes/zambia-unaids"><code>athowes/zambia-unaids</code></a>.
+</p>
+</div>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:zmb-scatter"></span>
+<img src="figures/bayesian/zmb-scatter.png" alt="The estimates from surveys with higher sample size have higher Pearson correlation coefficient (\(R\)) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure 3.2." width="95%" />
+<p class="caption">
+Figure 3.3: The estimates from surveys with higher sample size have higher Pearson correlation coefficient (<span class="math inline">\(R\)</span>) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure <a href="bayes-st.html#fig:zmb-maps">3.2</a>.
+</p>
+</div>
 </div>
 <div id="hierarchical-lgm-elgm" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Model classes<a href="bayes-st.html#hierarchical-lgm-elgm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -353,7 +366,7 @@ This law extends not only to space but also time.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:hierarchical-structure"></span>
 <img src="figures/bayesian/hierarchical-structure.png" alt="A simple example of group structure within data. Each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\)." width="95%" />
 <p class="caption">
-Figure 3.2: A simple example of group structure within data. Each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>.
+Figure 3.4: A simple example of group structure within data. Each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>.
 </p>
 </div>
 <p>Often it is natural to group some observations together.
@@ -367,7 +380,7 @@ The generative model for data <span class="math inline">\(\mathbf{y}\)</span> is
 \boldsymbol{\mathbf{\theta}} &amp;\sim p(\boldsymbol{\mathbf{\theta}}),
 \end{align}\]</span>
 with posterior distribution proportional to <span class="math inline">\(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\)</span>.</p>
-<p>For example, Figure <a href="bayes-st.html#fig:hierarchical-structure">3.2</a> illustrates a case where each individual <span class="math inline">\(i = 1, \ldots, n\)</span> in a study is observed <span class="math inline">\(m_i\)</span> times.
+<p>For example, Figure <a href="bayes-st.html#fig:hierarchical-structure">3.4</a> illustrates a case where each individual <span class="math inline">\(i = 1, \ldots, n\)</span> in a study is observed <span class="math inline">\(m_i\)</span> times.
 Observations <span class="math inline">\(y_{i1}, \ldots y_{im_i}\)</span> of the same individual are grouped together, and are more likely to have more similar properties than observations of different individuals.
 Hierarchical models often control over if and how information is shared between groups.</p>
 <ol style="list-style-type: decimal">
@@ -453,14 +466,14 @@ Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and r
 <h3><span class="header-section-number">3.4.1</span> Survey notation and key terms<a href="bayes-st.html#survey-notation-and-key-terms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Consider a population of individuals <span class="math inline">\(i = 1, \ldots, N\)</span> with outcomes of interest <span class="math inline">\(y_i\)</span>.
 A census is a type of survey where all individuals are sampled.
-Supposing responses from all individuals were recorded, then the population means can be calculated direct.
+Supposing responses from all individuals were recorded, then any population means can be calculated directly.
 For example, if <span class="math inline">\(G_i = G(y_i)\)</span> then the population mean of <span class="math inline">\(G\)</span> is
 <span class="math display">\[\begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}\]</span></p>
 <p>In practice, it is usually too expensive to run a census.
 Instead, only a subset of the individuals are sampled.
-Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
 Let <span class="math inline">\(S_i\)</span> be an indicator for whether or not individual <span class="math inline">\(i\)</span> is sampled, and <span class="math inline">\(R_i\)</span> be an indicator for whether or not <span class="math inline">\(y_i\)</span> is recorded.
 If <span class="math inline">\(S_i = 0\)</span> then <span class="math inline">\(R_i = 0\)</span>.
 If <span class="math inline">\(S_i = 1\)</span> then individual <span class="math inline">\(i\)</span> may not respond such that <span class="math inline">\(R_i = 0\)</span>.
@@ -476,7 +489,7 @@ The survey design is called complex when the sampling probabilities for each ind
 <p>Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
 Under a complex design, failing to take into account the unequal sampling probabilities will result in bias.
-That said, even for a SRS, bias can be caused by nonresponse.</p>
+That said, even for a SRS, nonresponse can cause analogous bias.</p>
 </div>
 <div id="survey-design" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Survey design<a href="bayes-st.html#survey-design" class="anchor-section" aria-label="Anchor link to header"></a></h3>

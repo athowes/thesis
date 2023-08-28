@@ -111,7 +111,17 @@ Foremost among them is correlation structure.
 Tobler's first law of geography, also expressed by @fisher1936design, is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
 This law extends not only to space but also time.
 
-<!-- Add figure here to demonstrate spatial data -->
+(ref:zmb-maps) To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from [`athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
+
+```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
+knitr::include_graphics("figures/bayesian/zmb-maps.png")
+```
+
+(ref:zmb-scatter) The estimates from surveys with higher sample size have higher Pearson correlation coefficient ($R$) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \@ref(fig:zmb-maps).
+
+```{r zmb-scatter, fig.cap="(ref:zmb-scatter)"}
+knitr::include_graphics("figures/bayesian/zmb-scatter.png")
+```
 
 ## Model classes {#hierarchical-lgm-elgm}
 
@@ -224,7 +234,7 @@ Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and r
 
 Consider a population of individuals $i = 1, \ldots, N$ with outcomes of interest $y_i$.
 A census is a type of survey where all individuals are sampled.
-Supposing responses from all individuals were recorded, then the population means can be calculated direct.
+Supposing responses from all individuals were recorded, then any population means can be calculated directly.
 For example, if $G_i = G(y_i)$ then the population mean of $G$ is
 \begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
@@ -232,7 +242,7 @@ For example, if $G_i = G(y_i)$ then the population mean of $G$ is
 
 In practice, it is usually too expensive to run a census.
 Instead, only a subset of the individuals are sampled.
-Furthermore, only a subset of those sampled have their outcome recorded due to nonresponse or otherwise.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
 Let $S_i$ be an indicator for whether or not individual $i$ is sampled, and $R_i$ be an indicator for whether or not $y_i$ is recorded.
 If $S_i = 0$ then $R_i = 0$.
 If $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
@@ -250,7 +260,7 @@ The survey design is called complex when the sampling probabilities for each ind
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, particular care is required in analysing data collected using complex survey designs.
 Under a complex design, failing to take into account the unequal sampling probabilities will result in bias.
-That said, even for a SRS, bias can be caused by nonresponse.
+That said, even for a SRS, nonresponse can cause analogous bias.
 
 ### Survey design
 
