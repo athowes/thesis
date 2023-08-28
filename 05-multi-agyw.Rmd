@@ -574,6 +574,12 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 
 The median national FSW proportion was `r fsw_age_Y015_019$median`\% (95\% CI `r fsw_age_Y015_019$lower`--`r fsw_age_Y015_019$upper`) for the 15-19 age group, `r fsw_age_Y020_024$median`\% (95\% CI `r fsw_age_Y020_024$lower`--`r fsw_age_Y020_024$upper`) for the 20-24 age group and `r fsw_age_Y025_029$median`\% (95\% CI `r fsw_age_Y025_029$lower`--`r fsw_age_Y025_029$upper`) for the 25-29 age group.
 
+(ref:age-variation) Figure caption.
+
+```{r age-variation, fig.cap="(ref:age-variation)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-variation.png"))
+```
+
 In the 20-24 and 25-29 year age groups, the majority of women were either cohabiting or had non-regular or multiple partner(s).
 Countries in eastern and central Africa (Cameroon, Kenya, Malawi, Mozambique, Tanzania, Uganda, Zambia and Zimbabwe) had a higher proportion of women in these age groups cohabiting (`r dividing_border_above_sexcohab$median`\% [95\% CI `r dividing_border_above_sexcohab$lower`--`r dividing_border_above_sexcohab$upper`\%] compared with `r dividing_border_above_sexnonreg$median`\% [95\% CI `r dividing_border_above_sexnonreg$lower`--`r dividing_border_above_sexnonreg$upper`\%] with non-regular partner[s]).
 In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia and South Africa) had a higher proportion with non-regular or multiple partner(s) (`r dividing_border_below_sexnonreg$median`\% [95\% CI `r dividing_border_below_sexnonreg$lower`--`r dividing_border_below_sexnonreg$upper`\%], compared with `r dividing_border_below_sexcohab$median`\% [95\% CI `r dividing_border_below_sexcohab$lower`--`r dividing_border_below_sexcohab$upper`\%] cohabiting).
@@ -582,7 +588,7 @@ This clear geographic delineation passes along the border of Mozambique, through
 In most districts (`r round(district_Y015_019_nosex12m_quantiles$median, 1)`\%; 95\% credible interval [CI] `r round(district_Y015_019_nosex12m_quantiles$lower, 1)`--`r round(district_Y015_019_nosex12m_quantiles$upper, 1)`) adolescent girls aged 15-19 were not sexually active.
 The exception was Mozambique, where the majority (`r 100 - round(moz_Y015_019_nosex12m$estimate_smoothed, 2)`\%) were sexually active in the past year and close to a third (`r round(moz_Y015_019_sexcohab$estimate_smoothed, 2)`\%) were cohabiting with a partner.
 
-#### Variance decomposition
+#### Variance decomposition {#variance-decomposition}
 
 (ref:aaa-variance-proportions) Figure caption.
 
@@ -641,9 +647,75 @@ By cumulatively summing the expected infections, for each fraction of the total 
 
 ### Results
 
-```{r infections-reached, out.width = "90%", echo=FALSE, fig.cap="Surveys."}
+```{r results=FALSE}
+inf <- readr::read_csv(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached.csv"))
+inf_country <- readRDS(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached-country.rds"))
+
+#' What is the minimum proportion of the population to reach in order to
+#' achieve reaching over q \in [0, 1] proportion of the new infections?
+min_pop_reached <- function(inf, q) {
+  inf %>%
+    filter(prop_infections_averted_cumulative > q) %>%
+    group_by(stratification) %>%
+    filter(prop_population_cumulative == min(prop_population_cumulative)) %>%
+    select(stratification, prop_infections_averted_cumulative, prop_population_cumulative)
+}
+
+inf_quarter <- min_pop_reached(inf, 0.25)
+inf_half <- min_pop_reached(inf, 0.5)
+
+inf_half_with_behaviour <- round(100 * filter(inf_half, stratification == "Area, age, behaviour")$prop_population_cumulative, 1)
+inf_half_without_behaviour <- round(100 * filter(inf_half, stratification == "Area, age")$prop_population_cumulative, 1)
+
+#' At a national level
+country_min_pop <- lapply(inf_country, function(x) min_pop_reached(x, q = 0.25)) %>%
+  bind_rows(.id = "country") %>%
+  filter(stratification %in% c("Area, age, behaviour", "Area, age"))
+
+inf_country_half <- country_min_pop %>%
+  group_by(stratification) %>%
+  summarise(
+    max = round(100 * max(prop_population_cumulative), 1),
+    median = round(100 * median(prop_population_cumulative), 1),
+    min = round(100 * min(prop_population_cumulative), 1)
+  )
+
+inf_country_half_with_behaviour <- filter(inf_country_half, stratification == "Area, age, behaviour")
+inf_country_half_without_behaviour <- filter(inf_country_half, stratification == "Area, age")
+
+#' What proportion of new infections are among FSW as compared with the proportion the population that are FSW?
+inf_fsw <- inf %>%
+  filter(
+    stratification == "Behaviour",
+    category == "sexpaid12m"
+  ) %>%
+  select(prop_infections_averted_cumulative, prop_population_cumulative) %>%
+  mutate(across(everything(), ~ round(100 * .x, digits = 1)))
+
+#' What about by country?
+inf_fsw_country <- lapply(inf_country, function(x)
+  x %>%
+    filter(stratification == "Behaviour", category == "sexpaid12m") %>%
+    select(prop_infections_averted_cumulative, prop_population_cumulative) %>%
+      mutate(across(prop_infections_averted_cumulative:prop_population_cumulative, ~ 100 * round(.x, 3)))
+) %>%
+  bind_rows(.id = "country")
+```
+
+(ref:infections-reached) Figure caption.
+
+```{r infections-reached, fig.cap="(ref:infections-reached)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached.png"))
 ```
+
+For any given fraction of AGYW prioritised, substantially more new infections were reached by strategies that included behavioural risk stratification.
+Reaching half of all expected new infections required reaching `r inf_half_without_behaviour`\% of the population when stratifying by subnational area and age, but only `r inf_half_with_behaviour`\% when behavioural stratification was included (Figure \@ref(fig:infections-reached)).
+The majority of this benefit came from reaching FSW, who were `r inf_fsw$prop_population_cumulative`\% of the population but `r inf_fsw$prop_infections_averted_cumulative`\% of all new infections.
+
+<!-- Possible TODO: How does this vary by country / region?  Maybe worth calling out result for West Africa vs. East Africa vs. Southern Africa here to highlight the difference. Also how does this compare with other estimates? And what does Oli think about this? I recognize that comparison is not straightforward because age group difference! -->
+
+Considering each country separately, on average, reaching half of new infections in each country required reaching `r inf_country_half_without_behaviour$median`\% (range `r inf_country_half_without_behaviour$min`-`r inf_country_half_without_behaviour$max`\%) of the population when stratifying by area and age, reducing to `r inf_country_half_with_behaviour$median`\% (range `r inf_country_half_with_behaviour$min`-`r inf_country_half_with_behaviour$max`\%) when behaviour was included.
+The relative importance of stratifying by age, location and behaviour varied between countries, analogous to the varying contribution of each to the total variance (Section \@ref(variance-decomposition)).
 
 ## Discussion
 
@@ -657,13 +729,11 @@ This variation underscores the need for these granular data to implement HIV pre
 I considered four risk groups based on sexual behaviour, the most proximal determinant of risk.
 Other factors, such as condom usage or type of sexual act, may account for additional heterogeneity in risk from sexual behaviour.
 However, I did not include these factors in view of measurement difficulties, concerns about consistency across contexts, and the operational benefits of describing risk parsimoniously.
+
 Sexual behaviour confers risk only when AGYW reside in geographic locations where there is unsuppressed viral load among their potential partners.
 I did not include more distal determinants, such as school attendance, orphanhood, or gender empowerment, as I expect their effects on risk to largely be mediated by more proximal determinants.
 However, to effectively implement programming, it is crucial to understand these factors, as well as the broader structural barriers and limits to personal agency faced by AGYW.
 Importantly, programs must ensure that intervention prioritisation occurs without stigmatising or blaming AGYW.
-
-@brugh2021characterizing previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
-This work builds on @brugh2021characterizing by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.
 
 By considering a range of possible risk stratification strategies, I showed that successful implementation of a risk-stratified approach would allow substantially more of those at risk for infections to be identified before infection occurs.
 A considerable proportion of estimated new infections were among FSW, supporting the case for HIV programming efforts focused on key population groups [@baral2012burden].
@@ -675,10 +745,19 @@ I found a geographic delineation in the proportion of women cohabiting between s
 The delineation does not represent a boundary between predominately Christian and Muslim populations, which is further north.
 I also note that the high numbers of adolescent girls aged 15-19 cohabiting in Mozambique is markedly different from the other countries [@unicef].
 
+@brugh2021characterizing previously geographically mapped AGYW HIV risk groups using biomarker and behavioural data from the most recent surveys in Eswatini, Haiti and Mozambique to define and subsequently map risk groups with a range of machine learning techniques.
+My work builds on @brugh2021characterizing by including more countries, integrating a greater number of surveys, and connecting risk group proportions with HIV epidemic indicators to help inform programming.
+
 My modelled estimates of risk group proportions improve upon direct survey results for three reasons.
 First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
-Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing.
-Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines (such as the analysis of risk group specific prevalence and incidence).
+Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing (Figure \@ref(fig:model-direct-benefits)).
+Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines such as my analysis of risk group specific prevalence and incidence (Figure \@ref(fig:model-direct-benefits)).
+
+(ref:model-direct-benefits) Figure caption.
+
+```{r model-direct-benefits, fig.cap="(ref:model-direct-benefits)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/model-direct-benefits.png"))
+```
 
 The final surveys included in the risk model model were conducted in 2018.
 The analysis may be updated with more surveys as they become available.
@@ -687,9 +766,9 @@ I do not anticipate that the risk group proportions will change substantially, a
 My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the `r 100 - 100`\% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
 Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.
 
-Phylogenetic results from BDI are about transmission rather than incidence.
-Only age-sex structured not age-sex-behaviour.
-Does not undermine my work.
+<!-- Phylogenetic results from BDI are about transmission rather than incidence. -->
+<!-- Only age-sex structured not age-sex-behaviour. -->
+<!-- Does not undermine my work. -->
 
 ### Limitations
 
@@ -702,7 +781,7 @@ If present, these reporting biases will also have distorted the estimates of inf
 I have the least confidence in my estimates for the FSW risk group.
 As well as having the smallest sample sizes, my transactional sex estimates do not overcome the difficulties of sampling hard to reach groups.
 I inherent any limitations of the national FSW estimates [@stevens2022estimating] which I adjust my estimates of transactional sex to match.
-Furthermore, I do not consider seasonal migration patterns, which may particularly affect FSW size.
+Furthermore, I do not consider seasonal migration patterns, which may particularly affect FSW population size.
 More generally, I did not consider covariates potentially predictive of risk group proportions (such as sociodemographic characteristics, education, local economic activity, cultural and religious norms and attitudes), which are typically difficult to measure spatially.
 Identifying measurable correlates of risk, or particular settings in which time-concentrated HIV risk occurs, is an important area for further research to improve risk prioritisation and precision HIV programme delivery.
 
@@ -714,15 +793,17 @@ Identifying and reaching behavioural strata may be particularly challenging.
 Empirical evaluations of behavioural risk screening tools have found only moderate discriminatory ability [@jia2022risk], and risk behaviour may change rapidly among young populations, increasing the challenge to effectively deliver appropriately timed prevention packages.
 This consideration may motivate selecting risk groups based on easily observable attributes, such as attendance of a particular service or facility, rather than sexual behaviour.
 
-I did not engage with country experts or civil society organisations.
-This led to problems, including in Malawi.
-Future work should be better.
+In conducting this work, there was insufficient engagement with country experts or civil society organisations.
+As a result, in early use of the risk group tool the FSW population size estimates were met with some disagreement in Malawi.
+In that instance, the cause of the disagreement was extenal model inputs used.
+In future, estimates should be generated and reviewed by country teams.
 
 <!-- RE notes that it could be worth talking about the age patterns of sexual mixing, that I didn't consider them, and how they might effect intervention planning. -->
 
 ### Conclusion
 
-I estimated the proportion of AGYW aged 15-19, 20-24 and 25-29 years in four sexual risk groups at a district-level in 13 priority countries and analyzed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
+I estimated HIV risk group proportions, HIV prevalences and HIV incidences for AGYW aged 15-19, 20-24 and 25-29 years at a district-level in 13 priority countries.
+Using these estimates, I analyzed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
 Though subject to limitations, these estimates provide data that national HIV programmes can use to set targets and implement differentiated HIV prevention strategies as outlined in the Global AIDS Strategy.
 Successfully implementing this approach would result in more efficiently reaching a greater number of those at risk of infection.
 
