@@ -572,6 +572,16 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/3p1-within-between-country-variation.png"))
 ```
 
+The median national FSW proportion was `r fsw_age_Y015_019$median`\% (95\% CI `r fsw_age_Y015_019$lower`--`r fsw_age_Y015_019$upper`) for the 15-19 age group, `r fsw_age_Y020_024$median`\% (95\% CI `r fsw_age_Y020_024$lower`--`r fsw_age_Y020_024$upper`) for the 20-24 age group and `r fsw_age_Y025_029$median`\% (95\% CI `r fsw_age_Y025_029$lower`--`r fsw_age_Y025_029$upper`) for the 25-29 age group.
+
+In the 20-24 and 25-29 year age groups, the majority of women were either cohabiting or had non-regular or multiple partner(s).
+Countries in eastern and central Africa (Cameroon, Kenya, Malawi, Mozambique, Tanzania, Uganda, Zambia and Zimbabwe) had a higher proportion of women in these age groups cohabiting (`r dividing_border_above_sexcohab$median`\% [95\% CI `r dividing_border_above_sexcohab$lower`--`r dividing_border_above_sexcohab$upper`\%] compared with `r dividing_border_above_sexnonreg$median`\% [95\% CI `r dividing_border_above_sexnonreg$lower`--`r dividing_border_above_sexnonreg$upper`\%] with non-regular partner[s]).
+In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia and South Africa) had a higher proportion with non-regular or multiple partner(s) (`r dividing_border_below_sexnonreg$median`\% [95\% CI `r dividing_border_below_sexnonreg$lower`--`r dividing_border_below_sexnonreg$upper`\%], compared with `r dividing_border_below_sexcohab$median`\% [95\% CI `r dividing_border_below_sexcohab$lower`--`r dividing_border_below_sexcohab$upper`\%] cohabiting).
+This clear geographic delineation passes along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia (Figure \@ref(fig:3p1-continental-map)).
+
+In most districts (`r round(district_Y015_019_nosex12m_quantiles$median, 1)`\%; 95\% credible interval [CI] `r round(district_Y015_019_nosex12m_quantiles$lower, 1)`--`r round(district_Y015_019_nosex12m_quantiles$upper, 1)`) adolescent girls aged 15-19 were not sexually active.
+The exception was Mozambique, where the majority (`r 100 - round(moz_Y015_019_nosex12m$estimate_smoothed, 2)`\%) were sexually active in the past year and close to a third (`r round(moz_Y015_019_sexcohab$estimate_smoothed, 2)`\%) were cohabiting with a partner.
+
 #### Variance decomposition
 
 (ref:aaa-variance-proportions) Figure caption.
@@ -579,6 +589,23 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 ```{r aaa-variance-proportions, fig.cap="(ref:aaa-variance-proportions)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/aaa-variance-proportions.png"))
 ```
+
+```{r}
+variance_proportions <- readr::read_csv(paste0("resources/multi-agyw/", resource_version, "/depends/variance-proportions-uncertainty.csv"))
+variance_proportions_age <- 100 * filter(variance_proportions, variable == "age") %>% select(-variable) %>% round(digits = 3)
+variance_proportions_iso3 <- 100 * filter(variance_proportions, variable == "iso3") %>% select(-variable) %>% round(digits = 3)
+variance_proportions_area <- 100 * filter(variance_proportions, variable == "area") %>% select(-variable) %>% round(digits = 3)
+variance_proportions_year <- 100 * filter(variance_proportions, variable == "year") %>% select(-variable) %>% round(digits = 3)
+variance_proportions_cat <- 100 * filter(variance_proportions, variable == "cat") %>% select(-variable) %>% round(digits = 3)
+```
+
+Age group was the most important factor explaining variation in risk group proportions, accounting for `r variance_proportions_age$mean`\% (95\% CI `r variance_proportions_age$lower`--`r variance_proportions_age$upper`\%) of total variation.
+The primary change in risk group proportions by age group occurs between the 15-19 age group and 20-29 age group (Figure \@ref(fig:3p1-continental-map)).
+The next most important factor was location.
+Country-level differences explained `r variance_proportions_iso3$mean`\% (95\% CI `r variance_proportions_iso3$lower`--`r variance_proportions_iso3$upper`\%) of variation, while district-level variation within countries explained `r variance_proportions_area$mean`\% (95\% CI `r variance_proportions_area$lower`--`r variance_proportions_area$upper`\%).
+<!-- Can I plot the country-level and district-level random effects to visualise this? -->
+Temporal changes only explained `r variance_proportions_year$mean`\% (95\% CI `r variance_proportions_year$lower`--`r variance_proportions_year$upper`\%) of variation, indicating very little change in risk group proportions over time.
+I found similar variance decomposition results fitting each country individually (Figure \@ref(fig:aaa-variance-proportions)) and using other model specifications.
 
 ## Prevalence and incidence by risk group
 
