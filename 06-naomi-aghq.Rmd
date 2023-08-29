@@ -21,14 +21,12 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe a novel Bayesian inference method I developed.
+In this chapter I describe a novel Bayesian inference method that I developed.
 The method is motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (`https://naomi.unaids.org`) to produce subnational estimates of HIV indicators [@unaids2023global].
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
-
-I began working on this project at the start of my PhD.
-However, it was only after I read @stringer2021fast that I began making progress.
-Alex Stringer later supervised by visit to the University of Waterloo.
+I began working on this project at the start of my PhD, and only started to make progress after reading @stringer2021fast.
+I am grateful that Alex Stringer later supervised my visit to the University of Waterloo.
 The results of this work are presented in @howes2023fast.
 Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](https://github.com/athowes/elgm-inf).
 
@@ -37,8 +35,9 @@ Code for the analysis in this chapter is available from [`athowes/naomi-aghq`](h
 In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 \begin{equation}
-p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}.
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})},
 \end{equation}
+or some way to compute summaries of it.
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
 
@@ -48,11 +47,12 @@ This is because the denominator contains an intractable integral called the post
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:evidence)
 \end{equation}
 For this reason, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
-Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
+Some approximate Bayesian inference methods avoid directly calculating the posterior normalising constant, instead working with the unnormalised posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
 \end{equation}
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
+The methods in this chapter fall into this later category.
 
 ### The Laplace approximation
 
@@ -66,7 +66,8 @@ Let $h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{
 \begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}
-Laplace's method involves approximating the function $h$ by its second order Taylor expansion evaluated at a maxima of $h$ to eliminate the first order term.
+Laplace's method involves approximating the function $h$ by its second order Taylor expansion.
+This expansion is then evaluated at a maxima of $h$ to eliminate the first order term.
 Let
 \begin{equation}
 \hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}})
@@ -81,19 +82,19 @@ The Laplace approximation is then
 \tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:la) \\
 &= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}
-Equation \@ref(eq:la) is calculated using the known normalising constant of the Gaussian distribution
+The above result is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
 p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}
-It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ such that
+The Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ such that
 \begin{equation}
 \tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}
 
 #### The marginal Laplace approximation
 
-It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
-An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
+It might be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
 As before, let $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ where $\mathbf{x}$ is the latent field, and $\boldsymbol{\mathbf{\theta}}$ are the hyperparameters.
 Applying an equivalent Laplace approximation to the latent field, we have $h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ with posterior mode
 \begin{equation}
@@ -103,7 +104,7 @@ and Hessian matrix evaluated at the posterior mode
 \begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-For both quantities cases dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit.
+For both quantities dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit.
 The resulting marginal Laplace approximation is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} (\#eq:marginalla) \\
@@ -125,6 +126,13 @@ Then a quadrature approximation to the posterior normalising constant is given b
 Quadrature methods are most effective when integrating over small dimensions.
 The reason why is that exponentially more quadrature points are required to cover each additional dimension.
 For even moderate dimension, this quickly becomes intractable.
+
+(ref:trapezoid) Figure caption.
+
+```{r trapezoid, fig.cap="(ref:trapezoid)"}
+knitr::include_graphics("figures/naomi-aghq/trapezoid.png")
+```
+
 
 #### Gauss-Hermite quadrature
 

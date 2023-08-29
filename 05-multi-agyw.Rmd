@@ -39,8 +39,8 @@ In this chapter I describe an application of Bayesian spatio-temporal statistics
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The results are presented in @howes2023spatio.
-Kathryn has also created a spreadsheet tool (`https://hivtools.unaids.org/pse/`) using the estimates.
-This tool is being used by countries, and continues to be developed.
+Kathryn has also created a spreadsheet tool using the estimates available from `https://hivtools.unaids.org/pse/`.
+This tool is now being used by countries, and continues to be developed.
 Code for the analysis in this chapter is available from [`athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
 
 ## Background
@@ -58,7 +58,7 @@ As such, prioritisation of prevention services is more efficient if both are tak
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
 Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.
 
-(ref:risk-grid) Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. This figure is adapted from a presentation I gave for High Impact Medicine, and is intended to be illustrative, rather than interpreted quantitatively.
+(ref:risk-grid) Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.
 
 ```{r risk-grid, fig.cap="(ref:risk-grid)"}
 knitr::include_graphics("figures/multi-agyw/risk-grid.png")
@@ -223,7 +223,7 @@ A standard multinomial logistic regression model [e.g. @gelman2013bayesian] is s
 where the number in risk group $k$ is $y_{itak}$, the fixed sample size is $m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}$, and $k = 1$ is chosen as the baseline category.
 This model is not an LGM.
 I used the multinomial-Poisson transformation to perform inference using the INLA [@rue2009approximate] algorithm via the `R-INLA` package [@martins2013bayesian].
-INLA has comparable accuracy and is substantially more computationally tractable than MCMC for GLMMs defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups.
+MCMC would be intractable for the model, defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups.
 
 #### The multinomial-Poisson transformation
 
@@ -257,7 +257,7 @@ corresponding to the product of independent Poisson likelihoods as in Equation \
 The random sample size model is equivalent to a multinomial logistic regression model only when the normalisation constants $m_{ita}$ are recovered exactly.
 To ensure that this is the case, observation-specific random effects $\theta_{ita}$ can be included in the equation for the linear predictor.
 Multiplying each of $\{\kappa_{itak}\}_{k = 1}^{3^+}$ by $\exp(\theta_{ita})$ has no effect on the category probabilities, but does provide the necessary flexibility for $\kappa_{ita}$ to recover $m_{ita}$ exactly.
-Although in theory an improper prior distribution $\theta_{ita} \propto 1$ should be used, I found that in practise, by keeping $\eta_{ita}$ otherwise small using appropriate constraints, so that arbitrarily large values of $\theta_{ita}$ are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.
+Although in theory an improper prior distribution $\theta_{ita} \propto 1$ should be used, I found that in practice, by keeping $\eta_{ita}$ otherwise small using appropriate constraints, so that arbitrarily large values of $\theta_{ita}$ are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.
 
 #### Model specifications
 
@@ -352,6 +352,21 @@ This working likelihood is implemented by `family = "xPoisson"` in `R-INLA`.
 
 I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion [@pettit1990conditional].
 For reference, I also computed the deviance information criterion (DIC) [@spiegelhalter2002bayesian] and widely applicable information criterion (WAIC) [@watanabe2013widely].
+Each of these criterion are presented in Figure \@ref(fig:model-comparison).
+
+(ref:model-comparison) For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
+
+```{r model-comparison, fig.cap="(ref:model-comparison)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/model-comparison.png"))
+```
+
+|      | M1           | M2           | M3           | M4           |
+|------|--------------|--------------|--------------|--------------|
+| CPO  | 5573 (36)    | 5772 (36)    | 5574 (36)    | 5771 (36)    |
+| DIC  | 100780 (300) | 101588 (317) | 100781 (300) | 101589 (317) |
+| WAIC | 103763 (358) | 105008 (383) | 103763 (358) | 105009 (383) |
+
+Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the multinomial logistic regression model with corresponding standard errors.
 
 ### Spatial logistic regression {#s-logistic}
 
@@ -401,10 +416,24 @@ This working likelihood is implemented by `family = "xBinomial"` in `R-INLA`.
 #### Model selection
 
 I selected the model including Besag spatial effects and `cfswrecent` covariates according to the CPO criterion.
-All results, including DIC and WAIC, are presented in Table.
+All results, including DIC and WAIC, are presented in Table and Figure \@ref(fig:fsw-logit-model-comparison).
 Inclusion of Besag spatial random effects, rather than IID, consistently improved performance.
 Benefits from inclusion of covariates were more marginal.
-As some countries had no suitable surveys, inclusion of covariate information is favourable such that the estimates in these countries are based on some country-specific data.
+As some countries had no suitable surveys, inclusion of covariate information is preferable such that the estimates in these countries are based on some country-specific data.
+
+(ref:fsw-logit-model-comparison) For the logistic regression model, the CPO, DIC, and WAIC each agreed that the model containing Besag spatial random effects and the `csfwrecent` covariates was best. Inclusion of Besag spatial random effects consistently improved each criterion, whereas improvements from inclusion of any covariates were marginal.
+
+```{r fsw-logit-model-comparison, fig.cap="(ref:fsw-logit-model-comparison)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/fsw-logit-model-comparison.png"))
+```
+
+|      | L1         | L2         | L3         | L4         | L5         | L6         |
+|------|------------|------------|------------|------------|------------|------------|
+| DIC  | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) |
+| WAIC | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) |
+| CPO  | 950 (15)   | 969 (15)   | 951 (15)   | 970 (15)   | 950 (15)   | 970 (15)   |
+
+Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the logistic regression model with corresponding standard errors.
 
 ### Female sex worker population size adjustment
 
@@ -423,7 +452,9 @@ Next, I used the assumed $\text{Gamma}(\alpha = 10.4, \beta = 0.36)$ FSW age dis
 I assumed the South African ratios were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
 The resutling age trends obtained (Figure \@ref(fig:age-disagg-fsw-line)) reflect country-level variation in demographics and age-at-first-sex.
 
-```{r age-disagg-fsw-line, fig.cap="The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups."}
+(ref:age-disagg-fsw-line) The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups.
+
+```{r age-disagg-fsw-line, fig.cap="(ref:age-disagg-fsw-line)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-disagg-fsw-line.png"))
 ```
 
@@ -702,7 +733,7 @@ inf_fsw_country <- lapply(inf_country, function(x)
   bind_rows(.id = "country")
 ```
 
-(ref:infections-reached) Figure caption.
+(ref:infections-reached) Percentage of new infections reached across all 13 countries, taking a variety of risk stratification approaches, against the percentage of at risk population required to be reached.
 
 ```{r infections-reached, fig.cap="(ref:infections-reached)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached.png"))

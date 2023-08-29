@@ -238,7 +238,15 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="C" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html"><i class="fa fa-check"></i><b>C</b> Fast approximate Bayesian inference</a>
 <ul>
-<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a></li>
+<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a>
+<ul>
+<li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#process-specification"><i class="fa fa-check"></i><b>C.1.1</b> Process specification</a></li>
+<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-prev"><i class="fa fa-check"></i><b>C.1.2</b> HIV prevalence</a></li>
+<li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-cov"><i class="fa fa-check"></i><b>C.1.3</b> ART coverage</a></li>
+<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-inc"><i class="fa fa-check"></i><b>C.1.4</b> HIV incidence rate</a></li>
+<li class="chapter" data-level="C.1.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#anc-test"><i class="fa fa-check"></i><b>C.1.5</b> ANC testing</a></li>
+<li class="chapter" data-level="C.1.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-attend"><i class="fa fa-check"></i><b>C.1.6</b> ART attendance</a></li>
+</ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.2</b> Model assessment</a></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.3</b> AGHQ and PCA-AGHQ details</a></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.4</b> Normalising constant estimation</a></li>
@@ -266,13 +274,12 @@ div.csl-indent {
 <div id="naomi-aghq" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">6</span> Fast approximate Bayesian inference<a href="naomi-aghq.html#naomi-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-<p>In this chapter I describe a novel Bayesian inference method I developed.
+<p>In this chapter I describe a novel Bayesian inference method that I developed.
 The method is motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (<code>https://naomi.unaids.org</code>) to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span>.
-Ensuring fast and accurate Bayesian inferences in this setting is challenging.</p>
-<p>I began working on this project at the start of my PhD.
-However, it was only after I read <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span> that I began making progress.
-Alex Stringer later supervised by visit to the University of Waterloo.
+Ensuring fast and accurate Bayesian inferences in this setting is challenging.
+I began working on this project at the start of my PhD, and only started to make progress after reading <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span>.
+I am grateful that Alex Stringer later supervised my visit to the University of Waterloo.
 The results of this work are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/elgm-inf"><code>athowes/naomi-aghq</code></a>.</p>
 <div id="inference-methods" class="section level2 hasAnchor" number="6.1">
@@ -280,8 +287,9 @@ Code for the analysis in this chapter is available from <a href="https://github.
 <p>In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 <span class="math display">\[\begin{equation}
-p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}.
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})},
 \end{equation}\]</span>
+or some way to compute summaries of it.
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.</p>
 <p>It is usually intractable to directly obtain the posterior distribution.
@@ -290,11 +298,12 @@ This is because the denominator contains an intractable integral called the post
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.1}
 \end{equation}\]</span>
 For this reason, approximations to the posterior distribution <span class="math inline">\(\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> are typically used in place of the exact posterior distribution.
-Some approximate Bayesian inference methods avoid directly calculate the posterior normalising constant, instead working with the unnormalised posterior distribution
+Some approximate Bayesian inference methods avoid directly calculating the posterior normalising constant, instead working with the unnormalised posterior distribution
 <span class="math display">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
 \end{equation}\]</span>
-Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.</p>
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
+The methods in this chapter fall into this later category.</p>
 <div id="the-laplace-approximation" class="section level3 hasAnchor" number="6.1.1">
 <h3><span class="header-section-number">6.1.1</span> The Laplace approximation<a href="naomi-aghq.html#the-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Laplace’s method <span class="citation">(<a href="#ref-laplace1774memoire">Laplace 1774</a>)</span> is a technique used to approximate integrals of the form
@@ -307,7 +316,8 @@ Let <span class="math inline">\(h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymb
 <span class="math display">\[\begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}\]</span>
-Laplace’s method involves approximating the function <span class="math inline">\(h\)</span> by its second order Taylor expansion evaluated at a maxima of <span class="math inline">\(h\)</span> to eliminate the first order term.
+Laplace’s method involves approximating the function <span class="math inline">\(h\)</span> by its second order Taylor expansion.
+This expansion is then evaluated at a maxima of <span class="math inline">\(h\)</span> to eliminate the first order term.
 Let
 <span class="math display">\[\begin{equation}
 \hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}})
@@ -322,18 +332,18 @@ The Laplace approximation is then
 \tilde p_{\texttt{LA}}(\mathbf{y}) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.2} \\
 &amp;= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}\]</span>
-Equation <a href="naomi-aghq.html#eq:la">(6.2)</a> is calculated using the known normalising constant of the Gaussian distribution
+The above result is calculated using the known normalising constant of the Gaussian distribution
 <span class="math display">\[\begin{equation}
 p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}\]</span>
-It follows that the Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> such that
+The Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> such that
 <span class="math display">\[\begin{equation}
 \tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}\]</span></p>
 <div id="the-marginal-laplace-approximation" class="section level4 hasAnchor" number="6.1.1.1">
 <h4><span class="header-section-number">6.1.1.1</span> The marginal Laplace approximation<a href="naomi-aghq.html#the-marginal-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>It may be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
-An alternative is to instead approximate the marginal posterior distribution of some subset of the parameters.
+<p>It might be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
 As before, let <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> where <span class="math inline">\(\mathbf{x}\)</span> is the latent field, and <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> are the hyperparameters.
 Applying an equivalent Laplace approximation to the latent field, we have <span class="math inline">\(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> with posterior mode
 <span class="math display">\[\begin{equation}
@@ -343,7 +353,7 @@ and Hessian matrix evaluated at the posterior mode
 <span class="math display">\[\begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}\]</span>
-For both quantities cases dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit.
+For both quantities dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit.
 The resulting marginal Laplace approximation is then
 <span class="math display" id="eq:marginalla">\[\begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \tag{6.3} \\
@@ -365,6 +375,13 @@ Then a quadrature approximation to the posterior normalising constant is given b
 Quadrature methods are most effective when integrating over small dimensions.
 The reason why is that exponentially more quadrature points are required to cover each additional dimension.
 For even moderate dimension, this quickly becomes intractable.</p>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:trapezoid"></span>
+<img src="figures/naomi-aghq/trapezoid.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.1: Figure caption.
+</p>
+</div>
 <div id="gauss-hermite-quadrature" class="section level4 hasAnchor" number="6.1.2.1">
 <h4><span class="header-section-number">6.1.2.1</span> Gauss-Hermite quadrature<a href="naomi-aghq.html#gauss-hermite-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate a certain class of functions exactly.
@@ -388,7 +405,7 @@ The corresponding weighting function <span class="math inline">\(\omega: \mathca
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:aghq-demo"></span>
 <img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
 <p class="caption">
-Figure 6.1: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
+Figure 6.2: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
 </p>
 </div>
 <p>In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
@@ -508,9 +525,9 @@ where <span class="math inline">\(\theta_{I}\)</span> are the following weighted
 <h3><span class="header-section-number">6.5.2</span> Principal components analysis<a href="naomi-aghq.html#principal-components-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:pca-demo"></span>
-<img src="figures/naomi-aghq/pca-demo.png" alt="See Figure 6.1." width="95%" />
+<img src="figures/naomi-aghq/pca-demo.png" alt="See Figure 6.2." width="95%" />
 <p class="caption">
-Figure 6.2: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.1</a>.
+Figure 6.3: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.2</a>.
 </p>
 </div>
 </div>
@@ -520,7 +537,7 @@ Figure 6.2: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.1</a>.
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:figB"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="Naomi output." width="95%" />
 <p class="caption">
-Figure 6.3: Naomi output.
+Figure 6.4: Naomi output.
 </p>
 </div>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.6.1">

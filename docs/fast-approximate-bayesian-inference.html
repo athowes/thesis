@@ -238,7 +238,15 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="C" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html"><i class="fa fa-check"></i><b>C</b> Fast approximate Bayesian inference</a>
 <ul>
-<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a></li>
+<li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a>
+<ul>
+<li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#process-specification"><i class="fa fa-check"></i><b>C.1.1</b> Process specification</a></li>
+<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-prev"><i class="fa fa-check"></i><b>C.1.2</b> HIV prevalence</a></li>
+<li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-cov"><i class="fa fa-check"></i><b>C.1.3</b> ART coverage</a></li>
+<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-inc"><i class="fa fa-check"></i><b>C.1.4</b> HIV incidence rate</a></li>
+<li class="chapter" data-level="C.1.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#anc-test"><i class="fa fa-check"></i><b>C.1.5</b> ANC testing</a></li>
+<li class="chapter" data-level="C.1.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-attend"><i class="fa fa-check"></i><b>C.1.6</b> ART attendance</a></li>
+</ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.2</b> Model assessment</a></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.3</b> AGHQ and PCA-AGHQ details</a></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.4</b> Normalising constant estimation</a></li>
@@ -267,6 +275,135 @@ div.csl-indent {
 <h1><span class="header-section-number">C</span> Fast approximate Bayesian inference<a href="fast-approximate-bayesian-inference.html#fast-approximate-bayesian-inference" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="simplified-naomi-model-description" class="section level2 hasAnchor" number="10.1">
 <h2><span class="header-section-number">C.1</span> Simplified Naomi model description<a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this section we describe the simplified Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> in complete detail.</p>
+<div id="process-specification" class="section level3 hasAnchor" number="10.1.1">
+<h3><span class="header-section-number">C.1.1</span> Process specification<a href="fast-approximate-bayesian-inference.html#process-specification" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<table>
+<colgroup>
+<col width="27%" />
+<col width="29%" />
+<col width="19%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Model component</th>
+<th>Latent field</th>
+<th>Hyperparameter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="fast-approximate-bayesian-inference.html#hiv-prev">C.1.2</a></td>
+<td>HIV prevalence</td>
+<td><span class="math inline">\(22 + 5n\)</span></td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><a href="fast-approximate-bayesian-inference.html#art-cov">C.1.3</a></td>
+<td>ART coverage</td>
+<td><span class="math inline">\(25 + 5n\)</span></td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td><a href="fast-approximate-bayesian-inference.html#hiv-inc">C.1.4</a></td>
+<td>HIV incidence rate</td>
+<td><span class="math inline">\(2 + n\)</span></td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td><a href="fast-approximate-bayesian-inference.html#anc-test">C.1.5</a></td>
+<td>ANC testing</td>
+<td><span class="math inline">\(2 + 2n\)</span></td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td><a href="fast-approximate-bayesian-inference.html#art-attend">C.1.6</a></td>
+<td>ART attendance</td>
+<td><span class="math inline">\(n\)</span></td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Total</td>
+<td><span class="math inline">\(51 + 14n\)</span></td>
+<td>24</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="hiv-prev" class="section level3 hasAnchor" number="10.1.2">
+<h3><span class="header-section-number">C.1.2</span> HIV prevalence<a href="fast-approximate-bayesian-inference.html#hiv-prev" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="25%" />
+<col width="57%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Distribution</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\beta^\rho_0\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, 5)\)</span></td>
+<td>Intercept</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\beta_{s}^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, 5)\)</span></td>
+<td>The difference in logit prevalence for men compared to women</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\bu^\rho_a\)</span></td>
+<td><span class="math inline">\(\text{AR}1(\sigma_A^\rho, \phi_A^\rho)\)</span></td>
+<td>Age random effects for women</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\bu_a^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)\)</span></td>
+<td>Age random effects for the difference in logit prevalence for men compared to women age <span class="math inline">\(a\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\bu^\rho_x\)</span></td>
+<td><span class="math inline">\(\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)\)</span></td>
+<td>Spatial random effects for women</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\bu_x^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)\)</span></td>
+<td>Spatial random effects for the difference in logit prevalence for men compared to women in district <span class="math inline">\(x\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\bu_x^{\rho, a &lt; 15}\)</span></td>
+<td><span class="math inline">\(\text{ICAR}(\sigma_{XA}^\rho)\)</span></td>
+<td>Spatial random effects for the ratio of paediatric prevalence to adult women prevalence</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\bmeta^\rho_{R_x, s, a}\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="art-cov" class="section level3 hasAnchor" number="10.1.3">
+<h3><span class="header-section-number">C.1.3</span> ART coverage<a href="fast-approximate-bayesian-inference.html#art-cov" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="hiv-inc" class="section level3 hasAnchor" number="10.1.4">
+<h3><span class="header-section-number">C.1.4</span> HIV incidence rate<a href="fast-approximate-bayesian-inference.html#hiv-inc" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="anc-test" class="section level3 hasAnchor" number="10.1.5">
+<h3><span class="header-section-number">C.1.5</span> ANC testing<a href="fast-approximate-bayesian-inference.html#anc-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="art-attend" class="section level3 hasAnchor" number="10.1.6">
+<h3><span class="header-section-number">C.1.6</span> ART attendance<a href="fast-approximate-bayesian-inference.html#art-attend" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
 </div>
 <div id="model-assessment-1" class="section level2 hasAnchor" number="10.2">
 <h2><span class="header-section-number">C.2</span> Model assessment<a href="fast-approximate-bayesian-inference.html#model-assessment-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -289,6 +426,12 @@ Figure C.1: The potential scale reduction factor compares between- and within- e
 </p>
 </div>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-eaton2021naomi" class="csl-entry">
+Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oliver Stevens, Sumali Bajaj, Rob Ashton, et al. 2021. <span>“Naomi: A New Modelling Tool for Estimating HIV Epidemic Indicators at the District Level in Sub-Saharan Africa.”</span>
 </div>
 </div>
             </section>

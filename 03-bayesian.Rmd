@@ -43,12 +43,14 @@ For a more complete introduction, I recommend @mcelreath2020statistical or @gelm
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
 This is achieved by the construction of a generative model $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$ together with parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$.
 Here $n$ is the dimension of the data and $d$ is the number of parameters.
+The notation $p(\cdot)$ denotes a probability distribution.
+
 The model is generative in the sense that one can simulate from it to generate draws
 \begin{equation}
 (\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
 \end{equation}
 If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
-In this way, models can be built iteratively, with complexity added gradually. 
+In this way, models can be built iteratively, with complexity added gradually.
 
 The model is usually constructed from two parts, known respectively as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
 The joint distribution is obtained by the product $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$.
@@ -56,14 +58,14 @@ The likelihood, as a function of $\boldsymbol{\mathbf{\phi}}$ with $\mathbf{y}$ 
 The prior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}}$ before the data is observed.
 
 Recommendations for specifying the prior distribution vary.
-A central issue is the extent to which subjective information should be incorporated into the prior distribution, and thereby influence the posterior distribution.
+The extent to which subjective information should be incorporated into the prior distribution, and thereby influence the posterior distribution, is a central topic of discussion.
 Proponents of the objective Bayesian paradigm suggest that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
-That said, we shall see that the distinction between likelihood and prior distribution can be blurred (Section \@ref(hierarchical-lgm-elgm)).
+That said, we shall see that the distinction between likelihood and prior distribution can be unclear (Section \@ref(hierarchical-lgm-elgm)).
 As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically [@gelman2017prior].
 
 ### Bayesian computation
 
-(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. The likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution is $\phi \sim \text{Gamma}(3, 1)$. Given observed data $\mathbf{y} = (1, 2, 3)$ the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the model is conjugate and the posterior distribution is in the same family as the prior distribution. Conjugate models are frequently used because of their convenience, in preference to other perhaps more appropriate models which might be more computationally demanding.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution is $\phi \sim \text{Gamma}(3, 1)$. Given observed data $\mathbf{y} = (1, 2, 3)$ the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. The posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Model of this sort are frequently used because of their convenience, in preference to other, perhaps more appropriate, models which might be more computationally demanding.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
@@ -74,20 +76,29 @@ Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the potentially high-dimensional integral $p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}$ in the denominator, sometimes known as the marginal likelihood or evidence.
+Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the potentially high-dimensional integral $p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}$ in the denominator.
+This integral is sometimes known as the marginal likelihood or evidence.
 As such, although it is easy to evaluate $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$, it is typically difficult to evaluate the posterior distribution itself.
 
-A variety of computational methods have been developed to tackle this problem.
-The main categories are:
+A variety of computational methods have been developed to tackle this problem:
 
-1. **Sampling algorithms** These approaches look to generate samples from the posterior distribution, and are known as Monte Carlo methods, named after the casino [@robert2005monte].
-The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from a Markov chain with the posterior distribution as its stationary distribution.
-In this thesis, I make use of the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
-2. **Variational inference** In variational inference (VI), the posterior distribution is assumed to belong to a particular class of functions.
-Optimisation algorithms are then used to choose the best member of that class.
-Though VI is fast, it may not be accurate [@yao2018yes].
-3. **Expectation maximisation**
-4. **Deterministic approximations** These approximations are the subject of Chapter \@ref(naomi-aghq).
+1. **Sampling algorithms** These approaches look to generate samples from the posterior distribution [@robert2005monte].
+Sometimes sampling algorithsm and are known as Monte Carlo methods, named after the casino.
+The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution [@roberts2004general].
+The samples from this Markov chain may then be used to approximate the posterior distribution.
+In this thesis, I make use of a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
+In particular, I use the No-U-Turn sampler [NUTS; @hoffman2014no], a method for adapting the tuning parameters of HMC based local properties of the posterior distribution.
+2. **Variational inference** In variational inference [VI; @blei2017variational] the posterior distribution is assumed to belong to a particular family of functions.
+Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
+VI is typically faster than Monte Carlo algorithms like MCMC, especially for large datasets or models.
+However, it lacks theoretical guarantees and is often known to inaccurately estimate posterior variances [@giordano2018covariances].
+Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research [@yao2018yes].
+The expectation propagation (EP) algorithm [@minka2001expectation].
+3. **Deterministic approximations**
+Laplace approximation.
+Quadrature.
+Integrated nested Laplace approximation.
+These approximations are the subject of Chapter \@ref(naomi-aghq).
 
 ### Interplay between modelling and computation
 
@@ -127,7 +138,7 @@ knitr::include_graphics("figures/bayesian/zmb-scatter.png")
 
 ### Hierarchical models {#hierarchical}
 
-(ref:hierarchical-structure) A simple example of group structure within data. Each individual $i = 1, \ldots, n$ is associated to $m_i$ observations $y_{i1}, \ldots, y_{im_i}$.
+(ref:hierarchical-structure) A simple example of group structure within data in which each individual $i = 1, \ldots, n$ is associated to $m_i$ observations $y_{i1}, \ldots, y_{im_i}$.
 
 ```{r hierarchical-structure, fig.cap="(ref:hierarchical-structure)"}
 knitr::include_graphics("figures/bayesian/hierarchical-structure.png")

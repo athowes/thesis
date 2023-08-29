@@ -6,6 +6,40 @@ resource_version <- "20230811-095752-5b8181d8"
 
 ## Simplified Naomi model description
 
+In this section we describe the simplified Naomi model [@eaton2021naomi] in complete detail.
+
+### Process specification 
+
+|                   | Model component    | Latent field | Hyperparameter |
+| ----------------- | ------------------ | ------------ | -------------- |
+| \@ref(hiv-prev)   | HIV prevalence     | $22 + 5n$    | 9              |
+| \@ref(art-cov)    | ART coverage       | $25 + 5n$    | 9              |
+| \@ref(hiv-inc)    | HIV incidence rate | $2 + n$      | 3              |
+| \@ref(anc-test)   | ANC testing        | $2 + 2n$     | 2              |
+| \@ref(art-attend) | ART attendance     | $n$          | 1              |
+|                   | Total              | $51 + 14n$   | 24             |
+
+### HIV prevalence {#hiv-prev}
+
+| Term                             | Distribution                                    | Description                                                                                                     |
+|----------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| $\beta^\rho_0$                   | $\mathcal{N}(0, 5)$                             | Intercept                                                                                                       |
+| $\beta_{s}^{\rho, s = \text{M}}$ | $\mathcal{N}(0, 5)$                             | The difference in logit prevalence for men compared to women                                                    |
+| $\bu^\rho_a$                     | $\text{AR}1(\sigma_A^\rho, \phi_A^\rho)$        | Age random effects for women                                                                                    |
+| $\bu_a^{\rho, s = \text{M}}$     | $\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)$  | Age random effects for the difference in logit prevalence for men compared to women age $a$                     |
+| $\bu^\rho_x$                     | $\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)$       | Spatial random effects for women                                                                                |
+| $\bu_x^{\rho, s = \text{M}}$     | $\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)$ | Spatial random effects for the difference in logit prevalence for men compared to women in district $x$         |
+| $\bu_x^{\rho, a < 15}$           | $\text{ICAR}(\sigma_{XA}^\rho)$                 | Spatial random effects for the ratio of paediatric prevalence to adult women prevalence                         |
+| $\bmeta^\rho_{R_x, s, a}$        | $-$                                             | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available |
+
+### ART coverage {#art-cov}
+
+### HIV incidence rate {#hiv-inc}
+
+### ANC testing {#anc-test}
+
+### ART attendance {#art-attend}
+
 ## Model assessment
 
 ## AGHQ and PCA-AGHQ details
