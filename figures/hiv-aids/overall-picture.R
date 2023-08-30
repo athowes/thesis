@@ -40,6 +40,10 @@ deaths_global <- read_xlsx("resources/hiv-aids/epidemic-transition-metrics-globa
   mutate(across(1:4, as_numeric_spaces)) %>%
   mutate(Region = "Global", Indicator = "AIDS-related deaths")
 
+fct_reorg <- function(fac, ...) {
+  fct_recode(fct_relevel(fac, ...), ...)
+}
+
 infections_deaths <- bind_rows(
   infections_esa,
   deaths_esa,
@@ -48,32 +52,22 @@ infections_deaths <- bind_rows(
   infections_global,
   deaths_global
 ) %>%
-  mutate(Region = fct_relevel(Region, "Global", "Eastern and southern Africa", "Western and central Africa"))
+  mutate(
+    Region = fct_reorg(Region, "Global" = "Global", "Eastern and\nsouthern Africa" = "Eastern and southern Africa", "Western and\ncentral Africa" = "Western and central Africa"),
+    Indicator = fct_relevel(Indicator, "New HIV infections", "AIDS-related deaths")
+  )
 
-infections_plot <- infections_deaths %>%
-  filter(Indicator == "New HIV infections") %>%
-  ggplot(aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
+ggplot(infections_deaths, aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
   geom_ribbon(alpha = 0.25, colour = NA) +
   geom_line() +
-  labs(x = "", y = "New HIV infections") +
+  facet_grid(Indicator ~ .) +
   scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
   scale_fill_manual(values = cbpalette) +
   scale_color_manual(values = cbpalette) +
   theme_minimal() +
-  theme(legend.position = "none")
+  labs(y = "Estimate")
 
-deaths_plot <- infections_deaths %>%
-  filter(Indicator == "AIDS-related deaths") %>%
-  ggplot(aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
-  geom_ribbon(alpha = 0.25, colour = NA) +
-  geom_line() +
-  labs(x = "Year", y = "AIDS-related deaths", caption = "Source: UNAIDS epidemiological estimates, 2023") +
-  scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
-  scale_fill_manual(values = cbpalette) +
-  scale_color_manual(values = cbpalette) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
+ggsave("figures/hiv-aids/overall-picture.png", h = 4.25, w = 6.25)
 
 infections_global %>%
   filter(`All ages estimate` == max(`All ages estimate`))
@@ -85,4 +79,4 @@ deaths_global %>%
 
 round(100 * (max(deaths_global$`All ages estimate`) - tail(deaths_global$`All ages estimate`, 1)) / max(deaths_global$`All ages estimate`))
 
-ggsave("figures/overall-picture.png", infections_plot / deaths_plot, h = 4.25, w = 6.25)
+

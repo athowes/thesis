@@ -148,7 +148,7 @@ map <- data %>%
 
 plot <- dotplot + map
 
-ggsave("figures/naomi-continent.png", h = 4, w = 6.25)
+ggsave("figures/hiv-aids/naomi-continent.png", h = 4, w = 6.25)
 
 #' Numbers for text
 data %>%
