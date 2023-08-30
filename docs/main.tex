@@ -285,19 +285,19 @@
  \begin{flushright}
  Adam Howes \\
  Imperial College London\\
- October 2023
+ December 2023
  \end{flushright}
 \end{acknowledgements}
 
 %%%%% ABSTRACT -- Nothing to do here except comment out if you don't want it.
 \begin{abstract}
-	Progress towards ending AIDS as a public health threat by 2030 is faltering.
+	Progress towards ending AIDS as a public health threat by 2030 is not being made fast enough.
 Effective public health response requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
 Limitations of available data make obtaining these estimates difficult.
-I develop and apply Bayesian spatio-temporal methods to meet this challenge.
-First, I examine models for area-level spatial structure.
-Second, I estimate district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
-Finally, I develop a novel deterministic Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
+I developed and applied Bayesian spatio-temporal methods to meet this challenge.
+First, I examined models for area-level spatial structure.
+Second, I estimated district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
+Finally, I developed a novel deterministic Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
 Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
 \end{abstract}
 
@@ -345,7 +345,7 @@ Together, the contributions in this thesis help to guide precision HIV policy in
 
 This thesis is about applied and methodological Bayesian statistics.
 It is applied and methodological in that I am concerned with real world questions and the means to answer them.
-The approach to statistics is Bayesian because I arrive at conclusions based on data using probability models.
+The statistical approach is Bayesian because I arrived at conclusions based on data using probability models.
 
 
 
@@ -355,21 +355,22 @@ The approach to statistics is Bayesian because I arrive at conclusions based on 
 
 }
 
-\caption{HIV/AIDS is the largest cause of DALYs among individuals aged \textgreater1 year in SSA \autocite{ihme2019}. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights vary between 0 (full health) and 1 (death) depending on severity of the condition.}\label{fig:gbd}
+\caption{HIV/AIDS is the largest cause of annual DALYs among individuals aged \textgreater1 year in SSA \autocite{ihme2019}. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights vary between 0 (full health) and 1 (death) depending on severity of the condition.}\label{fig:gbd}
 \end{figure}
 
-The real world questions relate to surveillance of the human immunodeficiency virus (HIV) epidemic in sub-Saharan Africa (SSA).
-Over 30 years since the beginning of the epidemic, HIV is the largest cause of disability adjusted life years (DALYs) in SSA among non-infants {[}\textcite{ihme2019}; Figure \ref{fig:gbd}{]}.
-Quantifying the epidemic using statistics is an important part of the public health response, and the path towards disease control and elimination.
-However, there are substantial challenges in obtaining suitable estimates of relevant indicators needed to mount this response.
+The real world questions are related to strategic information for planning the human immunodeficiency virus (HIV) epidemic response in sub-Saharan Africa (SSA).
+Over 40 years since the beginning of the epidemic, HIV is the largest annual cause of disability adjusted life years (DALYs) in SSA among non-infants {[}\textcite{ihme2019}; Figure \ref{fig:gbd}{]}.
+Quantification of the epidemic using statistics is an important part of the public health response.
+Effective implementation of both HIV prevention and treatment requires strategic information.
+However, producing suitable estimates of relevant indicators is challenging.
 
-The data I use are recorded from national household surveys or routinely collected from healthcare facilities.
-An important feature of this data is its location and the time at which it was recorded.
+The data I use are recorded from national household surveys or routinely collected from healthcare facilities providing HIV services.
+An important feature of these data are the location and the time at which each datum was recorded
 While diverse, spatio-temporal data have distinctive commonalities which reoccur across settings.
 As a result, the work in this thesis makes use of, and aspires to contribute to the development of, modelling techniques from spatio-temporal statistics.
 
 Computation is an essential part of modern statistical practice.
-Each project in this thesis, as well as the thesis itself, is accompanied by R \autocite{r} code, hosted on \href{https://github.com/athowes}{GitHub}.
+Each project in this thesis, and the thesis itself, is accompanied by R \autocite{r} code, hosted on GitHub at \href{https://github.com/athowes}{\texttt{https://github.com/athowes}}.
 
 \hypertarget{chapter-overview}{%
 \section{Chapter overview}\label{chapter-overview}}
@@ -379,21 +380,22 @@ This thesis is structured (Figure \ref{fig:chapter-flowchart}) as follows:
 \begin{itemize}
 \tightlist
 \item
-  Chapter \ref{hiv-aids}: I begin by providing an overview of the HIV/AIDS epidemic, and describing the challenges faced by disease surveillance efforts.
+  Chapter \ref{hiv-aids} provides an overview of the HIV/AIDS epidemic, and describing the challenges faced by disease surveillance efforts.
 \item
-  Chapter \ref{bayes-st}: I then introduce the statistical concepts and notation used throughout the thesis, focusing on Bayesian modelling and computation, spatio-temporal statistics, and survey methods.
+  Chapter \ref{bayes-st} introduces the statistical concepts and notation used throughout the thesis, focusing on Bayesian modelling and computation, spatio-temporal statistics, and survey methods.
 \item
   Chapter \ref{beyond-borders}: The prevailing model for spatial structure used in small-area estimation \autocite{besag1991bayesian} was intended to analyse a grid of pixels.
   In disease mapping, we work using the districts of a country, which are typically not a grid.
-  I evaluate the practical consequences of this this concern \autocite{howes2023beyond}.
+  I evaluated the practical consequences of this concern \autocite{howes2023beyond}.
 \item
-  Chapter \ref{multi-agyw}: Adolescent girls and young women are a demographic group at disproportionate risk of HIV infection.
-  The Global AIDS Strategy suggests prioritising interventions on the basis of behaviour to prevent the most new infections using available resources.
-  I estimate the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assess the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
+  Chapter \ref{multi-agyw}: Adolescent girls and young women are a demographic group at disproportionate risk of acquiring HIV infection.
+  The Global AIDS Strategy recommends prioritising interventions on the basis of behaviour to prevent the most new infections using available resources.
+  I estimated the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assessed the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
+  This work was included in the UNAIDS Global AIDS Update 2022 \autocite{unaids2022global} and 2023 \autocite{unaids2023global}.
 \item
   Chapter \ref{naomi-aghq}: The Naomi small-area estimation model \autocite{eaton2021naomi} is used by countries to estimate district-level HIV indicators.
-  With this model in mind, I develop an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
-  I apply the method to data from Malawi, and analyse the consequences of inference method choice for policy relevant outcomes.
+  With this model in mind, I developed an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
+  I applied the method to data from Malawi, and analysed the consequences of inference method choice for policy relevant outcomes.
   Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
 \item
   Chapter \ref{conclusions}: Finally, I discuss avenues for future work, and my conclusions regarding the research, as well as its strengths and weaknesses.
@@ -407,7 +409,7 @@ This thesis is structured (Figure \ref{fig:chapter-flowchart}) as follows:
 
 }
 
-\caption{Some chapters of the thesis should be read before others. Dashed lines represent recommended, but not required reading. Though chronological order is recommended, Chapter \ref{beyond-borders}, Chapter \ref{multi-agyw} and Chapter \ref{naomi-aghq} may be read in any order as they correspond to research projects which are for the most part separable.}\label{fig:chapter-flowchart}
+\caption{Some chapters of the thesis should be read before others. Dashed lines represent recommended, but not required reading. Though chronological order is recommended, Chapters \ref{beyond-borders}, \ref{multi-agyw} and \ref{naomi-aghq} may be read in any order as they correspond to research projects which are for the most part separable.}\label{fig:chapter-flowchart}
 \end{figure}
 
 \hypertarget{hiv-aids}{%
@@ -420,7 +422,7 @@ This thesis is structured (Figure \ref{fig:chapter-flowchart}) as follows:
 \section{Background}\label{background}}
 
 HIV is a retrovirus which infects humans.
-If untreated, HIV develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
+If untreated, HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
 HIV primarily attacks a type of white blood cell vital for the function of the immune system.
 As a result, AIDS is characterised by increased risk of developing opportunistic infections such as tuberculosis or \emph{Pneumocystis} pneumonias.
 
@@ -431,7 +433,7 @@ The most common mode of transmission is via unprotected anal or vaginal sex, tho
 Approximately 86 million people have become infected with HIV, and of those 40 million have died of AIDS-related causes.
 
 An ongoing global and multifaceted effort has been made to respond to the epidemic.
-Pivotal roles in shaping the response have been played by local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
+The response has been shaped by local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
 The investment of \$100 billion by PEPFAR, constituting the ``largest commitment by a single nation to address a single disease in history'' \autocite{pepfar2022}, is indicative of the scale of the response.
 
 
@@ -445,36 +447,36 @@ The investment of \$100 billion by PEPFAR, constituting the ``largest commitment
 \caption{Globally, yearly new HIV infections peaked in 1995, and have since decreased by 59\% and yearly AIDS-related deaths peaked in 2004, and have since decreased by 68\% \autocite{unaids2023aidsinfo}. Much of the disease burden is concentrated in eastern and southern Africa, as well as western and central Africa.}\label{fig:overall-picture}
 \end{figure}
 
-Implementation of HIV prevention and treatment has seen both the number of new HIV infections and AIDS-related deaths per year fall significantly since their peak (Figure \ref{fig:overall-picture}).
+Implementation of HIV prevention and treatment has significantly reduced the number of new HIV infections and AIDS-related deaths per year since their peak (Figure \ref{fig:overall-picture}).
 The most significant evidence-based interventions are:
 
 \begin{itemize}
 \tightlist
 \item
-  Antiretroviral therapy (ART) is a drug which stops the virus from replicating in the body.
+  Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as \emph{Chlamydia trachomatis}, \emph{Neisseria gonorroeae}, syphilis, and \emph{Trichomonas vaginalis}.
+  Condom usage has increased significantly since 1990, which is estimated to have averted 117 million new HIV infections \autocite{stover2021impact}.
+  That said, there remain significant and difficult to close gaps in condom usage.
+\item
+  Antiretroviral therapy (ART) is a combination of drugs which stop the virus from replicating in the body.
   A person living with HIV who takes ART daily can live a full and healthy life, transforming what was once a terminal illness to a treatable chronic condition.
   Of the 39 million people living with HIV (PLHIV) in 2022, around 76\% were accessing ART.
   A staggering 21 million AIDS-related deaths are estimated to have been averted by ART \autocite{unaids2023global}.
   ART reduces the amount of virus in the blood and genital secretions.
-  If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually \autocite{cohen2011prevention}.
-  For this reason, as well as providing life saving treatment, ART also operates as prevention (TaSP).
-  Particular efforts have been made to provide pregnant women with ART, which is estimated to reduce the chance of mother-to-child transmission (MTCT) by 25-35\% in some settings \autocite{siegfried2011antiretrovirals}.
+  If the virus is undetectable then there is considerable evidence that it cannot be transmitted sexually \autocite{cohen2011prevention,broyles2023risk}.
+  For this reason, in addition to providing life saving treatment, ART also operates as prevention.
+  Particular efforts have been made to provide pregnant women with ART to reduce the chance of mother-to-child transmission (MTCT) \autocite{siegfried2011antiretrovirals}.
 \item
-  Condoms are an inexpensive and effective method for prevention of HIV and other sexually transmitted infections (STIs) such as \emph{Chlamydia trachomatis}, \emph{Neisseria gonorroeae}, syphilis, and \emph{Trichomonas vaginalis}.
-  There has been a significant scale-up of condom usage since 1990, which is estimated to have averted 117 million new HIV infections \autocite{stover2021impact}.
-  That said, there remain significant and difficult to close gaps in the proportion of individuals reporting they used a condom during their last high-risk sexual encounter.
-\item
-  Voluntary medical male circumcision (VMMC) has been found to provide partial protection against female-to-male HIV transmission.
-  Three landmark randomised control trials \autocite{auvert2005randomized,gray2007male,bailey2007male} found complete surgical removal of the foreskin to result in a 50-60\% reduction of HIV incidence in men.
+  Voluntary medical male circumcision (VMMC) partially protects against female-to-male HIV acquisition.
+  Three landmark randomised control trials \autocite{auvert2005randomized,gray2007male,bailey2007male} found complete surgical removal of the foreskin to result a reduction of HIV acquisition in men by 50-60\%.
   Based on this evidence, VMMC has been recommended since 2007 by the World Health Organization (WHO) and UNAIDS as a key HIV intervention in high-prevalence settings.
   Scale up of VMMC across 15 priority countries between 2008 and 2019 is estimated to have already averted 340 thousand new HIV infections, though the future number of new HIV infections averted is likely to be much higher.
 \item
-  Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are drugs which can be taken before and after exposure to prevent transmission.
+  Pre-exposure prophylaxis (PrEP) and post-exposure prophylaxis (PEP) are antiretrovial drugs which can be taken before and after exposure to prevent transmission.
   PrEP and PEP are more costly than some other prevention options, so primarily useful in high risk settings.
 \end{itemize}
 
 Though important progress had been made, there remains much more to do.
-In 2022 there were 1.3 million people newly infected with HIV and 630 thousand AIDS-related deaths, more than one every minute \autocite{unaids2022global}.
+In 2022, 1.3 million people were newly infected with HIV and there were 630 thousand AIDS-related deaths, more than one every minute \autocite{unaids2022global}.
 Bold fast-track targets have been set to accelerate the end of AIDS as global public health threat by 2030.
 Renewed commitment is required to meet these targets in the context of disruption to HIV services caused by the COVID-19 pandemic and a shortfall in HIV funding \autocite{economist2023triple}.
 
@@ -486,7 +488,7 @@ Renewed commitment is required to meet these targets in the context of disruptio
 
 }
 
-\caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These estimates from 2023 were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \textcite{unaids2023aidsinfo}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria are yet to be approved and have been redacted. The estimates process in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results for the Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
+\caption{Adult (15-49) HIV prevalence varies substantially both within and between countries in SSA. These estimates from 2023 were generated by country teams using the Naomi small-area estimation model in a process supported by UNAIDS and are available from \textcite{unaids2023aidsinfo}. White filled points are country-level estimates, and coloured points are district-level estimates. Results from Nigeria were not published. Data collection in the Cabo Delgado province of Mozambique was disrupted by conflict. Obtaining results for the Democratic Republic of the Congo required removing some districts from the model. Country names are given by three-leter codes as published by the International Organization for Standardization (ISO).}\label{fig:naomi-continent}
 \end{figure}
 
 For available resources to have the greatest impact, it is important that HIV interventions are prioritised.
@@ -494,8 +496,9 @@ Under the precision public health paradigm, the right interventions should be pr
 Some interventions might be orders of magnitude more impactful than others \autocite{ord2013moral}.
 
 Disease burden varies substantially across multiple spatial scales.
-In some countries, the epidemic is concentrated within small populations, and HIV prevalence is low.
-In others, transmission is sustained in the general population, and HIV prevalence is higher.
+In some countries, the epidemic is concentrated in small populations, and national HIV prevalence is low.
+In others, the epidemic is sustained by heterosexual transmission, and national HIV prevalence is higher (typically \textgreater1\%)
+These two epidemic settings are described as concentrated and generalised respectively \autocite{tanser2014concentrated}.
 Most of the countries severely affected by HIV are in sub-Saharan Africa (SSA).
 It is estimated that 66\% of the 39 million PLHIV worldwide live in SSA.
 Adult HIV prevalence (ages 15-49) is higher than 10\% (Figure \ref{fig:naomi-continent}) in some countries in southern Africa.
@@ -505,7 +508,7 @@ For example, adult HIV prevalence at the district municipality level in South Af
 In all countries and contexts, some groups of people are at much higher risk than others.
 Groups of people at increased risk of HIV infection are known as key populations (KPs).
 Examples include men who have sex with men (MSM), female sex workers (FSW), people who inject drugs (PWID), and transgender people (TGP) \autocite{stevens2022key}.
-KPs are often marginalised, and face legal and social issues.
+KPs are often marginalised, and face legal and social barriers.
 In concentrated settings, the majority of new HIV infections occur in KPs and their sexual partners.
 In generalised settings like SSA, risk is more diffuse across the population.
 For example, in SSA adolescent girls and young women (AGYW) are a large demographic group at increased risk of HIV infection \autocite{risher2021age,monod2023growing}, but not typically considered a KP.
@@ -521,7 +524,7 @@ Important indicators include:
 \tightlist
 \item
   \textbf{HIV prevalence} is the proportion \(\rho \in [0, 1]\) of the population who have HIV, typically written as a percentage.
-  Both new infections and more PLHIV remaining alive by taking treatment result in an increase in HIV prevalence.
+  Both new infections and more PLHIV remaining alive by taking treatment increase HIV prevalence.
   As such, HIV prevalence should not be interpreted in isolation, and is primarily used indirectly to calculate other indicators.
   That said, in some circumstances when other indicators are difficult to estimate, HIV prevalence can be a useful proxy.
   The number of PLHIV is given by \(N\rho\), where \(N\) is the population size.
@@ -529,37 +532,43 @@ Important indicators include:
   \textbf{HIV incidence} is the rate \(\lambda \in \mathbb{R}\) of new HIV infections, typically written as number of new infections per 1000 person years.
   HIV incidence can be specified in terms of the change in HIV prevalence over some time period \(\lambda = \Delta \rho / \Delta t\).
   Planning, delivery, and evaluation of prevention programming relies on estimates of HIV incidence.
-  The number of new HIV infections is given by \(N \lambda\).
+  The number of new HIV infections is given by \(N (1 - \rho) \lambda\).
 \item
   \textbf{ART coverage} is the proportion \(\alpha \in [0, 1]\) of PLHIV who are on ART, typically written as a percentage.
   Estimates of ART coverage play a direct role in the provision of treatment services.
-  The number of people taking ART is given by \(N \alpha\).
+  The number of people taking ART is given by \(N \rho \alpha\).
 \end{itemize}
+
+\hypertarget{data}{%
+\subsection{Data}\label{data}}
+
+What are the current data?
+What are the current approaches to using the data?
 
 \hypertarget{challenges}{%
 \subsection{Challenges}\label{challenges}}
 
-Obtaining estimates of these indicators which are reliable, timely, and at an appropriate spatial resolution is challenging.
-Among the most significant difficulties faced are:
+Obtaining reliable, timely estimates at an appropriate spatial resolution is challenging.
+The most significant difficulties faced are:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Data sparsity}
+  \textbf{Data sparsity}:
   Collection of data is costly and time consuming.
   As a result, limited direct data might be available for the particular time, location, and sub-population of interest.
   For example, in many countries the last conducted household survey is several years out of date.
 \item
   \textbf{Missing data}
   The sampling frame of a survey may not correspond to the target population.
-  For example, many KPs are difficult to reach, and may be ommited from sampling frames.
+  For example, many KPs are difficult to reach, and may be omitted from sampling frames.
   Individuals included on the sampling frame may choose not to respond.
   All surveys are subject to sampling error, as only a subset of the target population are sampled.
   Each of these issues can be characterised as being problems of missing data.
   I characterise missing data as referring to the shortfalls of any given study, and data sparsity as referring to limited availability of studies.
 \item
-  \textbf{Survey biases}
+  \textbf{Response and measurement biases}
   Individuals may be hesitant to disclose their HIV status, or report higher risk behaviours, due to social desirability bias or a fear of discrimination or stigma.
   When available, biomarker data can be used to overcome under-reporting, but still may be subject to measurement errors.
 \item
@@ -581,25 +590,27 @@ Among the most significant difficulties faced are:
 \hypertarget{statistical-approaches}{%
 \subsection{Statistical approaches}\label{statistical-approaches}}
 
-The challenges above make it direct interpretation of the data often misleading.
-Careful statistical modelling is required to overcome these limitations as best is possible.
+The challenges above make direct interpretation of the data often misleading or impossible.
+Careful statistical modelling is required to overcome these limitations as best as possible.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Borrowing information}
-  When little direct data is available, data judged to be indirectly related can be used to help improve estimation.
-  For example, if limited data is available for individuals of a certain age is a particular country, it is likely reasonable to make use of the data for individuals of a similar age in that country.
+  \textbf{Borrowing information}:
+  When little direct data are available, data judged to be indirectly related can be used to help improve estimation.
+  For example, if limited data are available for individuals of a certain age is a particular country, it is likely reasonable to make use of data for individuals of a similar age in that country.
   As well as over age groups, information can be borrowed between and within countries, and across times.
 \item
-  \textbf{Evidence synthesis}
+  \textbf{Evidence synthesis}:
   Multiple sources of evidence can be combined to overcome the limitations of any one data source.
-  For example, infrequently run household surveys can be complimented by up to date programmatic data.
+  For example, infrequently run household surveys can be complemented by up to date programmatic data.
 \item
-  \textbf{Expert guidance}
+  \textbf{Expert guidance}:
   Expert epidemiological, demographic, and local stakeholder guidance can be used to improve estimates.
   Ensuring the quality of any data used in the estimation process is essential.
+\item
+  \textbf{Uncertainty quantification}:
 \end{enumerate}
 
 \hypertarget{future-directions}{%
@@ -611,7 +622,8 @@ Aims for HIV response going forward, and the surveillance capabilities needed to
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Greater reliance on routine health system data} It is not recommended to include HIV testing in nationally representative household surveys in low (\textless2\%) HIV prevalence settings \autocite{world2005guidelines}. Patient-level HIV data systems \autocite{world2017consolidated} and case-based surveillance (CBS). Integration of HIV services with other health programs and strengthening of health systems.
+  \textbf{Greater reliance on routine health system data}:
+  It is not recommended to include HIV testing in nationally representative household surveys in low (\textless2\%) HIV prevalence settings \autocite{world2005guidelines}. Patient-level HIV data systems \autocite{world2017consolidated} and case-based surveillance (CBS). Integration of HIV services with other health programs and strengthening of health systems.
 \end{enumerate}
 
 \hypertarget{bayes-st}{%
@@ -684,7 +696,7 @@ A variety of computational methods have been developed to tackle this problem:
 \tightlist
 \item
   \textbf{Sampling algorithms} These approaches look to generate samples from the posterior distribution \autocite{robert2005monte}.
-  Sometimes sampling algorithsm and are known as Monte Carlo methods, named after the casino.
+  Sometimes sampling algorithms and are known as Monte Carlo methods, named after the casino.
   The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution \autocite{roberts2004general}.
   The samples from this Markov chain may then be used to approximate the posterior distribution.
   In this thesis, I make use of a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
@@ -1180,7 +1192,7 @@ Code for the analysis in this chapter is available from \href{https://github.com
 In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-The social and biological reasons for this disparity include structural vulnerabilites and power imbalances, age patterns of sexual mixing, younger age at first sex, and increased susceptibility to HIV infection.
+The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming \autocite{saul2018dreams,global2018measurement}.
 
 The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021.
@@ -1201,8 +1213,8 @@ Implementation of the strategy by national HIV programmes and stakeholders requi
 \caption{Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.}\label{fig:risk-grid}
 \end{figure}
 
-\hypertarget{data}{%
-\section{Data}\label{data}}
+\hypertarget{data-1}{%
+\section{Data}\label{data-1}}
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2778}}
@@ -1474,7 +1486,7 @@ I chose the base model \(\rho = 1\) corresponding to no change in behaviour over
 \hypertarget{constraints}{%
 \subsubsection{Constraints}\label{constraints}}
 
-To faciliate interpretability of the posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
+To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
 For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects (Table \ref{tab:constraints}).
 
 \begin{longtable}[]{@{}ll@{}}
@@ -1714,7 +1726,7 @@ F(x) = \left(1 + \exp(\kappa_c (\mu_c - x)) \right)^{- \gamma_c},
 where \(\kappa_c, \mu_c, \gamma_c > 0\) are country-specific shape, shape and skewness parameters respectively.
 Next, I used the assumed \(\text{Gamma}(\alpha = 10.4, \beta = 0.36)\) FSW age distribution in South Africa from the Thembisa model \autocite{johnson2020thembisa} to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
 I assumed the South African ratios were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
-The resutling age trends obtained (Figure \ref{fig:age-disagg-fsw-line}) reflect country-level variation in demographics and age-at-first-sex.
+The resulting age trends obtained (Figure \ref{fig:age-disagg-fsw-line}) reflect country-level variation in demographics and age-at-first-sex.
 
 
 
@@ -1968,7 +1980,7 @@ In future, estimates should be generated and reviewed by country teams.
 \subsection{Conclusion}\label{conclusion}}
 
 I estimated HIV risk group proportions, HIV prevalences and HIV incidences for AGYW aged 15-19, 20-24 and 25-29 years at a district-level in 13 priority countries.
-Using these estimates, I analyzed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
+Using these estimates, I analysed the number of infections that could be reached by prioritisation based upon location, age and behaviour.
 Though subject to limitations, these estimates provide data that national HIV programmes can use to set targets and implement differentiated HIV prevention strategies as outlined in the Global AIDS Strategy.
 Successfully implementing this approach would result in more efficiently reaching a greater number of those at risk of infection.
 

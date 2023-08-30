@@ -38,6 +38,7 @@ If you would like to cite this work, please use:
 Thanks for being interested!
 You can read either the [HTML](https://athowes.github.io/thesis/) or [PDF](https://athowes.github.io/thesis/main.pdf) version.
 I know, an overwhelming choice.
+It's still very much a work in progress at the moment though, so check back in a few months.
 
 > How did you format this thesis?
 

@@ -95,7 +95,15 @@ national_map_data <- data %>%
   ) %>%
   arrange(desc(mean)) %>%
   ungroup() %>%
-  mutate(iso3_sort_order = row_number())
+  mutate(
+    iso3_sort_order = row_number(),
+    area_name = forcats::fct_recode(area_name,
+                                    "Dem. Rep. Congo" = "Democratic Republic of The Congo",
+                                    "Tanzania" = "United Republic of Tanzania",
+                                    "Sao Tome and Pri." = "SAO TOME AND PRINCIPE",
+                                    "Cen. Afr. Rep." = "Central African Republic",
+                                    "Equatorial Guinea" = "Equatorial guinea")
+  )
 
 dotplot <- data %>%
   filter(
@@ -108,11 +116,11 @@ dotplot <- data %>%
     select(national_map_data, iso3, area_name_national = area_name, iso3_sort_order),
     by = "iso3"
   ) %>%
-  ggplot(aes(x = fct_rev(reorder(iso3, iso3_sort_order)), y = mean, col = mean)) +
+  ggplot(aes(x = fct_rev(reorder(area_name_national, iso3_sort_order)), y = mean, col = mean)) +
     geom_jitter(width = 0, size = 1, alpha = 0.8) +
     viridis::scale_color_viridis(option = "A", direction = -1, begin = 0.3, end = 1.0) +
     geom_point(data = national_map_data,
-      aes(x = fct_rev(reorder(iso3, iso3_sort_order)), y = mean),
+      aes(x = fct_rev(reorder(area_name, iso3_sort_order)), y = mean),
           shape = 21, size = 2, fill = "white", col = "black", alpha = 0.9
     ) +
     scale_y_continuous(labels = function(x) paste0(100 * x, "%")) +
@@ -146,9 +154,9 @@ map <- data %>%
         legend.key.width = unit(1, "lines"),
         legend.key.height = unit(1, "lines"))
 
-plot <- dotplot + map
+dotplot + map
 
-ggsave("figures/hiv-aids/naomi-continent.png", h = 4, w = 6.25)
+ggsave("figures/hiv-aids/naomi-continent.png", h = 4.5, w = 6.25)
 
 #' Numbers for text
 data %>%
