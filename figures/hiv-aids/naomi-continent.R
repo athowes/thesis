@@ -128,7 +128,7 @@ dotplot <- data %>%
     labs(y = "HIV prevalence (15-49)", x = "Country") +
     guides(col = FALSE) +
     theme_minimal() +
-    theme(axis.text.y = element_text(size = 6, hjust = 0), axis.title.x = element_text(vjust = -0.5))
+    theme(axis.text.y = element_text(size = 5, hjust = 1), axis.title.x = element_text(vjust = -0.5))
 
 map <- data %>%
   filter(
