@@ -127,7 +127,11 @@ div.csl-indent {
 <li class="chapter" data-level="3.1.2" data-path="bayes-st.html"><a href="bayes-st.html#bayesian-computation"><i class="fa fa-check"></i><b>3.1.2</b> Bayesian computation</a></li>
 <li class="chapter" data-level="3.1.3" data-path="bayes-st.html"><a href="bayes-st.html#interplay-between-modelling-and-computation"><i class="fa fa-check"></i><b>3.1.3</b> Interplay between modelling and computation</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="bayes-st.html"><a href="bayes-st.html#spatio-temporal-statistics"><i class="fa fa-check"></i><b>3.2</b> Spatio-temporal statistics</a></li>
+<li class="chapter" data-level="3.2" data-path="bayes-st.html"><a href="bayes-st.html#spatio-temporal-statistics"><i class="fa fa-check"></i><b>3.2</b> Spatio-temporal statistics</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="bayes-st.html"><a href="bayes-st.html#properties-of-spatial-data"><i class="fa fa-check"></i><b>3.2.1</b> Properties of spatial data</a></li>
+<li class="chapter" data-level="3.2.2" data-path="bayes-st.html"><a href="bayes-st.html#small-area-estimation"><i class="fa fa-check"></i><b>3.2.2</b> Small-area estimation</a></li>
+</ul></li>
 <li class="chapter" data-level="3.3" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical-lgm-elgm"><i class="fa fa-check"></i><b>3.3</b> Model classes</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical models</a></li>
@@ -336,6 +340,23 @@ div.csl-indent {
 </div>
 <div id="hiv-prev" class="section level3 hasAnchor" number="10.1.2">
 <h3><span class="header-section-number">C.1.2</span> HIV prevalence<a href="fast-approximate-bayesian-inference.html#hiv-prev" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>HIV prevalence <span class="math inline">\(\rho_{x, s, a} \in [0, 1]\)</span> is modelled on the logit scale using the linear predictor
+<span class="math display">\[\begin{equation}
+\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \bu^\rho_a + \bu_a^{\rho, s = \text{M}} + \bu^\rho_x + \bu_x^{\rho, s = \text{M}} + \bu_x^{\rho, a &lt; 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. \label{eq:prev}
+\end{equation}\]</span>
+Table <span class="math inline">\(\ref{tab:prev}\)</span> provides a description of the terms included in Equation <span class="math inline">\(\ref{eq:prev}\)</span>.</p>
+<p>Half-normal prior distributions are chosen for the standard deviation terms
+<span class="math display">\[\begin{equation}
+\{\sigma_A^\rho, \sigma_{AS}^\rho, \sigma_X^\rho, \sigma_{XS}^\rho, \sigma_{XA}^\rho\} \sim \mathcal{N}^{+}(0, 2.5),
+\end{equation}\]</span>
+uniform prior distributions for the AR1 correlation parameters
+<span class="math display">\[\begin{equation}
+\{\phi_A^\rho, \phi_{AS}^\rho\} \sim \mathcal{U}(-1, 1),
+\end{equation}\]</span>
+and beta prior distributions for the BYM2 proportion parameters
+<span class="math display">\[\begin{equation}
+\{\phi_X^\rho, \phi_{XS}^\rho\} \sim \text{Beta}(0.5, 0.5).
+\end{equation}\]</span></p>
 <table>
 <colgroup>
 <col width="17%" />
@@ -361,32 +382,32 @@ div.csl-indent {
 <td>The difference in logit prevalence for men compared to women</td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\bu^\rho_a\)</span></td>
+<td><span class="math inline">\(\mathbf{u}^\rho_a\)</span></td>
 <td><span class="math inline">\(\text{AR}1(\sigma_A^\rho, \phi_A^\rho)\)</span></td>
 <td>Age random effects for women</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\bu_a^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_a^{\rho, s = \text{M}}\)</span></td>
 <td><span class="math inline">\(\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)\)</span></td>
 <td>Age random effects for the difference in logit prevalence for men compared to women age <span class="math inline">\(a\)</span></td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\bu^\rho_x\)</span></td>
+<td><span class="math inline">\(\mathbf{u}^\rho_x\)</span></td>
 <td><span class="math inline">\(\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)\)</span></td>
 <td>Spatial random effects for women</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\bu_x^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\rho, s = \text{M}}\)</span></td>
 <td><span class="math inline">\(\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)\)</span></td>
 <td>Spatial random effects for the difference in logit prevalence for men compared to women in district <span class="math inline">\(x\)</span></td>
 </tr>
 <tr class="odd">
-<td><span class="math inline">\(\bu_x^{\rho, a &lt; 15}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\rho, a &lt; 15}\)</span></td>
 <td><span class="math inline">\(\text{ICAR}(\sigma_{XA}^\rho)\)</span></td>
 <td>Spatial random effects for the ratio of paediatric prevalence to adult women prevalence</td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(\bmeta^\rho_{R_x, s, a}\)</span></td>
+<td><span class="math inline">\(\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}\)</span></td>
 <td><span class="math inline">\(-\)</span></td>
 <td>Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available</td>
 </tr>
@@ -395,15 +416,143 @@ div.csl-indent {
 </div>
 <div id="art-cov" class="section level3 hasAnchor" number="10.1.3">
 <h3><span class="header-section-number">C.1.3</span> ART coverage<a href="fast-approximate-bayesian-inference.html#art-cov" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>ART coverage <span class="math inline">\(\alpha_{x, s, a} \in [0, 1]\)</span> is modelled on the logit scale using the linear predictor
+<span class="math display">\[\begin{equation}
+\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \bu^\alpha_a + \bu_a^{\alpha, s = \text{M}} + \bu^\alpha_x + \bu_x^{\alpha, s = \text{M}} + \bu_x^{\alpha, a &lt; 15} + \bmeta^\alpha_{R_x, s, a}
+\end{equation}\]</span>
+with terms and priors analogous to the HIV prevalence process model in Section <span class="math inline">\(\ref{sec:hiv-prev}\)</span> above.</p>
 </div>
 <div id="hiv-inc" class="section level3 hasAnchor" number="10.1.4">
 <h3><span class="header-section-number">C.1.4</span> HIV incidence rate<a href="fast-approximate-bayesian-inference.html#hiv-inc" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>HIV incidence rate <span class="math inline">\(\lambda_{x, s, a} &gt; 0\)</span> is modelled on the log scale using the linear predictor
+<span class="math display">\[\begin{equation}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \bu_x^\lambda + \bmeta_{R_x, s, a}^\lambda. \label{eq:inc}
+\end{equation}\]</span>
+Table <span class="math inline">\(\ref{tab:inc}\)</span> provides a description of the terms included in Equation <span class="math inline">\(\ref{eq:inc}\)</span>.</p>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="14%" />
+<col width="69%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Distribution</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\beta^\lambda_0\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, 5)\)</span></td>
+<td>Intercept term proportional to the average HIV transmission rate for untreated HIV positive adults</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\beta_S^{\lambda, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, 5)\)</span></td>
+<td>The log incidence rate ratio for men compared to women</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\rho_{x}^{\text{15-49}}\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>The HIV prevalence among adults 15-49 calculated by aggregating age-specific HIV prevalences</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\alpha_{x}^{\text{15-49}}\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>The ART coverage among adults 15-49 calculated by aggregating age-specific ART coverages</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\omega = 0.7\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>Average reduction in HIV transmission rate per increase in population ART coverage fixed based on inputs to the Estimation and Projection Package (EPP) model</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\bu_x^\lambda\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, \sigma^\lambda)\)</span></td>
+<td>IID spatial random effects with <span class="math inline">\(\sigma^\lambda \sim \mathcal{N}^+(0, 1)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\bmeta^\lambda_{R_x, s, a}\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output</td>
+</tr>
+</tbody>
+</table>
+<p>The proportion recently infected among HIV positive persons <span class="math inline">\(\kappa_{x, s, a} \in [0, 1]\)</span> are modelled as
+<span class="math display">\[\begin{equation}
+\kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
+\end{equation}\]</span>
+where <span class="math inline">\(\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})\)</span> is the mean duration of recent infection, and <span class="math inline">\(\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})\)</span> is the false recent ratio.
+The prior distribution for <span class="math inline">\(\Omega_T\)</span> is informed by the characteristics of the recent infection testing algorithm.
+For PHIA surveys this is <span class="math inline">\(\Omega_{T_0} = 130 \text{ days}\)</span> and <span class="math inline">\(\sigma^{\Omega_T} = 6.12 \text{ days}\)</span>, and further there is assumed to be no false recency, such that <span class="math inline">\(\beta_{T_0} = 0.0\)</span> and <span class="math inline">\(\sigma^{\beta_T} = 0.0\)</span>.</p>
 </div>
 <div id="anc-test" class="section level3 hasAnchor" number="10.1.5">
 <h3><span class="header-section-number">C.1.5</span> ANC testing<a href="fast-approximate-bayesian-inference.html#anc-test" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>HIV prevalence <span class="math inline">\(\rho_{x, a}^\text{ANC}\)</span> and ART coverage <span class="math inline">\(\alpha_{x, a}^\text{ANC}\)</span> among pregnant women are modelled as being offset on the logit scale from the corresponding district-age indicators <span class="math inline">\(\rho_{x, F, a}\)</span> and <span class="math inline">\(\alpha_{x, F, a}\)</span> according to
+<span class="math display">\[\begin{align}
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \bu_x^{\rho^{\text{ANC}}} + \bmeta_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \bu_x^{\alpha^{\text{ANC}}} + \bmeta_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+\end{align}\]</span>
+Table <span class="math inline">\(\ref{tab:anc}\)</span> provides a description of the terms included in Equation <span class="math inline">\(\ref{eq:anc1}\)</span> and Equation <span class="math inline">\(\ref{eq:anc2}\)</span>.</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="16%" />
+<col width="69%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Distribution</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\beta^{\theta^{\text{ANC}}}\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, 5)\)</span></td>
+<td>Intercept giving the average difference between population and ANC outcomes</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\bu_x^{\theta^{\text{ANC}}}\)</span></td>
+<td><span class="math inline">\(\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})\)</span></td>
+<td>IID district random effects with <span class="math inline">\(\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\bmeta_{R_x, a}^{\theta^{\text{ANC}}}\)</span></td>
+<td><span class="math inline">\(-\)</span></td>
+<td>Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region <span class="math inline">\(R_x\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>In the full Naomi model, for adult women 15-49 the number of ANC clients <span class="math inline">\(\Psi_{x, a} &gt; 0\)</span> are modelled as
+<span class="math display">\[
+\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \bu_x^\psi,
+\]</span>
+where <span class="math inline">\(N_{x, \text{F}, a}\)</span> are the female population sizes, <span class="math inline">\(\psi_{R_x, a}\)</span> are fixed age-sex fertility ratios in Spectrum region <span class="math inline">\(R_x\)</span>, <span class="math inline">\(\beta^\psi\)</span> are log rate ratios for the number of ANC clients relative to the predicted fertility, and <span class="math inline">\(\bu_x^\psi \sim \mathcal{N}(0, \sigma^\psi)\)</span> are district random effects.
+Here we fix <span class="math inline">\(\beta^\psi = 0\)</span> and <span class="math inline">\(\bu_x^\psi = \mathbf{0}\)</span> such that <span class="math inline">\(\Psi_{x, a}\)</span> are simply constants.</p>
 </div>
 <div id="art-attend" class="section level3 hasAnchor" number="10.1.6">
 <h3><span class="header-section-number">C.1.6</span> ART attendance<a href="fast-approximate-bayesian-inference.html#art-attend" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let <span class="math inline">\(\gamma_{x, x&#39;} \in [0, 1]\)</span> be the probability that a person on ART residing in district <span class="math inline">\(x\)</span> receives ART in district <span class="math inline">\(x&#39;\)</span>.
+We assume that <span class="math inline">\(\gamma_{x, x&#39;} = 0\)</span> for <span class="math inline">\(x \notin \{x, \text{ne}(x)\}\)</span> such that individuals seek treatment only in their residing district or its neighbours <span class="math inline">\(\text{ne}(x) = \{x&#39;: x&#39; \sim x\}\)</span>, where <span class="math inline">\(\sim\)</span> is an adjacency relation, and <span class="math inline">\(\sum_{x&#39; \in \{x, \text{ne}(x)\}} \gamma_{x, x&#39;} = 1\)</span>.
+To model <span class="math inline">\(\gamma_{x, x&#39;}\)</span> for <span class="math inline">\(x \sim x&#39;\)</span> we use a multinomial logistic regression model, based on the log-odds ratios
+<span class="math display">\[\begin{equation}
+\tilde \gamma_{x, x&#39;} = \log \left( \frac{\gamma_{x, x&#39;}}{1 - \gamma_{x, x&#39;}} \right) = \tilde \gamma_0 + \bu_x^{\tilde \gamma}, \label{eq:log-or}
+\end{equation}\]</span>
+where <span class="math inline">\(\tilde \gamma_0 = -4\)</span> is a fixed intercept, and <span class="math inline">\(\bu_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})\)</span> are district random effects with <span class="math inline">\(\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)\)</span>.
+Note that Equation <span class="math inline">\(\ref{eq:log-or}\)</span> does not depend on <span class="math inline">\(x&#39;\)</span>, such that <span class="math inline">\(\gamma_{x, x&#39;}\)</span> is only a function of <span class="math inline">\(x\)</span>.
+Choice of <span class="math inline">\(\tilde \gamma_0 = -4\)</span> implies a prior mean on <span class="math inline">\(\gamma_{x, x&#39;}\)</span> of 1.8%, such that <span class="math inline">\((100 - 1.8 \times \text{ne}(x))\%\)</span> of ART clients in district <span class="math inline">\(x\)</span> obtain treatment in their home district, a-priori.
+We fix <span class="math inline">\(\tilde \gamma_{x, x} = 0\)</span> and recover the multinomial probabilities using the softmax
+<span class="math display">\[\begin{equation}
+\gamma_{x, x&#39;} = \frac{\exp(\tilde \gamma_{x, x&#39;})}{\sum_{x^\star \in \{x, \text{ne}(x)\}} \exp(\tilde \gamma_{x, x^\star})}.
+\end{equation}\]</span>
+Given the total number of PLHIV on ART <span class="math inline">\(A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a}\)</span>, the number of ART clients who reside in district <span class="math inline">\(x\)</span> and obtain ART in district <span class="math inline">\(x&#39;\)</span> are <span class="math inline">\(A_{x, x&#39;, s, a} = A_{x, s, a} \cdot \gamma_{x, x&#39;}\)</span>, and the total attending ART facilities in district <span class="math inline">\(x&#39;\)</span> are
+<span class="math display">\[\begin{equation}
+\tilde A_{x&#39;, s, a} = \sum_{x \in \{x&#39;, \text{ne}(x&#39;)\}} A_{x, x&#39;, s, a}.
+\end{equation}\]</span></p>
 </div>
 </div>
 <div id="model-assessment-1" class="section level2 hasAnchor" number="10.2">

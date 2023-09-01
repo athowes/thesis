@@ -365,7 +365,7 @@ Effective implementation of both HIV prevention and treatment requires strategic
 However, producing suitable estimates of relevant indicators is challenging.
 
 The data I use are recorded from national household surveys or routinely collected from healthcare facilities providing HIV services.
-An important feature of these data are the location and the time at which each datum was recorded
+An important feature of these data are the location and the time at which each observation was recorded
 While diverse, spatio-temporal data have distinctive commonalities which reoccur across settings.
 As a result, the work in this thesis makes use of, and aspires to contribute to the development of, modelling techniques from spatio-temporal statistics.
 
@@ -391,7 +391,7 @@ This thesis is structured (Figure \ref{fig:chapter-flowchart}) as follows:
   Chapter \ref{multi-agyw}: Adolescent girls and young women are a demographic group at disproportionate risk of acquiring HIV infection.
   The Global AIDS Strategy recommends prioritising interventions on the basis of behaviour to prevent the most new infections using available resources.
   I estimated the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assessed the potential benefits in terms of numbers of new infections prevented \autocite{howes2023spatio}.
-  This work was included in the UNAIDS Global AIDS Update 2022 \autocite{unaids2022global} and 2023 \autocite{unaids2023global}.
+  This work was included in the UNAIDS Global AIDS Update 2022 and 2023.
 \item
   Chapter \ref{naomi-aghq}: The Naomi small-area estimation model \autocite{eaton2021naomi} is used by countries to estimate district-level HIV indicators.
   With this model in mind, I developed an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis \autocite{howes2023fast}.
@@ -560,7 +560,7 @@ The most significant difficulties faced are:
   As a result, limited direct data might be available for the particular time, location, and sub-population of interest.
   For example, in many countries the last conducted household survey is several years out of date.
 \item
-  \textbf{Missing data}
+  \textbf{Missing data}:
   The sampling frame of a survey may not correspond to the target population.
   For example, many KPs are difficult to reach, and may be omitted from sampling frames.
   Individuals included on the sampling frame may choose not to respond.
@@ -568,20 +568,20 @@ The most significant difficulties faced are:
   Each of these issues can be characterised as being problems of missing data.
   I characterise missing data as referring to the shortfalls of any given study, and data sparsity as referring to limited availability of studies.
 \item
-  \textbf{Response and measurement biases}
+  \textbf{Response and measurement biases}:
   Individuals may be hesitant to disclose their HIV status, or report higher risk behaviours, due to social desirability bias or a fear of discrimination or stigma.
   When available, biomarker data can be used to overcome under-reporting, but still may be subject to measurement errors.
 \item
-  \textbf{Denominators and demography}
+  \textbf{Denominators and demography}:
   Many indicators are rates or proportions, which rely on estimates of the population at risk in the denominator.
   Accurately estimating population denominators is itself a challenging task \autocite{tatem2017worldpop}.
   Taking a ratio of uncertain quantities amplifies uncertainty, but is rarely properly accounted for.
 \item
-  \textbf{Inconsistent data collection and reporting}
+  \textbf{Inconsistent data collection and reporting}:
   The types of data that are collected might vary across space and time.
   Reporting protocols or definitions can also change.
 \item
-  \textbf{Reliance on epidemiological parameters}
+  \textbf{Reliance on epidemiological parameters}:
   Indicators rely on estimates of epidemiological parameters such as rates of disease progression.
   These parameters are typically obtained from cohort studies and may not generalise to the setting of interest.
   Further, they are typically applied coarsely, and without proper accounting for uncertainty.
@@ -636,7 +636,7 @@ Aims for HIV response going forward, and the surveillance capabilities needed to
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed by Section \ref{surveillance} because it allows principled and flexible integration of data and scientific knowledge.
+It is well suited for to the challenges posed by Section \ref{surveillance} because it allows principled and flexible synthesis of data with scientific knowledge, and handling of uncertainty.
 In this section I provide brief overview.
 For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
 
@@ -647,7 +647,6 @@ At its best, the Bayesian paradigm allows the analyst focus on how best to model
 This is achieved by the construction of a generative model \(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\) for the observed data \(\mathbf{y} = (y_1, \ldots, y_n)\) together with parameters \(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\).
 Here \(n\) is the dimension of the data and \(d\) is the number of parameters.
 The notation \(p(\cdot)\) denotes a probability distribution.
-
 The model is generative in the sense that one can simulate from it to generate draws
 \begin{equation}
 (\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
@@ -677,7 +676,7 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 }
 
-\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution is \(\phi \sim \text{Gamma}(3, 1)\). Given observed data \(\mathbf{y} = (1, 2, 3)\) the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). The posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Model of this sort are frequently used because of their convenience, in preference to other, perhaps more appropriate, models which might be more computationally demanding.}\label{fig:conjugate}
+\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified \autocite{bernardo2001bayesian}. Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.}\label{fig:conjugate}
 \end{figure}
 
 The posterior distribution \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\) encapsulates probabilistic beliefs about the parameters given the observed data.
@@ -685,36 +684,40 @@ Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \label{eq:posterior}
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \eqref{eq:posterior} directly because of the potentially high-dimensional integral \(p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}\) in the denominator.
-This integral is sometimes known as the marginal likelihood or evidence.
+
+In certain cases, the posterior distribution can be calculated in closed form (Figure \ref{fig:conjugate}).
+However, most of the time it is intractable to calculate the posterior distribution because of the potentially high-dimensional integral \(p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}\) in the denominator of Equation \eqref{eq:posterior}.
 As such, although it is easy to evaluate \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\), it is typically difficult to evaluate the posterior distribution itself.
 
-A variety of computational methods have been developed to tackle this problem:
+A variety of computational methods have been developed to tackle this problem.
+They may broadly be divided into sampling algorithms, and deterministic approximations.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Sampling algorithms} These approaches look to generate samples from the posterior distribution \autocite{robert2005monte}.
-  Sometimes sampling algorithms and are known as Monte Carlo methods, named after the casino.
-  The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution \autocite{roberts2004general}.
-  The samples from this Markov chain may then be used to approximate the posterior distribution.
-  In this thesis, I make use of a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
-  In particular, I use the No-U-Turn sampler {[}NUTS; \textcite{hoffman2014no}{]}, a method for adapting the tuning parameters of HMC based local properties of the posterior distribution.
-\item
-  \textbf{Variational inference} In variational inference {[}VI; \textcite{blei2017variational}{]} the posterior distribution is assumed to belong to a particular family of functions.
-  Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
-  VI is typically faster than Monte Carlo algorithms like MCMC, especially for large datasets or models.
-  However, it lacks theoretical guarantees and is often known to inaccurately estimate posterior variances \autocite{giordano2018covariances}.
-  Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research \autocite{yao2018yes}.
-  The expectation propagation (EP) algorithm \autocite{minka2001expectation}.
-\item
-  \textbf{Deterministic approximations}
-  Laplace approximation.
-  Quadrature.
-  Integrated nested Laplace approximation.
-  These approximations are the subject of Chapter \ref{naomi-aghq}.
-\end{enumerate}
+\hypertarget{sampling-algorithms}{%
+\subsubsection{Sampling algorithms}\label{sampling-algorithms}}
+
+Sometimes known as Monte Carlo methods, these approaches look to generate samples from the posterior distribution \autocite{robert2005monte}.
+These samples may then be used in any future computations such as expectations or summaries.
+
+Markov chain Monte Carlo (MCMC) methods are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution \autocite{roberts2004general}.
+In this thesis, I use a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
+The specific algorithm is the No-U-Turn sampler {[}NUTS; \textcite{hoffman2014no}{]}, which adapts the tuning parameters of HMC based local properties of the posterior distribution.
+Though not a one-size-fits-all solution, NUTS has proven empirically to be a good choice for sampling from a range of posterior distributions.
+
+\hypertarget{deterministic-approximations}{%
+\subsubsection{Deterministic approximations}\label{deterministic-approximations}}
+
+In variational inference {[}VI; \textcite{blei2017variational}{]} the posterior distribution is assumed to belong to a particular family of functions.
+Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
+VI is typically faster than Monte Carlo methods, especially for large datasets or models.
+However, it lacks theoretical guarantees and is often known to inaccurately estimate posterior variances \autocite{giordano2018covariances}.
+Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research \autocite{yao2018yes}.
+The expectation maximisation {[}EM; \textcite{dempster1977maximum}{]} and expectation propagation {[}EP; \textcite{minka2001expectation}{]} algorithms are closely related to VI.
+
+Need to talk about:
+Laplace approximation.
+Quadrature.
+Integrated nested Laplace approximation.
+These approximations are the subject of Chapter \ref{naomi-aghq}.
 
 \hypertarget{interplay-between-modelling-and-computation}{%
 \subsection{Interplay between modelling and computation}\label{interplay-between-modelling-and-computation}}
@@ -729,16 +732,56 @@ As computation improves, the space of models available to the analyst expands.
 \hypertarget{spatio-temporal-statistics}{%
 \section{Spatio-temporal statistics}\label{spatio-temporal-statistics}}
 
-In spatio-temporal statistics \autocite{cressie2015statistics}, we observe data indexed by spatial or temporal location.
-In this thesis we assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
-Data may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
-The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
-Similarly, data may be associated to a point \(t \in \mathcal{T}\) or period of time \(T \in \mathcal{T}\).
 
-Spatio-temporal data has some important properties.
-Foremost among them is correlation structure.
-Tobler's first law of geography, also expressed by \textcite{fisher1936design}, is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
-This law extends not only to space but also time.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/bayesian/st} 
+
+}
+
+\caption{On the left is a district level map of South Africa. The position of the capital city, Cape Town, can be considered to be a point location. ZF Mgcawu District Municipality is an example of an area. On the right World AIDS Day, designated on the 1st of December every year, represents a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. For both Cape Town and World AIDS Day, one can ask ask whether they are truly points, or merely areas of lesser extent. There are few instances of infinitesimally small point locations from pure mathematics in everyday life.}\label{fig:st}
+\end{figure}
+
+In spatio-temporal statistics \autocite{cressie2015statistics}, the observations are indexed by spatial or temporal location (Figure \ref{fig:st}).
+In this thesis I assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
+Observations may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
+The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
+Similarly, observations may be associated to a point \(t \in \mathcal{T}\) or period of time \(T \subseteq \mathcal{T}\).
+
+\hypertarget{properties-of-spatial-data}{%
+\subsection{Properties of spatial data}\label{properties-of-spatial-data}}
+
+Spatio-temporal data has some important properties:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Correlation structure}:
+  Tobler's first law of geography is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
+  \textcite{fisher1936design} made a similar observation about the similarity of yields of neighbouring crops.
+  As well as space, this law extends to time.
+  Observations made close together in time tend to be similar.
+
+  Because of its correlation structure, spatio-temporal data are not independent and identically distributed (IID).
+  Only one observation of a spatio-temporal process is typically realised.
+\item
+  \textbf{Scales}:
+  The observations may be at various possible spatial and temporal scales.
+  We may wish to model or generate predictions at another scale.
+\item
+  \textbf{Size}:
+  Data with spatial and temporal dimensions is often large.
+  Models typically require many parameters.
+  Storage, manipulation, and inference for spatio-temporal data can be challenging.
+\end{enumerate}
+
+\hypertarget{small-area-estimation}{%
+\subsection{Small-area estimation}\label{small-area-estimation}}
+
+Because of the large number of possible locations in space and time, often no or limited direct data is available for any given location.
+In this circumstance, direct estimates of indicators of interest are either impossible or have large error due to high variance.
+Small-area estimation (SAE) methods aim to overcome the limitations of small data by sharing information across space and time (Figure \ref{fig:zmb-maps}, Figure \ref{fig:zmb-scatter}).
 
 
 
@@ -748,7 +791,7 @@ This law extends not only to space but also time.
 
 }
 
-\caption{To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from \href{https://github.com/athowes/zambia-unaids}{\texttt{athowes/zambia-unaids}}.}\label{fig:zmb-maps}
+\caption{I simulated simple random samples with varying sample size (5, 25, 125) in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from \href{https://github.com/athowes/zambia-unaids}{\texttt{athowes/zambia-unaids}}.}\label{fig:zmb-maps}
 \end{figure}
 
 
@@ -759,7 +802,7 @@ This law extends not only to space but also time.
 
 }
 
-\caption{The estimates from surveys with higher sample size have higher Pearson correlation coefficient (\(R\)) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \ref{fig:zmb-maps}.}\label{fig:zmb-scatter}
+\caption{The estimates from surveys with higher sample size have higher Pearson correlation coefficient \(R\) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \ref{fig:zmb-maps}.}\label{fig:zmb-scatter}
 \end{figure}
 
 \hypertarget{hierarchical-lgm-elgm}{%
@@ -779,8 +822,13 @@ This law extends not only to space but also time.
 \caption{A simple example of group structure within data in which each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\).}\label{fig:hierarchical-structure}
 \end{figure}
 
-Often it is natural to group some observations together.
-Bayesian hierarchical or multilevel models, comprised of multiple stages, allow for natural handling data of this sort, even with complex nested or crossed grouping structures.
+Some observations in data are typically natural to group together.
+For example, each individual \(i = 1, \ldots, n\) in a study might be observed \(m_i\) times (Figure \ref{fig:hierarchical-structure}).
+Observations \(y_{i1}, \ldots y_{im_i}\) of the same individual are grouped together.
+These observations are more likely to be similar than observations of different individuals.
+We might also group observations by spatio-temporal location.
+
+Bayesian hierarchical or multilevel models allow for natural handling of group structure in data, even for complex nested or crossed structures.
 In a three-stage hierarchical model, we partition the parameters so that \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\).
 I refer to \(\mathbf{x} = (x_1, \ldots, x_n)\) as the latent field, and \(\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)\) as the hyperparameters.
 The generative model for data \(\mathbf{y}\) is then
@@ -791,27 +839,28 @@ The generative model for data \(\mathbf{y}\) is then
 \end{align}
 with posterior distribution proportional to \(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\).
 
-For example, Figure \ref{fig:hierarchical-structure} illustrates a case where each individual \(i = 1, \ldots, n\) in a study is observed \(m_i\) times.
-Observations \(y_{i1}, \ldots y_{im_i}\) of the same individual are grouped together, and are more likely to have more similar properties than observations of different individuals.
-Hierarchical models often control over if and how information is shared between groups.
+Bayesian hierarchical models allow control over whether and how information is shared across groups.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Complete pooling} In this model, the group structure is ignored and all \(\sum_{i = 1}^n m_i\) observations are treated as independent and identically distributed
+  \textbf{Complete pooling}:
+  In the complete pooling model, group structure is ignored and all \(\sum_{i = 1}^n m_i\) observations are treated as IID
   \begin{align}
   y_{ij} \sim \mathcal{N}(\mu, \sigma), \\
   (\mu, \sigma) \sim p(\mu, \sigma).
   \end{align}
 \item
-  \textbf{No pooling} Alternatively, the groups can be modelled entirely separately with group specific mean \(\mu_i\) and standard deviation \(\sigma_i\) parameters
+  \textbf{No pooling}:
+  Alternatively, the groups can be modelled entirely separately with group specific mean \(\mu_i\) and standard deviation \(\sigma_i\) parameters
   \begin{align}
   y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\
   (\mu_i, \sigma_i) \sim p(\mu_i, \sigma_i).
   \end{align}
 \item
-  \textbf{Partial pooling} In this model, some amount of information is shared between the groups
+  \textbf{Partial pooling}:
+  In this model, some amount of information is shared between the groups
   \begin{align}
   y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\
   \mu_i &= \beta + u_i, \\
@@ -2687,6 +2736,25 @@ Hyperparameter
 \hypertarget{hiv-prev}{%
 \subsection{HIV prevalence}\label{hiv-prev}}
 
+HIV prevalence \(\rho_{x, s, a} \in [0, 1]\) is modelled on the logit scale using the linear predictor
+\begin{equation}
+\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \bu^\rho_a + \bu_a^{\rho, s = \text{M}} + \bu^\rho_x + \bu_x^{\rho, s = \text{M}} + \bu_x^{\rho, a < 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. \label{eq:prev}
+\end{equation}
+Table \ref{tab:prev} provides a description of the terms included in Equation \ref{eq:prev}.
+
+Half-normal prior distributions are chosen for the standard deviation terms
+\begin{equation}
+\{\sigma_A^\rho, \sigma_{AS}^\rho, \sigma_X^\rho, \sigma_{XS}^\rho, \sigma_{XA}^\rho\} \sim \mathcal{N}^{+}(0, 2.5),
+\end{equation}
+uniform prior distributions for the AR1 correlation parameters
+\begin{equation}
+\{\phi_A^\rho, \phi_{AS}^\rho\} \sim \mathcal{U}(-1, 1),
+\end{equation}
+and beta prior distributions for the BYM2 proportion parameters
+\begin{equation}
+\{\phi_X^\rho, \phi_{XS}^\rho\} \sim \text{Beta}(0.5, 0.5).
+\end{equation}
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1735}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
@@ -2705,25 +2773,123 @@ Description
 \endlastfoot
 \(\beta^\rho_0\) & \(\mathcal{N}(0, 5)\) & Intercept \\
 \(\beta_{s}^{\rho, s = \text{M}}\) & \(\mathcal{N}(0, 5)\) & The difference in logit prevalence for men compared to women \\
-\(\bu^\rho_a\) & \(\text{AR}1(\sigma_A^\rho, \phi_A^\rho)\) & Age random effects for women \\
-\(\bu_a^{\rho, s = \text{M}}\) & \(\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)\) & Age random effects for the difference in logit prevalence for men compared to women age \(a\) \\
-\(\bu^\rho_x\) & \(\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)\) & Spatial random effects for women \\
-\(\bu_x^{\rho, s = \text{M}}\) & \(\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)\) & Spatial random effects for the difference in logit prevalence for men compared to women in district \(x\) \\
-\(\bu_x^{\rho, a < 15}\) & \(\text{ICAR}(\sigma_{XA}^\rho)\) & Spatial random effects for the ratio of paediatric prevalence to adult women prevalence \\
-\(\bmeta^\rho_{R_x, s, a}\) & \(-\) & Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available \\
+\(\mathbf{u}^\rho_a\) & \(\text{AR}1(\sigma_A^\rho, \phi_A^\rho)\) & Age random effects for women \\
+\(\mathbf{u}_a^{\rho, s = \text{M}}\) & \(\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)\) & Age random effects for the difference in logit prevalence for men compared to women age \(a\) \\
+\(\mathbf{u}^\rho_x\) & \(\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)\) & Spatial random effects for women \\
+\(\mathbf{u}_x^{\rho, s = \text{M}}\) & \(\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)\) & Spatial random effects for the difference in logit prevalence for men compared to women in district \(x\) \\
+\(\mathbf{u}_x^{\rho, a < 15}\) & \(\text{ICAR}(\sigma_{XA}^\rho)\) & Spatial random effects for the ratio of paediatric prevalence to adult women prevalence \\
+\(\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}\) & \(-\) & Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available \\
 \end{longtable}
 
 \hypertarget{art-cov}{%
 \subsection{ART coverage}\label{art-cov}}
 
+ART coverage \(\alpha_{x, s, a} \in [0, 1]\) is modelled on the logit scale using the linear predictor
+\begin{equation}
+\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \bu^\alpha_a + \bu_a^{\alpha, s = \text{M}} + \bu^\alpha_x + \bu_x^{\alpha, s = \text{M}} + \bu_x^{\alpha, a < 15} + \bmeta^\alpha_{R_x, s, a} 
+\end{equation}
+with terms and priors analogous to the HIV prevalence process model in Section \ref{sec:hiv-prev} above.
+
 \hypertarget{hiv-inc}{%
 \subsection{HIV incidence rate}\label{hiv-inc}}
+
+HIV incidence rate \(\lambda_{x, s, a} > 0\) is modelled on the log scale using the linear predictor
+\begin{equation}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \bu_x^\lambda + \bmeta_{R_x, s, a}^\lambda. \label{eq:inc}
+\end{equation}
+Table \ref{tab:inc} provides a description of the terms included in Equation \ref{eq:inc}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1535}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1491}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6974}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Term
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Distribution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\beta^\lambda_0\) & \(\mathcal{N}(0, 5)\) & Intercept term proportional to the average HIV transmission rate for untreated HIV positive adults \\
+\(\beta_S^{\lambda, s = \text{M}}\) & \(\mathcal{N}(0, 5)\) & The log incidence rate ratio for men compared to women \\
+\(\rho_{x}^{\text{15-49}}\) & \(-\) & The HIV prevalence among adults 15-49 calculated by aggregating age-specific HIV prevalences \\
+\(\alpha_{x}^{\text{15-49}}\) & \(-\) & The ART coverage among adults 15-49 calculated by aggregating age-specific ART coverages \\
+\(\omega = 0.7\) & \(-\) & Average reduction in HIV transmission rate per increase in population ART coverage fixed based on inputs to the Estimation and Projection Package (EPP) model \\
+\(\bu_x^\lambda\) & \(\mathcal{N}(0, \sigma^\lambda)\) & IID spatial random effects with \(\sigma^\lambda \sim \mathcal{N}^+(0, 1)\) \\
+\(\bmeta^\lambda_{R_x, s, a}\) & \(-\) & Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output \\
+\end{longtable}
+
+The proportion recently infected among HIV positive persons \(\kappa_{x, s, a} \in [0, 1]\) are modelled as
+\begin{equation}
+\kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
+\end{equation}
+where \(\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})\) is the mean duration of recent infection, and \(\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})\) is the false recent ratio.
+The prior distribution for \(\Omega_T\) is informed by the characteristics of the recent infection testing algorithm.
+For PHIA surveys this is \(\Omega_{T_0} = 130 \text{ days}\) and \(\sigma^{\Omega_T} = 6.12 \text{ days}\), and further there is assumed to be no false recency, such that \(\beta_{T_0} = 0.0\) and \(\sigma^{\beta_T} = 0.0\).
 
 \hypertarget{anc-test}{%
 \subsection{ANC testing}\label{anc-test}}
 
+HIV prevalence \(\rho_{x, a}^\text{ANC}\) and ART coverage \(\alpha_{x, a}^\text{ANC}\) among pregnant women are modelled as being offset on the logit scale from the corresponding district-age indicators \(\rho_{x, F, a}\) and \(\alpha_{x, F, a}\) according to
+\begin{align}
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \bu_x^{\rho^{\text{ANC}}} + \bmeta_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \bu_x^{\alpha^{\text{ANC}}} + \bmeta_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+\end{align}
+Table \ref{tab:anc} provides a description of the terms included in Equation \ref{eq:anc1} and Equation \ref{eq:anc2}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1371}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6957}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Term
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Distribution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\beta^{\theta^{\text{ANC}}}\) & \(\mathcal{N}(0, 5)\) & Intercept giving the average difference between population and ANC outcomes \\
+\(\bu_x^{\theta^{\text{ANC}}}\) & \(\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})\) & IID district random effects with \(\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)\) \\
+\(\bmeta_{R_x, a}^{\theta^{\text{ANC}}}\) & \(-\) & Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region \(R_x\) \\
+\end{longtable}
+
+In the full Naomi model, for adult women 15-49 the number of ANC clients \(\Psi_{x, a} > 0\) are modelled as
+\[
+\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \bu_x^\psi,
+\]
+where \(N_{x, \text{F}, a}\) are the female population sizes, \(\psi_{R_x, a}\) are fixed age-sex fertility ratios in Spectrum region \(R_x\), \(\beta^\psi\) are log rate ratios for the number of ANC clients relative to the predicted fertility, and \(\bu_x^\psi \sim \mathcal{N}(0, \sigma^\psi)\) are district random effects.
+Here we fix \(\beta^\psi = 0\) and \(\bu_x^\psi = \mathbf{0}\) such that \(\Psi_{x, a}\) are simply constants.
+
 \hypertarget{art-attend}{%
 \subsection{ART attendance}\label{art-attend}}
+
+Let \(\gamma_{x, x'} \in [0, 1]\) be the probability that a person on ART residing in district \(x\) receives ART in district \(x'\).
+We assume that \(\gamma_{x, x'} = 0\) for \(x \notin \{x, \text{ne}(x)\}\) such that individuals seek treatment only in their residing district or its neighbours \(\text{ne}(x) = \{x': x' \sim x\}\), where \(\sim\) is an adjacency relation, and \(\sum_{x' \in \{x, \text{ne}(x)\}} \gamma_{x, x'} = 1\).
+To model \(\gamma_{x, x'}\) for \(x \sim x'\) we use a multinomial logistic regression model, based on the log-odds ratios
+\begin{equation}
+\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \bu_x^{\tilde \gamma}, \label{eq:log-or}
+\end{equation}
+where \(\tilde \gamma_0 = -4\) is a fixed intercept, and \(\bu_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})\) are district random effects with \(\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)\).
+Note that Equation \ref{eq:log-or} does not depend on \(x'\), such that \(\gamma_{x, x'}\) is only a function of \(x\).
+Choice of \(\tilde \gamma_0 = -4\) implies a prior mean on \(\gamma_{x, x'}\) of 1.8\%, such that \((100 - 1.8 \times \text{ne}(x))\%\) of ART clients in district \(x\) obtain treatment in their home district, a-priori.
+We fix \(\tilde \gamma_{x, x} = 0\) and recover the multinomial probabilities using the softmax
+\begin{equation}
+\gamma_{x, x'} = \frac{\exp(\tilde \gamma_{x, x'})}{\sum_{x^\star \in \{x, \text{ne}(x)\}} \exp(\tilde \gamma_{x, x^\star})}.
+\end{equation}
+Given the total number of PLHIV on ART \(A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a}\), the number of ART clients who reside in district \(x\) and obtain ART in district \(x'\) are \(A_{x, x', s, a} = A_{x, s, a} \cdot \gamma_{x, x'}\), and the total attending ART facilities in district \(x'\) are
+\begin{equation}
+\tilde A_{x', s, a} = \sum_{x \in \{x', \text{ne}(x')\}} A_{x, x', s, a}.
+\end{equation}
 
 \hypertarget{model-assessment-1}{%
 \section{Model assessment}\label{model-assessment-1}}

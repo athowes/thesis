@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 ## Bayesian statistics
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed by Section \@ref(surveillance) because it allows principled and flexible integration of data and scientific knowledge.
+It is well suited for to the challenges posed by Section \@ref(surveillance) because it allows principled and flexible synthesis of data with scientific knowledge, and handling of uncertainty.
 In this section I provide brief overview.
 For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
 
@@ -44,7 +44,6 @@ At its best, the Bayesian paradigm allows the analyst focus on how best to model
 This is achieved by the construction of a generative model $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$ together with parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$.
 Here $n$ is the dimension of the data and $d$ is the number of parameters.
 The notation $p(\cdot)$ denotes a probability distribution.
-
 The model is generative in the sense that one can simulate from it to generate draws
 \begin{equation}
 (\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
@@ -65,7 +64,7 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 ### Bayesian computation
 
-(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution is $\phi \sim \text{Gamma}(3, 1)$. Given observed data $\mathbf{y} = (1, 2, 3)$ the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. The posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Model of this sort are frequently used because of their convenience, in preference to other, perhaps more appropriate, models which might be more computationally demanding.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter is $\phi \sim \text{Gamma}(3, 1)$. I simulated observed data $\mathbf{y} = (1, 2, 3)$ from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified [@bernardo2001bayesian]. Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
@@ -76,25 +75,34 @@ Using the eponymous Bayes' theorem, it is given by
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
 \end{equation}
-Unfortunately, it is usually intractable to calculate Equation \@ref(eq:posterior) directly because of the potentially high-dimensional integral $p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}$ in the denominator.
-This integral is sometimes known as the marginal likelihood or evidence.
+
+In certain cases, the posterior distribution can be calculated in closed form (Figure \@ref(fig:conjugate)).
+However, most of the time it is intractable to calculate the posterior distribution because of the potentially high-dimensional integral $p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}$ in the denominator of Equation \@ref(eq:posterior).
 As such, although it is easy to evaluate $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$, it is typically difficult to evaluate the posterior distribution itself.
 
-A variety of computational methods have been developed to tackle this problem:
+A variety of computational methods have been developed to tackle this problem.
+They may broadly be divided into sampling algorithms, and deterministic approximations.
 
-1. **Sampling algorithms** These approaches look to generate samples from the posterior distribution [@robert2005monte].
-Sometimes sampling algorithms and are known as Monte Carlo methods, named after the casino.
-The most popular is Markov chain Monte Carlo (MCMC), which proceeds by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution [@roberts2004general].
-The samples from this Markov chain may then be used to approximate the posterior distribution.
-In this thesis, I make use of a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
-In particular, I use the No-U-Turn sampler [NUTS; @hoffman2014no], a method for adapting the tuning parameters of HMC based local properties of the posterior distribution.
-2. **Variational inference** In variational inference [VI; @blei2017variational] the posterior distribution is assumed to belong to a particular family of functions.
+#### Sampling algorithms
+
+Sometimes known as Monte Carlo methods, these approaches look to generate samples from the posterior distribution [@robert2005monte].
+These samples may then be used in any future computations such as expectations or summaries.
+
+Markov chain Monte Carlo (MCMC) methods are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution [@roberts2004general].
+In this thesis, I use a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
+The specific algorithm is the No-U-Turn sampler [NUTS; @hoffman2014no], which adapts the tuning parameters of HMC based local properties of the posterior distribution.
+Though not a one-size-fits-all solution, NUTS has proven empirically to be a good choice for sampling from a range of posterior distributions.
+
+#### Deterministic approximations
+
+In variational inference [VI; @blei2017variational] the posterior distribution is assumed to belong to a particular family of functions.
 Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
-VI is typically faster than Monte Carlo algorithms like MCMC, especially for large datasets or models.
+VI is typically faster than Monte Carlo methods, especially for large datasets or models.
 However, it lacks theoretical guarantees and is often known to inaccurately estimate posterior variances [@giordano2018covariances].
 Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research [@yao2018yes].
-The expectation propagation (EP) algorithm [@minka2001expectation].
-3. **Deterministic approximations**
+The expectation maximisation [EM; @dempster1977maximum] and expectation propagation [EP; @minka2001expectation] algorithms are closely related to VI.
+
+Need to talk about:
 Laplace approximation.
 Quadrature.
 Integrated nested Laplace approximation.
@@ -111,24 +119,52 @@ As computation improves, the space of models available to the analyst expands.
 
 ## Spatio-temporal statistics
 
-In spatio-temporal statistics [@cressie2015statistics], we observe data indexed by spatial or temporal location.
-In this thesis we assume that the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ has two dimensions, corresponding to latitude and longitude.
-Data may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
+(ref:st) On the left is a district level map of South Africa. The position of the capital city, Cape Town, can be considered to be a point location. ZF Mgcawu District Municipality is an example of an area. On the right World AIDS Day, designated on the 1st of December every year, represents a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. For both Cape Town and World AIDS Day, one can ask ask whether they are truly points, or merely areas of lesser extent. There are few instances of infinitesimally small point locations from pure mathematics in everyday life.
+
+```{r st, fig.cap="(ref:st)"}
+knitr::include_graphics("figures/bayesian/st.png")
+```
+
+In spatio-temporal statistics [@cressie2015statistics], the observations are indexed by spatial or temporal location (Figure \@ref(fig:st)).
+In this thesis I assume that the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ has two dimensions, corresponding to latitude and longitude.
+Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
 The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be one dimensional.
-Similarly, data may be associated to a point $t \in \mathcal{T}$ or period of time $T \in \mathcal{T}$.
+Similarly, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
 
-Spatio-temporal data has some important properties.
-Foremost among them is correlation structure.
-Tobler's first law of geography, also expressed by @fisher1936design, is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
-This law extends not only to space but also time.
+### Properties of spatial data
 
-(ref:zmb-maps) To demonstrate the benefits of spatial modelling, I simulated simple random samples with varying sample size in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from [`athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
+Spatio-temporal data has some important properties:
+
+1. **Correlation structure**:
+Tobler's first law of geography is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
+@fisher1936design made a similar observation about the similarity of yields of neighbouring crops.
+As well as space, this law extends to time.
+Observations made close together in time tend to be similar.
+
+    Because of its correlation structure, spatio-temporal data are not independent and identically distributed (IID).
+    Only one observation of a spatio-temporal process is typically realised.
+
+2. **Scales**:
+The observations may be at various possible spatial and temporal scales.
+We may wish to model or generate predictions at another scale.
+3. **Size**:
+Data with spatial and temporal dimensions is often large.
+Models typically require many parameters.
+Storage, manipulation, and inference for spatio-temporal data can be challenging.
+
+### Small-area estimation
+
+Because of the large number of possible locations in space and time, often no or limited direct data is available for any given location.
+In this circumstance, direct estimates of indicators of interest are either impossible or have large error due to high variance.
+Small-area estimation (SAE) methods aim to overcome the limitations of small data by sharing information across space and time (Figure \@ref(fig:zmb-maps), Figure \@ref(fig:zmb-scatter)).
+
+(ref:zmb-maps) I simulated simple random samples with varying sample size (5, 25, 125) in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from [`athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
 
 ```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
 knitr::include_graphics("figures/bayesian/zmb-maps.png")
 ```
 
-(ref:zmb-scatter) The estimates from surveys with higher sample size have higher Pearson correlation coefficient ($R$) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \@ref(fig:zmb-maps).
+(ref:zmb-scatter) The estimates from surveys with higher sample size have higher Pearson correlation coefficient $R$ with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure \@ref(fig:zmb-maps).
 
 ```{r zmb-scatter, fig.cap="(ref:zmb-scatter)"}
 knitr::include_graphics("figures/bayesian/zmb-scatter.png")
@@ -144,8 +180,13 @@ knitr::include_graphics("figures/bayesian/zmb-scatter.png")
 knitr::include_graphics("figures/bayesian/hierarchical-structure.png")
 ```
 
-Often it is natural to group some observations together.
-Bayesian hierarchical or multilevel models, comprised of multiple stages, allow for natural handling data of this sort, even with complex nested or crossed grouping structures.
+Some observations in data are typically natural to group together.
+For example, each individual $i = 1, \ldots, n$ in a study might be observed $m_i$ times (Figure \@ref(fig:hierarchical-structure)).
+Observations $y_{i1}, \ldots y_{im_i}$ of the same individual are grouped together.
+These observations are more likely to be similar than observations of different individuals.
+We might also group observations by spatio-temporal location.
+
+Bayesian hierarchical or multilevel models allow for natural handling of group structure in data, even for complex nested or crossed structures.
 In a three-stage hierarchical model, we partition the parameters so that $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
 I refer to $\mathbf{x} = (x_1, \ldots, x_n)$ as the latent field, and $\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)$ as the hyperparameters.
 The generative model for data $\mathbf{y}$ is then
@@ -156,21 +197,22 @@ The generative model for data $\mathbf{y}$ is then
 \end{align}
 with posterior distribution proportional to $p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})$.
 
-For example, Figure \@ref(fig:hierarchical-structure) illustrates a case where each individual $i = 1, \ldots, n$ in a study is observed $m_i$ times.
-Observations $y_{i1}, \ldots y_{im_i}$ of the same individual are grouped together, and are more likely to have more similar properties than observations of different individuals.
-Hierarchical models often control over if and how information is shared between groups.
+Bayesian hierarchical models allow control over whether and how information is shared across groups.
 
-1. **Complete pooling** In this model, the group structure is ignored and all $\sum_{i = 1}^n m_i$ observations are treated as independent and identically distributed
+1. **Complete pooling**:
+In the complete pooling model, group structure is ignored and all $\sum_{i = 1}^n m_i$ observations are treated as IID
 \begin{align}
 y_{ij} \sim \mathcal{N}(\mu, \sigma), \\
 (\mu, \sigma) \sim p(\mu, \sigma).
 \end{align}
-2. **No pooling** Alternatively, the groups can be modelled entirely separately with group specific mean $\mu_i$ and standard deviation $\sigma_i$ parameters
+2. **No pooling**:
+Alternatively, the groups can be modelled entirely separately with group specific mean $\mu_i$ and standard deviation $\sigma_i$ parameters
 \begin{align}
 y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\
 (\mu_i, \sigma_i) \sim p(\mu_i, \sigma_i).
 \end{align}
-3. **Partial pooling** In this model, some amount of information is shared between the groups
+3. **Partial pooling**:
+In this model, some amount of information is shared between the groups
 \begin{align}
 y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\
 \mu_i &= \beta + u_i, \\
