@@ -11,32 +11,28 @@ trapezoid_rule <- function(x, spacing) {
 
 finegrid <- seq(0, pi, length.out = 1000)
 
-plot <- data.frame(x = finegrid, y = sin(finegrid)) %>%
-  ggplot(aes(x = x, y = y)) +
-  geom_line(col = "#009E73") +
-  theme_minimal() +
-  labs(x = "", y = "")
+f <- function(x) sin(x) * x
 
-trapezoid_plot <- function(N) {
+trapezoid_df <- function(N) {
   grid <- seq(0, pi, length.out = N)
-  int <- trapezoid_rule(x = sin(grid), spacing = grid[2] - grid[1])
-  
-  plot + 
-    geom_bar(
-      data = data.frame(x = grid, y = sin(grid)),
-      aes(x = x, y = y), alpha = 0.7, stat = "identity",
-      inherit.aes = FALSE, fill = "#56B4E9") +
-    theme_minimal() +
-    labs(
-      subtitle = paste0("Number of nodes: ", N - 2, "\nTrapezoid rule estimate: ", round(int, 3)),
-      x = "", y = ""
-    )
+  df <- data.frame(x = grid, y = f(grid), N = N - 2)
+  int <- trapezoid_rule(x = df$y, spacing = df$x[2] - df$x[1])
+  df$int <- int
+  df$spacing <- df$x[2] - df$x[1]
+  return(df)
 }
 
-fig1 <- trapezoid_plot(N = 7)
-fig2 <- trapezoid_plot(N = 27)
-fig3 <- trapezoid_plot(N = 127)
+df <- bind_rows(trapezoid_df(N = 7), trapezoid_df(N = 27), trapezoid_df(N = 127))
 
-fig1 + fig2 + fig3 + plot_layout(ncol = 1)
+ggplot(df) +
+  geom_col(aes(x = x, y = y, width = spacing * 0.95), fill = "#56B4E9", alpha = 0.8) +
+  geom_function(fun = f, n = 500, col = "#009E73") +
+  geom_text(
+    data = df %>% select(N, int) %>% unique(),
+    aes(label = paste0("Estimate: ", signif(int, 5)), x = 0.45, y = 1.6), size = 3
+  ) +
+  facet_grid(N ~ .) +
+  labs(x = "", y = "") +
+  theme_minimal() 
 
-ggsave("trapezoid.png", h = 7, w = 6.25)
+ggsave("figures/naomi-aghq/trapezoid.png", h = 7, w = 6.25, bg = "white")

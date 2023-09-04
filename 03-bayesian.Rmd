@@ -34,22 +34,21 @@ knitr::opts_chunk$set(
 ## Bayesian statistics
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed by Section \@ref(surveillance) because it allows principled and flexible synthesis of data with scientific knowledge, and handling of uncertainty.
-In this section I provide brief overview.
-For a more complete introduction, I recommend @mcelreath2020statistical or @gelman2013bayesian.
+It is especially well suited to facing the challenges posed by Section \@ref(surveillance).
+First, because it allows for principled and flexible integration of data with scientific knowledge.
+Second, because it handling of uncertainty is an integral part of the Bayesian paradigm.
+In this section I provide a brief overview.
+For a more complete introduction, I recommend @gelman2013bayesian or @mcelreath2020statistical.
 
 ### Bayesian modelling
 
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$ together with parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$.
-Here $n$ is the dimension of the data and $d$ is the number of parameters.
-The notation $p(\cdot)$ denotes a probability distribution.
-The model is generative in the sense that one can simulate from it to generate draws
-\begin{equation}
-(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
-\end{equation}
-If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
-In this way, models can be built iteratively, with complexity added gradually.
+This is achieved mathematically by the construction of a generative model $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$ together with parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$, where $n$ is the dimension of the data and $d$ is the number of parameters, and the notation $p(\cdot)$ denotes a probability distribution.
+Choice of the particular parameters $\boldsymbol{\mathbf{\phi}}$ will depend upon the requirements of the analysis.
+
+The model is generative in the sense that one can simulate from it to generate samples $(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
+If these samples differ too greatly from what the analyst would expect, then the generative model does not capture their prior scientific understanding of the data, and can be refined.
+Using this procedure, known as a prior predictive check [@gelman2013bayesian; Chapter 6], models can be built iteratively, with complexity added gradually.
 
 The model is usually constructed from two parts, known respectively as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
 The joint distribution is obtained by the product $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$.
@@ -64,7 +63,7 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 ### Bayesian computation
 
-(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter is $\phi \sim \text{Gamma}(3, 1)$. I simulated observed data $\mathbf{y} = (1, 2, 3)$ from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified [@bernardo2001bayesian]. Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter is $\phi \sim \text{Gamma}(3, 1)$. I simulated observed data $\mathbf{y} = (1, 2, 3)$ from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified [@bernardo2001bayesian]. Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
@@ -76,21 +75,38 @@ Using the eponymous Bayes' theorem, it is given by
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
 \end{equation}
 
-In certain cases, the posterior distribution can be calculated in closed form (Figure \@ref(fig:conjugate)).
-However, most of the time it is intractable to calculate the posterior distribution because of the potentially high-dimensional integral $p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}$ in the denominator of Equation \@ref(eq:posterior).
+Unfortunately, most of the time it is intractable to calculate the posterior distribution directly.
+This is because of the potentially high-dimensional integral
+\begin{equation}
+p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
+\end{equation}
+in the denominator of Equation \@ref(eq:posterior).
 As such, although it is easy to evaluate $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$, it is typically difficult to evaluate the posterior distribution itself.
+
+The difficulty of performing Bayesian inference in general may be thought of as analogous to the difficulties with calculating integrals.
+As with integration, in some cases closed form solutions are available.
+Figure \@ref(fig:conjugate) illustrates one such case, where the prior distribution and posterior distribution are in the same family of probability distributions.
 
 A variety of computational methods have been developed to tackle this problem.
 They may broadly be divided into sampling algorithms, and deterministic approximations.
 
 #### Sampling algorithms
 
-Sometimes known as Monte Carlo methods, these approaches look to generate samples from the posterior distribution [@robert2005monte].
-These samples may then be used in any future computations such as expectations or summaries.
+Also known as Monte Carlo methods, sampling algorithms [@robert2005monte] look to generate samples from the posterior distribution 
+\begin{equation}
+\boldsymbol{\mathbf{\phi}}_i \sim p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}), \quad i \in 1, \ldots M.
+\end{equation}
+These samples may then be used in any future computations involving the posterior distribution.
+For example, if $G = G(\boldsymbol{\mathbf{\phi}})$ then the expectation of $G$ with respect to the posterior distribution can be approximated by
+\begin{equation}
+\mathbb{E}(G) = \int G(\boldsymbol{\mathbf{\phi}}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\end{equation}
 
-Markov chain Monte Carlo (MCMC) methods are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution [@roberts2004general].
-In this thesis, I use a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
-The specific algorithm is the No-U-Turn sampler [NUTS; @hoffman2014no], which adapts the tuning parameters of HMC based local properties of the posterior distribution.
+Markov chain Monte Carlo (MCMC) methods [@roberts2004general] are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution .
+In this thesis, I use the the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
+HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings [@metropolis1953equation; @hastings1970monte] proposal distributions.
+
+NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has proven empirically to be a good choice for sampling from a range of posterior distributions.
 
 #### Deterministic approximations
@@ -119,36 +135,45 @@ As computation improves, the space of models available to the analyst expands.
 
 ## Spatio-temporal statistics
 
-(ref:st) On the left is a district level map of South Africa. The position of the capital city, Cape Town, can be considered to be a point location. ZF Mgcawu District Municipality is an example of an area. On the right World AIDS Day, designated on the 1st of December every year, represents a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. For both Cape Town and World AIDS Day, one can ask ask whether they are truly points, or merely areas of lesser extent. There are few instances of infinitesimally small point locations from pure mathematics in everyday life.
+(ref:st) The position of the capital of South Africa, Cape Town, can be considered a point location. The ZF Mgcawu District Municipality is an example of an area. World AIDS Day, designated on the 1st of December every year, can be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. Both Cape Town and World AIDS Day in reality are areas of lesser extent, rather than true point locations. There are few instances of true infinitesimal point locations in everyday life.
 
 ```{r st, fig.cap="(ref:st)"}
 knitr::include_graphics("figures/bayesian/st.png")
 ```
 
-In spatio-temporal statistics [@cressie2015statistics], the observations are indexed by spatial or temporal location (Figure \@ref(fig:st)).
+In spatio-temporal statistics [@cressie2015statistics], observations are indexed by spatial or temporal location (Figure \@ref(fig:st)).
 In this thesis I assume that the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ has two dimensions, corresponding to latitude and longitude.
 Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
 The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be one dimensional.
 Similarly, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
 
-### Properties of spatial data
+### Properties of spatio-temporal data
 
 Spatio-temporal data has some important properties:
 
 1. **Correlation structure**:
 Tobler's first law of geography is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
-@fisher1936design made a similar observation about the similarity of yields of neighbouring crops.
-As well as space, this law extends to time.
-Observations made close together in time tend to be similar.
+In "The Design of Experiments" @fisher1936design similarly observed that neighbouring crops were more likely to have similar yields.
+This law may be formalised using spatial covariance functions.
+When these functions vary over space they are called non-stationary.
+
+    As well as space, Tobler's first law extends to time.
+    Observations made close together in time tend to be similar.
+    The field of time series analysis [@hyndman2018forecasting].
 
     Because of its correlation structure, spatio-temporal data are not independent and identically distributed (IID).
     Only one observation of a spatio-temporal process is typically realised.
 
 2. **Scales**:
-The observations may be at various possible spatial and temporal scales.
-We may wish to model or generate predictions at another scale.
+Spatio-temporal observations might be at various possible scales.
+May want to model data at a scale it was not observated at.
+May want to model data from different scales simultaneously.
+Downscaling.
+Upscaling.
+Change-of-support.
+Misalignment.
 3. **Size**:
-Data with spatial and temporal dimensions is often large.
+Data with both spatial and temporal dimensions are often large.
 Models typically require many parameters.
 Storage, manipulation, and inference for spatio-temporal data can be challenging.
 

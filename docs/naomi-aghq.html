@@ -129,7 +129,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="bayes-st.html"><a href="bayes-st.html#spatio-temporal-statistics"><i class="fa fa-check"></i><b>3.2</b> Spatio-temporal statistics</a>
 <ul>
-<li class="chapter" data-level="3.2.1" data-path="bayes-st.html"><a href="bayes-st.html#properties-of-spatial-data"><i class="fa fa-check"></i><b>3.2.1</b> Properties of spatial data</a></li>
+<li class="chapter" data-level="3.2.1" data-path="bayes-st.html"><a href="bayes-st.html#properties-of-spatio-temporal-data"><i class="fa fa-check"></i><b>3.2.1</b> Properties of spatio-temporal data</a></li>
 <li class="chapter" data-level="3.2.2" data-path="bayes-st.html"><a href="bayes-st.html#small-area-estimation"><i class="fa fa-check"></i><b>3.2.2</b> Small-area estimation</a></li>
 </ul></li>
 <li class="chapter" data-level="3.3" data-path="bayes-st.html"><a href="bayes-st.html#hierarchical-lgm-elgm"><i class="fa fa-check"></i><b>3.3</b> Model classes</a>
@@ -258,6 +258,12 @@ div.csl-indent {
 <li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.5</b> Inference comparison</a></li>
 <li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#mcmc-convergence-and-suitability"><i class="fa fa-check"></i><b>C.6</b> MCMC convergence and suitability</a></li>
 </ul></li>
+<li class="chapter" data-level="D" data-path="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html"><a href="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html"><i class="fa fa-check"></i><b>D</b> Bayesian spatio-temporal methods for small-area estimation of HIV indicators</a>
+<ul>
+<li class="chapter" data-level="D.1" data-path="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html"><a href="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html#chapters"><i class="fa fa-check"></i><b>D.1</b> Chapters</a></li>
+<li class="chapter" data-level="D.2" data-path="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html"><a href="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html#citation"><i class="fa fa-check"></i><b>D.2</b> Citation</a></li>
+<li class="chapter" data-level="D.3" data-path="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html"><a href="bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators.html#frequently-asked-questions"><i class="fa fa-check"></i><b>D.3</b> Frequently asked questions</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -284,7 +290,7 @@ The method is motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (<code>https://naomi.unaids.org</code>) to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span>.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 I began working on this project at the start of my PhD, and only started to make progress after reading <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2021fast">2021</a>)</span>.
-I am grateful that Alex Stringer later supervised my visit to the University of Waterloo.
+I am grateful to have later collaborated with Alex Stringer.
 The results of this work are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/elgm-inf"><code>athowes/naomi-aghq</code></a>.</p>
 <div id="inference-methods" class="section level2 hasAnchor" number="6.1">
@@ -296,7 +302,8 @@ p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\
 \end{equation}\]</span>
 or some way to compute summaries of it.
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
-Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.</p>
+Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
+For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.</p>
 <p>It is usually intractable to directly obtain the posterior distribution.
 This is because the denominator contains an intractable integral called the posterior normalising constant
 <span class="math display" id="eq:evidence">\[\begin{equation}
@@ -345,10 +352,17 @@ The Laplace approximation may be thought of as approximating the posterior distr
 <span class="math display">\[\begin{equation}
 \tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}\]</span></p>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:laplace"></span>
+<img src="figures/naomi-aghq/laplace.png" alt="Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure 3.1. The unnormalised posterior \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\) can be recognised as the unnomalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)." width="95%" />
+<p class="caption">
+Figure 6.1: Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. The unnormalised posterior <span class="math inline">\(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\)</span> can be recognised as the unnomalised gamma distribution <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. The true log normalising constant is <span class="math inline">\(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\)</span>, whereas the Laplace approximate log normalising constant is <span class="math inline">\(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\)</span>, resulting from the Gaussian approximation <span class="math inline">\(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)</span>.
+</p>
+</div>
 <div id="the-marginal-laplace-approximation" class="section level4 hasAnchor" number="6.1.1.1">
 <h4><span class="header-section-number">6.1.1.1</span> The marginal Laplace approximation<a href="naomi-aghq.html#the-marginal-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>It might be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
-An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
+<p>Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters which might have posterior distributions which are close to being Gaussian.
 As before, let <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> where <span class="math inline">\(\mathbf{x}\)</span> is the latent field, and <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> are the hyperparameters.
 Applying an equivalent Laplace approximation to the latent field, we have <span class="math inline">\(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> with posterior mode
 <span class="math display">\[\begin{equation}
@@ -376,22 +390,25 @@ As with the Laplace approximation, it is deterministic in that the computational
 Then a quadrature approximation to the posterior normalising constant is given by
 <span class="math display">\[\begin{equation}
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
-\end{equation}\]</span>
-Quadrature methods are most effective when integrating over small dimensions.
-The reason why is that exponentially more quadrature points are required to cover each additional dimension.
+\end{equation}\]</span></p>
+<p>The one-dimensional trapezoid rule, in which quadrature points are spaced evenly across the domain of interest, is a simple example of a quadrature rule.
+The more quadrature points are used per dimension, the more accurate the estiamte of the integrand (Figure <a href="naomi-aghq.html#fig:trapezoid">6.2</a>).</p>
+<p>Quadrature methods are most effective when integrating over small dimensions.
+The number of quadrature points required grows exponentially with the dimension.
 For even moderate dimension, this quickly becomes intractable.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:trapezoid"></span>
-<img src="figures/naomi-aghq/trapezoid.png" alt="Figure caption." width="95%" />
+<img src="figures/naomi-aghq/trapezoid.png" alt="The trapezoid rule with \(k = 5, 25, 125\) quadrature nodes can be used to integrate the function \(f(z) = z \sin(z)\) in the domain \([0, \pi]\). Here, the exact solution is \(\pi \approx 3.1416\). As more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution." width="95%" />
 <p class="caption">
-Figure 6.1: Figure caption.
+Figure 6.2: The trapezoid rule with <span class="math inline">\(k = 5, 25, 125\)</span> quadrature nodes can be used to integrate the function <span class="math inline">\(f(z) = z \sin(z)\)</span> in the domain <span class="math inline">\([0, \pi]\)</span>. Here, the exact solution is <span class="math inline">\(\pi \approx 3.1416\)</span>. As more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.
 </p>
 </div>
 <div id="gauss-hermite-quadrature" class="section level4 hasAnchor" number="6.1.2.1">
 <h4><span class="header-section-number">6.1.2.1</span> Gauss-Hermite quadrature<a href="naomi-aghq.html#gauss-hermite-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate a certain class of functions exactly.
-These functions are the form <span class="math inline">\(f(z) = \phi(z) P_\alpha(z)\)</span>, where <span class="math inline">\(\phi(\cdot)\)</span> is a standard normal density, and <span class="math inline">\(P_\alpha(\cdot)\)</span> is a polynomial of degree <span class="math inline">\(\alpha\)</span>.</p>
-<p>Following the notation for GHQ established by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> for <span class="math inline">\(z \in \mathbb{R}\)</span>, let <span class="math inline">\(H_k(z)\)</span> be the <span class="math inline">\(k\)</span>th Hermite polynomial
+<p>Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate functions of the form <span class="math inline">\(f(z) = \phi(z) P_\alpha(z)\)</span> exactly.
+Here <span class="math inline">\(\phi(\cdot)\)</span> is a standard normal density, and <span class="math inline">\(P_\alpha(\cdot)\)</span> is a polynomial of degree <span class="math inline">\(\alpha\)</span>.</p>
+<p>I follow the notation for GHQ established by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>.
+For <span class="math inline">\(z \in \mathbb{R}\)</span>, let <span class="math inline">\(H_k(z)\)</span> be the <span class="math inline">\(k\)</span>th Hermite polynomial
 <span class="math display">\[\begin{equation}
 H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2).
 \end{equation}\]</span>
@@ -401,22 +418,33 @@ The corresponding weighting function <span class="math inline">\(\omega: \mathca
 \omega(z) = \frac{\phi(z) \cdot k!}{[H_{k + 1}(z)]^2}.
 \end{equation}\]</span></p>
 <p>Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
-In <span class="math inline">\(d\)</span> dimensions, the multivariate GHQ nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(d, k)\)</span> are defined by <span class="math inline">\(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\)</span>.
+In <span class="math inline">\(d\)</span> dimensions, the multivariate GHQ nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(d, k)\)</span> are defined by
+<span class="math display">\[\begin{equation}
+\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k).
+\end{equation}\]</span>
 The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\)</span> is given by <span class="math inline">\(\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)\)</span>.</p>
 </div>
 <div id="adaptive-quadrature" class="section level4 hasAnchor" number="6.1.2.2">
 <h4><span class="header-section-number">6.1.2.2</span> Adaptive quadrature<a href="naomi-aghq.html#adaptive-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:aghq-demo"></span>
-<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
+<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
 <p class="caption">
-Figure 6.2: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
+Figure 6.3: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
 </p>
 </div>
 <p>In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
 Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
-No fixed quadrature rule can be expected to perform well in integrating any posterior distributions produced by observation of particular data.</p>
-<p>In adaptive GHQ (AGHQ).</p>
+No fixed quadrature rule can be expected to effectively integrate every posterior distribution produced by observation of particular data.</p>
+<p>In adaptive GHQ (AGHQ) the quadrature nodes are shifted by the mode of the integrand, and rotated based on a matrix decomposition of the inverse curvature at the mode
+<span class="math display">\[\begin{equation}
+\mathbf{z} \mapsto \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}.
+\end{equation}\]</span>
+Two alternatives for the matrix decomposition <span class="citation">(<a href="#ref-jackel2005note">Jäckel 2005</a>)</span> are:</p>
+<ol style="list-style-type: decimal">
+<li>the Cholesky decomposition <span class="math inline">\(\hat{\mathbf{P}}_\texttt{LA} = \hat{\mathbf{L}}_\texttt{LA}\)</span>, where <span class="math inline">\(\hat{\mathbf{L}}_\texttt{LA}\)</span> is lower triangular,</li>
+<li>the spectral decomposition <span class="math inline">\(\hat{\mathbf{P}}_\texttt{LA} = \hat{\mathbf{E}}_\texttt{LA} \hat{\mathbf{\Lambda}}_\texttt{LA}^{1/2}\)</span>, where <span class="math inline">\(\hat{\mathbf{E}}_\texttt{LA} = (\hat{\mathbf{e}}_{\texttt{LA}, 1}, \ldots \hat{\mathbf{e}}_{\texttt{LA}, m})\)</span> contains the eigenvectors of <span class="math inline">\([\hat{\mathbf{H}}_\texttt{LA}(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA})]^{-1}\)</span> and <span class="math inline">\(\hat{\mathbf{\Lambda}}_\texttt{LA}\)</span> is a diagonal matrix containing its eigenvalues <span class="math inline">\((\hat \lambda_{\texttt{LA}, 1}, \ldots, \hat \lambda_{\texttt{LA}, m})\)</span>.</li>
+</ol>
 </div>
 </div>
 <div id="integrated-nested-laplace-approximation" class="section level3 hasAnchor" number="6.1.3">
@@ -530,9 +558,9 @@ where <span class="math inline">\(\theta_{I}\)</span> are the following weighted
 <h3><span class="header-section-number">6.5.2</span> Principal components analysis<a href="naomi-aghq.html#principal-components-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:pca-demo"></span>
-<img src="figures/naomi-aghq/pca-demo.png" alt="See Figure 6.2." width="95%" />
+<img src="figures/naomi-aghq/pca-demo.png" alt="See Figure 6.3." width="95%" />
 <p class="caption">
-Figure 6.3: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.2</a>.
+Figure 6.4: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>.
 </p>
 </div>
 </div>
@@ -542,7 +570,7 @@ Figure 6.3: See Figure <a href="naomi-aghq.html#fig:aghq-demo">6.2</a>.
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:figB"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="Naomi output." width="95%" />
 <p class="caption">
-Figure 6.4: Naomi output.
+Figure 6.5: Naomi output.
 </p>
 </div>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.6.1">
@@ -588,6 +616,9 @@ Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oli
 </div>
 <div id="ref-howes2023fast" class="csl-entry">
 Howes, Adam, Alex Stringer, Seth R. Flaxman, and Jeffrey W. Eaton. 2023+. <span>“<span class="nocase">Fast approximate Bayesian inference of HIV indicators using PCA adaptive Gauss-Hermite quadrature</span>,”</span> 2023+.
+</div>
+<div id="ref-jackel2005note" class="csl-entry">
+Jäckel, Peter. 2005. <span>“A Note on Multivariate Gauss-Hermite Quadrature.”</span> <em>London: ABN-Amro. Re</em>.
 </div>
 <div id="ref-kish1965survey" class="csl-entry">
 Kish, Leslie. 1965. <em>Survey Sampling</em>. 04; HN29, K5.

@@ -636,23 +636,22 @@ Aims for HIV response going forward, and the surveillance capabilities needed to
 \section{Bayesian statistics}\label{bayesian-statistics}}
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is well suited for to the challenges posed by Section \ref{surveillance} because it allows principled and flexible synthesis of data with scientific knowledge, and handling of uncertainty.
-In this section I provide brief overview.
-For a more complete introduction, I recommend \textcite{mcelreath2020statistical} or \textcite{gelman2013bayesian}.
+It is especially well suited to facing the challenges posed by Section \ref{surveillance}.
+First, because it allows for principled and flexible integration of data with scientific knowledge.
+Second, because it handling of uncertainty is an integral part of the Bayesian paradigm.
+In this section I provide a brief overview.
+For a more complete introduction, I recommend \textcite{gelman2013bayesian} or \textcite{mcelreath2020statistical}.
 
 \hypertarget{bayesian-modelling}{%
 \subsection{Bayesian modelling}\label{bayesian-modelling}}
 
 At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved by the construction of a generative model \(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\) for the observed data \(\mathbf{y} = (y_1, \ldots, y_n)\) together with parameters \(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\).
-Here \(n\) is the dimension of the data and \(d\) is the number of parameters.
-The notation \(p(\cdot)\) denotes a probability distribution.
-The model is generative in the sense that one can simulate from it to generate draws
-\begin{equation}
-(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})
-\end{equation}
-If these draws differ too greatly from what the analyst would expect, then the generative model does not capture their scientific understanding, and can be refined.
-In this way, models can be built iteratively, with complexity added gradually.
+This is achieved mathematically by the construction of a generative model \(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\) for the observed data \(\mathbf{y} = (y_1, \ldots, y_n)\) together with parameters \(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\), where \(n\) is the dimension of the data and \(d\) is the number of parameters, and the notation \(p(\cdot)\) denotes a probability distribution.
+Choice of the particular parameters \(\boldsymbol{\mathbf{\phi}}\) will depend upon the requirements of the analysis.
+
+The model is generative in the sense that one can simulate from it to generate samples \((\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\).
+If these samples differ too greatly from what the analyst would expect, then the generative model does not capture their prior scientific understanding of the data, and can be refined.
+Using this procedure, known as a prior predictive check {[}\textcite{gelman2013bayesian}; Chapter 6{]}, models can be built iteratively, with complexity added gradually.
 
 The model is usually constructed from two parts, known respectively as the likelihood \(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})\) and the prior distribution \(p(\boldsymbol{\mathbf{\phi}})\).
 The joint distribution is obtained by the product \(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\).
@@ -676,7 +675,7 @@ As such, it may be argued that issues of subjectivity are not unique to the prio
 
 }
 
-\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified \autocite{bernardo2001bayesian}. Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.}\label{fig:conjugate}
+\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified \autocite{bernardo2001bayesian}. Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.}\label{fig:conjugate}
 \end{figure}
 
 The posterior distribution \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\) encapsulates probabilistic beliefs about the parameters given the observed data.
@@ -685,9 +684,17 @@ Using the eponymous Bayes' theorem, it is given by
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \label{eq:posterior}
 \end{equation}
 
-In certain cases, the posterior distribution can be calculated in closed form (Figure \ref{fig:conjugate}).
-However, most of the time it is intractable to calculate the posterior distribution because of the potentially high-dimensional integral \(p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}\) in the denominator of Equation \eqref{eq:posterior}.
+Unfortunately, most of the time it is intractable to calculate the posterior distribution directly.
+This is because of the potentially high-dimensional integral
+\begin{equation}
+p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
+\end{equation}
+in the denominator of Equation \eqref{eq:posterior}.
 As such, although it is easy to evaluate \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\), it is typically difficult to evaluate the posterior distribution itself.
+
+The difficulty of performing Bayesian inference in general may be thought of as analogous to the difficulties with calculating integrals.
+As with integration, in some cases closed form solutions are available.
+Figure \ref{fig:conjugate} illustrates one such case, where the prior distribution and posterior distribution are in the same family of probability distributions.
 
 A variety of computational methods have been developed to tackle this problem.
 They may broadly be divided into sampling algorithms, and deterministic approximations.
@@ -695,12 +702,21 @@ They may broadly be divided into sampling algorithms, and deterministic approxim
 \hypertarget{sampling-algorithms}{%
 \subsubsection{Sampling algorithms}\label{sampling-algorithms}}
 
-Sometimes known as Monte Carlo methods, these approaches look to generate samples from the posterior distribution \autocite{robert2005monte}.
-These samples may then be used in any future computations such as expectations or summaries.
+Also known as Monte Carlo methods, sampling algorithms \autocite{robert2005monte} look to generate samples from the posterior distribution
+\begin{equation}
+\boldsymbol{\mathbf{\phi}}_i \sim p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}), \quad i \in 1, \ldots M.
+\end{equation}
+These samples may then be used in any future computations involving the posterior distribution.
+For example, if \(G = G(\boldsymbol{\mathbf{\phi}})\) then the expectation of \(G\) with respect to the posterior distribution can be approximated by
+\begin{equation}
+\mathbb{E}(G) = \int G(\boldsymbol{\mathbf{\phi}}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\end{equation}
 
-Markov chain Monte Carlo (MCMC) methods are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution \autocite{roberts2004general}.
-In this thesis, I use a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
-The specific algorithm is the No-U-Turn sampler {[}NUTS; \textcite{hoffman2014no}{]}, which adapts the tuning parameters of HMC based local properties of the posterior distribution.
+Markov chain Monte Carlo (MCMC) methods \autocite{roberts2004general} are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution .
+In this thesis, I use the the No-U-Turn sampler {[}NUTS; \textcite{hoffman2014no}{]}, a Hamiltonian Monte Carlo {[}HMC; \textcite{duane1987hybrid}; \textcite{neal2011mcmc}{]} algorithm, implemented in the Stan \autocite{carpenter2017stan} probabilistic programming language (PPL).
+HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings \autocite{metropolis1953equation,hastings1970monte} proposal distributions.
+
+NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has proven empirically to be a good choice for sampling from a range of posterior distributions.
 
 \hypertarget{deterministic-approximations}{%
@@ -740,17 +756,17 @@ As computation improves, the space of models available to the analyst expands.
 
 }
 
-\caption{On the left is a district level map of South Africa. The position of the capital city, Cape Town, can be considered to be a point location. ZF Mgcawu District Municipality is an example of an area. On the right World AIDS Day, designated on the 1st of December every year, represents a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. For both Cape Town and World AIDS Day, one can ask ask whether they are truly points, or merely areas of lesser extent. There are few instances of infinitesimally small point locations from pure mathematics in everyday life.}\label{fig:st}
+\caption{The position of the capital of South Africa, Cape Town, can be considered a point location. The ZF Mgcawu District Municipality is an example of an area. World AIDS Day, designated on the 1st of December every year, can be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. Both Cape Town and World AIDS Day in reality are areas of lesser extent, rather than true point locations. There are few instances of true infinitesimal point locations in everyday life.}\label{fig:st}
 \end{figure}
 
-In spatio-temporal statistics \autocite{cressie2015statistics}, the observations are indexed by spatial or temporal location (Figure \ref{fig:st}).
+In spatio-temporal statistics \autocite{cressie2015statistics}, observations are indexed by spatial or temporal location (Figure \ref{fig:st}).
 In this thesis I assume that the spatial study region \(\mathcal{S} \subseteq \mathbb{R}^2\) has two dimensions, corresponding to latitude and longitude.
 Observations may be associated to a point \(s \in \mathcal{S}\) or area \(A \subseteq \mathcal{S}\) in the study region.
 The temporal study period \(\mathcal{T} \subseteq \mathbb{R}\) can more generally be assumed to be one dimensional.
 Similarly, observations may be associated to a point \(t \in \mathcal{T}\) or period of time \(T \subseteq \mathcal{T}\).
 
-\hypertarget{properties-of-spatial-data}{%
-\subsection{Properties of spatial data}\label{properties-of-spatial-data}}
+\hypertarget{properties-of-spatio-temporal-data}{%
+\subsection{Properties of spatio-temporal data}\label{properties-of-spatio-temporal-data}}
 
 Spatio-temporal data has some important properties:
 
@@ -759,19 +775,28 @@ Spatio-temporal data has some important properties:
 \item
   \textbf{Correlation structure}:
   Tobler's first law of geography is that ``everything is related to everything else, but near things are more related than distant things'' \autocite{tobler1970computer}.
-  \textcite{fisher1936design} made a similar observation about the similarity of yields of neighbouring crops.
-  As well as space, this law extends to time.
+  In ``The Design of Experiments'' \textcite{fisher1936design} similarly observed that neighbouring crops were more likely to have similar yields.
+  This law may be formalised using spatial covariance functions.
+  When these functions vary over space they are called non-stationary.
+
+  As well as space, Tobler's first law extends to time.
   Observations made close together in time tend to be similar.
+  The field of time series analysis \autocite{hyndman2018forecasting}.
 
   Because of its correlation structure, spatio-temporal data are not independent and identically distributed (IID).
   Only one observation of a spatio-temporal process is typically realised.
 \item
   \textbf{Scales}:
-  The observations may be at various possible spatial and temporal scales.
-  We may wish to model or generate predictions at another scale.
+  Spatio-temporal observations might be at various possible scales.
+  May want to model data at a scale it was not observated at.
+  May want to model data from different scales simultaneously.
+  Downscaling.
+  Upscaling.
+  Change-of-support.
+  Misalignment.
 \item
   \textbf{Size}:
-  Data with spatial and temporal dimensions is often large.
+  Data with both spatial and temporal dimensions are often large.
   Models typically require many parameters.
   Storage, manipulation, and inference for spatio-temporal data can be challenging.
 \end{enumerate}
@@ -2050,7 +2075,7 @@ The method is motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (\texttt{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
 Ensuring fast and accurate Bayesian inferences in this setting is challenging.
 I began working on this project at the start of my PhD, and only started to make progress after reading \textcite{stringer2021fast}.
-I am grateful that Alex Stringer later supervised my visit to the University of Waterloo.
+I am grateful to have later collaborated with Alex Stringer.
 The results of this work are presented in \textcite{howes2023fast}.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{athowes/naomi-aghq}}.
 
@@ -2065,6 +2090,7 @@ p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\
 or some way to compute summaries of it.
 Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
+For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.
 
 It is usually intractable to directly obtain the posterior distribution.
 This is because the denominator contains an intractable integral called the posterior normalising constant
@@ -2117,11 +2143,22 @@ The Laplace approximation may be thought of as approximating the posterior distr
 \tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/naomi-aghq/laplace} 
+
+}
+
+\caption{Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure \ref{fig:conjugate}. The unnormalised posterior \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\) can be recognised as the unnomalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\).}\label{fig:laplace}
+\end{figure}
+
 \hypertarget{the-marginal-laplace-approximation}{%
 \subsubsection{The marginal Laplace approximation}\label{the-marginal-laplace-approximation}}
 
-It might be inaccurate to approximate the full joint posterior distribution using a Gaussian distribution.
-An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
+Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters which might have posterior distributions which are close to being Gaussian.
 As before, let \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\) where \(\mathbf{x}\) is the latent field, and \(\boldsymbol{\mathbf{\theta}}\) are the hyperparameters.
 Applying an equivalent Laplace approximation to the latent field, we have \(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) with posterior mode
 \begin{equation}
@@ -2151,8 +2188,12 @@ Then a quadrature approximation to the posterior normalising constant is given b
 \begin{equation}
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}
+
+The one-dimensional trapezoid rule, in which quadrature points are spaced evenly across the domain of interest, is a simple example of a quadrature rule.
+The more quadrature points are used per dimension, the more accurate the estiamte of the integrand (Figure \ref{fig:trapezoid}).
+
 Quadrature methods are most effective when integrating over small dimensions.
-The reason why is that exponentially more quadrature points are required to cover each additional dimension.
+The number of quadrature points required grows exponentially with the dimension.
 For even moderate dimension, this quickly becomes intractable.
 
 
@@ -2163,16 +2204,17 @@ For even moderate dimension, this quickly becomes intractable.
 
 }
 
-\caption{Figure caption.}\label{fig:trapezoid}
+\caption{The trapezoid rule with \(k = 5, 25, 125\) quadrature nodes can be used to integrate the function \(f(z) = z \sin(z)\) in the domain \([0, \pi]\). Here, the exact solution is \(\pi \approx 3.1416\). As more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.}\label{fig:trapezoid}
 \end{figure}
 
 \hypertarget{gauss-hermite-quadrature}{%
 \subsubsection{Gauss-Hermite quadrature}\label{gauss-hermite-quadrature}}
 
-Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature rule designed to integrate a certain class of functions exactly.
-These functions are the form \(f(z) = \phi(z) P_\alpha(z)\), where \(\phi(\cdot)\) is a standard normal density, and \(P_\alpha(\cdot)\) is a polynomial of degree \(\alpha\).
+Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature rule designed to integrate functions of the form \(f(z) = \phi(z) P_\alpha(z)\) exactly.
+Here \(\phi(\cdot)\) is a standard normal density, and \(P_\alpha(\cdot)\) is a polynomial of degree \(\alpha\).
 
-Following the notation for GHQ established by \textcite{bilodeau2022stochastic} for \(z \in \mathbb{R}\), let \(H_k(z)\) be the \(k\)th Hermite polynomial
+I follow the notation for GHQ established by \textcite{bilodeau2022stochastic}.
+For \(z \in \mathbb{R}\), let \(H_k(z)\) be the \(k\)th Hermite polynomial
 \begin{equation}
 H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2).
 \end{equation}
@@ -2183,7 +2225,10 @@ The corresponding weighting function \(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\
 \end{equation}
 
 Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
-In \(d\) dimensions, the multivariate GHQ nodes \(\mathbf{z} \in \mathcal{Q}(d, k)\) are defined by \(\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k)\).
+In \(d\) dimensions, the multivariate GHQ nodes \(\mathbf{z} \in \mathcal{Q}(d, k)\) are defined by
+\begin{equation}
+\mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k).
+\end{equation}
 The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\) is given by \(\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)\).
 
 \hypertarget{adaptive-quadrature}{%
@@ -2197,14 +2242,27 @@ The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\
 
 }
 
-\caption{The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(\theta_1, \theta_2) = \text{sn}(0.5 \theta_1, \alpha = 2) \cdot \text{sn}(0.8 \theta_1 - 0.5 \theta_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
+\caption{The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
 \end{figure}
 
 In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
 Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
-No fixed quadrature rule can be expected to perform well in integrating any posterior distributions produced by observation of particular data.
+No fixed quadrature rule can be expected to effectively integrate every posterior distribution produced by observation of particular data.
 
-In adaptive GHQ (AGHQ).
+In adaptive GHQ (AGHQ) the quadrature nodes are shifted by the mode of the integrand, and rotated based on a matrix decomposition of the inverse curvature at the mode
+\begin{equation}
+\mathbf{z} \mapsto \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}.
+\end{equation}
+Two alternatives for the matrix decomposition \autocite{jackel2005note} are:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  the Cholesky decomposition \(\hat{\mathbf{P}}_\texttt{LA} = \hat{\mathbf{L}}_\texttt{LA}\), where \(\hat{\mathbf{L}}_\texttt{LA}\) is lower triangular,
+\item
+  the spectral decomposition \(\hat{\mathbf{P}}_\texttt{LA} = \hat{\mathbf{E}}_\texttt{LA} \hat{\mathbf{\Lambda}}_\texttt{LA}^{1/2}\), where \(\hat{\mathbf{E}}_\texttt{LA} = (\hat{\mathbf{e}}_{\texttt{LA}, 1}, \ldots \hat{\mathbf{e}}_{\texttt{LA}, m})\) contains the eigenvectors of \([\hat{\mathbf{H}}_\texttt{LA}(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA})]^{-1}\) and \(\hat{\mathbf{\Lambda}}_\texttt{LA}\) is a diagonal matrix containing its eigenvalues \((\hat \lambda_{\texttt{LA}, 1}, \ldots, \hat \lambda_{\texttt{LA}, m})\).
+\end{enumerate}
 
 \hypertarget{integrated-nested-laplace-approximation}{%
 \subsection{Integrated nested Laplace approximation}\label{integrated-nested-laplace-approximation}}
@@ -2914,6 +2972,113 @@ Given the total number of PLHIV on ART \(A_{x, s, a} = N_{x, s, a} \cdot \rho_{x
 
 \caption{The potential scale reduction factor compares between- and within- estimates of univariate parameters. It is recommended only to use NUTS results if the value is less than 1.05, which it is for all parameters.}\label{fig:rhat}
 \end{figure}
+
+\hypertarget{bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators}{%
+\chapter{Bayesian spatio-temporal methods for small-area estimation of HIV indicators}\label{bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators}}
+
+PhD in \href{https://statml.io/}{Modern Statistics and Statistical Machine Learning} at \href{https://www.imperial.ac.uk/}{Imperial College London}.
+
+Supervised by: \href{https://sethrf.com/}{Seth Flaxman} and \href{https://www.imperial.ac.uk/people/jeffrey.eaton}{Jeff Eaton}.
+
+Progress towards ending AIDS as a public health threat by 2030 is not being made fast enough.
+Effective public health response requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
+Limitations of available data make obtaining these estimates difficult.
+I developed and applied Bayesian spatio-temporal methods to meet this challenge.
+First, I examined models for area-level spatial structure.
+Second, I estimated district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
+Finally, I developed a novel deterministic Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
+Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
+
+\includegraphics{figures/hiv-aids/naomi-continent.png}
+
+\hypertarget{chapters}{%
+\section{Chapters}\label{chapters}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4651}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0698}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Title
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+GitHub repository
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Journal
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & \href{https://athowes.github.io/thesis/introduction.html}{Introduction} & & \\
+2 & \href{https://athowes.github.io/thesis/hiv-aids.html}{The HIV/AIDS epidemic} & & \\
+3 & \href{https://athowes.github.io/thesis/bayes-st.html}{Bayesian spatio-temporal statistics} & & \\
+4 & \href{https://athowes.github.io/thesis/beyond-borders.html}{Spatial structure} & \href{https://github.com/athowes/beyond-borders}{\texttt{beyond-borders}} & In preparation! \\
+5 & \href{https://athowes.github.io/thesis/multi-agyw.html}{A model for risk group proportions} & \href{https://github.com/athowes/multi-agyw}{\texttt{multi-agyw}} & \href{https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731}{PLOS Global Public Health} \\
+6 & \href{https://athowes.github.io/thesis/naomi-aghq.html}{Fast approximate Bayesian inference} & \href{https://github.com/athowes/naomi-aghq}{\texttt{naomi-aghq}} & In preparation! \\
+7 & \href{https://athowes.github.io/thesis/conclusions.html}{Future work and conclusions} & & \\
+\end{longtable}
+
+\hypertarget{citation}{%
+\section{Citation}\label{citation}}
+
+If you would like to cite this work, please use:
+
+\begin{verbatim}
+@phdthesis{howes23,
+  author = {Howes, Adam},
+  school = {Imperial College London},
+  title = {Bayesian spatio-temporal methods for small-area estimation of HIV indicators},
+  year = {2023}
+}
+\end{verbatim}
+
+\hypertarget{frequently-asked-questions}{%
+\section{Frequently asked questions}\label{frequently-asked-questions}}
+
+\begin{quote}
+How can I read the thesis?
+\end{quote}
+
+Thanks for being interested!
+You can read either the \href{https://athowes.github.io/thesis/}{HTML} or \href{https://athowes.github.io/thesis/main.pdf}{PDF} version.
+I know, an overwhelming choice.
+It's still very much a work in progress at the moment though, so check back in a few months.
+
+\begin{quote}
+How did you format this thesis?
+\end{quote}
+
+I used the R package \href{https://github.com/ismayc/thesisdown}{\texttt{thesisdown}}, inspired by \href{https://github.com/rstudio/bookdown}{\texttt{bookdown}}.
+
+\begin{quote}
+Are there any resources you'd recommend for an introduction to this area of research?
+\end{quote}
+
+I'd recommend something like \href{https://sites.google.com/a/r-inla.org/stbook/}{Spatial and Spatio-temporal Bayesian models with \texttt{R-INLA}} by Marta Blangiardo and Michela Cameletti.
+I have a repository with further miscellaneous recommended \href{https://github.com/athowes/resources}{resources}, if you are interested.
+
+\begin{quote}
+I'm a statistician: which parts of the thesis might interest me?
+\end{quote}
+
+If you use spatial random effects to model areal spatial structure, \href{https://athowes.github.io/thesis/beyond-borders.html}{Chapter 4}.
+If you're interested in modelling multinomial data using the multinomial-Poisson transformation and structured random effects, \href{https://athowes.github.io/thesis/multi-agyw.html}{Chapter 5}.
+If you have a complicated model which is not compatible with \texttt{R-INLA}, but would still like to use INLA-like methods, \href{https://athowes.github.io/thesis/naomi-aghq.html}{Chapter 6}.
+If you have such a model, get in touch!
+All of the methods are compatible with any model written in the (very general) \href{https://kaskr.github.io/adcomp/Introduction.html}{Template Model Builder} R package (\texttt{TMB}).
+
+\begin{quote}
+I'm a HIV epidemiologist: which parts of the thesis might interest me?
+\end{quote}
+
+Primarily \href{https://athowes.github.io/thesis/multi-agyw.html}{Chapter 5} will be of interest to you.
+The \href{https://www.unaids.org/en/Global-AIDS-Strategy-2021-2026}{Global AIDS Strategy} sets out goals for prioritisation of prevention programming for adolescent girls and young women according to risk behaviour and epidemic setting.
+To enable the strategy, I estimated risk group specific population sizes, prevalence and incidences at a district-level.
+I also used these estimates to evaluate the extent to which risk varies by age, behaviour, and geographic area.
+You might also be interested in the analysis in \href{https://athowes.github.io/thesis/naomi-aghq.html}{Chapter 6} applying the Naomi small-area estimation model to data from Malawi.
 
 
 %%%%% REFERENCES

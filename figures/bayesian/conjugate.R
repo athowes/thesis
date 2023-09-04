@@ -19,7 +19,7 @@ ggplot(data = data.frame(x = c(0, 8)), aes(x)) +
   geom_col(data = data.frame(x = c(0, 0, 0), y = c(0, 0, 0), type = c("Posterior", "Prior", "Truth")), aes(x = x, y = y, fill = type)) +
   scale_fill_manual(values = cbpalette) +
   labs(x = "", y = "", col = "", fill = "") +
-  guides(col = FALSE, fill = guide_legend(override.aes = list(alpha = 1, shape = 15))) +
+  guides(col = "none", fill = guide_legend(override.aes = list(alpha = 1, shape = 15))) +
   theme_minimal()
 
 ggsave("figures/bayesian/conjugate.png", h = 3, w = 6.25, bg = "white")
