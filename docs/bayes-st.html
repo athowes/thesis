@@ -289,70 +289,85 @@ div.csl-indent {
 <h2><span class="header-section-number">3.1</span> Bayesian statistics<a href="bayes-st.html#bayesian-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Bayesian statistics is a mathematical paradigm for learning from data.
 It is especially well suited to facing the challenges posed by Section <a href="hiv-aids.html#surveillance">2.2</a>.
-First, because it allows for principled and flexible integration of data with scientific knowledge.
-Second, because it handling of uncertainty is an integral part of the Bayesian paradigm.
+First, because it allows for principled and flexible integration of data with domain knowledge.
+Second, because uncertainty is handled as an integral part of the Bayesian paradigm.
 In this section I provide a brief overview.
 For a more complete introduction, I recommend <span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span> or <span class="citation">McElreath (<a href="#ref-mcelreath2020statistical">2020</a>)</span>.</p>
 <div id="bayesian-modelling" class="section level3 hasAnchor" number="3.1.1">
 <h3><span class="header-section-number">3.1.1</span> Bayesian modelling<a href="bayes-st.html#bayesian-modelling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved mathematically by the construction of a generative model <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span> for the observed data <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)\)</span> together with parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\)</span>, where <span class="math inline">\(n\)</span> is the dimension of the data and <span class="math inline">\(d\)</span> is the number of parameters, and the notation <span class="math inline">\(p(\cdot)\)</span> denotes a probability distribution.
-Choice of the particular parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> will depend upon the requirements of the analysis.</p>
-<p>The model is generative in the sense that one can simulate from it to generate samples <span class="math inline">\((\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span>.
+This is achieved mathematically by the construction of a generative model <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span> for the observed data <span class="math inline">\(\mathbf{y}\)</span> together with parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>, where the notation <span class="math inline">\(p(\cdot)\)</span> denotes a probability distribution.
+I assume the data to be an <span class="math inline">\(n\)</span>-vector <span class="math inline">\((y_1, \ldots, y_n)\)</span>, and the parameters to be a <span class="math inline">\(n\)</span>-vector <span class="math inline">\((\phi_1, \ldots, \phi_d)\)</span>.
+Choice of the parameters used to model the data will depend upon the requirements of the analysis.</p>
+<p>The model is generative in the sense that it can be simulated from to obtain samples <span class="math inline">\((\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span>.
 If these samples differ too greatly from what the analyst would expect, then the generative model does not capture their prior scientific understanding of the data, and can be refined.
-Using this procedure, known as a prior predictive check [<span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>; Chapter 6], models can be built iteratively, with complexity added gradually.</p>
+In this way, prior predictive checks [<span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>; Chapter 6] can be used to build generative models iteratively, with complexity added gradually.</p>
 <p>The model is usually constructed from two parts, known respectively as the likelihood <span class="math inline">\(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})\)</span> and the prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}})\)</span>.
-The joint distribution is obtained by the product <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>.
+The joint distribution is obtained by the product
+<span class="math display">\[\begin{equation}
+p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}).
+\end{equation}\]</span>
 The likelihood, as a function of <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> with <span class="math inline">\(\mathbf{y}\)</span> fixed, reflects the probability of observing the data when the true value of the parameters is <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.
 The prior distribution encapsulates beliefs about the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> before the data is observed.</p>
 <p>Recommendations for specifying the prior distribution vary.
-The extent to which subjective information should be incorporated into the prior distribution, and thereby influence the posterior distribution, is a central topic of discussion.
-Proponents of the objective Bayesian paradigm suggest that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
-That said, we shall see that the distinction between likelihood and prior distribution can be unclear (Section <a href="bayes-st.html#hierarchical-lgm-elgm">3.3</a>).
+The extent to which subjective information should be incorporated into the prior distribution, and in doing so influence the posterior distribution, is a central topic of discussion.
+Proponents of the objective Bayesian paradigm <span class="citation">(<a href="#ref-berger2006case">Berger 2006</a>)</span> put forward that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
+That said, we shall see in Section <a href="bayes-st.html#hierarchical-lgm-elgm">3.3</a> that the distinction between likelihood and prior distribution can be unclear.
 As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically <span class="citation">(<a href="#ref-gelman2017prior">Gelman, Simpson, and Betancourt 2017</a>)</span>.</p>
 </div>
 <div id="bayesian-computation" class="section level3 hasAnchor" number="3.1.2">
 <h3><span class="header-section-number">3.1.2</span> Bayesian computation<a href="bayes-st.html#bayesian-computation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:conjugate"></span>
-<img src="figures/bayesian/conjugate.png" alt="An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified (Bernardo and Smith 2001). Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution." width="95%" />
+<img src="figures/bayesian/conjugate.png" alt="An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of generative models being considered (This situation is sometimes known (Bernardo and Smith 2001) as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified .) Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution." width="95%" />
 <p class="caption">
-Figure 3.1: An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution on the rate parameter is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>. I simulated observed data <span class="math inline">\(\mathbf{y} = (1, 2, 3)\)</span> from the distribution <span class="math inline">\(\text{Poisson}(2.5)\)</span>. As such, the true data generating process is within the space of generative models being considered. This is sometimes known as the <span class="math inline">\(\mathcal{M}\)</span>-closed world, in contrast to the <span class="math inline">\(\mathcal{M}\)</span>-open world where the model is said to be misspecified <span class="citation">(<a href="#ref-bernardo2001bayesian">Bernardo and Smith 2001</a>)</span>. Furthermore, the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
+Figure 3.1: An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution on the rate parameter is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>. I simulated observed data <span class="math inline">\(\mathbf{y} = (1, 2, 3)\)</span> from the distribution <span class="math inline">\(\text{Poisson}(2.5)\)</span>. As such, the true data generating process is within the space of generative models being considered (This situation is sometimes known <span class="citation">(<a href="#ref-bernardo2001bayesian">Bernardo and Smith 2001</a>)</span> as the <span class="math inline">\(\mathcal{M}\)</span>-closed world, in contrast to the <span class="math inline">\(\mathcal{M}\)</span>-open world where the model is said to be misspecified .) Furthermore, the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
 </p>
 </div>
 <p>The posterior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> encapsulates probabilistic beliefs about the parameters given the observed data.
-Using the eponymous Bayes’ theorem, it is given by
+Using the eponymous Bayes’ theorem
 <span class="math display" id="eq:posterior">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \tag{3.1}
 \end{equation}\]</span></p>
-<p>Unfortunately, most of the time it is intractable to calculate the posterior distribution directly.
+<p>The primary goal in a Bayesian analysis is to obtain the posterior distribution.
+Unfortunately, most of the time it is intractable to calculate directly.
 This is because of the potentially high-dimensional integral
 <span class="math display">\[\begin{equation}
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}\]</span>
 in the denominator of Equation <a href="bayes-st.html#eq:posterior">(3.1)</a>.
-As such, although it is easy to evaluate <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>, it is typically difficult to evaluate the posterior distribution itself.</p>
-<p>The difficulty of performing Bayesian inference in general may be thought of as analogous to the difficulties with calculating integrals.
+As such, although it is easy to evaluate <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>, it is typically difficult to evaluate the posterior distribution itself.
+The difficulty in performing Bayesian inference in general may be thought of as analogous to the difficulty in calculating integrals.
 As with integration, in some cases closed form solutions are available.
 Figure <a href="bayes-st.html#fig:conjugate">3.1</a> illustrates one such case, where the prior distribution and posterior distribution are in the same family of probability distributions.</p>
-<p>A variety of computational methods have been developed to tackle this problem.
-They may broadly be divided into sampling algorithms, and deterministic approximations.</p>
-<div id="sampling-algorithms" class="section level4 hasAnchor" number="3.1.2.1">
-<h4><span class="header-section-number">3.1.2.1</span> Sampling algorithms<a href="bayes-st.html#sampling-algorithms" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Also known as Monte Carlo methods, sampling algorithms <span class="citation">(<a href="#ref-robert2005monte">Robert and Casella 2005</a>)</span> look to generate samples from the posterior distribution
+<p>A great variety of computational methods have been developed to tackle this problem <span class="citation">(<a href="#ref-martin2023computing">Martin, Frazier, and Robert 2023</a>)</span>.
+They may broadly be divided into Monte Carlo algorithms, and deterministic approximations.</p>
+<div id="monte-carlo-algorithms" class="section level4 hasAnchor" number="3.1.2.1">
+<h4><span class="header-section-number">3.1.2.1</span> Monte Carlo algorithms<a href="bayes-st.html#monte-carlo-algorithms" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Monte Carlo algorithms <span class="citation">(<a href="#ref-robert2005monte">Robert and Casella 2005</a>)</span> look to generate samples from the posterior distribution
 <span class="math display">\[\begin{equation}
 \boldsymbol{\mathbf{\phi}}_i \sim p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}), \quad i \in 1, \ldots M.
 \end{equation}\]</span>
-These samples may then be used in any future computations involving the posterior distribution.
+These samples may be used in any future computations involving the posterior distribution.
 For example, if <span class="math inline">\(G = G(\boldsymbol{\mathbf{\phi}})\)</span> then the expectation of <span class="math inline">\(G\)</span> with respect to the posterior distribution can be approximated by
 <span class="math display">\[\begin{equation}
-\mathbb{E}(G) = \int G(\boldsymbol{\mathbf{\phi}}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
-\end{equation}\]</span></p>
-<p>Markov chain Monte Carlo (MCMC) methods <span class="citation">(<a href="#ref-roberts2004general">Roberts and Rosenthal 2004</a>)</span> are perhaps the most popular class of sampling algorithms, and proceed by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution .
-In this thesis, I use the the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
-HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings <span class="citation">(<a href="#ref-metropolis1953equation">Metropolis et al. 1953</a>; <a href="#ref-hastings1970monte">Hastings 1970</a>)</span> proposal distributions.</p>
-<p>NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
+\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\end{equation}\]</span>
+Most quantities of interest can be cast as posterior expectations.</p>
+<p>Markov chain Monte Carlo (MCMC) methods <span class="citation">(<a href="#ref-roberts2004general">Roberts and Rosenthal 2004</a>)</span> are the most popular class of sampling algorithms.
+Using MCMC samples are generated from by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution.
+The Metropolis-Hastings <span class="citation">(<a href="#ref-metropolis1953equation">Metropolis et al. 1953</a>; <a href="#ref-hastings1970monte">Hastings 1970</a>)</span> algorithm uses a proposal distribution <span class="math inline">\(q(\boldsymbol{\mathbf{\phi}}_{i + 1} \, | \, \boldsymbol{\mathbf{\phi}}_i)\)</span> to generate candidate parameters for the next step in the Markov chain.</p>
+<p>In this thesis, I use the the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
+HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings proposal distributions.
+NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has proven empirically to be a good choice for sampling from a range of posterior distributions.</p>
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:stan"></span>
+<img src="figures/bayesian/stan.png" alt="NUTS can be used to sample from the posterior distribution in the example of Figure 3.1. Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value." width="95%" />
+<p class="caption">
+Figure 3.2: NUTS can be used to sample from the posterior distribution in the example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value.
+</p>
+</div>
 </div>
 <div id="deterministic-approximations" class="section level4 hasAnchor" number="3.1.2.2">
 <h4><span class="header-section-number">3.1.2.2</span> Deterministic approximations<a href="bayes-st.html#deterministic-approximations" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -366,7 +381,8 @@ The expectation maximisation [EM; <span class="citation">Dempster, Laird, and Ru
 Laplace approximation.
 Quadrature.
 Integrated nested Laplace approximation.
-These approximations are the subject of Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p>
+These approximations are the subject of Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.
+Unsure how much detail to go into here.</p>
 </div>
 </div>
 <div id="interplay-between-modelling-and-computation" class="section level3 hasAnchor" number="3.1.3">
@@ -385,10 +401,10 @@ As computation improves, the space of models available to the analyst expands.</
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:st"></span>
 <img src="figures/bayesian/st.png" alt="The position of the capital of South Africa, Cape Town, can be considered a point location. The ZF Mgcawu District Municipality is an example of an area. World AIDS Day, designated on the 1st of December every year, can be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. Both Cape Town and World AIDS Day in reality are areas of lesser extent, rather than true point locations. There are few instances of true infinitesimal point locations in everyday life." width="95%" />
 <p class="caption">
-Figure 3.2: The position of the capital of South Africa, Cape Town, can be considered a point location. The ZF Mgcawu District Municipality is an example of an area. World AIDS Day, designated on the 1st of December every year, can be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. Both Cape Town and World AIDS Day in reality are areas of lesser extent, rather than true point locations. There are few instances of true infinitesimal point locations in everyday life.
+Figure 3.3: The position of the capital of South Africa, Cape Town, can be considered a point location. The ZF Mgcawu District Municipality is an example of an area. World AIDS Day, designated on the 1st of December every year, can be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. Both Cape Town and World AIDS Day in reality are areas of lesser extent, rather than true point locations. There are few instances of true infinitesimal point locations in everyday life.
 </p>
 </div>
-<p>In spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span>, observations are indexed by spatial or temporal location (Figure <a href="bayes-st.html#fig:st">3.2</a>).
+<p>In spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span>, observations are indexed by spatial or temporal location (Figure <a href="bayes-st.html#fig:st">3.3</a>).
 In this thesis I assume that the spatial study region <span class="math inline">\(\mathcal{S} \subseteq \mathbb{R}^2\)</span> has two dimensions, corresponding to latitude and longitude.
 Observations may be associated to a point <span class="math inline">\(s \in \mathcal{S}\)</span> or area <span class="math inline">\(A \subseteq \mathcal{S}\)</span> in the study region.
 The temporal study period <span class="math inline">\(\mathcal{T} \subseteq \mathbb{R}\)</span> can more generally be assumed to be one dimensional.
@@ -423,21 +439,21 @@ Storage, manipulation, and inference for spatio-temporal data can be challenging
 </div>
 <div id="small-area-estimation" class="section level3 hasAnchor" number="3.2.2">
 <h3><span class="header-section-number">3.2.2</span> Small-area estimation<a href="bayes-st.html#small-area-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Because of the large number of possible locations in space and time, often no or limited direct data is available for any given location.
-In this circumstance, direct estimates of indicators of interest are either impossible or have large error due to high variance.
-Small-area estimation (SAE) methods aim to overcome the limitations of small data by sharing information across space and time (Figure <a href="bayes-st.html#fig:zmb-maps">3.3</a>, Figure <a href="bayes-st.html#fig:zmb-scatter">3.4</a>).</p>
+<p>Because of the large number of possible locations in space and time, and cost of collecting data, often no or limited direct observations are available for any given location.
+In this situtation, direct estimates of indicators of interest are either impossible or inaccurate.
+Small-area estimation [SAE; <span class="citation">Pfeffermann et al. (<a href="#ref-pfeffermann2013new">2013</a>)</span>] methods aim to overcome the limitations of small data by sharing information across space and time (Figure <a href="bayes-st.html#fig:zmb-maps">3.4</a>, Figure <a href="bayes-st.html#fig:zmb-scatter">3.5</a>).</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:zmb-maps"></span>
 <img src="figures/bayesian/zmb-maps.png" alt="I simulated simple random samples with varying sample size (5, 25, 125) in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from athowes/zambia-unaids." width="95%" />
 <p class="caption">
-Figure 3.3: I simulated simple random samples with varying sample size (5, 25, 125) in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from <a href="https://github.com/athowes/zambia-unaids"><code>athowes/zambia-unaids</code></a>.
+Figure 3.4: I simulated simple random samples with varying sample size (5, 25, 125) in each of the 156 constituencies of Zambia. I then calculated direct and modelled estimates for each survey. The model was a logistic regression with linear predictor given by an intercept and a Besag spatial random effect. HIV estimates for Zambia have previously been generated at the district-level comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is more locally devolved. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from <a href="https://github.com/athowes/zambia-unaids"><code>athowes/zambia-unaids</code></a>.
 </p>
 </div>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:zmb-scatter"></span>
-<img src="figures/bayesian/zmb-scatter.png" alt="The estimates from surveys with higher sample size have higher Pearson correlation coefficient \(R\) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure 3.3." width="95%" />
+<img src="figures/bayesian/zmb-scatter.png" alt="The estimates from surveys with higher sample size have higher Pearson correlation coefficient \(R\) with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure 3.4." width="95%" />
 <p class="caption">
-Figure 3.4: The estimates from surveys with higher sample size have higher Pearson correlation coefficient <span class="math inline">\(R\)</span> with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure <a href="bayes-st.html#fig:zmb-maps">3.3</a>.
+Figure 3.5: The estimates from surveys with higher sample size have higher Pearson correlation coefficient <span class="math inline">\(R\)</span> with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. The setting matches that of Figure <a href="bayes-st.html#fig:zmb-maps">3.4</a>.
 </p>
 </div>
 </div>
@@ -450,11 +466,11 @@ Figure 3.4: The estimates from surveys with higher sample size have higher Pears
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:hierarchical-structure"></span>
 <img src="figures/bayesian/hierarchical-structure.png" alt="A simple example of group structure within data in which each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\)." width="95%" />
 <p class="caption">
-Figure 3.5: A simple example of group structure within data in which each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>.
+Figure 3.6: A simple example of group structure within data in which each individual <span class="math inline">\(i = 1, \ldots, n\)</span> is associated to <span class="math inline">\(m_i\)</span> observations <span class="math inline">\(y_{i1}, \ldots, y_{im_i}\)</span>.
 </p>
 </div>
 <p>Some observations in data are typically natural to group together.
-For example, each individual <span class="math inline">\(i = 1, \ldots, n\)</span> in a study might be observed <span class="math inline">\(m_i\)</span> times (Figure <a href="bayes-st.html#fig:hierarchical-structure">3.5</a>).
+For example, each individual <span class="math inline">\(i = 1, \ldots, n\)</span> in a study might be observed <span class="math inline">\(m_i\)</span> times (Figure <a href="bayes-st.html#fig:hierarchical-structure">3.6</a>).
 Observations <span class="math inline">\(y_{i1}, \ldots y_{im_i}\)</span> of the same individual are grouped together.
 These observations are more likely to be similar than observations of different individuals.
 We might also group observations by spatio-temporal location.</p>
@@ -641,6 +657,9 @@ All of this isn’t great and that someone should figure this out <span class="c
 <div id="ref-baker1994multinomial" class="csl-entry">
 Baker, Stuart G. 1994. <span>“<span class="nocase">The multinomial-Poisson transformation</span>.”</span> <em>Journal of the Royal Statistical Society: Series D (The Statistician)</em> 43 (4): 495–504.
 </div>
+<div id="ref-berger2006case" class="csl-entry">
+Berger, James. 2006. <span>“The Case for Objective Bayesian Analysis.”</span>
+</div>
 <div id="ref-bernardo2001bayesian" class="csl-entry">
 Bernardo, José M, and Adrian FM Smith. 2001. <em>Bayesian Theory</em>. John Wiley &amp; Sons.
 </div>
@@ -695,6 +714,9 @@ Hoffman, Matthew D, Andrew Gelman, et al. 2014. <span>“The No-u-Turn Sampler: 
 <div id="ref-hyndman2018forecasting" class="csl-entry">
 Hyndman, Rob J, and George Athanasopoulos. 2018. <em>Forecasting: Principles and Practice</em>. OTexts.
 </div>
+<div id="ref-martin2023computing" class="csl-entry">
+Martin, Gael M, David T Frazier, and Christian P Robert. 2023. <span>“Computing Bayes: From Then ‘Til Now.”</span> <em>Statistical Science</em> 1 (1): 1–17.
+</div>
 <div id="ref-mcelreath2020statistical" class="csl-entry">
 McElreath, Richard. 2020. <em>Statistical Rethinking: A Bayesian Course with Examples in r and Stan</em>. CRC press.
 </div>
@@ -709,6 +731,9 @@ Minka, Thomas P. 2001. <span>“<span class="nocase">Expectation Propagation for
 </div>
 <div id="ref-neal2011mcmc" class="csl-entry">
 Neal, Radford M et al. 2011. <span>“<span class="nocase">MCMC using Hamiltonian dynamics</span>.”</span> <em>Handbook of Markov Chain Monte Carlo</em> 2 (11): 2.
+</div>
+<div id="ref-pfeffermann2013new" class="csl-entry">
+Pfeffermann, Danny et al. 2013. <span>“<span class="nocase">New Important Developments in Small Area Estimation</span>.”</span> <em>Statistical Science</em> 28 (1): 40–68.
 </div>
 <div id="ref-robert2005monte" class="csl-entry">
 Robert, Christian P, and George Casella. 2005. <span>“Monte Carlo Statistical Methods (Springer Texts in Statistics).”</span> Springer.
