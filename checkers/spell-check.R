@@ -8,7 +8,10 @@ spell_check <- function(filename) {
 
   misspelled_words <- hunspell(words, dict = 'en_GB')
   misspelled_words <- unlist(misspelled_words)
-  common_words <- c("hiv", "unaids", "howes", "eaton", "flaxman", "athowes", "aghq", "agyw", "naomi", "plhiv", "bayesian", "laplace", "inla")
+  common_words <- c(
+    "hiv", "unaids", "howes", "eaton", "flaxman", "athowes", "aghq", "agyw", "naomi", "plhiv", "bayesian", "laplace", "inla",
+    "knitr", "bookdown", "mcmc", "github", "mathbf", "mathcal", "poisson"
+  )
   misspelled_words <- setdiff(misspelled_words, common_words)
 
   return(misspelled_words)
