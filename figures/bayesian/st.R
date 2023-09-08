@@ -15,11 +15,11 @@ indicator <- c(rep(0, i - 1), 1, rep(0, nrow(sf) - i))
 
 space <- ggplot() +
   geom_sf(data = sf, aes(fill = as.factor(indicator))) +
-  annotate("text", x = 15, y = -33.95, label = "Cape Town", size = 3) +
+  annotate("text", x = 14.5, y = -33.95, label = "Cape Town\n(point)", size = 3, col = "grey30") +
   geom_sf(data = ct, aes(geometry = geometry), size = 2, col = "#009E73") +
-  annotate("text", x = 20, y = -23.5, label = "ZF Mgcawu\nDistrict Municipality", size = 3) +
+  annotate("text", x = 20, y = -23, label = "ZF Mgcawu\nDistrict Municipality (area)", size = 3, col = "grey30") +
   labs(x = "", y = "", fill = "") +
-  lims(x = c(13, NA)) +
+  lims(x = c(12.5, NA)) +
   scale_fill_manual(values = c(sf_lightgrey, "#56B4E9")) +
   theme_void() +
   theme(legend.position = "none")
@@ -33,7 +33,7 @@ time <- data.frame(
   geom_point(col = "#009E73", size = 2) +
   geom_segment(aes(x = 4, y = 2, xend = 7, yend = 2), col = "#56B4E9", linewidth = 0.5, arrow = arrow(ends = "both", length = unit(0.1, "inches"))) +
   scale_x_continuous(breaks = 1:12, labels = month.abb, limits = c(1, 12)) +
-  scale_y_discrete(labels = c("World\nAIDS\nDay", "Q2")) +
+  scale_y_discrete(labels = c("World AIDS\nDay (point)", "Q2 (period)")) +
   scale_alpha(range = c(0, 1)) +
   guides(alpha = "none") +
   labs(x = "", y = "") +
