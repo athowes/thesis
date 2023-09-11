@@ -235,8 +235,7 @@ This model is not an LGM because each observation $y_{itak}$ for $k \in \{1, 2, 
 
 To recast this model as an LGM, I used the multinomial-Poisson transformation.
 This modification allowed inference to be performed using the INLA [@rue2009approximate] algorithm via the `R-INLA` package [@martins2013bayesian].
-INLA is likely to be the most accurate inference method available because the model is too large for MCMC to be intractable.
-Specifically, the spatio-temporal multinomial logistic regression model is defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups.
+INLA is likely to be the most accurate inference method available because the model, defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups, is too large for MCMC to be intractable in reasonable time.
 
 #### The multinomial-Poisson transformation
 
@@ -259,15 +258,16 @@ Under the equivalent model, the sample sizes $m_{ita}$ are treated as random rat
 \begin{equation}
 m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right). (\#eq:mpoisson)
 \end{equation}
-Using Equations \@ref(eq:multi) and \@ref(eq:mpoisson), the joint distribution of $p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})$ is then
+Using Equations \@ref(eq:multi) for $p(\mathbf{y}_{ita} \, | \, m_{ita})$ and Equation \@ref(eq:mpoisson) for $p(m_{ita})$, the joint distribution is given by
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), (\#eq:prodpoisson)
+&= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). (\#eq:prodpoisson)
 \end{align}
-corresponding to the product of independent Poisson likelihoods as in Equation \@ref(eq:poisson1).
+As expected, Equation \@ref(eq:prodpoisson) corresponds to the product of independent Poisson likelihoods defined in Equation \@ref(eq:poisson1).
+This exercise demonstrates that the Poisson log-linear model contains within it a multinomial likelihood, with a Poission prior on the sample size.
 
-The random sample size model is equivalent to a multinomial logistic regression model only when the normalisation constants $m_{ita}$ are recovered exactly.
+For this model to be equivalent to a multinomial logistic regression model, the normalisation constants $m_{ita}$ must be recovered exactly.
 To ensure that this is the case, observation-specific random effects $\theta_{ita}$ can be included in the equation for the linear predictor.
 Multiplying each of $\{\kappa_{itak}\}_{k = 1}^{3^+}$ by $\exp(\theta_{ita})$ has no effect on the category probabilities, but does provide the necessary flexibility for $\kappa_{ita}$ to recover $m_{ita}$ exactly.
 Although in theory an improper prior distribution $\theta_{ita} \propto 1$ should be used, I found that in practice, by keeping $\eta_{ita}$ otherwise small using appropriate constraints, so that arbitrarily large values of $\theta_{ita}$ are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.
@@ -283,14 +283,15 @@ Although in theory an improper prior distribution $\theta_{ita} \propto 1$ shoul
 
 Table: (\#tab:multinomial-models) Four multinomial regression models were considered. Observation random effects $\theta_{ita}$, included in all models, are omitted from this table.
 
-I considered four models (Table \@ref(tab:multinomial-models)) for $\eta_{ita}$ in the equivalent Poisson log-linear model (Equation \@ref(eq:poisson2)) of the form
+I considered four models (Table \@ref(tab:multinomial-models)) for $\eta_{ita}$ in the equivalent Poisson log-linear model of the form
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
 <!-- + \delta_{itk} -->
-Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ with a vague prior distribution were included in all models I considered to ensure the transformation is valid.
+Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ with a vague prior distribution were included in all models I considered to ensure the multinomial-Poisson transformation was valid.
 To capture country-specific proportion estimates for each category, I included category random effects $\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})$ and country-category random effects $\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})$.
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects $\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})$.
+I considered several specifications for the remaining spatial and temporal effects.
 
 ##### Spatial random effects
 
@@ -303,9 +304,11 @@ $$
 $$
 The scaled structure matrix $\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}$ is given by the Kronecker product of the scaled Besag structure matrix $\mathbf{R}^\star_b$ and the identity matrix $\mathbf{I}$, and ${-}$ denotes the generalised matrix inverse.
 I followed best practices for the Besag model as described in Chapter \@ref(beyond-borders).
+To implement the Kronecker product I used the `group` option in `R-INLA` [@riebler2011kronecker].
 
-In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
-I also tested using the BYM2 model [@simpson2017penalising] in place of the Besag, but found that the proportion parameter posteriors tended to be highly peaked at the value one.
+In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
+I also tested using the BYM2 model [@simpson2017penalising] in place of the Besag.
+I found that the proportion parameter posteriors tended to be highly peaked at the value one.
 For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.
 
 ##### Temporal random effects
@@ -324,6 +327,15 @@ r_1 &\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
 r_t &= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T, 
 \end{align}
 where $\epsilon_t \sim \mathcal{N}(0, 1)$ and $|\rho| < 1$.
+As with the structured spatial random effects, I implemented this Kronecker product using the `group` option.
+
+##### A note on spatio-temporal interaction random effects
+
+I wanted to, and did all four.
+This was quite difficult because it required space-time-category interactions.
+Building this type of model within formual interface software is challenging.
+They ran OK for one country but not for all 13 jointly.
+They don't matter much here because there is limited temporal trend.
 
 ##### Prior distributions
 

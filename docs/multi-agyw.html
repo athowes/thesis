@@ -426,8 +426,7 @@ where the number in risk group <span class="math inline">\(k\)</span> is <span c
 This model is not an LGM because each observation <span class="math inline">\(y_{itak}\)</span> for <span class="math inline">\(k \in \{1, 2, 3^{+}\}\)</span> depends on multiple structured additive predictors <span class="math inline">\(\{\eta_{itak}, k = 1, 2, 3^{+}\}\)</span>.</p>
 <p>To recast this model as an LGM, I used the multinomial-Poisson transformation.
 This modification allowed inference to be performed using the INLA <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> algorithm via the <code>R-INLA</code> package <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span>.
-INLA is likely to be the most accurate inference method available because the model is too large for MCMC to be intractable.
-Specifically, the spatio-temporal multinomial logistic regression model is defined over 940 districts, 20 years, 3 age groups, and 3 risk groups.</p>
+INLA is likely to be the most accurate inference method available because the model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be intractable in reasonable time.</p>
 </div>
 <div id="the-multinomial-poisson-transformation" class="section level4 hasAnchor" number="5.3.1.2">
 <h4><span class="header-section-number">5.3.1.2</span> The multinomial-Poisson transformation<a href="multi-agyw.html#the-multinomial-poisson-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -450,14 +449,15 @@ Under the equivalent model, the sample sizes <span class="math inline">\(m_{ita}
 <span class="math display" id="eq:mpoisson">\[\begin{equation}
 m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right). \tag{5.4}
 \end{equation}\]</span>
-Using Equations <a href="multi-agyw.html#eq:multi">(5.3)</a> and <a href="multi-agyw.html#eq:mpoisson">(5.4)</a>, the joint distribution of <span class="math inline">\(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\)</span> is then
+Using Equations <a href="multi-agyw.html#eq:multi">(5.3)</a> for <span class="math inline">\(p(\mathbf{y}_{ita} \, | \, m_{ita})\)</span> and Equation <a href="multi-agyw.html#eq:mpoisson">(5.4)</a> for <span class="math inline">\(p(m_{ita})\)</span>, the joint distribution is given by
 <span class="math display" id="eq:prodpoisson">\[\begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &amp;= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &amp;= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right), \tag{5.5}
+&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \tag{5.5}
 \end{align}\]</span>
-corresponding to the product of independent Poisson likelihoods as in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a>.</p>
-<p>The random sample size model is equivalent to a multinomial logistic regression model only when the normalisation constants <span class="math inline">\(m_{ita}\)</span> are recovered exactly.
+As expected, Equation <a href="multi-agyw.html#eq:prodpoisson">(5.5)</a> corresponds to the product of independent Poisson likelihoods defined in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a>.
+This exercise demonstrates that the Poisson log-linear model contains within it a multinomial likelihood, with a Poission prior on the sample size.</p>
+<p>For this model to be equivalent to a multinomial logistic regression model, the normalisation constants <span class="math inline">\(m_{ita}\)</span> must be recovered exactly.
 To ensure that this is the case, observation-specific random effects <span class="math inline">\(\theta_{ita}\)</span> can be included in the equation for the linear predictor.
 Multiplying each of <span class="math inline">\(\{\kappa_{itak}\}_{k = 1}^{3^+}\)</span> by <span class="math inline">\(\exp(\theta_{ita})\)</span> has no effect on the category probabilities, but does provide the necessary flexibility for <span class="math inline">\(\kappa_{ita}\)</span> to recover <span class="math inline">\(m_{ita}\)</span> exactly.
 Although in theory an improper prior distribution <span class="math inline">\(\theta_{ita} \propto 1\)</span> should be used, I found that in practice, by keeping <span class="math inline">\(\eta_{ita}\)</span> otherwise small using appropriate constraints, so that arbitrarily large values of <span class="math inline">\(\theta_{ita}\)</span> are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.</p>
@@ -519,14 +519,15 @@ Although in theory an improper prior distribution <span class="math inline">\(\t
 </tr>
 </tbody>
 </table>
-<p>I considered four models (Table <a href="multi-agyw.html#tab:multinomial-models">5.2</a>) for <span class="math inline">\(\eta_{ita}\)</span> in the equivalent Poisson log-linear model (Equation <a href="multi-agyw.html#eq:poisson2">(5.2)</a>) of the form
+<p>I considered four models (Table <a href="multi-agyw.html#tab:multinomial-models">5.2</a>) for <span class="math inline">\(\eta_{ita}\)</span> in the equivalent Poisson log-linear model of the form
 <span class="math display">\[\begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}\]</span>
 <!-- + \delta_{itk} -->
-Observation random effects <span class="math inline">\(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\)</span> with a vague prior distribution were included in all models I considered to ensure the transformation is valid.
+Observation random effects <span class="math inline">\(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\)</span> with a vague prior distribution were included in all models I considered to ensure the multinomial-Poisson transformation was valid.
 To capture country-specific proportion estimates for each category, I included category random effects <span class="math inline">\(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\)</span> and country-category random effects <span class="math inline">\(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\)</span>.
-Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects <span class="math inline">\(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.</p>
+Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects <span class="math inline">\(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.
+I considered several specifications for the remaining spatial and temporal effects.</p>
 <div id="spatial-random-effects" class="section level5 hasAnchor" number="5.3.1.3.1">
 <h5><span class="header-section-number">5.3.1.3.1</span> Spatial random effects<a href="multi-agyw.html#spatial-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>For the space-category <span class="math inline">\(u_{ik}\)</span> random effects I considered two specifications:</p>
@@ -537,10 +538,12 @@ Heterogeneity in risk group proportions by age was allowed by including age-coun
 \mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
 \]</span>
 The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\)</span> is given by the Kronecker product of the scaled Besag structure matrix <span class="math inline">\(\mathbf{R}^\star_b\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, and <span class="math inline">\({-}\)</span> denotes the generalised matrix inverse.
-I followed best practices for the Besag model as described in Chapter <a href="beyond-borders.html#beyond-borders">4</a>.</li>
+I followed best practices for the Besag model as described in Chapter <a href="beyond-borders.html#beyond-borders">4</a>.
+To implement the Kronecker product I used the <code>group</code> option in <code>R-INLA</code> <span class="citation">(<a href="#ref-riebler2011kronecker">Riebler 2011</a>)</span>.</li>
 </ol>
-<p>In preliminary testing, I excluded spatial random effects from the model, but found that this negatively effected performance.
-I also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> in place of the Besag, but found that the proportion parameter posteriors tended to be highly peaked at the value one.
+<p>In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
+I also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> in place of the Besag.
+I found that the proportion parameter posteriors tended to be highly peaked at the value one.
 For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.</p>
 </div>
 <div id="temporal-random-effects" class="section level5 hasAnchor" number="5.3.1.3.2">
@@ -558,11 +561,20 @@ The AR1 structure matrix <span class="math inline">\(\mathbf{R}_r\)</span> is ob
 r_1 &amp;\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
 r_t &amp;= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T,
 \end{align}\]</span>
-where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, 1)\)</span> and <span class="math inline">\(|\rho| &lt; 1\)</span>.</li>
+where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, 1)\)</span> and <span class="math inline">\(|\rho| &lt; 1\)</span>.
+As with the structured spatial random effects, I implemented this Kronecker product using the <code>group</code> option.</li>
 </ol>
 </div>
-<div id="prior-distributions" class="section level5 hasAnchor" number="5.3.1.3.3">
-<h5><span class="header-section-number">5.3.1.3.3</span> Prior distributions<a href="multi-agyw.html#prior-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="a-note-on-spatio-temporal-interaction-random-effects" class="section level5 hasAnchor" number="5.3.1.3.3">
+<h5><span class="header-section-number">5.3.1.3.3</span> A note on spatio-temporal interaction random effects<a href="multi-agyw.html#a-note-on-spatio-temporal-interaction-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>I wanted to, and did all four.
+This was quite difficult because it required space-time-category interactions.
+Building this type of model within formual interface software is challenging.
+They ran OK for one country but not for all 13 jointly.
+They don’t matter much here because there is limited temporal trend.</p>
+</div>
+<div id="prior-distributions" class="section level5 hasAnchor" number="5.3.1.3.4">
+<h5><span class="header-section-number">5.3.1.3.4</span> Prior distributions<a href="multi-agyw.html#prior-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>All random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\)</span> were given independent penalised complexity (PC) prior distributions <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> with base model <span class="math inline">\(\sigma = 0\)</span> given by
 <span class="math display">\[\begin{equation}
 p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)
@@ -1131,6 +1143,9 @@ Nnko, Soori, J Ties Boerma, Mark Urassa, Gabriel Mwaluko, and Basia Zaba. 2004. 
 </div>
 <div id="ref-pettit1990conditional" class="csl-entry">
 Pettit, LI. 1990. <span>“The Conditional Predictive Ordinate for the Normal Distribution.”</span> <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 52 (1): 175–84.
+</div>
+<div id="ref-riebler2011kronecker" class="csl-entry">
+Riebler, Andrea. 2011. <span>“Gaussian Kronecker Product Markov Random Fields.”</span>
 </div>
 <div id="ref-rue2009approximate" class="csl-entry">
 Rue, Håvard, Sara Martino, and Nicolas Chopin. 2009. <span>“<span class="nocase">Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations</span>.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92.
