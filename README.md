@@ -2,8 +2,7 @@
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
 > \[!WARNING\]  
-> Critical content demanding immediate user attention due to potential
-> risks.
+> Thesis under construction! Check back in a few months.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -61,7 +60,8 @@ Thanks for being interested! You can read either the
 [HTML](https://athowes.github.io/thesis/) or
 [PDF](https://athowes.github.io/thesis/main.pdf) version. I know, an
 overwhelming choice. It’s still very much a work in progress at the
-moment though, so check back in a few months.
+moment though, so I’d recommend checking back in a few months unless you
+love non sequiturs.
 
 > How did you format this thesis?
 
