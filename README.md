@@ -1,6 +1,10 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
+> \[!WARNING\]  
+> Critical content demanding immediate user attention due to potential
+> risks.
+
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
 London](https://www.imperial.ac.uk/).
