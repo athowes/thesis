@@ -1309,9 +1309,9 @@ This problem does not only apply locally: since the effect of \(\sigma^2_u\) app
 In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
-The results are presented in \textcite{howes2023spatio}.
-Kathryn has also created a spreadsheet tool using the estimates available from \texttt{https://hivtools.unaids.org/pse/}.
-This tool is now being used by countries, and continues to be developed.
+The model and results for 13 countries are presented in \textcite{howes2023spatio}.
+Kathryn has also used the estimates to create a spreadsheet tool (\href{\%60https://hivtools.unaids.org/pse/\%60}{\texttt{https://hivtools.unaids.org/pse/}}) for use in national HIV response planning.
+The tool continues to be updated with inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{https://github.com/athowes/multi-agyw}}.
 
 \hypertarget{background-2}{%
@@ -1321,12 +1321,23 @@ In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic gro
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
 The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, younger age at first sex, and increased susceptibility to HIV infection.
-On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments have been made in prevention programming \autocite{saul2018dreams,global2018measurement}.
+On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments, such as the DREAMS partnership \autocite{saul2018dreams}, have been made in prevention programming \autocite{global2018measurement}.
 
 The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021.
-It proposed stratifying HIV prevention packages to AGYW based on 1) local population-level HIV incidence and 2) individual-level sexual risk behaviour.
+It proposed stratifying HIV prevention packages to AGYW based on
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  local population-level HIV incidence, and
+\item
+  individual-level sexual risk behaviour.
+\end{enumerate}
+
 Risk of acquiring HIV depends on both factors.
-As such, prioritisation of prevention services is more efficient if both are taken into account (Figure \ref{fig:risk-grid}).
+As such, prioritisation of prevention services is more efficient if both factors are taken into account.
+I illustrate this stylistically in Figure \ref{fig:risk-grid}.
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
 Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.
 
@@ -1344,13 +1355,16 @@ Implementation of the strategy by national HIV programmes and stakeholders requi
 \hypertarget{data-1}{%
 \section{Data}\label{data-1}}
 
+\hypertarget{behavioural-data-from-household-surveys}{%
+\subsection{Behavioural data from household surveys}\label{behavioural-data-from-household-surveys}}
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2778}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3056}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4167}}@{}}
 \caption{\label{tab:risk-groups} HIV risk groups and HIV incidence rate ratios relative to AGYW with one cohabiting sexual partner.
-The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of longitudinal data \autocite{slaymaker2020croi}.
-Among FSW, the incidence rate ratio (25.0, 13.0, 9.0, 6.0, 3.0) depended on the level of HIV incidence among the general population (\textless0.1\%, 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, \textgreater3.0\%), such that higher local HIV incidence in the general population corresponds to a lower incidence rate ratio for FSW.
+The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of longitudinal data by \textcite{slaymaker2020croi}.
+Among FSW, the incidence rate ratio (25.0, 13.0, 9.0, 6.0, 3.0) depended on the level of HIV incidence among the general population (\textless0.1\%, 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, \textgreater3.0\%), such that higher local HIV incidence in the general population corresponded to a lower incidence rate ratio for FSW.
 These estimates were derived by UNAIDS based on patterns of relative HIV prevalence among FSW compared to general population prevalence.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
@@ -1377,7 +1391,7 @@ Incidence rate ratio
 None & Not sexually active & 0.0 \\
 Low & One cohabiting sexual partner & 1.0 (baseline) \\
 High & Non-regular or multiple partner(s) & 1.72 \\
-Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 3.0-25.0 (varies depending on local HIV incidence) \\
+Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 3.0-25.0 (varied depending on local HIV incidence) \\
 \end{longtable}
 
 
@@ -1388,18 +1402,18 @@ Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 
 
 }
 
-\caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex.}\label{fig:available-surveys}
+\caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type (AIDS Indicator Surveys {[}AIS{]}, Demographic and Health Surveys {[}DHS{]}, the Botswana AIDS Impact Survey 2013 {[}BAIS{]}, and Population-based HIV Impact Assessment {[}PHIA{]} surveys), sample size, and whether the survey included a specific question about transactional sex.}\label{fig:available-surveys}
 \end{figure}
 
-I used household survey data from 13 countries identified by the GFATM as priority countries for implementation of AGYW HIV prevention: Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
-Surveys conducted in these countries between 1999 and 2018 in which women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts were included.
+I used household survey data from 13 countries identified by the GFATM as priority countries for implementation of AGYW HIV prevention.
+These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+Surveys conducted in these countries between 1999 and 2018 in which both women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts were included.
 There were 46 suitable surveys (Figure \ref{fig:available-surveys}), with a total sample size of 274,970 women aged 15-29 years.
 Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
 The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
-Included surveys comprise Demographic and Health Surveys (DHS), AIDS Indicator Surveys (AIS), Population-based HIV Impact Assessment (PHIA) surveys, and the Botswana AIDS Impact Survey 2013 (BAIS).
 
 For each survey, respondents were classified into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
-These risk groups were (Table \ref{tab:risk-groups}):
+These risk groups were:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1414,6 +1428,7 @@ These risk groups were (Table \ref{tab:risk-groups}):
   Reporting transactional sex.
 \end{enumerate}
 
+The HIV incidence rate ratio was assumed to vary by risk group (Table \ref{tab:risk-groups}).
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
 Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
@@ -1424,22 +1439,25 @@ Full survey questions used are provided in Appendix \ref{survey-questions}.
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64\% of women reported transactional sex.
 In surveys without such a question, women almost never (0.01\%) answered that one of their three most recent partners was a sex work client.
-As a result of this incomparability, it was not not appropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
+This incomparability made it inappropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
 Of the total 46 surveys included in the analysis, 12 had a specific transactional sex question, with a total sample size of 62,853 (28,753 aged 15-19 years, 26,324 aged 20-24 years, and 7,776 aged 25-29 years.
-There were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
+The sample size for women aged 25-29 is smaller beccause there were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
 
-I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
-The administrative area hierarchy and geographic boundaries I used correspond to those used for health service planning by countries.
-Exceptions are Cameroon and Kenya, where I conducted analysis one level higher at the department and county levels, respectively.
+\hypertarget{other-data}{%
+\subsection{Other data}\label{other-data}}
+
+As well as the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
 I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
+I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries.
+Exceptions are Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
 
 \hypertarget{model-for-risk-group-proportions}{%
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
 
-I took a two-stage modelling approach to estimate the four risk group proportions.
+Owing to incomparability across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
 Let the four risk groups be indexed by \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group as \(k = 3^{+}\).
-First, using all the surveys, I used a spatio-temporal multinomial logistic regression model (Section \ref{st-multinomial}) to estimate the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
-Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model (Section \ref{s-logistic}) to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
+First, using all the surveys, I used a spatio-temporal multinomial logistic regression model to estimate the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
+Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
 
 \hypertarget{st-multinomial}{%
 \subsection{Spatio-temporal multinomial logistic regression}\label{st-multinomial}}
@@ -1457,14 +1475,17 @@ A standard multinomial logistic regression model \autocite[e.g.][]{gelman2013bay
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &= \eta_{itak}, \quad k = 2, 3^{+},
 \end{align}
 where the number in risk group \(k\) is \(y_{itak}\), the fixed sample size is \(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\), and \(k = 1\) is chosen as the baseline category.
-This model is not an LGM.
-I used the multinomial-Poisson transformation to perform inference using the INLA \autocite{rue2009approximate} algorithm via the \texttt{R-INLA} package \autocite{martins2013bayesian}.
-MCMC would be intractable for the model, defined over 940 districts, 20 years, 3 age groups, and 4 risk groups.
+This model is not an LGM because each observation \(y_{itak}\) for \(k \in \{1, 2, 3^{+}\}\) depends on multiple structured additive predictors \(\{\eta_{itak}, k = 1, 2, 3^{+}\}\).
+
+To recast this model as an LGM, I used the multinomial-Poisson transformation.
+This modification allowed inference to be performed using the INLA \autocite{rue2009approximate} algorithm via the \texttt{R-INLA} package \autocite{martins2013bayesian}.
+INLA is likely to be the most accurate inference method available because the model is too large for MCMC to be intractable.
+Specifically, the spatio-temporal multinomial logistic regression model is defined over 940 districts, 20 years, 3 age groups, and 3 risk groups.
 
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
 
-The multinomial-Poisson transformation reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+The multinomial-Poisson transformation \autocite{baker1994multinomial} reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
 The equivalent model is of the form
 \begin{align}
     y_{itak} &\sim \text{Poisson}(\kappa_{itak}), \label{eq:poisson1} \\
@@ -1472,7 +1493,7 @@ The equivalent model is of the form
 \end{align}
 The basis of the transformation is that conditional on their sum Poisson counts are jointly multinomially distributed \autocite{mccullagh1989generalized} as follows
 \begin{equation}
-    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right),
+    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right), \label{eq:multi}
 \end{equation}
 where \(\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}\).
 Category probabilities may then be obtained using the softmax function
@@ -1481,9 +1502,9 @@ Category probabilities may then be obtained using the softmax function
 \end{equation}
 Under the equivalent model, the sample sizes \(m_{ita}\) are treated as random rather than fixed such that
 \begin{equation}
-m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right).
+m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right). \label{eq:mpoisson}
 \end{equation}
-The joint distribution of \(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\) is then
+Using Equations \eqref{eq:multi} and \eqref{eq:mpoisson}, the joint distribution of \(p(\mathbf{y}_{ita}, m_{ita}) = p(\mathbf{y}_{ita} \, | \, m_{ita})p(m_{ita})\) is then
 \begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
@@ -3026,113 +3047,6 @@ Given the total number of PLHIV on ART \(A_{x, s, a} = N_{x, s, a} \cdot \rho_{x
 
 \caption{The potential scale reduction factor compares between- and within- estimates of univariate parameters. It is recommended only to use NUTS results if the value is less than 1.05, which it is for all parameters.}\label{fig:rhat}
 \end{figure}
-
-\hypertarget{bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators}{%
-\chapter{Bayesian spatio-temporal methods for small-area estimation of HIV indicators}\label{bayesian-spatio-temporal-methods-for-small-area-estimation-of-hiv-indicators}}
-
-PhD in \href{https://statml.io/}{Modern Statistics and Statistical Machine Learning} at \href{https://www.imperial.ac.uk/}{Imperial College London}.
-
-Supervised by: \href{https://sethrf.com/}{Seth Flaxman} and \href{https://www.imperial.ac.uk/people/jeffrey.eaton}{Jeff Eaton}.
-
-Progress towards ending AIDS as a public health threat by 2030 is not being made fast enough.
-Effective public health response requires accurate, timely, high-resolution estimates of epidemic and demographic indicators.
-Limitations of available data make obtaining these estimates difficult.
-I developed and applied Bayesian spatio-temporal methods to meet this challenge.
-First, I examined models for area-level spatial structure.
-Second, I estimated district-level HIV risk group proportions, enabling behavioural prioritisation of prevention services, as put forward in the Global AIDS Strategy.
-Finally, I developed a novel deterministic Bayesian inference method, combining adaptive Gauss-Hermite quadrature with principal component analysis, motivated by the Naomi district-level model of HIV indicators.
-Together, the contributions in this thesis help to guide precision HIV policy in sub-Saharan Africa, as well as advancing Bayesian methods for spatio-temporal data.
-
-\includegraphics{figures/hiv-aids/naomi-continent.png}
-
-\hypertarget{chapters}{%
-\section{Chapters}\label{chapters}}
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2326}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2326}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4651}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0698}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Title
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-GitHub repository
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Journal
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-1 & \href{https://athowes.github.io/thesis/introduction.html}{Introduction} & & \\
-2 & \href{https://athowes.github.io/thesis/hiv-aids.html}{The HIV/AIDS epidemic} & & \\
-3 & \href{https://athowes.github.io/thesis/bayes-st.html}{Bayesian spatio-temporal statistics} & & \\
-4 & \href{https://athowes.github.io/thesis/beyond-borders.html}{Spatial structure} & \href{https://github.com/athowes/beyond-borders}{\texttt{beyond-borders}} & In preparation! \\
-5 & \href{https://athowes.github.io/thesis/multi-agyw.html}{A model for risk group proportions} & \href{https://github.com/athowes/multi-agyw}{\texttt{multi-agyw}} & \href{https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731}{PLOS Global Public Health} \\
-6 & \href{https://athowes.github.io/thesis/naomi-aghq.html}{Fast approximate Bayesian inference} & \href{https://github.com/athowes/naomi-aghq}{\texttt{naomi-aghq}} & In preparation! \\
-7 & \href{https://athowes.github.io/thesis/conclusions.html}{Future work and conclusions} & & \\
-\end{longtable}
-
-\hypertarget{citation}{%
-\section{Citation}\label{citation}}
-
-If you would like to cite this work, please use:
-
-\begin{verbatim}
-@phdthesis{howes23,
-  author = {Howes, Adam},
-  school = {Imperial College London},
-  title = {Bayesian spatio-temporal methods for small-area estimation of HIV indicators},
-  year = {2023}
-}
-\end{verbatim}
-
-\hypertarget{frequently-asked-questions}{%
-\section{Frequently asked questions}\label{frequently-asked-questions}}
-
-\begin{quote}
-How can I read the thesis?
-\end{quote}
-
-Thanks for being interested!
-You can read either the \href{https://athowes.github.io/thesis/}{HTML} or \href{https://athowes.github.io/thesis/main.pdf}{PDF} version.
-I know, an overwhelming choice.
-It's still very much a work in progress at the moment though, so check back in a few months.
-
-\begin{quote}
-How did you format this thesis?
-\end{quote}
-
-I used the R package \href{https://github.com/ismayc/thesisdown}{\texttt{thesisdown}}, inspired by \href{https://github.com/rstudio/bookdown}{\texttt{bookdown}}.
-
-\begin{quote}
-Are there any resources you'd recommend for an introduction to this area of research?
-\end{quote}
-
-I'd recommend something like \href{https://sites.google.com/a/r-inla.org/stbook/}{Spatial and Spatio-temporal Bayesian models with \texttt{R-INLA}} by Marta Blangiardo and Michela Cameletti.
-I have a repository with further miscellaneous recommended \href{https://github.com/athowes/resources}{resources}, if you are interested.
-
-\begin{quote}
-I'm a statistician: which parts of the thesis might interest me?
-\end{quote}
-
-If you use spatial random effects to model areal spatial structure, \href{https://athowes.github.io/thesis/beyond-borders.html}{Chapter 4}.
-If you're interested in modelling multinomial data using the multinomial-Poisson transformation and structured random effects, \href{https://athowes.github.io/thesis/multi-agyw.html}{Chapter 5}.
-If you have a complicated model which is not compatible with \texttt{R-INLA}, but would still like to use INLA-like methods, \href{https://athowes.github.io/thesis/naomi-aghq.html}{Chapter 6}.
-If you have such a model, get in touch!
-All of the methods are compatible with any model written in the (very general) \href{https://kaskr.github.io/adcomp/Introduction.html}{Template Model Builder} R package (\texttt{TMB}).
-
-\begin{quote}
-I'm a HIV epidemiologist: which parts of the thesis might interest me?
-\end{quote}
-
-Primarily \href{https://athowes.github.io/thesis/multi-agyw.html}{Chapter 5} will be of interest to you.
-The \href{https://www.unaids.org/en/Global-AIDS-Strategy-2021-2026}{Global AIDS Strategy} sets out goals for prioritisation of prevention programming for adolescent girls and young women according to risk behaviour and epidemic setting.
-To enable the strategy, I estimated risk group specific population sizes, prevalence and incidences at a district-level.
-I also used these estimates to evaluate the extent to which risk varies by age, behaviour, and geographic area.
-You might also be interested in the analysis in \href{https://athowes.github.io/thesis/naomi-aghq.html}{Chapter 6} applying the Naomi small-area estimation model to data from Malawi.
 
 
 %%%%% REFERENCES

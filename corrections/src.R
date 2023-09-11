@@ -1,0 +1,6 @@
+rmarkdown::render(input = "corrections/corrections.Rmd", output_dir = "docs", output_format = "pdf_document")
+pagedown::chrome_print(input = "corrections/cover.Rmd", output = "docs/cover.pdf")
+pdftools::pdf_combine(c("docs/cover.pdf", "docs/corrections.pdf"), output = "docs/correct.pdf")
+file.remove("docs/cover.pdf")
+file.remove("docs/corrections.pdf")
+file.remove("docs/corrections.tex")
