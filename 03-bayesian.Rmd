@@ -34,27 +34,20 @@ knitr::opts_chunk$set(
 ## Bayesian statistics
 
 Bayesian statistics is a mathematical paradigm for learning information from data.
-It is especially well suited to facing the challenges posed by Section \@ref(surveillance) because it allows for principled and flexible integration of data with domain knowledge.
-Additionally, uncertainty is handled as an integral part of the Bayesian paradigm.
+It is especially well suited to facing the challenges posed by Section \@ref(surveillance) because it allows for principled and flexible integration of prior domain knowledge.
+Additionally, uncertainty over all unknown quantities is handled as an integral part of the Bayesian paradigm.
 This section provides a brief and opinionated overview.
-For a more complete introduction, I recommend @gelman2013bayesian or @mcelreath2020statistical.
+For a more complete introduction, I recommend @gelman2013bayesian, @mcelreath2020statistical or @gelman2020bayesian.
 
 ### Bayesian modelling
 
-At its best, the Bayesian paradigm allows the analyst focus on how best to model the data.
-This is achieved mathematically by the construction of a generative model $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ for the observed data $\mathbf{y}$ together with parameters $\boldsymbol{\mathbf{\phi}}$, where the notation $p(\cdot)$ denotes a probability distribution.
-I assume the data to be an $n$-vector $(y_1, \ldots, y_n)$, and the parameters to be a $n$-vector $(\phi_1, \ldots, \phi_d)$.
-Choice of the parameters used to model the data will depend upon the requirements of the analysis.
+The Bayesian approach to data analysis is based on construction of a probability model for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$ together with parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$.
+Choice of the particular parameters used depends upon the requirements of the analysis.
+All quantities are assumed to be random variables, and the model is written as $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$, where $p(\cdot)$ denotes a probability distribution.
+Subsequent calculations are based on manipulation of this model using probability theory.
 
-The model is generative in the sense that it can be simulated from to obtain samples $(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
-If these samples differ too greatly from what the analyst would expect, then the generative model does not capture their prior scientific understanding of the data, and can be refined.
-In this way, prior predictive checks [@gelman2013bayesian; Chapter 6] can be used to build generative models iteratively, with complexity added gradually.
-
-The model is constructed from two parts, known respectively as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
-The joint distribution is obtained by the product
-\begin{equation}
-p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}).
-\end{equation}
+Models can be most naturally constructed from two parts, known respectively as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
+The joint distribution is obtained by the product $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$.
 The likelihood, as a function of $\boldsymbol{\mathbf{\phi}}$ with $\mathbf{y}$ fixed, reflects the probability of observing the data when the value of the parameters is $\boldsymbol{\mathbf{\phi}}$.
 The prior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}}$ before the data are observed.
 
@@ -62,36 +55,48 @@ Recommendations for specifying prior distributions vary.
 The extent to which subjective information should be incorporated into the prior distribution, and in doing so influence the posterior distribution, is a central topic of discussion.
 Proponents of the objective Bayesian paradigm [@berger2006case] put forward that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
 That said, we shall see in Section \@ref(hierarchical-lgm-elgm) that the distinction between likelihood and prior distribution can be unclear.
-As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically [@gelman2017prior].
+As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically.
+
+<!-- Could cite @gelman2017prior here. -->
+
+The probability model can be simulated from to obtain samples $(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
+If the samples of $\mathbf{y}$ differ too greatly from what the analyst would expect, then the model does not capture their prior scientific understanding of the data.
+Models which do not produce plausible samples can be refined.
+Checks of this kind [@gelman2013bayesian; Chapter 6] can be used to help iteratively build models, adding complexity gradually as required.
 
 ### Bayesian computation
 
-(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter is $\phi \sim \text{Gamma}(3, 1)$. I simulated observed data $\mathbf{y} = (1, 2, 3)$ from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of generative models being considered (This situation is sometimes known [@bernardo2001bayesian] as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified .) Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter is $\phi \sim \text{Gamma}(3, 1)$. I simulated observed data $\mathbf{y} = (1, 2, 3)$ from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of models being considered (This situation is sometimes known [@bernardo2001bayesian] as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified .) Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
 ```
 
-The posterior distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ encapsulates probabilistic beliefs about the parameters given the observed data.
-Using the eponymous Bayes' theorem
+The primary goal in a Bayesian analysis is to obtain the posterior distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$.
+This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central to decisions made as a result of the analysis.
+Using the eponymous Bayes' theorem, the posterior distribution is obtained by
 \begin{equation}
-p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = = \frac{p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})} = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
 \end{equation}
 
-The primary goal in a Bayesian analysis is to obtain the posterior distribution.
-Unfortunately, most of the time it is intractable to calculate analytically.
+Unfortunately, most of the time it is intractable to calculate the posterior distribution analytically.
 This is because of the potentially high-dimensional integral
 \begin{equation}
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}
 in the denominator of Equation \@ref(eq:posterior).
-As such, although it is easy to evaluate $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})$, it is typically difficult to evaluate the posterior distribution itself.
+The evidence $p(\mathbf{y})$ quantifies the probability of obtaining the data under the model, and 
+As such, although it is easy to evaluate a quantity proportional to the posterior distribution
+\begin{equation}
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
+\end{equation}
+it is typically difficult to evaluate the posterior distribution itself.
+
 The difficulty in performing Bayesian inference in general may be thought of as analogous to the difficulty in calculating integrals.
 As with integration, in some cases closed form analytic solutions are available.
 Figure \@ref(fig:conjugate) illustrates one such case, where the prior distribution and posterior distribution are in the same family of probability distributions.
-
-Many computational methods have been developed to tackle the problem of approximating the posterior distribution [@martin2023computing].
-They may broadly be divided into Monte Carlo algorithms, and deterministic approximations.
+For the more general case where no analytic solution is available, computational methods have been developed to approximate the posterior distribution [@martin2023computing].
+These methods may broadly be divided into Monte Carlo algorithms, and deterministic approximations.
 
 #### Monte Carlo algorithms
 
@@ -107,13 +112,20 @@ For example, if $G = G(\boldsymbol{\mathbf{\phi}})$ then the expectation of $G$ 
 Most quantities of interest can be cast as posterior expectations.
 
 Markov chain Monte Carlo (MCMC) methods [@roberts2004general] are the most popular class of sampling algorithms.
-Using MCMC samples are generated from by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution.
-The Metropolis-Hastings [@metropolis1953equation; @hastings1970monte] algorithm uses a proposal distribution $q(\boldsymbol{\mathbf{\phi}}_{i + 1} \, | \, \boldsymbol{\mathbf{\phi}}_i)$ to generate candidate parameters for the next step in the Markov chain.
+Using MCMC, samples are generated from by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution.
+The Metropolis-Hastings [MH; @metropolis1953equation; @hastings1970monte] algorithm uses a proposal distribution $q(\boldsymbol{\mathbf{\phi}}_{i + 1} \, | \, \boldsymbol{\mathbf{\phi}}_i)$ to generate candidate parameters for the next step in the Markov chain.
+Many MCMC algorithms, including the Gibbs sampler, are special cases of MH.
+
+Other notable classes of sampling algorithms include importance sampling (IS) methods, in which the samples are weighted, and sequential Monte Carlo [SMC; @chopin2020introduction] methods based on sampling from a sequence of distributions.
+Though these methods have found applications in specific domains, MCMC is more widely used because of its generality and theoretical reliability.
 
 In this thesis, I use the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, as implemented in the Stan [@carpenter2017stan] probabilistic programming language (PPL).
 HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings proposal distributions based on Hamiltonian dynamics.
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
+
+After running a MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
+Panel B of Figure \@ref(fig:stan) shows a traceplot for a Markov chain which has converged.
 
 (ref:stan) NUTS can be used to sample from the posterior distribution in the example of Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value.
 
@@ -138,13 +150,18 @@ Unsure how much detail to go into here given that these approximations are the s
 
 ### Interplay between modelling and computation
 
-Modern computational techniques and software have succeeded in abstracting away calculation of the posterior distribution from the analyst for many models.
-However, computation of the posterior distribution remains intractable for a majority of models.
+Modern computational techniques and software like PPLs have succeeded in abstracting away calculation of the posterior distribution from the analyst for many models.
+However, computation remains intractable in the majority of cases.
 As such, the analyst need not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior distribution is tractable in reasonable time.
 As such, there is an important interplay between modelling and computation, wherein models are bound by the limits of computation.
 As computation improves, the space of models available to the analyst expands.
 
-## Spatio-temporal statistics
+## Spatio-temporal statistics 
+
+Spatio-temporal statistics [@cressie2015statistics] concerns observations which are indexed by spatial or temporal location.
+In doing so, it unites the fields of spatial statistics [@bivand2008applied] and time series analysis [@shumway2017time].
+
+### Properties of spatio-temporal data
 
 (ref:st) The spatial location of Cape Town in South Africa could be considered a point. The ZF Mgcawu District Municipality on the other hand is an example of an area. World AIDS Day, designated on the 1st of December every year, could be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
 
@@ -152,73 +169,77 @@ As computation improves, the space of models available to the analyst expands.
 knitr::include_graphics("figures/bayesian/st.png")
 ```
 
-In spatio-temporal statistics [@cressie2015statistics], observations are indexed by spatial or temporal location (Figure \@ref(fig:st)).
-In this thesis I assume that the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ has two dimensions, corresponding to latitude and longitude.
-Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
-The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be one dimensional.
-Similarly, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
-
-### Properties of spatio-temporal data
-
-Spatio-temporal data has some important properties:
+Spatio-temporal data have some important properties:
 
 1. **Covariance structure**:
-Tobler's first law of geography is that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
-In "The Design of Experiments" @fisher1936design observed likewise that neighbouring crops were more likely to have similar yields.
+According to Tobler's first law of geography "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
+In "The Design of Experiments" @fisher1936design observed that neighbouring crops were more likely to have similar yields than those far apart.
 This law can be formalised using spatial covariance functions.
 Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
 
     As well as space, an Tobler's first law applies to time.
     Observations made close together in time tend to be similar.
-    There is a field of time series analysis [@hyndman2018forecasting] to summarise in a couple of sentences.
+    Temporal covariance structures are often periodic.
 
-    Space-time correlation structure [@porcu202130].
-    Separable means no space-time correlation can be factorised, nonseparable means it can't.
-    Separable correlation could be @knorr2000bayesian I, II, III and IV.
+    The space-time covariance structure [@porcu202130] is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can't.
+    A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured [@knorr2000bayesian].
 
-    Because of their correlation structure, spatio-temporal data are not independent and identically distributed (IID).
+    Because of their covariance structure, spatio-temporal data are not IID.
     Only one observation of a spatio-temporal process is realised.
-    Does this matter in any meaningful way?
+    
 
 2. **Scales**:
-Spatio-temporal observations could be at various possible scales.
-May want to model data at a scale it was not observed at.
-May want to model data from different scales simultaneously.
-Downscaling.
-Upscaling.
-Change-of-support.
-Misalignment.
+In this thesis I assume that the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ has two dimensions, corresponding to latitude and longitude.
+Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
+The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be one dimensional.
+Together with time only moving forward, this feature is what distinguishes time from space.
+As with space, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
+Figure \@ref(fig:st) illustrates both types of observation for space and time.
+
+    As such, spatio-temporal observations can be made at various possible scales.
+    Sometimes, we may want to model data at a scale it was not observed at.
+    This is known as the change-of-support problem [@gelfand2001change] and includes as special cases the problems of downscaling, upscaling, and dealing with so-called misaligned data.
+    Closely related is the problem of wanting to jointly model data at different scales simultaneously.
+
 3. **Size**:
-Data with both spatial and temporal dimensions are often large.
-Models typically require many parameters due to the non-IID nature of spatio-temporal data.
-Storage, manipulation, and inference for spatio-temporal data can be challenging.
+Data with both spatial and temporal dimensions are often large, making storage and operations on spatio-temporal data potentially difficult.
+Furthermore, models for spatio-temporal data typically require many parameters.
+Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
+Large data combined with large models make Bayesian inference challenging.
 
 ### Small-area estimation
 
-There are a large number of possible locations in space and time.
-The cost of collecting data can be prohibitive.
-Especially the case for data related to people for which collection in more difficult to automate.
-As a result, often no or limited direct observations are available for any given space-time location.
+Data always has a cost to collect.
+This cost can be significant, especially for data relating to people where collection is difficult to automate.
+As a result, given the large number of possible locations in space and time, often no or limited direct observations may be available for any given space-time location.
 Direct estimates of indicators of interest are either impossible or inaccurate in this setting.
+
 Small-area estimation [SAE; @pfeffermann2013new] methods aim to overcome the limitations of small data by sharing information.
 In the spatio-temporal setting sharing of information occurs across space and time.
+The fact that observations in one spatio-temporal location are correlated with those at another can be used to improve estimates.
+Figures \@ref(fig:zmb-maps) and \@ref(fig:zmb-scatter) illustrate the unreliability of direct estimates from small sample sizes, and the way in which a spatial model may be used to overcome this limiation.
 
 More generally, SAE methods are useful when data are limited for subpopulations of interest.
-Subpopulations could be generated by the intersection of demographic variables such as age and gender, as well as spatio-temporal location.
+These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
+Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
+Those of the same sex are more likely to be similar, as are those of similar ages or socioeconomic strata.
 
-(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size ($m = 5, 25, 125$) in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the ratio $y_i / m$. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. HIV estimates for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the constituency level, as program planning is devolved locally. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
+(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size ($m = 5, 25, 125$) in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the ratio $y_i / m$. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. HIV estimates for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
 
 ```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
 knitr::include_graphics("figures/bayesian/zmb-maps.png")
 ```
 
-(ref:zmb-scatter) The setting of this figure matches that of Figure \@ref(fig:zmb-maps). Estimates from surveys with higher sample size have higher Pearson correlation coefficient $R$ with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data.
+(ref:zmb-scatter) The setting of this figure matches that of Figure \@ref(fig:zmb-maps). Estimates from surveys with higher sample size have higher Pearson correlation coefficient $R$ with the underlying truth. For a fixed sample size, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. For each sample size, using a spatial model increases the correlation between the estimates and underlying truth.
 
 ```{r zmb-scatter, fig.cap="(ref:zmb-scatter)"}
 knitr::include_graphics("figures/bayesian/zmb-scatter.png")
 ```
 
-## Model classes {#hierarchical-lgm-elgm}
+## Model structure {#hierarchical-lgm-elgm}
+
+We have seen that in spatio-temporal statistics, observations have structure.
+Each observation should not necessarily be considered as arising from the same distribution as another.
 
 ### Hierarchical models {#hierarchical}
 
@@ -228,7 +249,7 @@ knitr::include_graphics("figures/bayesian/zmb-scatter.png")
 knitr::include_graphics("figures/bayesian/hierarchical-structure.png")
 ```
 
-Some observations in data are typically natural to group together.
+Some observations in data are natural to group together.
 For example, each individual $i = 1, \ldots, n$ in a study might be observed $m_i$ times (Figure \@ref(fig:hierarchical-structure)).
 Observations $y_{i1}, \ldots y_{im_i}$ of the same individual are grouped together.
 These observations are more likely to be similar than observations of different individuals.
@@ -237,7 +258,7 @@ We might also group observations by spatio-temporal location.
 Bayesian hierarchical or multilevel models allow for natural handling of group structure in data, even for complex nested or crossed structures.
 In a three-stage hierarchical model, we partition the parameters so that $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
 I refer to $\mathbf{x} = (x_1, \ldots, x_n)$ as the latent field, and $\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)$ as the hyperparameters.
-The generative model for data $\mathbf{y}$ is then
+The model for data $\mathbf{y}$ is then
 \begin{align}
 \mathbf{y} &\sim p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
 \mathbf{x} &\sim p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}), \\
@@ -286,6 +307,8 @@ Random effects can also be structured to share information between some groups m
 In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
 Spatial random effects are the subject of Chapter \@ref(beyond-borders).
 
+Give equation for a generalised linear mixed model (GLMM) here (may want to introduce GLMs first).
+
 ### Latent Gaussian models
 
 Latent Gaussian models [LGMs; @rue2009approximate] are a class of three-stage Bayesian hierarchical models in which the middle layer is Gaussian.
@@ -293,37 +316,37 @@ To be more precise, in an LGM, the likelihood is given by
 \begin{align*}
 y_i &\sim p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i), \\
-\eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}).
+\eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} u_k(w_{ki}).
 \end{align*}
-The likelihood is given by a product $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\eta}}, \boldsymbol{\mathbf{\theta}}_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1)$, where $\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots, \eta_n)$.
 Each response has conditional mean $\mu_i$ with inverse link function $g: \mathbb{R} \to \mathbb{R}$ such that $\mu_i = g(\eta_i)$.
+The likelihood has a product structure given by $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\eta}}, \boldsymbol{\mathbf{\theta}}_1) = \prod_{i = 1}^n p(y_i \, | \, \eta_i, \boldsymbol{\mathbf{\theta}}_1)$, where $\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots, \eta_n)$.
 The vector $\boldsymbol{\mathbf{\theta}}_1 \in \mathbb{R}^{s_1}$, with $s_1$ assumed small, are additional parameters of the likelihood.
-The structured additive predictor $\eta_i$ may include an intercept $\beta_0$, fixed effects $\beta_j$ of the covariates $z_{ji}$, and random effects $f_k(\cdot)$ of the covariates $u_{ki}$.
-The parameters $\beta_0$, $\{\beta_j\}$, $\{f_k(\cdot)\}$ are each assigned Gaussian prior distributions, and can be collected into a vector $\mathbf{x} \in \mathbb{R}^N$ such that $\mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1})$ where $\boldsymbol{\mathbf{\theta}}_2 \in \mathbb{R}^{s_2}$ are further hyperparameters, again with $s_2$ assumed small.
+The structured additive predictor $\eta_i$ may include an intercept $\beta_0$, fixed effects $\beta_j$ of the covariates $z_{ji}$, and random effects $u_k(\cdot)$ of the covariates $w_{ki}$.
+The parameters $\beta_0$, $\{\beta_j\}$, $\{u_k(\cdot)\}$ are each assigned Gaussian prior distributions, and can be collected into a vector $\mathbf{x} \in \mathbb{R}^N$ such that $\mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1})$ where $\boldsymbol{\mathbf{\theta}}_2 \in \mathbb{R}^{s_2}$ are further hyperparameters, again with $s_2$ assumed small.
 Let $\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbol{\mathbf{\theta}}_2) \in \mathbb{R}^m$ with $m = s_1 + s_2$ be all hyperparameters, with prior distribution $p(\boldsymbol{\mathbf{\theta}})$.
 
 ### Extended latent Gaussian models
 
-<!-- Strictly speaking, many-to-one is not an issue for `R-INLA`, the latent field is implemented as a concatenation of many vectors already e.g. for $\eta_i = \beta_0 + \phi_i$ with $i = 1, \ldots, n$ the latent field is $(\eta_1, \ldots, \eta_n, \beta_0, \phi_1, \ldots, \phi_n)^\top$ of dimension $2n + 1$ -->
-<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
-<!-- Thesis work of [Follestad](https://cds.cern.ch/record/639625/files/sis-2003-305.pdf) that stayed as a preprint -->
-
-Extended latent Gaussian models [ELGMs; @stringer2021fast] facilitate modelling of LGMs with greater non-linearities.
-In particular, the structured additive predictor is redefined as $\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots \eta_{N_n})$, where $N_n \in \mathbb{N}$ is a function of $n$, and it is possible that $N_n \neq n$.
+Extended latent Gaussian models [ELGMs; @stringer2021fast] facilitate modelling of data with greater non-linearities than an LGM.
+In an ELGM, the structured additive predictor is redefined as $\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots \eta_{N_n})$, where $N_n \in \mathbb{N}$ is a function of $n$, and it is possible that $N_n \neq n$.
 Each mean response $\mu_i$ now depends on some subset $\mathcal{J}_i \subseteq [N_n]$ of indices of $\boldsymbol{\mathbf{\eta}}$, with $\cup_{i = 1}^n \mathcal{J}_i = [N_n]$ and $1 \leq |\mathcal{J}_i| \leq N_n$, where $[N_n] = \{1, \ldots, N_n\}$.
 The inverse link function $g(\cdot)$ is redefined for each observation to be a possibly many-to-one mapping $g_i: \mathbb{R}^{|\mathcal{J}_i|} \to \mathbb{R}$, such that $\mu_i = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i})$.
 Put together, ELGMs are of the form
 \begin{align*}
 y_i &\sim p(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}, \boldsymbol{\mathbf{\theta}}_1), \quad i = 1, \ldots, n, \\
 \mu_i &= \mathbb{E}(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}) = g_i(\boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}), \\
-\eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} f_k(u_{ki}), \quad j = 1, \ldots, N_n,
+\eta_j &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji} + \sum_{k = 1}^{r} u_k(w_{ki}), \quad j = 1, \ldots, N_n,
 \end{align*}
 with latent field and hyperparameter prior distributions as in the LGM case.
 
-The ELGM class is well suited to small-area estimation of HIV indicators.
-Indeed, this class of models is used throughout the thesis.
+The ELGM class is well suited to small-area estimation of HIV indicators, and so used throughout the thesis.
 While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial] the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is naturally written as an ELGM where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
 In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
+
+## Model comparison
+
+Should this section be here?
+Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections, things used later in the thesis.
 
 ## Survey methods {#survey}
 
