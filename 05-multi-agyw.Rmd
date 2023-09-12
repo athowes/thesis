@@ -700,35 +700,80 @@ I found similar variance decomposition results fitting each country individually
 
 ## Prevalence and incidence by risk group
 
-### Disaggregation of Naomi estimates
+Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:
 
-I calculated HIV incidence $\lambda_{iak}$ and number of new HIV infections $I_{iak}$ stratified according to district, age group and risk group by linear disaggregation
+1. HIV prevalence $\rho_{iak}$,
+2. the number of people living with HIV (PLHIV) $H_{iak}$,
+3. HIV incidence $\lambda_{iak}$, and
+4. the number of new HIV infections $I_{iak}$.
+
+To do so, I disaggregated district, age group specific Naomi estimates by risk group.
+
+### Disaggregation of Naomi prevalence estimates
+
+To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios $\log(\text{OR}_k)$ relative to the general population.
+To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
+I also included general population HIV prevalence data.
+The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
+The log odds ratios may then be easily obtained by taking the difference in odds ratios.
+
+To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
+I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.
+
+Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV $H_{ia}$ on the logit scale using numerical optimisation.
+I did this by by finding the values of $\theta_{ia}$ which minimise the equation
+\begin{equation}
+f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia}
+\end{equation}
+where
+\begin{equation}
+\text{logistic}(x) = \exp(x) / (1 + \exp(x))
+\end{equation}
+such that
+\begin{equation}
+\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}.
+\end{equation}
+These values are given by
+\begin{equation}
+\hat \theta_{ia} = \text{argmin}_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2,
+\end{equation}
+The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{iak}$ is the risk group population size.
+
+### Disaggregation of Naomi incidence estimates
+
+I calculated the number of new HIV infections by risk group using linear disaggregation
 \begin{align}
-    I_{ia} &= \sum_k I_{iak} = \sum_k \lambda_{iak}N_{iak} \\
-    &= 0 + \lambda_{ia2} N_{ia2} + \lambda_{ia3} N_{ia3} + \lambda_{ia4} N_{ia4} \\
-    &= \lambda_{ia2} \left(N_{ia2}  + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}  \right).
+    I_{ia} &= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
+    &= 0 + \lambda_{ia2} (1 - \rho_{ia2}) N_{ia2} + \lambda_{ia3} (1 - \rho_{ia3}) {ia3} + \lambda_{ia4} (1 - \rho_{ia4}) N_{ia4} \\
+    &= \lambda_{ia2} \left((1 - \rho_{ia2}) N_{ia2}  + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{i4}) N_{ia4}  \right),
 \end{align}
-Risk group specific HIV incidence estimates are then given by
+where $\text{RR}_{2}$, $\text{RR}_{3}$ and $\text{RR}_{4}(\cdot)$ are the HIV risk ratios given in Table \@ref(tab:risk-groups), and $(1 - \rho_{iak}) N_{iak}$ are the susceptible population sizes in each risk group.
+The risk ratio for FSW was defined as a function of district-level incidence in the general population $\lambda_{ia}$.
+
+Risk group specific HIV incidence estimates were then given by
 \begin{align}
     \lambda_{ia1} &= 0, \\
-    \lambda_{ia2} &= I_{ia} / \left(N_{ia2} + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}\right), \\
+    \lambda_{ia2} &= I_{ia} / \left((1 - \rho_{ia2}) N_{ia2} + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{ia4}) N_{ia4}\right), \\
     \lambda_{ia3} &= \text{RR}_{3} \lambda_{ia2}, \\
     \lambda_{ia4} &= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
 \end{align}
-which I evaluated using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$, HIV infection risk ratios $\{\text{RR}_3, \text{RR}_4(\lambda_{ia})\}$, and risk group population sizes as above.
-The risk ratio $\text{RR}_4(\lambda_{ia})$ was defined as a function of general population incidence.
-The number of new HIV infections are then $I_{iak} = \lambda_{iak} N_{iak}$.
+I evaluated these equations using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
+The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
 
 ### Expected new infections reached
 
-I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population--that is for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group. 
-As an illustration, for stratification just by age, I aggregated the number of new HIV infections and HIV incidence as such 
+I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population.
+That is, for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group. 
+
+To illustrate this approach, consider stratification by age.
+I first aggregated the number of new HIV infections and HIV incidence such that
 \begin{align}
     I_a &= \sum_{ik} I_{iak}, \\
-    \lambda_a &= I_a / \sum_{ik} N_{iak}.
+    \lambda_a &= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
 \end{align}
-Under this stratification, individuals in each age group $a$ are prioritised according to the highest HIV incidence $\lambda_a$.
+I then considered prioritisation individuals by age group $a$ according to the highest HIV incidence $\lambda_a$.
 By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
+As there are three age groups, the resulting function was piecewise linear with three segments.
 
 ### Results
 

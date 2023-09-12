@@ -180,9 +180,10 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
 <ul>
-<li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi estimates</a></li>
-<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections-reached"><i class="fa fa-check"></i><b>5.4.2</b> Expected new infections reached</a></li>
-<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#results-1"><i class="fa fa-check"></i><b>5.4.3</b> Results</a></li>
+<li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-prevalence-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi prevalence estimates</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-incidence-estimates"><i class="fa fa-check"></i><b>5.4.2</b> Disaggregation of Naomi incidence estimates</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections-reached"><i class="fa fa-check"></i><b>5.4.3</b> Expected new infections reached</a></li>
+<li class="chapter" data-level="5.4.4" data-path="multi-agyw.html"><a href="multi-agyw.html#results-1"><i class="fa fa-check"></i><b>5.4.4</b> Results</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#discussion-1"><i class="fa fa-check"></i><b>5.5</b> Discussion</a>
 <ul>
@@ -986,38 +987,78 @@ I found similar variance decomposition results fitting each country individually
 </div>
 <div id="prevalence-and-incidence-by-risk-group" class="section level2 hasAnchor" number="5.4">
 <h2><span class="header-section-number">5.4</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prevalence-and-incidence-by-risk-group" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="disaggregation-of-naomi-estimates" class="section level3 hasAnchor" number="5.4.1">
-<h3><span class="header-section-number">5.4.1</span> Disaggregation of Naomi estimates<a href="multi-agyw.html#disaggregation-of-naomi-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>I calculated HIV incidence <span class="math inline">\(\lambda_{iak}\)</span> and number of new HIV infections <span class="math inline">\(I_{iak}\)</span> stratified according to district, age group and risk group by linear disaggregation
+<p>Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:</p>
+<ol style="list-style-type: decimal">
+<li>HIV prevalence <span class="math inline">\(\rho_{iak}\)</span>,</li>
+<li>the number of people living with HIV (PLHIV) <span class="math inline">\(H_{iak}\)</span>,</li>
+<li>HIV incidence <span class="math inline">\(\lambda_{iak}\)</span>, and</li>
+<li>the number of new HIV infections <span class="math inline">\(I_{iak}\)</span>.</li>
+</ol>
+<p>To do so, I disaggregated district, age group specific Naomi estimates by risk group.</p>
+<div id="disaggregation-of-naomi-prevalence-estimates" class="section level3 hasAnchor" number="5.4.1">
+<h3><span class="header-section-number">5.4.1</span> Disaggregation of Naomi prevalence estimates<a href="multi-agyw.html#disaggregation-of-naomi-prevalence-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios <span class="math inline">\(\log(\text{OR}_k)\)</span> relative to the general population.
+To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
+I also included general population HIV prevalence data.
+The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
+The log odds ratios may then be easily obtained by taking the difference in odds ratios.</p>
+<p>To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
+I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.</p>
+<p>Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV <span class="math inline">\(H_{ia}\)</span> on the logit scale using numerical optimisation.
+I did this by by finding the values of <span class="math inline">\(\theta_{ia}\)</span> which minimise the equation
+<span class="math display">\[\begin{equation}
+f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia}
+\end{equation}\]</span>
+where
+<span class="math display">\[\begin{equation}
+\text{logistic}(x) = \exp(x) / (1 + \exp(x))
+\end{equation}\]</span>
+such that
+<span class="math display">\[\begin{equation}
+\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}.
+\end{equation}\]</span>
+These values are given by
+<span class="math display">\[\begin{equation}
+\hat \theta_{ia} = \text{argmin}_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2,
+\end{equation}\]</span>
+The number of PLHIV were obtained by <span class="math inline">\(H_{iak} = \rho_{iak} N_{iak}\)</span>, where <span class="math inline">\(N_{iak}\)</span> is the risk group population size.</p>
+</div>
+<div id="disaggregation-of-naomi-incidence-estimates" class="section level3 hasAnchor" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> Disaggregation of Naomi incidence estimates<a href="multi-agyw.html#disaggregation-of-naomi-incidence-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated the number of new HIV infections by risk group using linear disaggregation
 <span class="math display">\[\begin{align}
-    I_{ia} &amp;= \sum_k I_{iak} = \sum_k \lambda_{iak}N_{iak} \\
-    &amp;= 0 + \lambda_{ia2} N_{ia2} + \lambda_{ia3} N_{ia3} + \lambda_{ia4} N_{ia4} \\
-    &amp;= \lambda_{ia2} \left(N_{ia2}  + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}  \right).
+    I_{ia} &amp;= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
+    &amp;= 0 + \lambda_{ia2} (1 - \rho_{ia2}) N_{ia2} + \lambda_{ia3} (1 - \rho_{ia3}) {ia3} + \lambda_{ia4} (1 - \rho_{ia4}) N_{ia4} \\
+    &amp;= \lambda_{ia2} \left((1 - \rho_{ia2}) N_{ia2}  + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{i4}) N_{ia4}  \right),
 \end{align}\]</span>
-Risk group specific HIV incidence estimates are then given by
+where <span class="math inline">\(\text{RR}_{2}\)</span>, <span class="math inline">\(\text{RR}_{3}\)</span> and <span class="math inline">\(\text{RR}_{4}(\cdot)\)</span> are the HIV risk ratios given in Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>, and <span class="math inline">\((1 - \rho_{iak}) N_{iak}\)</span> are the susceptible population sizes in each risk group.
+The risk ratio for FSW was defined as a function of district-level incidence in the general population <span class="math inline">\(\lambda_{ia}\)</span>.</p>
+<p>Risk group specific HIV incidence estimates were then given by
 <span class="math display">\[\begin{align}
     \lambda_{ia1} &amp;= 0, \\
-    \lambda_{ia2} &amp;= I_{ia} / \left(N_{ia2} + \text{RR}_{3} N_{ia3} + \text{RR}_4(\lambda_{ia}) N_{ia4}\right), \\
+    \lambda_{ia2} &amp;= I_{ia} / \left((1 - \rho_{ia2}) N_{ia2} + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{ia4}) N_{ia4}\right), \\
     \lambda_{ia3} &amp;= \text{RR}_{3} \lambda_{ia2}, \\
     \lambda_{ia4} &amp;= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
 \end{align}\]</span>
-which I evaluated using Naomi model estimates of the number of new HIV infections <span class="math inline">\(I_{ia} = \lambda_{ia} N_{ia}\)</span>, HIV infection risk ratios <span class="math inline">\(\{\text{RR}_3, \text{RR}_4(\lambda_{ia})\}\)</span>, and risk group population sizes as above.
-The risk ratio <span class="math inline">\(\text{RR}_4(\lambda_{ia})\)</span> was defined as a function of general population incidence.
-The number of new HIV infections are then <span class="math inline">\(I_{iak} = \lambda_{iak} N_{iak}\)</span>.</p>
+I evaluated these equations using Naomi model estimates of the number of new HIV infections <span class="math inline">\(I_{ia} = \lambda_{ia} N_{ia}\)</span>.
+The number of new HIV infections were <span class="math inline">\(I_{iak} = \lambda_{iak} N_{iak}\)</span>.</p>
 </div>
-<div id="expected-new-infections-reached" class="section level3 hasAnchor" number="5.4.2">
-<h3><span class="header-section-number">5.4.2</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections-reached" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population–that is for all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.
-As an illustration, for stratification just by age, I aggregated the number of new HIV infections and HIV incidence as such
+<div id="expected-new-infections-reached" class="section level3 hasAnchor" number="5.4.3">
+<h3><span class="header-section-number">5.4.3</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections-reached" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population.
+That is, for all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.</p>
+<p>To illustrate this approach, consider stratification by age.
+I first aggregated the number of new HIV infections and HIV incidence such that
 <span class="math display">\[\begin{align}
     I_a &amp;= \sum_{ik} I_{iak}, \\
-    \lambda_a &amp;= I_a / \sum_{ik} N_{iak}.
+    \lambda_a &amp;= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
 \end{align}\]</span>
-Under this stratification, individuals in each age group <span class="math inline">\(a\)</span> are prioritised according to the highest HIV incidence <span class="math inline">\(\lambda_a\)</span>.
-By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.</p>
+I then considered prioritisation individuals by age group <span class="math inline">\(a\)</span> according to the highest HIV incidence <span class="math inline">\(\lambda_a\)</span>.
+By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
+As there are three age groups, the resulting function was piecewise linear with three segments.</p>
 </div>
-<div id="results-1" class="section level3 hasAnchor" number="5.4.3">
-<h3><span class="header-section-number">5.4.3</span> Results<a href="multi-agyw.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="results-1" class="section level3 hasAnchor" number="5.4.4">
+<h3><span class="header-section-number">5.4.4</span> Results<a href="multi-agyw.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:infections-reached"></span>
 <img src="resources/multi-agyw/20230627-144735-3da88508/depends/infections-reached.png" alt="Percentage of new infections reached across all 13 countries, taking a variety of risk stratification approaches, against the percentage of at risk population required to be reached." width="95%" />
