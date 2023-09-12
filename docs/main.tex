@@ -1479,7 +1479,8 @@ This model is not an LGM because each observation \(y_{itak}\) for \(k \in \{1, 
 
 To recast this model as an LGM, I used the multinomial-Poisson transformation.
 This modification allowed inference to be performed using the INLA \autocite{rue2009approximate} algorithm via the \texttt{R-INLA} package \autocite{martins2013bayesian}.
-INLA is likely to be the most accurate inference method available because the model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be intractable in reasonable time.
+The model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be tractable in reasonable time.
+Inferences from INLA in the LGM setting are accurate and substantially faster than MCMC.
 
 \hypertarget{the-multinomial-poisson-transformation}{%
 \subsubsection{The multinomial-Poisson transformation}\label{the-multinomial-poisson-transformation}}
@@ -1578,7 +1579,7 @@ I considered several specifications for the remaining spatial and temporal effec
 \hypertarget{spatial-random-effects}{%
 \paragraph{Spatial random effects}\label{spatial-random-effects}}
 
-For the space-category \(u_{ik}\) random effects I considered two specifications:
+For the space-category random effects \(u_{ik}\) I considered two specifications:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1592,7 +1593,8 @@ For the space-category \(u_{ik}\) random effects I considered two specifications
   \]
   The scaled structure matrix \(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\) is given by the Kronecker product of the scaled Besag structure matrix \(\mathbf{R}^\star_b\) and the identity matrix \(\mathbf{I}\), and \({-}\) denotes the generalised matrix inverse.
   I followed best practices for the Besag model as described in Chapter \ref{beyond-borders}.
-  To implement the Kronecker product I used the \texttt{group} option in \texttt{R-INLA} \autocite{riebler2011kronecker}.
+  To implement the Kronecker product I used the \texttt{group} option in \texttt{R-INLA} {[}Section 3.5.5; \textcite{gomez2020bayesian}{]} setting the random effect to be \texttt{f(area\_idx,\ model\ =\ "besag",\ group\ =\ cat\_idx,\ control.group\ =\ list(model\ =\ "iid"),\ ...)}.
+  Though the Kronecker product is symmetric, performance is better in \texttt{R-INLA} when the more complicated effect is written as the first variable rather than the grouping variable.
 \end{enumerate}
 
 In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
@@ -1603,7 +1605,7 @@ For simplicity and to avoid numerical issues, by using Besag random effects I ef
 \hypertarget{temporal-random-effects}{%
 \paragraph{Temporal random effects}\label{temporal-random-effects}}
 
-For the year-category \(\gamma_{tk}\) random effects I considered two specifications:
+For the time-category random effects \(\gamma_{tk}\) I considered two specifications:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1622,22 +1624,45 @@ For the year-category \(\gamma_{tk}\) random effects I considered two specificat
   r_t &= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T, 
   \end{align}
   where \(\epsilon_t \sim \mathcal{N}(0, 1)\) and \(|\rho| < 1\).
-  As with the structured spatial random effects, I implemented this Kronecker product using the \texttt{group} option.
+  As with the structured spatial random effects, I implemented this Kronecker product using the \texttt{group} option via \texttt{f(year\_idx,\ model\ =\ "ar1",\ group\ =\ cat\_idx,\ control.group\ =\ list(model\ =\ "iid"),\ ...)}.
+  Again the more complicated variable was written first.
 \end{enumerate}
 
 \hypertarget{a-note-on-spatio-temporal-interaction-random-effects}{%
 \paragraph{A note on spatio-temporal interaction random effects}\label{a-note-on-spatio-temporal-interaction-random-effects}}
 
-I wanted to, and did all four.
-This was quite difficult because it required space-time-category interactions.
-Building this type of model within formual interface software is challenging.
-They ran OK for one country but not for all 13 jointly.
-They don't matter much here because there is limited temporal trend.
+I also considered including separable space-time-category random effects \(\delta_{itk}\) in the model, using the specification
+\begin{equation}
+    \boldsymbol{\mathbf{\delta}} = (\delta_{111}, \ldots, \delta_{nT3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\delta \mathbf{R}^\star_\delta)^{-}),
+\end{equation}
+where \(\mathbf{R}^\star_\delta\) is a Kronecker product of the relevant space, time and category structure matrices.
+These specifications were:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  IID spatial and IID temporal (Type I) \(\mathbf{R}^\star_\delta = \mathbf{I} \otimes \mathbf{I} \otimes \mathbf{I}\),
+\item
+  Besag spatial and IID temporal (Type II) \(\mathbf{R}^\star_\delta = \mathbf{R}^\star_b \otimes \mathbf{I} \otimes \mathbf{I}\),
+\item
+  IID spatial and AR1 temporal (Type III) \(\mathbf{R}^\star_\delta = \mathbf{I} \otimes \mathbf{R}^\star_a \otimes \mathbf{I}\),
+\item
+  Besag spatial and AR1 (Type IV) \(\mathbf{R}^\star_\delta = \mathbf{R}^\star_b \otimes \mathbf{R}^\star_a \otimes \mathbf{I}\),
+\end{enumerate}
+
+where the first, second and third elements of the Kronecker product represent space, time and category (always IID) structure matrices respectively.
+The interaction type in brackets (e.g.~Type I) is given according to the \textcite{knorr2000bayesian} framework.
+
+Though three-way Kronecker products are not directly supported in \texttt{R-INLA}, I implemented each specification using a combination of the \texttt{group} and \texttt{replicate} options {[}Section 6.5.2; \textcite{gomez2020bayesian}{]}.
+For example, for the Type IV effects the random effects were specified by \texttt{f(area\_idx\_copy,\ model\ =\ "besag",\ group\ =\ year\_idx,\ replicate\ =\ cat\_idx,\ control.group\ =\ list(model\ =\ "ar1"))}.
+I was able to run these models for single countries, keeping only years at which surveys occurred in those countries.
+However, when fitting all countries jointly I found inclusion of the space-time-category random effects to be intractable, and as such decided not to include them in the model.
 
 \hypertarget{prior-distributions}{%
 \paragraph{Prior distributions}\label{prior-distributions}}
 
-All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\) were given independent penalised complexity (PC) prior distributions \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by
+All random effect precision parameters \(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma, \tau_\delta\}\) were given independent penalised complexity (PC) prior distributions \autocite{simpson2017penalising} with base model \(\sigma = 0\) given by
 \begin{equation}
 p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)
 \end{equation}
@@ -1648,17 +1673,28 @@ I chose the base model \(\rho = 1\) corresponding to no change in behaviour over
 \hypertarget{constraints}{%
 \subsubsection{Constraints}\label{constraints}}
 
-To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
-For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects (Table \ref{tab:constraints}).
+To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints (Table \ref{tab:constraints}) such that none of the category interaction random effects altered overall category probabilities.
+In testing of the space-time-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and time-category random effects.
+In some cases it was not possible to implement all three sets of constraints for the three-way interactions in \texttt{R-INLA}.
 
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5600}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4400}}@{}}
 \caption{\label{tab:constraints} Applying sum-to-zero constraints to interaction effects ensures that the main effect is not interfered with.}\tabularnewline
 \toprule\noalign{}
-Random effects & Constraints \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Random effects
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Constraints
+\end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Random effects & Constraints \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Random effects
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Constraints
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1668,6 +1704,7 @@ Country & \(\sum_c \zeta_{ck} = 0, \, \forall \, k\) \\
 Age-country & \(\sum_a \alpha_{ack} = 0, \, \forall \, c, k\) \\
 Spatial & \(\sum_i u_{ik} = 0, \, \forall \, k\) \\
 Temporal & \(\sum_t \gamma_{tk} = 0, \, \forall \, k\) \\
+Spatio-temporal & \(\sum_i \delta_{itk} = 0, \, \forall \, t, k; \sum_t \delta_{itk} = 0, \, \forall \, i, k; \sum_k \delta_{itk} = 0, \, \forall \, i, t\) \\
 \end{longtable}
 
 \hypertarget{survey-weighted-likelihood}{%
@@ -1687,7 +1724,8 @@ This working likelihood is implemented by \texttt{family\ =\ "xPoisson"} in \tex
 
 I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion \autocite{pettit1990conditional}.
 For reference, I also computed the deviance information criterion (DIC) \autocite{spiegelhalter2002bayesian} and widely applicable information criterion (WAIC) \autocite{watanabe2013widely}.
-Each of these criterion are presented in Figure \ref{fig:model-comparison}.
+Each of these criterion can be calculated in \texttt{R-INLA} without requiriing model refitting.
+The results are presented in Figure \ref{fig:model-comparison}.
 
 
 
@@ -1809,7 +1847,7 @@ I selected the model including Besag spatial effects and \texttt{cfswrecent} cov
 All results, including DIC and WAIC, are presented in Table and Figure \ref{fig:fsw-logit-model-comparison}.
 Inclusion of Besag spatial random effects, rather than IID, consistently improved performance.
 Benefits from inclusion of covariates were more marginal.
-As some countries had no suitable surveys, inclusion of covariate information is preferable such that the estimates in these countries are based on some country-specific data.
+As some countries had no suitable surveys, I nonetheless preferred to include covariate information so that estimates in these countries would be based on some country-specific data.
 
 
 
@@ -1872,14 +1910,22 @@ WAIC & 4692 (115) & 4624 (115) & 4692 (115) & 4624 (115) & 4692 (115) & 4624 (11
 CPO & 950 (15) & 969 (15) & 951 (15) & 970 (15) & 950 (15) & 970 (15) \\
 \end{longtable}
 
+\hypertarget{model-combination}{%
+\subsection{Model combination}\label{model-combination}}
+
+How were the models combined?
+Using samples.
+
 \hypertarget{female-sex-worker-population-size-adjustment}{%
 \subsection{Female sex worker population size adjustment}\label{female-sex-worker-population-size-adjustment}}
 
 Having had sex ``in return for gifts, cash or anything else in the past 12 months'' is not considered sufficient to constitute sex work.
-As such, I adjusted the estimates obtained based on the transactional sex survey question to match alternative FSW population size estimates.
+As such, I adjusted the estimates obtained based on the transactional sex survey question to match FSW population size estimates obtained using an alternative method, which I describe below.
+The estimates of the non-regular or multiple sexual partner(s) population size were changed to facilitate changing of the FSW population size.
+This approach retained subnational variation informed by the transactional sex survey question.
 
-\textcite{stevens2022estimating} used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
-I disaggregated these estimates by age as follows.
+I used the estimates adult (15-49) FSW population size by country from a Bayesian meta-analysis of key population specific data sources \autocite{stevens2022estimating}.
+To disaggregate these estimates by age, I took the following steps.
 First, I calculated the total sexually debuted population in each age group, by country.
 To describe the distribution of age at first sex, I used skew logistic distributions \autocite{nguyen2022trends} with cumulative distribution function given by
 \begin{equation}
@@ -1932,7 +1978,8 @@ That is to say, the proportion of the PIT values which were greater than 0.95 wa
 \subsubsection{Estimates}\label{estimates}}
 
 Figure \ref{fig:aaa-variance-proportions} and Figure \ref{fig:3p1-within-between-country-variation} show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.
-In subsequent results, all estimates refer to this year, unless otherwise indicated.
+I focused on the most recent estimates because they are the most relevant to inform ongoing HIV policy.
+In subsequent results, all estimates refer to 2018, unless otherwise indicated.
 
 
 
@@ -1942,7 +1989,7 @@ In subsequent results, all estimates refer to this year, unless otherwise indica
 
 }
 
-\caption{The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis.}\label{fig:3p1-continental-map}
+\caption{The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group.}\label{fig:3p1-continental-map}
 \end{figure}
 
 
@@ -1953,10 +2000,10 @@ In subsequent results, all estimates refer to this year, unless otherwise indica
 
 }
 
-\caption{National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows).}\label{fig:3p1-within-between-country-variation}
+\caption{National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows). Though the information presented is similar to that of Figure \ref{fig:3p1-continental-map}, this figure presents a clear view of within- and between-country variation in risk group proportions.}\label{fig:3p1-within-between-country-variation}
 \end{figure}
 
-The median national FSW proportion was 1.1\% (95\% CI 0.4--1.9) for the 15-19 age group, 1.6\% (95\% CI 0.6--2.8) for the 20-24 age group and 1.9\% (95\% CI 0.5--3.5) for the 25-29 age group.
+The median national FSW proportion was 1.1\% (95\% CI 0.4--1.9) for the 15-19 age group, 1.6\% (95\% CI 0.6--2.8) for the 20-24 age group and 1.9\% (95\% CI 0.5--3.5) for the 25-29 age group, in line with the results displayed in Figure \ref{fig:age-disagg-fsw-line}.
 
 
 
@@ -1972,7 +2019,8 @@ The median national FSW proportion was 1.1\% (95\% CI 0.4--1.9) for the 15-19 ag
 In the 20-24 and 25-29 year age groups, the majority of women were either cohabiting or had non-regular or multiple partner(s).
 Countries in eastern and central Africa (Cameroon, Kenya, Malawi, Mozambique, Tanzania, Uganda, Zambia and Zimbabwe) had a higher proportion of women in these age groups cohabiting (63.1\% {[}95\% CI 35--78.7\%{]} compared with 21.3\% {[}95\% CI 10.1--48.8\%{]} with non-regular partner{[}s{]}).
 In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia and South Africa) had a higher proportion with non-regular or multiple partner(s) (58.9\% {[}95\% CI 43.2--70.5\%{]}, compared with 23.4\% {[}95\% CI 9.7--39.1\%{]} cohabiting).
-This clear geographic delineation passes along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia (Figure \ref{fig:3p1-continental-map}).
+This finding is the most notable feature of between-country variation shown in Figure \ref{fig:3p1-within-between-country-variation}.
+Figure \ref{fig:3p1-continental-map} shows the geographic delineation to pass along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia.
 
 In most districts (57.9\%; 95\% credible interval {[}CI{]} 27.7--79.7) adolescent girls aged 15-19 were not sexually active.
 The exception was Mozambique, where the majority (64.23\%) were sexually active in the past year and close to a third (34.17\%) were cohabiting with a partner.

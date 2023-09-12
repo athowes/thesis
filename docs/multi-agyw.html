@@ -174,8 +174,9 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="5.3.1" data-path="multi-agyw.html"><a href="multi-agyw.html#st-multinomial"><i class="fa fa-check"></i><b>5.3.1</b> Spatio-temporal multinomial logistic regression</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#s-logistic"><i class="fa fa-check"></i><b>5.3.2</b> Spatial logistic regression</a></li>
-<li class="chapter" data-level="5.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Female sex worker population size adjustment</a></li>
-<li class="chapter" data-level="5.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#results"><i class="fa fa-check"></i><b>5.3.4</b> Results</a></li>
+<li class="chapter" data-level="5.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#model-combination"><i class="fa fa-check"></i><b>5.3.3</b> Model combination</a></li>
+<li class="chapter" data-level="5.3.4" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>5.3.4</b> Female sex worker population size adjustment</a></li>
+<li class="chapter" data-level="5.3.5" data-path="multi-agyw.html"><a href="multi-agyw.html#results"><i class="fa fa-check"></i><b>5.3.5</b> Results</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
 <ul>
@@ -426,7 +427,8 @@ where the number in risk group <span class="math inline">\(k\)</span> is <span c
 This model is not an LGM because each observation <span class="math inline">\(y_{itak}\)</span> for <span class="math inline">\(k \in \{1, 2, 3^{+}\}\)</span> depends on multiple structured additive predictors <span class="math inline">\(\{\eta_{itak}, k = 1, 2, 3^{+}\}\)</span>.</p>
 <p>To recast this model as an LGM, I used the multinomial-Poisson transformation.
 This modification allowed inference to be performed using the INLA <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> algorithm via the <code>R-INLA</code> package <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span>.
-INLA is likely to be the most accurate inference method available because the model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be intractable in reasonable time.</p>
+The model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be tractable in reasonable time.
+Inferences from INLA in the LGM setting are accurate and substantially faster than MCMC.</p>
 </div>
 <div id="the-multinomial-poisson-transformation" class="section level4 hasAnchor" number="5.3.1.2">
 <h4><span class="header-section-number">5.3.1.2</span> The multinomial-Poisson transformation<a href="multi-agyw.html#the-multinomial-poisson-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -530,7 +532,7 @@ Heterogeneity in risk group proportions by age was allowed by including age-coun
 I considered several specifications for the remaining spatial and temporal effects.</p>
 <div id="spatial-random-effects" class="section level5 hasAnchor" number="5.3.1.3.1">
 <h5><span class="header-section-number">5.3.1.3.1</span> Spatial random effects<a href="multi-agyw.html#spatial-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>For the space-category <span class="math inline">\(u_{ik}\)</span> random effects I considered two specifications:</p>
+<p>For the space-category random effects <span class="math inline">\(u_{ik}\)</span> I considered two specifications:</p>
 <ol style="list-style-type: decimal">
 <li>Independent and identically distributed (IID) <span class="math inline">\(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\)</span>,</li>
 <li>Besag <span class="citation">(<a href="#ref-besag1991bayesian">Besag, York, and Mollié 1991</a>)</span> grouped by category
@@ -539,7 +541,8 @@ I considered several specifications for the remaining spatial and temporal effec
 \]</span>
 The scaled structure matrix <span class="math inline">\(\mathbf{R}^\star_u = \mathbf{R}^\star_b \otimes \mathbf{I}\)</span> is given by the Kronecker product of the scaled Besag structure matrix <span class="math inline">\(\mathbf{R}^\star_b\)</span> and the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, and <span class="math inline">\({-}\)</span> denotes the generalised matrix inverse.
 I followed best practices for the Besag model as described in Chapter <a href="beyond-borders.html#beyond-borders">4</a>.
-To implement the Kronecker product I used the <code>group</code> option in <code>R-INLA</code> <span class="citation">(<a href="#ref-riebler2011kronecker">Riebler 2011</a>)</span>.</li>
+To implement the Kronecker product I used the <code>group</code> option in <code>R-INLA</code> [Section 3.5.5; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>] setting the random effect to be <code>f(area_idx, model = "besag", group = cat_idx, control.group = list(model = "iid"), ...)</code>.
+Though the Kronecker product is symmetric, performance is better in <code>R-INLA</code> when the more complicated effect is written as the first variable rather than the grouping variable.</li>
 </ol>
 <p>In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
 I also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> in place of the Besag.
@@ -548,7 +551,7 @@ For simplicity and to avoid numerical issues, by using Besag random effects I ef
 </div>
 <div id="temporal-random-effects" class="section level5 hasAnchor" number="5.3.1.3.2">
 <h5><span class="header-section-number">5.3.1.3.2</span> Temporal random effects<a href="multi-agyw.html#temporal-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>For the year-category <span class="math inline">\(\gamma_{tk}\)</span> random effects I considered two specifications:</p>
+<p>For the time-category random effects <span class="math inline">\(\gamma_{tk}\)</span> I considered two specifications:</p>
 <ol style="list-style-type: decimal">
 <li>IID <span class="math inline">\(\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})\)</span>,</li>
 <li>First order autoregressive (AR1) grouped by category
@@ -562,20 +565,34 @@ r_1 &amp;\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
 r_t &amp;= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T,
 \end{align}\]</span>
 where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, 1)\)</span> and <span class="math inline">\(|\rho| &lt; 1\)</span>.
-As with the structured spatial random effects, I implemented this Kronecker product using the <code>group</code> option.</li>
+As with the structured spatial random effects, I implemented this Kronecker product using the <code>group</code> option via <code>f(year_idx, model = "ar1", group = cat_idx, control.group = list(model = "iid"), ...)</code>.
+Again the more complicated variable was written first.</li>
 </ol>
 </div>
 <div id="a-note-on-spatio-temporal-interaction-random-effects" class="section level5 hasAnchor" number="5.3.1.3.3">
 <h5><span class="header-section-number">5.3.1.3.3</span> A note on spatio-temporal interaction random effects<a href="multi-agyw.html#a-note-on-spatio-temporal-interaction-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>I wanted to, and did all four.
-This was quite difficult because it required space-time-category interactions.
-Building this type of model within formual interface software is challenging.
-They ran OK for one country but not for all 13 jointly.
-They don’t matter much here because there is limited temporal trend.</p>
+<p>I also considered including separable space-time-category random effects <span class="math inline">\(\delta_{itk}\)</span> in the model, using the specification
+<span class="math display">\[\begin{equation}
+    \boldsymbol{\mathbf{\delta}} = (\delta_{111}, \ldots, \delta_{nT3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_\delta \mathbf{R}^\star_\delta)^{-}),
+\end{equation}\]</span>
+where <span class="math inline">\(\mathbf{R}^\star_\delta\)</span> is a Kronecker product of the relevant space, time and category structure matrices.
+These specifications were:</p>
+<ol style="list-style-type: decimal">
+<li>IID spatial and IID temporal (Type I) <span class="math inline">\(\mathbf{R}^\star_\delta = \mathbf{I} \otimes \mathbf{I} \otimes \mathbf{I}\)</span>,</li>
+<li>Besag spatial and IID temporal (Type II) <span class="math inline">\(\mathbf{R}^\star_\delta = \mathbf{R}^\star_b \otimes \mathbf{I} \otimes \mathbf{I}\)</span>,</li>
+<li>IID spatial and AR1 temporal (Type III) <span class="math inline">\(\mathbf{R}^\star_\delta = \mathbf{I} \otimes \mathbf{R}^\star_a \otimes \mathbf{I}\)</span>,</li>
+<li>Besag spatial and AR1 (Type IV) <span class="math inline">\(\mathbf{R}^\star_\delta = \mathbf{R}^\star_b \otimes \mathbf{R}^\star_a \otimes \mathbf{I}\)</span>,</li>
+</ol>
+<p>where the first, second and third elements of the Kronecker product represent space, time and category (always IID) structure matrices respectively.
+The interaction type in brackets (e.g. Type I) is given according to the <span class="citation">Knorr-Held (<a href="#ref-knorr2000bayesian">2000</a>)</span> framework.</p>
+<p>Though three-way Kronecker products are not directly supported in <code>R-INLA</code>, I implemented each specification using a combination of the <code>group</code> and <code>replicate</code> options [Section 6.5.2; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>].
+For example, for the Type IV effects the random effects were specified by <code>f(area_idx_copy, model = "besag", group = year_idx, replicate = cat_idx, control.group = list(model = "ar1"))</code>.
+I was able to run these models for single countries, keeping only years at which surveys occurred in those countries.
+However, when fitting all countries jointly I found inclusion of the space-time-category random effects to be intractable, and as such decided not to include them in the model.</p>
 </div>
 <div id="prior-distributions" class="section level5 hasAnchor" number="5.3.1.3.4">
 <h5><span class="header-section-number">5.3.1.3.4</span> Prior distributions<a href="multi-agyw.html#prior-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>All random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma\}\)</span> were given independent penalised complexity (PC) prior distributions <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> with base model <span class="math inline">\(\sigma = 0\)</span> given by
+<p>All random effect precision parameters <span class="math inline">\(\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma, \tau_\delta\}\)</span> were given independent penalised complexity (PC) prior distributions <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>)</span> with base model <span class="math inline">\(\sigma = 0\)</span> given by
 <span class="math display">\[\begin{equation}
 p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)
 \end{equation}\]</span>
@@ -586,10 +603,15 @@ I chose the base model <span class="math inline">\(\rho = 1\)</span> correspondi
 </div>
 <div id="constraints" class="section level4 hasAnchor" number="5.3.1.4">
 <h4><span class="header-section-number">5.3.1.4</span> Constraints<a href="multi-agyw.html#constraints" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints such that none of the category interaction random effects altered overall category probabilities.
-For the space-year-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and year-category random effects (Table <a href="multi-agyw.html#tab:constraints">5.3</a>).</p>
+<p>To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints (Table <a href="multi-agyw.html#tab:constraints">5.3</a>) such that none of the category interaction random effects altered overall category probabilities.
+In testing of the space-time-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and time-category random effects.
+In some cases it was not possible to implement all three sets of constraints for the three-way interactions in <code>R-INLA</code>.</p>
 <table>
 <caption><span id="tab:constraints">Table 5.3: </span> Applying sum-to-zero constraints to interaction effects ensures that the main effect is not interfered with.</caption>
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>Random effects</th>
@@ -617,6 +639,10 @@ For the space-year-category random effects, I applied analogous sum-to-zero cons
 <td>Temporal</td>
 <td><span class="math inline">\(\sum_t \gamma_{tk} = 0, \, \forall \, k\)</span></td>
 </tr>
+<tr class="even">
+<td>Spatio-temporal</td>
+<td><span class="math inline">\(\sum_i \delta_{itk} = 0, \, \forall \, t, k; \sum_t \delta_{itk} = 0, \, \forall \, i, k; \sum_k \delta_{itk} = 0, \, \forall \, i, t\)</span></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -635,7 +661,8 @@ This working likelihood is implemented by <code>family = "xPoisson"</code> in <c
 <h4><span class="header-section-number">5.3.1.6</span> Model selection<a href="multi-agyw.html#model-selection" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion <span class="citation">(<a href="#ref-pettit1990conditional">Pettit 1990</a>)</span>.
 For reference, I also computed the deviance information criterion (DIC) <span class="citation">(<a href="#ref-spiegelhalter2002bayesian">D. J. Spiegelhalter et al. 2002</a>)</span> and widely applicable information criterion (WAIC) <span class="citation">(<a href="#ref-watanabe2013widely">Watanabe 2013</a>)</span>.
-Each of these criterion are presented in Figure <a href="multi-agyw.html#fig:model-comparison">5.3</a>.</p>
+Each of these criterion can be calculated in <code>R-INLA</code> without requiriing model refitting.
+The results are presented in Figure <a href="multi-agyw.html#fig:model-comparison">5.3</a>.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:model-comparison"></span>
 <img src="resources/multi-agyw/20230627-144735-3da88508/depends/model-comparison.png" alt="For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe." width="95%" />
@@ -790,7 +817,7 @@ This working likelihood is implemented by <code>family = "xBinomial"</code> in <
 All results, including DIC and WAIC, are presented in Table and Figure <a href="multi-agyw.html#fig:fsw-logit-model-comparison">5.4</a>.
 Inclusion of Besag spatial random effects, rather than IID, consistently improved performance.
 Benefits from inclusion of covariates were more marginal.
-As some countries had no suitable surveys, inclusion of covariate information is preferable such that the estimates in these countries are based on some country-specific data.</p>
+As some countries had no suitable surveys, I nonetheless preferred to include covariate information so that estimates in these countries would be based on some country-specific data.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:fsw-logit-model-comparison"></span>
 <img src="resources/multi-agyw/20230627-144735-3da88508/depends/fsw-logit-model-comparison.png" alt="For the logistic regression model, the CPO, DIC, and WAIC each agreed that the model containing Besag spatial random effects and the csfwrecent covariates was best. Inclusion of Besag spatial random effects consistently improved each criterion, whereas improvements from inclusion of any covariates were marginal." width="95%" />
@@ -852,12 +879,19 @@ Figure 5.4: For the logistic regression model, the CPO, DIC, and WAIC each agree
 </table>
 </div>
 </div>
-<div id="female-sex-worker-population-size-adjustment" class="section level3 hasAnchor" number="5.3.3">
-<h3><span class="header-section-number">5.3.3</span> Female sex worker population size adjustment<a href="multi-agyw.html#female-sex-worker-population-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="model-combination" class="section level3 hasAnchor" number="5.3.3">
+<h3><span class="header-section-number">5.3.3</span> Model combination<a href="multi-agyw.html#model-combination" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>How were the models combined?
+Using samples.</p>
+</div>
+<div id="female-sex-worker-population-size-adjustment" class="section level3 hasAnchor" number="5.3.4">
+<h3><span class="header-section-number">5.3.4</span> Female sex worker population size adjustment<a href="multi-agyw.html#female-sex-worker-population-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Having had sex “in return for gifts, cash or anything else in the past 12 months” is not considered sufficient to constitute sex work.
-As such, I adjusted the estimates obtained based on the transactional sex survey question to match alternative FSW population size estimates.</p>
-<p><span class="citation">Stevens, Sabin, Arias Garcia, et al. (<a href="#ref-stevens2022estimating">2022</a>)</span> used a Bayesian meta-analysis of key population specific data sources to estimate adult (15-49) FSW population size by country.
-I disaggregated these estimates by age as follows.
+As such, I adjusted the estimates obtained based on the transactional sex survey question to match FSW population size estimates obtained using an alternative method, which I describe below.
+The estimates of the non-regular or multiple sexual partner(s) population size were changed to facilitate changing of the FSW population size.
+This approach retained subnational variation informed by the transactional sex survey question.</p>
+<p>I used the estimates adult (15-49) FSW population size by country from a Bayesian meta-analysis of key population specific data sources <span class="citation">(<a href="#ref-stevens2022estimating">Stevens, Sabin, Arias Garcia, et al. 2022</a>)</span>.
+To disaggregate these estimates by age, I took the following steps.
 First, I calculated the total sexually debuted population in each age group, by country.
 To describe the distribution of age at first sex, I used skew logistic distributions <span class="citation">(<a href="#ref-nguyen2022trends">Nguyen and Eaton 2022</a>)</span> with cumulative distribution function given by
 <span class="math display">\[\begin{equation}
@@ -875,10 +909,10 @@ Figure 5.5: The disaggregation procedure I used produces an age distribution for
 </p>
 </div>
 </div>
-<div id="results" class="section level3 hasAnchor" number="5.3.4">
-<h3><span class="header-section-number">5.3.4</span> Results<a href="multi-agyw.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="coverage-assessment" class="section level4 hasAnchor" number="5.3.4.1">
-<h4><span class="header-section-number">5.3.4.1</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="results" class="section level3 hasAnchor" number="5.3.5">
+<h3><span class="header-section-number">5.3.5</span> Results<a href="multi-agyw.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-assessment" class="section level4 hasAnchor" number="5.3.5.1">
+<h4><span class="header-section-number">5.3.5.1</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>To assess the calibration of the fitted model, I calculated the quantile <span class="math inline">\(q\)</span> of each observation within the posterior predictive distribution.
 For calibrated models, these quantiles, known as probability integral transform (PIT) values <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>; <a href="#ref-bosse2022scoringutils">Bosse et al. 2022</a>)</span>, should follow a uniform distribution <span class="math inline">\(q \sim \mathcal{U}[0, 1]\)</span>.
 To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
@@ -896,25 +930,26 @@ Figure 5.6: Probability integral transform (PIT) histograms (top row) and empiri
 </p>
 </div>
 </div>
-<div id="estimates" class="section level4 hasAnchor" number="5.3.4.2">
-<h4><span class="header-section-number">5.3.4.2</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="estimates" class="section level4 hasAnchor" number="5.3.5.2">
+<h4><span class="header-section-number">5.3.5.2</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Figure <a href="multi-agyw.html#fig:aaa-variance-proportions">5.10</a> and Figure <a href="multi-agyw.html#fig:3p1-within-between-country-variation">5.8</a> show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.
-In subsequent results, all estimates refer to this year, unless otherwise indicated.</p>
+I focused on the most recent estimates because they are the most relevant to inform ongoing HIV policy.
+In subsequent results, all estimates refer to 2018, unless otherwise indicated.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-continental-map"></span>
-<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-continental-map.png" alt="The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis." width="95%" />
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-continental-map.png" alt="The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group." width="95%" />
 <p class="caption">
-Figure 5.7: The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis.
+Figure 5.7: The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group.
 </p>
 </div>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-within-between-country-variation"></span>
-<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-within-between-country-variation.png" alt="National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows)." width="95%" />
+<img src="resources/multi-agyw/20230627-144735-3da88508/depends/3p1-within-between-country-variation.png" alt="National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows). Though the information presented is similar to that of Figure 5.7, this figure presents a clear view of within- and between-country variation in risk group proportions." width="95%" />
 <p class="caption">
-Figure 5.8: National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows).
+Figure 5.8: National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows). Though the information presented is similar to that of Figure <a href="multi-agyw.html#fig:3p1-continental-map">5.7</a>, this figure presents a clear view of within- and between-country variation in risk group proportions.
 </p>
 </div>
-<p>The median national FSW proportion was 1.1% (95% CI 0.4–1.9) for the 15-19 age group, 1.6% (95% CI 0.6–2.8) for the 20-24 age group and 1.9% (95% CI 0.5–3.5) for the 25-29 age group.</p>
+<p>The median national FSW proportion was 1.1% (95% CI 0.4–1.9) for the 15-19 age group, 1.6% (95% CI 0.6–2.8) for the 20-24 age group and 1.9% (95% CI 0.5–3.5) for the 25-29 age group, in line with the results displayed in Figure <a href="multi-agyw.html#fig:age-disagg-fsw-line">5.5</a>.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:age-variation"></span>
 <img src="resources/multi-agyw/20230627-144735-3da88508/depends/age-variation.png" alt="Figure caption." width="95%" />
@@ -925,12 +960,13 @@ Figure 5.9: Figure caption.
 <p>In the 20-24 and 25-29 year age groups, the majority of women were either cohabiting or had non-regular or multiple partner(s).
 Countries in eastern and central Africa (Cameroon, Kenya, Malawi, Mozambique, Tanzania, Uganda, Zambia and Zimbabwe) had a higher proportion of women in these age groups cohabiting (63.1% [95% CI 35–78.7%] compared with 21.3% [95% CI 10.1–48.8%] with non-regular partner[s]).
 In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia and South Africa) had a higher proportion with non-regular or multiple partner(s) (58.9% [95% CI 43.2–70.5%], compared with 23.4% [95% CI 9.7–39.1%] cohabiting).
-This clear geographic delineation passes along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia (Figure <a href="multi-agyw.html#fig:3p1-continental-map">5.7</a>).</p>
+This finding is the most notable feature of between-country variation shown in Figure <a href="multi-agyw.html#fig:3p1-within-between-country-variation">5.8</a>.
+Figure <a href="multi-agyw.html#fig:3p1-continental-map">5.7</a> shows the geographic delineation to pass along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia.</p>
 <p>In most districts (57.9%; 95% credible interval [CI] 27.7–79.7) adolescent girls aged 15-19 were not sexually active.
 The exception was Mozambique, where the majority (64.23%) were sexually active in the past year and close to a third (34.17%) were cohabiting with a partner.</p>
 </div>
-<div id="variance-decomposition" class="section level4 hasAnchor" number="5.3.4.3">
-<h4><span class="header-section-number">5.3.4.3</span> Variance decomposition<a href="multi-agyw.html#variance-decomposition" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="variance-decomposition" class="section level4 hasAnchor" number="5.3.5.3">
+<h4><span class="header-section-number">5.3.5.3</span> Variance decomposition<a href="multi-agyw.html#variance-decomposition" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:aaa-variance-proportions"></span>
 <img src="resources/multi-agyw/20230627-144735-3da88508/depends/aaa-variance-proportions.png" alt="Figure caption." width="95%" />
@@ -994,7 +1030,7 @@ Reaching half of all expected new infections required reaching 19.4% of the popu
 The majority of this benefit came from reaching FSW, who were 1.3% of the population but 10.6% of all new infections.</p>
 <!-- Possible TODO: How does this vary by country / region?  Maybe worth calling out result for West Africa vs. East Africa vs. Southern Africa here to highlight the difference. Also how does this compare with other estimates? And what does Oli think about this? I recognize that comparison is not straightforward because age group difference! -->
 <p>Considering each country separately, on average, reaching half of new infections in each country required reaching 14.6% (range 8.7-21.8%) of the population when stratifying by area and age, reducing to 5.1% (range 2.1-13.2%) when behaviour was included.
-The relative importance of stratifying by age, location and behaviour varied between countries, analogous to the varying contribution of each to the total variance (Section <a href="multi-agyw.html#variance-decomposition">5.3.4.3</a>).</p>
+The relative importance of stratifying by age, location and behaviour varied between countries, analogous to the varying contribution of each to the total variance (Section <a href="multi-agyw.html#variance-decomposition">5.3.5.3</a>).</p>
 </div>
 </div>
 <div id="discussion-1" class="section level2 hasAnchor" number="5.5">
@@ -1114,6 +1150,9 @@ Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Don
 <div id="ref-glynn2011assessing" class="csl-entry">
 Glynn, Judith R, Ndoliwe Kayuni, Emmanuel Banda, Fiona Parrott, Sian Floyd, Monica Francis-Chizororo, Misheck Nkhata, et al. 2011. <span>“<span class="nocase">Assessing the validity of sexual behaviour reports in a whole population survey in rural Malawi</span>.”</span> <em><span>PLoS One</span></em> 6 (7): e22840.
 </div>
+<div id="ref-gomez2020bayesian" class="csl-entry">
+Gómez-Rubio, Virgilio. 2020. <em>Bayesian Inference with INLA</em>. CRC Press.
+</div>
 <div id="ref-helleringer2011reliability" class="csl-entry">
 Helleringer, Stéphane, Hans-Peter Kohler, Linda Kalilani-Phiri, James Mkandawire, and Benjamin Armbruster. 2011. <span>“The Reliability of Sexual Partnership Histories: Implications for the Measurement of Partnership Concurrency During Surveys.”</span> <em>AIDS (London, England)</em> 25 (4): 503.
 </div>
@@ -1129,6 +1168,9 @@ Jia, Katherine M, Hallie Eilerts, Olanrewaju Edun, Kevin Lam, Adam Howes, Matthe
 <div id="ref-johnson2020thembisa" class="csl-entry">
 Johnson, L, and RE Dorrington. 2020. <span>“<span class="nocase">Thembisa version 4.3: A model for evaluating the impact of HIV/AIDS in South Africa</span>.”</span> <em>View Article</em>.
 </div>
+<div id="ref-knorr2000bayesian" class="csl-entry">
+Knorr-Held, Leonhard. 2000. <span>“Bayesian Modelling of Inseparable Space-Time Variation in Disease Risk.”</span> <em>Statistics in Medicine</em> 19 (17-18): 2555–67.
+</div>
 <div id="ref-martins2013bayesian" class="csl-entry">
 Martins, Thiago G, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2013. <span>“<span class="nocase">Bayesian computing with INLA: new features</span>.”</span> <em>Computational Statistics &amp; Data Analysis</em> 67: 68–83.
 </div>
@@ -1143,9 +1185,6 @@ Nnko, Soori, J Ties Boerma, Mark Urassa, Gabriel Mwaluko, and Basia Zaba. 2004. 
 </div>
 <div id="ref-pettit1990conditional" class="csl-entry">
 Pettit, LI. 1990. <span>“The Conditional Predictive Ordinate for the Normal Distribution.”</span> <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 52 (1): 175–84.
-</div>
-<div id="ref-riebler2011kronecker" class="csl-entry">
-Riebler, Andrea. 2011. <span>“Gaussian Kronecker Product Markov Random Fields.”</span>
 </div>
 <div id="ref-rue2009approximate" class="csl-entry">
 Rue, Håvard, Sara Martino, and Nicolas Chopin. 2009. <span>“<span class="nocase">Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations</span>.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (2): 319–92.
