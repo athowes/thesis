@@ -3,7 +3,7 @@
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 124/~200 pages, and many/tending to zero mistakes.
+> 123/~200 pages, and many/~tending to zero mistakes.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -102,9 +102,10 @@ will be of interest to you. The [Global AIDS
 Strategy](https://www.unaids.org/en/Global-AIDS-Strategy-2021-2026) sets
 out goals for prioritisation of prevention programming for adolescent
 girls and young women according to risk behaviour and epidemic setting.
-To enable the strategy, I estimated risk group specific population
-sizes, prevalence and incidences at a district-level. I also used these
-estimates to evaluate the extent to which risk varies by age, behaviour,
-and geographic area. You might also be interested in the analysis in
-[Chapter 6](https://athowes.github.io/thesis/naomi-aghq.html) applying
-the Naomi small-area estimation model to data from Malawi.
+To enable implementation of the strategy, I estimated risk group
+specific population sizes, prevalence and incidences at a
+district-level. I also used these estimates to evaluate the extent to
+which risk varies by age, behaviour, and geographic area. You might also
+be interested in the analysis in [Chapter
+6](https://athowes.github.io/thesis/naomi-aghq.html) applying the Naomi
+small-area estimation model to data from Malawi.

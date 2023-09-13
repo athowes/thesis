@@ -1,0 +1,35 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+\begin{document}
+
+\tikzstyle{question} = [rectangle, draw, text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{category} = [rectangle, draw, text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{outerblock} = [rectangle, draw, text width=11em, text centered, rounded corners, minimum height=22em]
+\tikzstyle{line} = [draw, -latex']
+
+\begin{tikzpicture}[node distance = 2cm, auto]
+    \node[category] at (0, 0) (1) {$k = 1$:\\Not sexually active};
+    \node[category] at (0, -2) (2) {$k = 4$:\\Reporting\\transactional sex};
+    \node[category] at (0, -4) (3) {$k = 2$:\\One cohabiting sexual partner};
+    \node[category] at (0, -6) (4) {$k = 3$:\\Non-regular or multiple sexual partner(s)};
+    % \node[outerblock] at (0, -3) {};
+
+    \node[question] at (-10, 0) (a) {Is the respondent sexually active in the past 12 months?};
+    \node[question] at (-10, -2) (b) {Has the respondent been given gifts or money for sex?};
+    \node[question] at (-5, -4) (c) {Does that partner live in the same household as the respondent?};
+    \node[question] at (-10, -4) (d) {Number of partners of the respondent of the past 12 months?};
+
+    \path[line] (a) -- node {No}(1);
+    \path[line] (a) -- node {Yes}(b);
+    \path[line] (b) -- node {Yes}(2);
+    \path[line] (b) -- node {No}(d);
+    \path[line] (c) -- node {Yes}(3);
+    \path[line] (d) -- node {$1$}(c);
+    \path[line] (d) |- node[near start] {$>1$}(4);
+    \path[line] (c) |- node[near start] {No}(4);
+\end{tikzpicture}
+
+\end{document}

@@ -875,8 +875,25 @@ Those of the same sex are more likely to be similar, as are those of similar age
 \hypertarget{hierarchical-lgm-elgm}{%
 \section{Model structure}\label{hierarchical-lgm-elgm}}
 
-We have seen that in spatio-temporal statistics, observations have structure.
-Each observation should not necessarily be considered as arising from the same distribution as another.
+We have seen that in spatio-temporal statistics, observations are related to each other, and should not all be considered as IID.
+In this section, I will discuss ways in which these relationships can be encoded mathematically via the model structure.
+
+\hypertarget{linear-model}{%
+\subsection{Linear model}\label{linear-model}}
+
+A linear model is given by
+\begin{align*}
+y_i &\sim \mathcal{N}(\mu_i, \sigma), \\
+\mu_i &= \beta_0 + \sum_{l = 1}^{p} \beta_j z_{ji}, \\
+\{\beta_j\} &\sim p(\{\beta_j\}), \\
+\sigma &\sim p(\sigma).
+\end{align*}
+
+\hypertarget{generalised-linear-model}{%
+\subsection{Generalised linear model}\label{generalised-linear-model}}
+
+A generalised linear model (GLM) is given by.
+Things can then be removed from LGM, ELGM which are introduced here.
 
 \hypertarget{hierarchical}{%
 \subsection{Hierarchical models}\label{hierarchical}}
@@ -892,31 +909,19 @@ Each observation should not necessarily be considered as arising from the same d
 \caption{A simple example of group structure within data in which each individual \(i = 1, \ldots, n\) is associated to \(m_i\) observations \(y_{i1}, \ldots, y_{im_i}\).}\label{fig:hierarchical-structure}
 \end{figure}
 
-Some observations in data are natural to group together.
-For example, each individual \(i = 1, \ldots, n\) in a study might be observed \(m_i\) times (Figure \ref{fig:hierarchical-structure}).
-Observations \(y_{i1}, \ldots y_{im_i}\) of the same individual are grouped together.
-These observations are more likely to be similar than observations of different individuals.
-We might also group observations by spatio-temporal location.
+Group structure is a simple, binary way in which observations are related.
+Figure \ref{fig:hierarchical-structure} illustrates a case in which each individual in a study is observed some number of times, and observations of the same individual are grouped together.
+Observations from the same indivudal are more likely to be similar than observations of different individuals.
+Groups can also be nested within other groups, as well as crossed with each other.
 
-Bayesian hierarchical or multilevel models allow for natural handling of group structure in data, even for complex nested or crossed structures.
-In a three-stage hierarchical model, we partition the parameters so that \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\).
-I refer to \(\mathbf{x} = (x_1, \ldots, x_n)\) as the latent field, and \(\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)\) as the hyperparameters.
-The model for data \(\mathbf{y}\) is then
-\begin{align}
-\mathbf{y} &\sim p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
-\mathbf{x} &\sim p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}), \\
-\boldsymbol{\mathbf{\theta}} &\sim p(\boldsymbol{\mathbf{\theta}}),
-\end{align}
-with posterior distribution proportional to \(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\).
-
-Bayesian hierarchical models allow control over whether and how information is shared across groups.
+Consider three models for this data, each of which with a Gaussian likelihood:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
   \textbf{Complete pooling}:
-  In the complete pooling model, group structure is ignored and all \(\sum_{i = 1}^n m_i\) observations are treated as IID
+  In the complete pooling model, group structure is ignored and all observations are treated as IID
   \begin{align}
   y_{ij} \sim \mathcal{N}(\mu, \sigma), \\
   (\mu, \sigma) \sim p(\mu, \sigma).
@@ -939,10 +944,23 @@ Bayesian hierarchical models allow control over whether and how information is s
   \sigma &\sim p(\sigma),
   \end{align}
   where the vector \(\mathbf{u} = (u_1, \ldots, u_n)\).
+  The parameter \(\beta\) applies to all groups, and each group is differentiated by a specific value of \(u_i\).
+  When inference is performed for the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed at the outset, as with the complete or no pooling models.
 \end{enumerate}
 
-\hypertarget{mixed-effects-models}{%
-\subsection{Mixed effects models}\label{mixed-effects-models}}
+Bayesian hierarchical or multilevel models allow control over whether and how information is shared across groups.
+In a three-stage hierarchical model, the parameters are partitioned such that \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\).
+The model for data \(\mathbf{y}\) is then
+\begin{align}
+\mathbf{y} &\sim p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
+\mathbf{x} &\sim p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}), \\
+\boldsymbol{\mathbf{\theta}} &\sim p(\boldsymbol{\mathbf{\theta}}),
+\end{align}
+with posterior distribution proportional to \(p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})\).
+I refer to \(\mathbf{x} = (x_1, \ldots, x_n)\) as the latent field, and \(\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)\) as the hyperparameters.
+
+\hypertarget{generalised-linear-mixed-effects-model}{%
+\subsection{Generalised linear mixed effects model}\label{generalised-linear-mixed-effects-model}}
 
 Fixed effects refer to those elements of the latent field which are constant across groups.
 Random effects refer to those elements of the latent field which vary across groups.
@@ -958,10 +976,10 @@ Random effects can also be structured to share information between some groups m
 In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
 Spatial random effects are the subject of Chapter \ref{beyond-borders}.
 
-Give equation for a generalised linear mixed model (GLMM) here (may want to introduce GLMs first).
+Give equation for a generalised linear mixed model (GLMM) here.
 
-\hypertarget{latent-gaussian-models}{%
-\subsection{Latent Gaussian models}\label{latent-gaussian-models}}
+\hypertarget{latent-gaussian-model}{%
+\subsection{Latent Gaussian model}\label{latent-gaussian-model}}
 
 Latent Gaussian models {[}LGMs; \textcite{rue2009approximate}{]} are a class of three-stage Bayesian hierarchical models in which the middle layer is Gaussian.
 To be more precise, in an LGM, the likelihood is given by
@@ -977,8 +995,8 @@ The structured additive predictor \(\eta_i\) may include an intercept \(\beta_0\
 The parameters \(\beta_0\), \(\{\beta_j\}\), \(\{u_k(\cdot)\}\) are each assigned Gaussian prior distributions, and can be collected into a vector \(\mathbf{x} \in \mathbb{R}^N\) such that \(\mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1})\) where \(\boldsymbol{\mathbf{\theta}}_2 \in \mathbb{R}^{s_2}\) are further hyperparameters, again with \(s_2\) assumed small.
 Let \(\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbol{\mathbf{\theta}}_2) \in \mathbb{R}^m\) with \(m = s_1 + s_2\) be all hyperparameters, with prior distribution \(p(\boldsymbol{\mathbf{\theta}})\).
 
-\hypertarget{extended-latent-gaussian-models}{%
-\subsection{Extended latent Gaussian models}\label{extended-latent-gaussian-models}}
+\hypertarget{extended-latent-gaussian-model}{%
+\subsection{Extended latent Gaussian model}\label{extended-latent-gaussian-model}}
 
 Extended latent Gaussian models {[}ELGMs; \textcite{stringer2021fast}{]} facilitate modelling of data with greater non-linearities than an LGM.
 In an ELGM, the structured additive predictor is redefined as \(\boldsymbol{\mathbf{\eta}} = (\eta_1, \ldots \eta_{N_n})\), where \(N_n \in \mathbb{N}\) is a function of \(n\), and it is possible that \(N_n \neq n\).
@@ -1310,8 +1328,8 @@ In this chapter I describe an application of Bayesian spatio-temporal statistics
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
 The model and results for 13 countries are presented in \textcite{howes2023spatio}.
-Kathryn has also used the estimates to create a spreadsheet tool (\href{\%60https://hivtools.unaids.org/pse/\%60}{\texttt{https://hivtools.unaids.org/pse/}}) for use in national HIV response planning.
-The tool continues to be updated with inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
+Kathryn has also created a spreadsheet tool using the estimates (\href{\%60https://hivtools.unaids.org/pse/\%60}{\texttt{https://hivtools.unaids.org/pse/}}) for use in national HIV response planning.
+The tool is being updated by inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{https://github.com/athowes/multi-agyw}}.
 
 \hypertarget{background-2}{%
@@ -1319,12 +1337,13 @@ Code for the analysis in this chapter is available from \href{https://github.com
 
 In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
-HIV incidence for AGYW is 2.4 times higher than for similarly aged males.
-The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, younger age at first sex, and increased susceptibility to HIV infection.
-On this basis, AGYW have been identified as a priority population for HIV prevention services, and significant investments, such as the DREAMS partnership \autocite{saul2018dreams}, have been made in prevention programming \autocite{global2018measurement}.
+HIV incidence for AGYW is 2.4 times higher than for similarly aged (15-29) males.
+The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, a younger age at first sex, and increased susceptibility to HIV infection.
+On this basis, AGYW have been identified as a priority population for HIV prevention services.
+Significant investments, such as the DREAMS partnership \autocite{saul2018dreams} and by the GFATM \autocite{global2018measurement}, have been made to support prevention programming.
 
-The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021.
-It proposed stratifying HIV prevention packages to AGYW based on
+The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021, and ``outlines the strategic priorities and actions to be implemented by global, regional, country and community partners to get on-track to ending AIDS''.
+It proposed stratifying HIV prevention packages to AGYW based on two factors
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1349,7 +1368,7 @@ Implementation of the strategy by national HIV programmes and stakeholders requi
 
 }
 
-\caption{Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.}\label{fig:risk-grid}
+\caption{Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.}\label{fig:risk-grid}
 \end{figure}
 
 \hypertarget{data-1}{%
@@ -1365,7 +1384,7 @@ Implementation of the strategy by national HIV programmes and stakeholders requi
 \caption{\label{tab:risk-groups} HIV risk groups and HIV incidence rate ratios relative to AGYW with one cohabiting sexual partner.
 The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of longitudinal data by \textcite{slaymaker2020croi}.
 Among FSW, the incidence rate ratio (25.0, 13.0, 9.0, 6.0, 3.0) depended on the level of HIV incidence among the general population (\textless0.1\%, 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, \textgreater3.0\%), such that higher local HIV incidence in the general population corresponded to a lower incidence rate ratio for FSW.
-These estimates were derived by UNAIDS based on patterns of relative HIV prevalence among FSW compared to general population prevalence.}\tabularnewline
+Estimates of HIV incidence rate ratios for FSW were derived by UNAIDS based on patterns of relative HIV prevalence among FSW compared to general population prevalence.}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Risk group
@@ -1402,34 +1421,35 @@ Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 
 
 }
 
-\caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type (AIDS Indicator Surveys {[}AIS{]}, Demographic and Health Surveys {[}DHS{]}, the Botswana AIDS Impact Survey 2013 {[}BAIS{]}, and Population-based HIV Impact Assessment {[}PHIA{]} surveys), sample size, and whether the survey included a specific question about transactional sex.}\label{fig:available-surveys}
+\caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.}\label{fig:available-surveys}
 \end{figure}
 
-I used household survey data from 13 countries identified by the GFATM as priority countries for implementation of AGYW HIV prevention.
+I used household survey data from 13 countries identified by the GFATM \autocite{global2018measurement} as priority countries for implementation of AGYW HIV prevention.
 These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
-Surveys conducted in these countries between 1999 and 2018 in which both women were interviewed about their sexual behaviour and sufficient geographic information was available to locate survey clusters to health districts were included.
+Surveys conducted in these countries between 1999 and 2018 were included in which both women were interviewed about their sexual behaviour, and sufficient geographic information was available to locate survey clusters to health districts.
 There were 46 suitable surveys (Figure \ref{fig:available-surveys}), with a total sample size of 274,970 women aged 15-29 years.
 Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
 The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
 
-For each survey, respondents were classified into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months.
-These risk groups were:
+For each survey, I classified respondents into one of four behavioural risk groups \(k = 1, 2, 3, 4\) according to reported sexual risk behaviour in the past 12 months (Figure \ref{fig:category-flowchart}).
+In decreasing order of HIV acquisition risk, these risk groups were:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Not sexually active
+  \(k = 1\): Not sexually active
 \item
-  One cohabiting sexual partner
+  \(k = 2\): One cohabiting sexual partner
 \item
-  Non-regular or multiple sexual partner(s), and
+  \(k = 3\): Non-regular or multiple sexual partner(s), and
 \item
-  Reporting transactional sex.
+  \(k = 4\): Reporting transactional sex.
 \end{enumerate}
 
 The HIV incidence rate ratio was assumed to vary by risk group (Table \ref{tab:risk-groups}).
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
+
 Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
@@ -1443,6 +1463,17 @@ This incomparability made it inappropriate to include surveys without a specific
 Of the total 46 surveys included in the analysis, 12 had a specific transactional sex question, with a total sample size of 62,853 (28,753 aged 15-19 years, 26,324 aged 20-24 years, and 7,776 aged 25-29 years.
 The sample size for women aged 25-29 is smaller beccause there were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
 
+
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.95\linewidth]{figures/multi-agyw/category-flowchart} 
+
+}
+
+\caption{Flowchart giving classification of survey respondents to HIV risk groups.}\label{fig:category-flowchart}
+\end{figure}
+
 \hypertarget{other-data}{%
 \subsection{Other data}\label{other-data}}
 
@@ -1455,7 +1486,7 @@ Exceptions are Cameroon and Kenya, where I conducted analyses one level higher a
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
 
 Owing to incomparability across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
-Let the four risk groups be indexed by \(k \in \{1, 2, 3, 4\}\), and denote being in either the third or fourth risk group as \(k = 3^{+}\).
+Denote being in either the third or fourth risk group as \(k = 3^{+}\).
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model to estimate the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
 Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
 
@@ -2932,17 +2963,6 @@ Variable(s) & Description \\
 \end{tabularx}
 \caption{The survey questions included in Population-Based HIV Impact Assessment (PHIA) surveys.}
 \end{table}
-
-
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.95\linewidth]{resources/multi-agyw/20230627-144735-3da88508/depends/category-flowchart} 
-
-}
-
-\caption{Flowchart describing allocation of survey respondents to HIV risk groups.}\label{fig:category-flowchart}
-\end{figure}
 
 \hypertarget{fast-approximate-bayesian-inference}{%
 \chapter{Fast approximate Bayesian inference}\label{fast-approximate-bayesian-inference}}
