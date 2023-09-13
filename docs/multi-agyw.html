@@ -380,20 +380,20 @@ There were 46 suitable surveys (Figure <a href="multi-agyw.html#fig:available-su
 Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
 The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.</p>
 <p>For each survey, I classified respondents into one of four behavioural risk groups <span class="math inline">\(k = 1, 2, 3, 4\)</span> according to reported sexual risk behaviour in the past 12 months (Figure <a href="multi-agyw.html#fig:category-flowchart">5.3</a>).
-In decreasing order of HIV acquisition risk, these risk groups were:</p>
-<ol style="list-style-type: decimal">
+In increasing order of HIV acquisition risk, these risk groups were:</p>
+<ul>
 <li><span class="math inline">\(k = 1\)</span>: Not sexually active</li>
 <li><span class="math inline">\(k = 2\)</span>: One cohabiting sexual partner</li>
 <li><span class="math inline">\(k = 3\)</span>: Non-regular or multiple sexual partner(s), and</li>
 <li><span class="math inline">\(k = 4\)</span>: Reporting transactional sex.</li>
-</ol>
-<p>The HIV incidence rate ratio was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>).
-In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.</p>
+</ul>
+<p>The HIV incidence rate ratio <span class="math inline">\(\text{RR}_k\)</span> was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>), with the one cohabiting partner risk group as baseline.</p>
 <p>Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
 Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
-Full survey questions used are provided in Appendix <a href="a-model-for-risk-group-proportions.html#survey-questions">B.4</a>.</p>
+Full survey questions used are provided in Appendix <a href="a-model-for-risk-group-proportions.html#survey-questions">B.4</a>.
+In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.</p>
 <p>Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64% of women reported transactional sex.
 In surveys without such a question, women almost never (0.01%) answered that one of their three most recent partners was a sex work client.
@@ -430,47 +430,48 @@ Let <span class="math inline">\(p_{itak} &gt; 0\)</span> with <span class="math 
 <div id="multinomial-logistic-regression" class="section level4 hasAnchor" number="5.3.1.1">
 <h4><span class="header-section-number">5.3.1.1</span> Multinomial logistic regression<a href="multi-agyw.html#multinomial-logistic-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>A standard multinomial logistic regression model <span class="citation">(e.g. <a href="#ref-gelman2013bayesian">Gelman et al. 2013</a>)</span> is specified by
-<span class="math display">\[\begin{align}
-    \mathbf{y}_{ita} &amp;= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \\
-    \log \left( \frac{p_{itak}}{p_{ita1}} \right) &amp;= \eta_{itak}, \quad k = 2, 3^{+},
+<span class="math display" id="eq:mlr2" id="eq:mlr1">\[\begin{align}
+    \mathbf{y}_{ita} &amp;= (y_{ita1}, \ldots, y_{ita3^{+}})^\top \sim \text{Multinomial}(m_{ita}; \, p_{ita1}, \ldots, p_{ita3^{+}}), \tag{5.1} \\
+    \log \left( \frac{p_{itak}}{p_{ita1}} \right) &amp;= \eta_{itak}, \quad k = 2, 3^{+}, \tag{5.2}
 \end{align}\]</span>
 where the number in risk group <span class="math inline">\(k\)</span> is <span class="math inline">\(y_{itak}\)</span>, the fixed sample size is <span class="math inline">\(m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}\)</span>, and <span class="math inline">\(k = 1\)</span> is chosen as the baseline category.
 This model is not an LGM because each observation <span class="math inline">\(y_{itak}\)</span> for <span class="math inline">\(k \in \{1, 2, 3^{+}\}\)</span> depends on multiple structured additive predictors <span class="math inline">\(\{\eta_{itak}, k = 1, 2, 3^{+}\}\)</span>.</p>
-<p>To recast this model as an LGM, I used the multinomial-Poisson transformation.
+<p>The model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be tractable in reasonable time.
+To recast this model as an LGM, I used the multinomial-Poisson transformation (detailed in Section <a href="multi-agyw.html#mp-transformation">5.3.1.2</a>).
 This modification allowed inference to be performed using the INLA <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> algorithm via the <code>R-INLA</code> package <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span>.
-The model, defined over 940 districts, 20 years, 3 age groups, and 3 risk groups, is too large for MCMC to be tractable in reasonable time.
 Inferences from INLA in the LGM setting are accurate and substantially faster than MCMC.</p>
 </div>
-<div id="the-multinomial-poisson-transformation" class="section level4 hasAnchor" number="5.3.1.2">
-<h4><span class="header-section-number">5.3.1.2</span> The multinomial-Poisson transformation<a href="multi-agyw.html#the-multinomial-poisson-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The multinomial-Poisson transformation <span class="citation">(<a href="#ref-baker1994multinomial">Baker 1994</a>)</span> reframes a given multinomial logistic regression model as an equivalent Poisson log-linear model.
+<div id="mp-transformation" class="section level4 hasAnchor" number="5.3.1.2">
+<h4><span class="header-section-number">5.3.1.2</span> The multinomial-Poisson transformation<a href="multi-agyw.html#mp-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The multinomial-Poisson transformation <span class="citation">(<a href="#ref-baker1994multinomial">Baker 1994</a>)</span> reframes a given multinomial logistic regression model, like that described in Equations <a href="multi-agyw.html#eq:mlr1">(5.1)</a> and <a href="multi-agyw.html#eq:mlr2">(5.2)</a>, as an equivalent Poisson log-linear model.
 The equivalent model is of the form
 <span class="math display" id="eq:poisson2" id="eq:poisson1">\[\begin{align}
-    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \tag{5.1} \\
-    \log(\kappa_{itak}) &amp;= \eta_{itak}. \tag{5.2}
+    y_{itak} &amp;\sim \text{Poisson}(\kappa_{itak}), \tag{5.3} \\
+    \log(\kappa_{itak}) &amp;= \eta_{itak}. \tag{5.4}
 \end{align}\]</span>
 The basis of the transformation is that conditional on their sum Poisson counts are jointly multinomially distributed <span class="citation">(<a href="#ref-mccullagh1989generalized">McCullagh and Nelder 1989</a>)</span> as follows
 <span class="math display" id="eq:multi">\[\begin{equation}
-    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right), \tag{5.3}
+    \mathbf{y}_{ita} \, | \, m_{ita} \sim \text{Multinomial} \left( m_{ita}; \frac{\kappa_{ita1}}{\kappa_{ita}}, \ldots, \frac{\kappa_{ita3^{+}}}{\kappa_{ita}} \right), \tag{5.5}
 \end{equation}\]</span>
 where <span class="math inline">\(\kappa_{ita} = \sum_{k = 1}^{3^{+}} \kappa_{itak}\)</span>.
-Category probabilities may then be obtained using the softmax function
+The probabilities <span class="math inline">\(p_{itak}\)</span> may then be obtained using the softmax function
 <span class="math display">\[\begin{equation}
     p_{itak} = \frac{\exp(\eta_{itak})}{\sum_{k = 1}^{3^{+}} \exp(\eta_{itak})} = \frac{\kappa_{itak}}{\sum_{k = 1}^{3^{+}} \kappa_{itak}} = \frac{\kappa_{itak}}{\kappa_{ita}}.
 \end{equation}\]</span>
-Under the equivalent model, the sample sizes <span class="math inline">\(m_{ita}\)</span> are treated as random rather than fixed such that
+Under the equivalent model, in Equation <a href="multi-agyw.html#eq:poisson1">(5.3)</a> the sample sizes <span class="math inline">\(m_{ita}\)</span> are treated as random rather than fixed such that
 <span class="math display" id="eq:mpoisson">\[\begin{equation}
-m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right). \tag{5.4}
+m_{ita} = \sum_k y_{itak} \sim \text{Poisson} \left( \sum_k \kappa_{itak} \right) = \text{Poisson} \left( \kappa_{ita} \right). \tag{5.6}
 \end{equation}\]</span>
-Using Equations <a href="multi-agyw.html#eq:multi">(5.3)</a> for <span class="math inline">\(p(\mathbf{y}_{ita} \, | \, m_{ita})\)</span> and Equation <a href="multi-agyw.html#eq:mpoisson">(5.4)</a> for <span class="math inline">\(p(m_{ita})\)</span>, the joint distribution is given by
+Using Equations <a href="multi-agyw.html#eq:multi">(5.5)</a> for <span class="math inline">\(p(\mathbf{y}_{ita} \, | \, m_{ita})\)</span> and Equation <a href="multi-agyw.html#eq:mpoisson">(5.6)</a> for <span class="math inline">\(p(m_{ita})\)</span>, the joint distribution is given by
 <span class="math display" id="eq:prodpoisson">\[\begin{align}
 p(\mathbf{y}_{ita}, m_{ita}) &amp;= \exp(-\kappa_{ita}) \frac{(\kappa_{ita})^{m_{ita}}}{m_{ita}!} \times \frac{m_{ita}!}{\prod_k y_{itak}!} \prod_k \left( \frac{\kappa_{itak}}{\kappa_{ita}} \right)^{y_{itak}} \\
 &amp;= \prod_k \left( \frac{\exp(-\kappa_{itak}) \left( \kappa_{itak} \right)^{y_{itak}}}{y_{itak}!} \right) \\
-&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \tag{5.5}
+&amp;= \prod_k \text{Poisson} \left( y_{itak} \, | \, \kappa_{itak} \right). \tag{5.7}
 \end{align}\]</span>
-As expected, Equation <a href="multi-agyw.html#eq:prodpoisson">(5.5)</a> corresponds to the product of independent Poisson likelihoods defined in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a>.
+As expected, Equation <a href="multi-agyw.html#eq:prodpoisson">(5.7)</a> corresponds to the product of independent Poisson likelihoods defined in Equation <a href="multi-agyw.html#eq:poisson1">(5.3)</a>.
 This exercise demonstrates that the Poisson log-linear model contains within it a multinomial likelihood, with a Poission prior on the sample size.</p>
 <p>For this model to be equivalent to a multinomial logistic regression model, the normalisation constants <span class="math inline">\(m_{ita}\)</span> must be recovered exactly.
+That is to say, their posterior distributions should be as close as possible to a Dirac delta distribution with value zero everywhere but the known value of the sample size.
 To ensure that this is the case, observation-specific random effects <span class="math inline">\(\theta_{ita}\)</span> can be included in the equation for the linear predictor.
 Multiplying each of <span class="math inline">\(\{\kappa_{itak}\}_{k = 1}^{3^+}\)</span> by <span class="math inline">\(\exp(\theta_{ita})\)</span> has no effect on the category probabilities, but does provide the necessary flexibility for <span class="math inline">\(\kappa_{ita}\)</span> to recover <span class="math inline">\(m_{ita}\)</span> exactly.
 Although in theory an improper prior distribution <span class="math inline">\(\theta_{ita} \propto 1\)</span> should be used, I found that in practice, by keeping <span class="math inline">\(\eta_{ita}\)</span> otherwise small using appropriate constraints, so that arbitrarily large values of <span class="math inline">\(\theta_{ita}\)</span> are not required, it is sufficient (and practically preferable for inference) to instead use a vague prior distribution.</p>
@@ -540,9 +541,11 @@ Although in theory an improper prior distribution <span class="math inline">\(\t
 Observation random effects <span class="math inline">\(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\)</span> with a vague prior distribution were included in all models I considered to ensure the multinomial-Poisson transformation was valid.
 To capture country-specific proportion estimates for each category, I included category random effects <span class="math inline">\(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\)</span> and country-category random effects <span class="math inline">\(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\)</span>.
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects <span class="math inline">\(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\)</span>.
-I considered several specifications for the remaining spatial and temporal effects.</p>
-<div id="spatial-random-effects" class="section level5 hasAnchor" number="5.3.1.3.1">
-<h5><span class="header-section-number">5.3.1.3.1</span> Spatial random effects<a href="multi-agyw.html#spatial-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+I considered several specifications for the space-cateogry <span class="math inline">\(u_{ik}\)</span> and time-cateogry effects <span class="math inline">\(\gamma_{tk}\)</span>, described in Sections <a href="multi-agyw.html#spatial-re">5.3.1.3.1</a> and <a href="multi-agyw.html#temporal-re">5.3.1.3.2</a>.</p>
+<p>Use of the multinomial-Poisson transformation required all random effects to include interaction with category <span class="math inline">\(k\)</span>, because any random effects which did not include interaction with category would give no change in category probabilities.
+The only exception were the observation random effects, which were included as a device to ensure the transformation is valid, rather than to model the data.</p>
+<div id="spatial-re" class="section level5 hasAnchor" number="5.3.1.3.1">
+<h5><span class="header-section-number">5.3.1.3.1</span> Spatial random effects<a href="multi-agyw.html#spatial-re" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>For the space-category random effects <span class="math inline">\(u_{ik}\)</span> I considered two specifications:</p>
 <ol style="list-style-type: decimal">
 <li>Independent and identically distributed (IID) <span class="math inline">\(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\)</span>,</li>
@@ -560,8 +563,8 @@ I also tested using the BYM2 model <span class="citation">(<a href="#ref-simpson
 I found that the proportion parameter posteriors tended to be highly peaked at the value one.
 For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.</p>
 </div>
-<div id="temporal-random-effects" class="section level5 hasAnchor" number="5.3.1.3.2">
-<h5><span class="header-section-number">5.3.1.3.2</span> Temporal random effects<a href="multi-agyw.html#temporal-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="temporal-re" class="section level5 hasAnchor" number="5.3.1.3.2">
+<h5><span class="header-section-number">5.3.1.3.2</span> Temporal random effects<a href="multi-agyw.html#temporal-re" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>For the time-category random effects <span class="math inline">\(\gamma_{tk}\)</span> I considered two specifications:</p>
 <ol style="list-style-type: decimal">
 <li>IID <span class="math inline">\(\gamma_{tk} \sim \mathcal{N}(0, \tau_\gamma^{-1})\)</span>,</li>
@@ -660,7 +663,7 @@ In some cases it was not possible to implement all three sets of constraints for
 <div id="survey-weighted-likelihood" class="section level4 hasAnchor" number="5.3.1.5">
 <h4><span class="header-section-number">5.3.1.5</span> Survey weighted likelihood<a href="multi-agyw.html#survey-weighted-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>I accounted survey design using a weighted pseudo-likelihood where the observed counts <span class="math inline">\(y\)</span> are replaced by effective counts <span class="math inline">\(y^\star\)</span>, as described in Section <a href="bayes-st.html#survey">3.5</a>.
-These counts may not be integers, and as such the Poisson likelihood given in Equation <a href="multi-agyw.html#eq:poisson1">(5.1)</a> is not appropriate.
+These counts may not be integers, and as such the Poisson likelihood given in Equation <a href="multi-agyw.html#eq:poisson1">(5.3)</a> is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood <span class="math inline">\(y^\star \sim \text{xPoisson}(\kappa)\)</span> given by
 <span class="math display">\[\begin{equation}
     p(y^\star) = \frac{\kappa^{y^\star}}{\left \lfloor{y^\star!}\right \rfloor } \exp \left(- \kappa \right),
@@ -722,7 +725,7 @@ Figure 5.4: For the multinomial logistic regression model, under the CPO criteri
 <h3><span class="header-section-number">5.3.2</span> Spatial logistic regression<a href="multi-agyw.html#s-logistic" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To estimate the proportion of those in the <span class="math inline">\(k = 3^{+}\)</span> risk group that were in the <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 4\)</span> risk groups respectively, I fit logistic regression models of the form
 <span class="math display" id="eq:logistic-regression">\[\begin{align}
-    y_{ia4} &amp;\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \tag{5.6} \\
+    y_{ia4} &amp;\sim \text{Binomial} \left( y_{ia3} + y_{ia4}, q_{ia} \right), \tag{5.8} \\
     q_{ia} &amp;= \text{logit}^{-1} \left( \eta_{ia} \right),
 \end{align}\]</span>
 where
