@@ -433,7 +433,7 @@ The most common mode of transmission is via unprotected anal or vaginal sex, tho
 Approximately 86 million people have become infected with HIV, and of those 40 million have died of AIDS-related causes.
 
 An ongoing global and multifaceted effort has been made to respond to the epidemic.
-The response has been shaped by local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (GFATM).
+The response has been shaped by local communities, civil society organisations, governments, research institutions, pharmaceutical companies, international agencies like the Joint United Nations Programme on HIV/AIDS (UNAIDS), and global health initiatives such like the President's Emergency Plan for AIDS Relief (PEPFAR) and the Global Fund to Fight AIDS, Tuberculosis, and Malaria (the Global Fund).
 The investment of \$100 billion by PEPFAR, constituting the ``largest commitment by a single nation to address a single disease in history'' \autocite{pepfar2022}, is indicative of the scale of the response.
 
 
@@ -680,7 +680,7 @@ Checks of this kind {[}\textcite{gelman2013bayesian}; Chapter 6{]} can be used t
 \end{figure}
 
 The primary goal in a Bayesian analysis is to obtain the posterior distribution \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\).
-This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central to decisions made as a result of the analysis.
+This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central role in use of the analysis for decision making.
 Using the eponymous Bayes' theorem, the posterior distribution is obtained by
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = = \frac{p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})} = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \label{eq:posterior}
@@ -692,7 +692,7 @@ This is because of the potentially high-dimensional integral
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}
 in the denominator of Equation \eqref{eq:posterior}.
-The evidence \(p(\mathbf{y})\) quantifies the probability of obtaining the data under the model, and
+The evidence \(p(\mathbf{y})\) quantifies the probability of obtaining the data under the model, and\ldots{} TODO.
 As such, although it is easy to evaluate a quantity proportional to the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
@@ -715,7 +715,7 @@ Monte Carlo algorithms \autocite{robert2005monte} aim to generate samples from t
 These samples may be used in any future computations involving functions of the posterior distribution.
 For example, if \(G = G(\boldsymbol{\mathbf{\phi}})\) then the expectation of \(G\) with respect to the posterior distribution can be approximated by
 \begin{equation}
-\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \frac{1}{M} \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
 \end{equation}
 Most quantities of interest can be cast as posterior expectations.
 
@@ -732,7 +732,7 @@ HMC uses derivatives of the posterior distribution to generate efficient Metropo
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 
-After running a MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
+After running an MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
 Panel B of Figure \ref{fig:stan} shows a traceplot for a Markov chain which has converged.
 
 
@@ -1123,7 +1123,7 @@ All of this isn't great and that someone should figure this out \autocite{gelman
 \adjustmtc
 \markboth{Models for spatial structure}{}
 
-In this chapter, I present an investigation of spatial random effects specifications.
+This chapter presents an investigation of spatial random effects specifications.
 My investigation was motivated by a fundamental question encountered during model construction.
 Namely, should the model be augmented to capture a conjectured feature of the data?
 The results are presented in \textcite{howes2023beyond}.
@@ -1324,23 +1324,22 @@ This problem does not only apply locally: since the effect of \(\sigma^2_u\) app
 \adjustmtc
 \markboth{A model for risk group proportions}{}
 
-In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
+This chapter describes an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
-The model and results for 13 countries are presented in \textcite{howes2023spatio}.
-Kathryn has also created a spreadsheet tool using the estimates (\href{\%60https://hivtools.unaids.org/pse/\%60}{\texttt{https://hivtools.unaids.org/pse/}}) for use in national HIV response planning.
+I developed the statistical model, building upon an earlier version of the analysis conducted by Dr.~Kathryn Risher.
+The model and results for 13 countries are presented in \textcite{howes2023spatio}, and implemented in a spreadsheet tool (\href{https://hivtools.unaids.org/pse/}{\texttt{https://hivtools.unaids.org/pse/}}) for use in national HIV response planning.
 The tool is being updated by inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/multi-agyw}{\texttt{https://github.com/athowes/multi-agyw}}.
 
 \hypertarget{background-2}{%
 \section{Background}\label{background-2}}
 
-In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
+In SSA, adolescent girls and young women (AGYW) aged 15-29 are at increased risk of HIV infection.
 Though AGYW are only 28\% of the population, they comprise 44\% of new infections \autocite{unaids2021update}.
 HIV incidence for AGYW is 2.4 times higher than for similarly aged (15-29) males.
 The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, a younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services.
-Significant investments, such as the DREAMS partnership \autocite{saul2018dreams} and by the GFATM \autocite{global2018measurement}, have been made to support prevention programming.
+Significant investments, such as the DREAMS partnership \autocite{saul2018dreams} and by the the Global Fund \autocite{global2018measurement}, have been made to support prevention programming.
 
 The Global AIDS Strategy 2021-2026 \autocite{unaids2021global} was adopted by the United Nations (UN) General Assembly in June 2021, and ``outlines the strategic priorities and actions to be implemented by global, regional, country and community partners to get on-track to ending AIDS''.
 It proposed stratifying HIV prevention packages to AGYW based on two factors
@@ -1368,7 +1367,7 @@ Implementation of the strategy by national HIV programmes and stakeholders requi
 
 }
 
-\caption{Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.}\label{fig:risk-grid}
+\caption{Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively.}\label{fig:risk-grid}
 \end{figure}
 
 \hypertarget{data-1}{%
@@ -1413,6 +1412,13 @@ High & Non-regular or multiple partner(s) & 1.72 \\
 Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 3.0-25.0 (varied depending on local HIV incidence) \\
 \end{longtable}
 
+I used household survey data from 13 countries identified by the the Global Fund \autocite{global2018measurement} as priority countries for implementation of AGYW HIV prevention.
+These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
+Surveys conducted in these countries between 1999 and 2018 were included in which both women were interviewed about their sexual behaviour, and sufficient geographic information was available to locate survey clusters to health districts.
+There were 46 suitable surveys (Figure \ref{fig:available-surveys}), with a total sample size of 274,970 women aged 15-29 years.
+Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
+The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
+
 
 
 \begin{figure}
@@ -1423,13 +1429,6 @@ Very High & Reporting transactional sex (later adjusted to correspond to FSW) & 
 
 \caption{Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.}\label{fig:available-surveys}
 \end{figure}
-
-I used household survey data from 13 countries identified by the GFATM \autocite{global2018measurement} as priority countries for implementation of AGYW HIV prevention.
-These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
-Surveys conducted in these countries between 1999 and 2018 were included in which both women were interviewed about their sexual behaviour, and sufficient geographic information was available to locate survey clusters to health districts.
-There were 46 suitable surveys (Figure \ref{fig:available-surveys}), with a total sample size of 274,970 women aged 15-29 years.
-Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
-The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
 
 For each survey, I classified respondents into one of four behavioural risk groups \(k = 1, 2, 3, 4\) according to reported sexual risk behaviour in the past 12 months (Figure \ref{fig:category-flowchart}).
 In increasing order of HIV acquisition risk, these risk groups were:
@@ -1449,18 +1448,18 @@ In increasing order of HIV acquisition risk, these risk groups were:
 The HIV incidence rate ratio \(\text{RR}_k\) was assumed to vary by risk group (Table \ref{tab:risk-groups}), with the one cohabiting partner risk group as baseline.
 
 Exact survey questions varied slightly across survey types and between survey phases.
-Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
+Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so with how many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
 Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
-Full survey questions used are provided in Appendix \ref{survey-questions}.
+Full survey questions used are in Appendix \ref{survey-questions}.
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
 
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64\% of women reported transactional sex.
 In surveys without such a question, women almost never (0.01\%) answered that one of their three most recent partners was a sex work client.
 This incomparability made it inappropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
-Of the total 46 surveys included in the analysis, 12 had a specific transactional sex question, with a total sample size of 62,853 (28,753 aged 15-19 years, 26,324 aged 20-24 years, and 7,776 aged 25-29 years.
-The sample size for women aged 25-29 is smaller beccause there were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
+Of the total 46 surveys included in the analysis, 12 had a specific transactional sex question, with a total sample size of 62,853 (28,753 aged 15-19 years, 26,324 aged 20-24 years, and 7,776 aged 25-29 years).
+The sample size for women aged 25-29 is smaller because there were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
 
 
 
@@ -1476,18 +1475,20 @@ The sample size for women aged 25-29 is smaller beccause there were 6 DHS survey
 \hypertarget{other-data}{%
 \subsection{Other data}\label{other-data}}
 
-As well as the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
+In addition to the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model \autocite{eaton2021naomi}.
 I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
 I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries.
-Exceptions are Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
+Exceptions were Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
 
 \hypertarget{model-for-risk-group-proportions}{%
 \section{Model for risk group proportions}\label{model-for-risk-group-proportions}}
 
-Owing to incomparability across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
+Owing to the incomparability in estimating the \(k = 4\) risk gorup across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
 Denote being in either the third or fourth risk group as \(k = 3^{+}\).
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model to estimate the proportion of AGYW in the risk groups \(k \in \{1, 2, 3^{+}\}\).
+This model is described in Section \ref{st-multinomial}.
 Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model to estimate the proportion of those in the \(k = 3^{+}\) risk group that were in the \(k = 3\) and \(k = 4\) risk groups respectively.
+This model is described in Section \ref{s-logistic}.
 
 \hypertarget{st-multinomial}{%
 \subsection{Spatio-temporal multinomial logistic regression}\label{st-multinomial}}
@@ -1602,7 +1603,7 @@ I considered four models (Table \ref{tab:multinomial-models}) for \(\eta_{ita}\)
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
-Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) with a vague prior distribution were included in all models I considered to ensure the multinomial-Poisson transformation was valid.
+Observation random effects \(\theta_{ita} \sim \mathcal{N}(0, 1000^2)\) with a vague prior distribution were included in all models to ensure the multinomial-Poisson transformation was valid.
 To capture country-specific proportion estimates for each category, I included category random effects \(\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})\) and country-category random effects \(\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})\).
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects \(\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})\).
 I considered several specifications for the space-cateogry \(u_{ik}\) and time-cateogry effects \(\gamma_{tk}\), described in Sections \ref{spatial-re} and \ref{temporal-re}.
@@ -1621,7 +1622,7 @@ For the space-category random effects \(u_{ik}\) I considered two specifications
 \item
   Independent and identically distributed (IID) \(u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})\),
 \item
-  Besag \autocite{besag1991bayesian} grouped by category
+  The Besag improper conditional autoregressive (ICAR) model \autocite{besag1991bayesian} grouped by category
   \[
   \mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
   \]
@@ -1631,8 +1632,7 @@ For the space-category random effects \(u_{ik}\) I considered two specifications
   Though the Kronecker product is symmetric, performance is better in \texttt{R-INLA} when the more complicated effect is written as the first variable rather than the grouping variable.
 \end{enumerate}
 
-In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
-I also tested using the BYM2 model \autocite{simpson2017penalising} in place of the Besag.
+In preliminary testing I used the BYM2 model \autocite{simpson2017penalising} in place of the Besag.
 I found that the proportion parameter posteriors tended to be highly peaked at the value one.
 For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.
 
@@ -1704,8 +1704,8 @@ where \(\nu = - \ln(0.01) / 2.5\) such that \(\mathbb{P}(\sigma > 2.5) = 0.01\).
 For the lag-one correlation parameter \(\rho\), I used the PC prior distribution, as derived by \textcite{sorbye2017penalised}, with base model \(\rho = 1\) and condition \(\mathbb{P}(\rho > 0 = 0.75)\).
 I chose the base model \(\rho = 1\) corresponding to no change in behaviour over time, rather than the alternative \(\rho = 0\) corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.
 
-\hypertarget{constraints}{%
-\subsubsection{Constraints}\label{constraints}}
+\hypertarget{identifiability-constraints}{%
+\subsubsection{Identifiability constraints}\label{identifiability-constraints}}
 
 To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints (Table \ref{tab:constraints}) such that none of the category interaction random effects altered overall category probabilities.
 In testing of the space-time-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and time-category random effects.
@@ -1744,7 +1744,7 @@ Spatio-temporal & \(\sum_i \delta_{itk} = 0, \, \forall \, t, k; \sum_t \delta_{
 \hypertarget{survey-weighted-likelihood}{%
 \subsubsection{Survey weighted likelihood}\label{survey-weighted-likelihood}}
 
-I accounted survey design using a weighted pseudo-likelihood where the observed counts \(y\) are replaced by effective counts \(y^\star\), as described in Section \ref{survey}.
+I accounted for the survey design using a weighted pseudo-likelihood where the observed counts \(y\) are replaced by effective counts \(y^\star\), as described in Section \ref{survey}.
 These counts may not be integers, and as such the Poisson likelihood given in Equation \eqref{eq:poisson1} is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood \(y^\star \sim \text{xPoisson}(\kappa)\) given by
 \begin{equation}
@@ -1757,8 +1757,8 @@ This working likelihood is implemented by \texttt{family\ =\ "xPoisson"} in \tex
 \subsubsection{Model selection}\label{model-selection}}
 
 I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion \autocite{pettit1990conditional}.
-For reference, I also computed the deviance information criterion (DIC) \autocite{spiegelhalter2002bayesian} and widely applicable information criterion (WAIC) \autocite{watanabe2013widely}.
-Each of these criterion can be calculated in \texttt{R-INLA} without requiriing model refitting.
+For comparison, I also computed the deviance information criterion (DIC) \autocite{spiegelhalter2002bayesian} and widely applicable information criterion (WAIC) \autocite{watanabe2013widely}.
+Each of these criterion can be calculated in \texttt{R-INLA} without requiring model refitting.
 The results are presented in Figure \ref{fig:model-comparison}.
 
 
@@ -2294,12 +2294,13 @@ These findings underscore the importance of providing effective HIV prevention o
 \adjustmtc
 \markboth{Fast approximate Bayesian inference}{}
 
-In this chapter I describe a novel Bayesian inference method that I developed.
+This chapter describes a novel Bayesian inference method.
 The method is motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software (\texttt{https://naomi.unaids.org}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
-Ensuring fast and accurate Bayesian inferences in this setting is challenging.
-I began working on this project at the start of my PhD, and only started to make progress after reading \textcite{stringer2021fast}.
-I am grateful to have later collaborated with Alex Stringer.
+Over 35 countries have used the Naomi model software (\href{https://naomi.unaids.org}{\texttt{https://naomi.unaids.org}}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
+It is challenging to obtain fast and accurate Bayesian inferences in this setting.
+As such, inferences have previously been obtained using an empirical Bayes strategy, where hyperparameter uncertainty is not taken into account fully.
+I began work on this project at the start of my PhD, and only started to make meaningful progress after reading \textcite{stringer2021fast}.
+I am grateful to later have had the opportunity to collaborate with Alex Stringer, including my visiting the University of Waterloo.
 The results of this work are presented in \textcite{howes2023fast}.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{https://github.com/athowes/naomi-aghq}}.
 
@@ -2311,16 +2312,18 @@ That is, to obtain the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})},
 \end{equation}
-or some way to compute summaries of it.
-Inference is a reasonable goal because the posterior distribution is sufficient for use in decision making.
+or some way to compute relevant functions of it, where \(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\) are the parameters and \(\mathbf{y} = (y_1, \ldots, y_n)\) are the data.
+
+Inference is a sensible goal because the posterior distribution is sufficient for use in decision making.
 Given a loss function, the posterior loss of a decision depends on the data only via the posterior distribution.
 For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.
 
 It is usually intractable to directly obtain the posterior distribution.
-This is because the denominator contains an intractable integral called the posterior normalising constant
+This is because the denominator contains a potentially high-dimensional integral over the parameters
 \begin{equation}
-p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} \label{eq:evidence}
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}, \label{eq:evidence}
 \end{equation}
+sometimes called the evidence or posterior normalising constant.
 For this reason, approximations to the posterior distribution \(\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\) are typically used in place of the exact posterior distribution.
 Some approximate Bayesian inference methods avoid directly calculating the posterior normalising constant, instead working with the unnormalised posterior distribution
 \begin{equation}
@@ -2334,9 +2337,9 @@ The methods in this chapter fall into this later category.
 
 Laplace's method \autocite{laplace1774memoire} is a technique used to approximate integrals of the form
 \begin{equation}
-\int \exp(C h(z)) \text{d}z,
+\int \exp(C h(\mathbf{z})) \text{d}\mathbf{z},
 \end{equation}
-where \(C > 0\) is a large constant and \(h\) is a function which is twice-differentiable.
+where \(C > 0\) is a large constant and \(h\) is a function which is twice-differentiable, and \(\mathbf{z}\) are generic variables.
 The Laplace approximation \autocite{tierney1986accurate} is obtained by application of Laplace's method to calculate the posterior normalising constant.
 Let \(h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})\) such that
 \begin{equation}
@@ -2358,7 +2361,7 @@ The Laplace approximation is then
 \tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \label{eq:la} \\
 &= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}.
 \end{align}
-The above result is calculated using the known normalising constant of the Gaussian distribution
+The result above is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
 p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}
@@ -2375,7 +2378,7 @@ The Laplace approximation may be thought of as approximating the posterior distr
 
 }
 
-\caption{Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure \ref{fig:conjugate}. The unnormalised posterior \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\) can be recognised as the unnomalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\).}\label{fig:laplace}
+\caption{Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure \ref{fig:conjugate}. The unnormalised posterior is \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\), and can be recognised as the unnomalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\).}\label{fig:laplace}
 \end{figure}
 
 \hypertarget{the-marginal-laplace-approximation}{%
@@ -2383,16 +2386,23 @@ The Laplace approximation may be thought of as approximating the posterior distr
 
 Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
 An alternative is to approximate the marginal posterior distribution of some subset of the parameters which might have posterior distributions which are close to being Gaussian.
-As before, let \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\) where \(\mathbf{x}\) is the latent field, and \(\boldsymbol{\mathbf{\theta}}\) are the hyperparameters.
+
+Let \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\) and consider a three-stage three-stage hierarchical model of the form
+\begin{align}
+\mathbf{y} &\sim p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
+\mathbf{x} &\sim p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}), \\
+\boldsymbol{\mathbf{\theta}} &\sim p(\boldsymbol{\mathbf{\theta}}),
+\end{align}
+where \(\mathbf{x}\) is the latent field, and \(\boldsymbol{\mathbf{\theta}}\) are the hyperparameters.
 Applying an equivalent Laplace approximation to the latent field, we have \(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{x}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) with posterior mode
 \begin{equation}
-\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \label{eq:posterior-mode}
 \end{equation}
 and Hessian matrix evaluated at the posterior mode
 \begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. \label{eq:hessian}
 \end{equation}
-For both quantities dependence on the hyperparameters \(\boldsymbol{\mathbf{\theta}}\) is made explicit.
+In both Equation \eqref{eq:posterior-mode} and \eqref{eq:hessian} dependence on the hyperparameters \(\boldsymbol{\mathbf{\theta}}\) is made explicit.
 The resulting marginal Laplace approximation is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}, \mathbf{y}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \label{eq:marginalla} \\
@@ -2401,24 +2411,31 @@ The resulting marginal Laplace approximation is then
 \end{align}
 where \(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\) is a Gaussian approximation to the marginal posterior of the latent field.
 
+The marginal Laplace approximation is most accurate when then marginal posterior \(p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) is accurately approximated by a Gaussian
+distribution.
+For the class of latent Gaussian models \autocite{rue2009approximate} the prior on the latent field is Gaussian \(\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}})\).
+
 \hypertarget{quadrature}{%
 \subsection{Quadrature}\label{quadrature}}
 
 Quadrature is an approach which can be used to approximate integrals like the posterior normalising constant.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 
-Let \(\mathcal{Q}\) be a set of quadrature points \(\mathbf{z} \in \mathcal{Q}\) and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
-Then a quadrature approximation to the posterior normalising constant is given by
+Let \(\mathcal{Q}\) be a set of quadrature nodes \(z \in \mathcal{Q}\) and \(\omega: \mathbb{R} \to \mathbb{R}\) be a weighting function.
+Quadrature can be used to estimate the posterior normalising constant as follows
 \begin{equation}
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}
 
-The one-dimensional trapezoid rule, in which quadrature points are spaced evenly across the domain of interest, is a simple example of a quadrature rule.
-The more quadrature points are used per dimension, the more accurate the estiamte of the integrand (Figure \ref{fig:trapezoid}).
-
-Quadrature methods are most effective when integrating over small dimensions.
-The number of quadrature points required grows exponentially with the dimension.
-For even moderate dimension, this quickly becomes intractable.
+To illustrate how quadrature works, consider integrating the univariate function \(f(z)\) between \(z = a\) and \(z = b\).
+A quadrature approximation of this integral is given by
+\begin{equation}
+\int_{a}^b f(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} f(z) \omega(z),
+\end{equation}
+where \(\mathcal{Q} = \{z_1, \ldots z_k\}\) is a set of quadrature nodes and \(\omega: \mathbb{R} \to \mathbb{R}\).
+The trapezoid rule is a simple examples of a quadrature rule, where quadrature nodes are spaced evenly across the domain of interest such that \(z_i - z_{i - 1} = \epsilon > 0\) for all \(1 < i < k\), and \(\omega(z_i) = \epsilon\) for \(1 < i < k\) and \(\omega(z_i) = \epsilon / 2\) for \(i \in \{1, k\}\).
+Figure \ref{fig:trapezoid} shows that the more quadrature nodes are used, the more accurate the estimate of the integrand is.
+Under some regularity conditions on \(f\), then as \(\epsilon \to 0\) the quadrature estimate using the trapezoid rule converges to the true value of the integral.
 
 
 
@@ -2428,21 +2445,26 @@ For even moderate dimension, this quickly becomes intractable.
 
 }
 
-\caption{The trapezoid rule with \(k = 5, 25, 125\) quadrature nodes can be used to integrate the function \(f(z) = z \sin(z)\) in the domain \([0, \pi]\). Here, the exact solution is \(\pi \approx 3.1416\). As more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.}\label{fig:trapezoid}
+\caption{The trapezoid rule with \(k = 5, 25, 125\) quadrature nodes can be used to integrate the function \(f(z) = z \sin(z)\) in the domain \([0, \pi]\). Here, the exact solution is \(\pi \approx 3.1416\). As \(k\) increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.}\label{fig:trapezoid}
 \end{figure}
+
+Quadrature methods are most effective when integrating over small dimensions.
+The number of quadrature nodes required grows exponentially with the dimension.
+For even moderate dimension, this quickly becomes intractable.
 
 \hypertarget{gauss-hermite-quadrature}{%
 \subsubsection{Gauss-Hermite quadrature}\label{gauss-hermite-quadrature}}
 
-Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature rule designed to integrate functions of the form \(f(z) = \phi(z) P_\alpha(z)\) exactly.
-Here \(\phi(\cdot)\) is a standard normal density, and \(P_\alpha(\cdot)\) is a polynomial of degree \(\alpha\).
+Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature rule designed to integrate functions of the form \(f(\mathbf{z}) = \phi(\mathbf{z}) P_\alpha(\mathbf{z})\) exactly.
+Here \(\phi(\cdot)\) is a standard multivariate normal density, and \(P_\alpha(\cdot)\) is a polynomial of degree \(\alpha\).
+GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
 
 I follow the notation for GHQ established by \textcite{bilodeau2022stochastic}.
-For \(z \in \mathbb{R}\), let \(H_k(z)\) be the \(k\)th Hermite polynomial
+First, to construct the univariate GHQ for \(z \in \mathbb{R}\), let \(H_k(z)\) be the \(k\)th Hermite polynomial
 \begin{equation}
 H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2).
 \end{equation}
-The univariate GHQ rule has nodes \(z \in \mathcal{Q}(1, k)\) given by the \(k\) zeroes of the \(k\)th Hermite polynomial.
+The GHQ nodes \(z \in \mathcal{Q}(1, k)\) are given by the \(k\) zeroes of the \(k\)th Hermite polynomial.
 The corresponding weighting function \(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\) is given by
 \begin{equation}
 \omega(z) = \frac{\phi(z) \cdot k!}{[H_{k + 1}(z)]^2}.
@@ -2469,9 +2491,10 @@ The corresponding weighting function \(\omega: \mathcal{Q}(d, k) \to \mathbb{R}\
 \caption{The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two dimensional integral with three nodes per dimension (A). Adaption occurs based on the mode (B) and covariance of the integrand via either the Cholesky (C) or spectral (D) decomposition of the inverse curvature at the mode. The integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\).}\label{fig:aghq-demo}
 \end{figure}
 
-In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand.
-Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising function is a function of the data.
-No fixed quadrature rule can be expected to effectively integrate every posterior distribution produced by observation of particular data.
+In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand under consideration.
+Adaptive quadrature rules are particularly important for Bayesian inference problems because the posterior normalising constant \(p(\mathbf{y})\) is a function of the data.
+No fixed quadrature rule can be expected to effectively integrate every posterior distribution produced by observation of particular data \(\mathbf{y}\).
+For example, application of the trapezoid rule requires the choice of the start point \(a\) and end point \(b\), as well as the space between nodes \(\epsilon\).
 
 In adaptive GHQ (AGHQ) the quadrature nodes are shifted by the mode of the integrand, and rotated based on a matrix decomposition of the inverse curvature at the mode
 \begin{equation}
@@ -2728,8 +2751,8 @@ Avenues for future work include:
 
 \startappendices
 
-\hypertarget{spatial-structure}{%
-\chapter{Spatial structure}\label{spatial-structure}}
+\hypertarget{models-for-spatial-structure}{%
+\chapter{Models for spatial structure}\label{models-for-spatial-structure}}
 
 \hypertarget{a-model-for-risk-group-proportions}{%
 \chapter{A model for risk group proportions}\label{a-model-for-risk-group-proportions}}
@@ -2973,7 +2996,7 @@ Variable(s) & Description \\
 \hypertarget{simplified-naomi-model-description}{%
 \section{Simplified Naomi model description}\label{simplified-naomi-model-description}}
 
-In this section we describe the simplified Naomi model \autocite{eaton2021naomi} in complete detail.
+This section describes the simplified version of the Naomi model \autocite{eaton2021naomi} in complete detail.
 
 \hypertarget{process-specification}{%
 \subsection{Process specification}\label{process-specification}}
@@ -2983,6 +3006,18 @@ In this section we describe the simplified Naomi model \autocite{eaton2021naomi}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2951}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1967}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2295}}@{}}
+\caption{\label{tab:process}}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Model component
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Latent field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Hyperparameter
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
@@ -3005,23 +3040,22 @@ Hyperparameter
 \end{longtable}
 
 \hypertarget{hiv-prev}{%
-\subsection{HIV prevalence}\label{hiv-prev}}
+\subsubsection{HIV prevalence}\label{hiv-prev}}
 
-HIV prevalence \(\rho_{x, s, a} \in [0, 1]\) is modelled on the logit scale using the linear predictor
+HIV prevalence \(\rho_{x, s, a} \in [0, 1]\) was modelled on the logit scale using the linear predictor
 \begin{equation}
-\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \bu^\rho_a + \bu_a^{\rho, s = \text{M}} + \bu^\rho_x + \bu_x^{\rho, s = \text{M}} + \bu_x^{\rho, a < 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. \label{eq:prev}
+\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \mathbf{u}^\rho_a + \mathbf{u}_a^{\rho, s = \text{M}} + \mathbf{u}^\rho_x + \mathbf{u}_x^{\rho, s = \text{M}} + \mathbf{u}_x^{\rho, a < 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. \label{eq:prev}
 \end{equation}
-Table \ref{tab:prev} provides a description of the terms included in Equation \ref{eq:prev}.
-
-Half-normal prior distributions are chosen for the standard deviation terms
+Table \ref{tab:prev} provides a description of the terms included in Equation \eqref{eq:prev}.
+Independent half-normal prior distributions were chosen for the five standard deviation terms
 \begin{equation}
 \{\sigma_A^\rho, \sigma_{AS}^\rho, \sigma_X^\rho, \sigma_{XS}^\rho, \sigma_{XA}^\rho\} \sim \mathcal{N}^{+}(0, 2.5),
 \end{equation}
-uniform prior distributions for the AR1 correlation parameters
+independent uniform prior distributions for the two AR1 correlation parameters
 \begin{equation}
 \{\phi_A^\rho, \phi_{AS}^\rho\} \sim \mathcal{U}(-1, 1),
 \end{equation}
-and beta prior distributions for the BYM2 proportion parameters
+and independent beta prior distributions for the two BYM2 proportion parameters
 \begin{equation}
 \{\phi_X^\rho, \phi_{XS}^\rho\} \sim \text{Beta}(0.5, 0.5).
 \end{equation}
@@ -3030,6 +3064,17 @@ and beta prior distributions for the BYM2 proportion parameters
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1735}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.5765}}@{}}
+\caption{\label{tab:prev}}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Term
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Distribution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Term
@@ -3049,24 +3094,24 @@ Description
 \(\mathbf{u}^\rho_x\) & \(\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)\) & Spatial random effects for women \\
 \(\mathbf{u}_x^{\rho, s = \text{M}}\) & \(\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)\) & Spatial random effects for the difference in logit prevalence for men compared to women in district \(x\) \\
 \(\mathbf{u}_x^{\rho, a < 15}\) & \(\text{ICAR}(\sigma_{XA}^\rho)\) & Spatial random effects for the ratio of paediatric prevalence to adult women prevalence \\
-\(\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}\) & \(-\) & Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available \\
+\(\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}\) & \(-\) & Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available \\
 \end{longtable}
 
 \hypertarget{art-cov}{%
-\subsection{ART coverage}\label{art-cov}}
+\subsubsection{ART coverage}\label{art-cov}}
 
-ART coverage \(\alpha_{x, s, a} \in [0, 1]\) is modelled on the logit scale using the linear predictor
+ART coverage \(\alpha_{x, s, a} \in [0, 1]\) was modelled on the logit scale using the linear predictor
 \begin{equation}
-\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \bu^\alpha_a + \bu_a^{\alpha, s = \text{M}} + \bu^\alpha_x + \bu_x^{\alpha, s = \text{M}} + \bu_x^{\alpha, a < 15} + \bmeta^\alpha_{R_x, s, a} 
+\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_a + \mathbf{u}_a^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_x + \mathbf{u}_x^{\alpha, s = \text{M}} + \mathbf{u}_x^{\alpha, a < 15} + \boldsymbol{\mathbf{\eta}}^\alpha_{R_x, s, a} 
 \end{equation}
-with terms and priors analogous to the HIV prevalence process model in Section \ref{sec:hiv-prev} above.
+with terms and priors analogous to the HIV prevalence process model in Section \ref{hiv-prev} above.
 
 \hypertarget{hiv-inc}{%
-\subsection{HIV incidence rate}\label{hiv-inc}}
+\subsubsection{HIV incidence rate}\label{hiv-inc}}
 
-HIV incidence rate \(\lambda_{x, s, a} > 0\) is modelled on the log scale using the linear predictor
+HIV incidence rate \(\lambda_{x, s, a} > 0\) was modelled on the log scale using the linear predictor
 \begin{equation}
-\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \bu_x^\lambda + \bmeta_{R_x, s, a}^\lambda. \label{eq:inc}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. \label{eq:inc}
 \end{equation}
 Table \ref{tab:inc} provides a description of the terms included in Equation \ref{eq:inc}.
 
@@ -3091,25 +3136,25 @@ Description
 \(\rho_{x}^{\text{15-49}}\) & \(-\) & The HIV prevalence among adults 15-49 calculated by aggregating age-specific HIV prevalences \\
 \(\alpha_{x}^{\text{15-49}}\) & \(-\) & The ART coverage among adults 15-49 calculated by aggregating age-specific ART coverages \\
 \(\omega = 0.7\) & \(-\) & Average reduction in HIV transmission rate per increase in population ART coverage fixed based on inputs to the Estimation and Projection Package (EPP) model \\
-\(\bu_x^\lambda\) & \(\mathcal{N}(0, \sigma^\lambda)\) & IID spatial random effects with \(\sigma^\lambda \sim \mathcal{N}^+(0, 1)\) \\
-\(\bmeta^\lambda_{R_x, s, a}\) & \(-\) & Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output \\
+\(\mathbf{u}_x^\lambda\) & \(\mathcal{N}(0, \sigma^\lambda)\) & IID spatial random effects with \(\sigma^\lambda \sim \mathcal{N}^+(0, 1)\) \\
+\(\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}\) & \(-\) & Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output \\
 \end{longtable}
 
-The proportion recently infected among HIV positive persons \(\kappa_{x, s, a} \in [0, 1]\) are modelled as
+The proportion recently infected among HIV positive persons \(\kappa_{x, s, a} \in [0, 1]\) were modelled as
 \begin{equation}
 \kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
 \end{equation}
 where \(\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})\) is the mean duration of recent infection, and \(\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})\) is the false recent ratio.
-The prior distribution for \(\Omega_T\) is informed by the characteristics of the recent infection testing algorithm.
-For PHIA surveys this is \(\Omega_{T_0} = 130 \text{ days}\) and \(\sigma^{\Omega_T} = 6.12 \text{ days}\), and further there is assumed to be no false recency, such that \(\beta_{T_0} = 0.0\) and \(\sigma^{\beta_T} = 0.0\).
+The prior distribution for \(\Omega_T\) was informed by the characteristics of the recent infection testing algorithm.
+For PHIA surveys this was \(\Omega_{T_0} = 130 \text{ days}\) and \(\sigma^{\Omega_T} = 6.12 \text{ days}\), and further there was assumed to be no false recency, such that \(\beta_{T_0} = 0.0\) and \(\sigma^{\beta_T} = 0.0\).
 
 \hypertarget{anc-test}{%
-\subsection{ANC testing}\label{anc-test}}
+\subsubsection{ANC testing}\label{anc-test}}
 
-HIV prevalence \(\rho_{x, a}^\text{ANC}\) and ART coverage \(\alpha_{x, a}^\text{ANC}\) among pregnant women are modelled as being offset on the logit scale from the corresponding district-age indicators \(\rho_{x, F, a}\) and \(\alpha_{x, F, a}\) according to
+HIV prevalence \(\rho_{x, a}^\text{ANC}\) and ART coverage \(\alpha_{x, a}^\text{ANC}\) among pregnant women were modelled as being offset on the logit scale from the corresponding district-age indicators \(\rho_{x, F, a}\) and \(\alpha_{x, F, a}\) according to
 \begin{align}
-\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \bu_x^{\rho^{\text{ANC}}} + \bmeta_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
-\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \bu_x^{\alpha^{\text{ANC}}} + \bmeta_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
 \end{align}
 Table \ref{tab:anc} provides a description of the terms included in Equation \ref{eq:anc1} and Equation \ref{eq:anc2}.
 
@@ -3130,27 +3175,27 @@ Description
 \bottomrule\noalign{}
 \endlastfoot
 \(\beta^{\theta^{\text{ANC}}}\) & \(\mathcal{N}(0, 5)\) & Intercept giving the average difference between population and ANC outcomes \\
-\(\bu_x^{\theta^{\text{ANC}}}\) & \(\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})\) & IID district random effects with \(\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)\) \\
-\(\bmeta_{R_x, a}^{\theta^{\text{ANC}}}\) & \(-\) & Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region \(R_x\) \\
+\(\mathbf{u}_x^{\theta^{\text{ANC}}}\) & \(\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})\) & IID district random effects with \(\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)\) \\
+\(\boldsymbol{\mathbf{\eta}}_{R_x, a}^{\theta^{\text{ANC}}}\) & \(-\) & Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region \(R_x\) \\
 \end{longtable}
 
-In the full Naomi model, for adult women 15-49 the number of ANC clients \(\Psi_{x, a} > 0\) are modelled as
+In the full Naomi model, for adult women 15-49 the number of ANC clients \(\Psi_{x, a} > 0\) were modelled as
 \[
-\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \bu_x^\psi,
+\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \mathbf{u}_x^\psi,
 \]
-where \(N_{x, \text{F}, a}\) are the female population sizes, \(\psi_{R_x, a}\) are fixed age-sex fertility ratios in Spectrum region \(R_x\), \(\beta^\psi\) are log rate ratios for the number of ANC clients relative to the predicted fertility, and \(\bu_x^\psi \sim \mathcal{N}(0, \sigma^\psi)\) are district random effects.
-Here we fix \(\beta^\psi = 0\) and \(\bu_x^\psi = \mathbf{0}\) such that \(\Psi_{x, a}\) are simply constants.
+where \(N_{x, \text{F}, a}\) are the female population sizes, \(\psi_{R_x, a}\) are fixed age-sex fertility ratios in Spectrum region \(R_x\), \(\beta^\psi\) are log rate ratios for the number of ANC clients relative to the predicted fertility, and \(\mathbf{u}_x^\psi \sim \mathcal{N}(0, \sigma^\psi)\) are district random effects.
+Here we fix \(\beta^\psi = 0\) and \(\mathbf{u}_x^\psi = \mathbf{0}\) such that \(\Psi_{x, a}\) are simply constants.
 
 \hypertarget{art-attend}{%
-\subsection{ART attendance}\label{art-attend}}
+\subsubsection{ART attendance}\label{art-attend}}
 
 Let \(\gamma_{x, x'} \in [0, 1]\) be the probability that a person on ART residing in district \(x\) receives ART in district \(x'\).
 We assume that \(\gamma_{x, x'} = 0\) for \(x \notin \{x, \text{ne}(x)\}\) such that individuals seek treatment only in their residing district or its neighbours \(\text{ne}(x) = \{x': x' \sim x\}\), where \(\sim\) is an adjacency relation, and \(\sum_{x' \in \{x, \text{ne}(x)\}} \gamma_{x, x'} = 1\).
 To model \(\gamma_{x, x'}\) for \(x \sim x'\) we use a multinomial logistic regression model, based on the log-odds ratios
 \begin{equation}
-\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \bu_x^{\tilde \gamma}, \label{eq:log-or}
+\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, \label{eq:log-or}
 \end{equation}
-where \(\tilde \gamma_0 = -4\) is a fixed intercept, and \(\bu_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})\) are district random effects with \(\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)\).
+where \(\tilde \gamma_0 = -4\) is a fixed intercept, and \(\mathbf{u}_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})\) were district random effects with \(\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)\).
 Note that Equation \ref{eq:log-or} does not depend on \(x'\), such that \(\gamma_{x, x'}\) is only a function of \(x\).
 Choice of \(\tilde \gamma_0 = -4\) implies a prior mean on \(\gamma_{x, x'}\) of 1.8\%, such that \((100 - 1.8 \times \text{ne}(x))\%\) of ART clients in district \(x\) obtain treatment in their home district, a-priori.
 We fix \(\tilde \gamma_{x, x} = 0\) and recover the multinomial probabilities using the softmax

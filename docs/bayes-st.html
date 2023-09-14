@@ -242,7 +242,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.3</b> Conclusions</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
-<li class="chapter" data-level="A" data-path="spatial-structure.html"><a href="spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Spatial structure</a></li>
+<li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a></li>
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
@@ -255,11 +255,6 @@ div.csl-indent {
 <li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#simplified-naomi-model-description"><i class="fa fa-check"></i><b>C.1</b> Simplified Naomi model description</a>
 <ul>
 <li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#process-specification"><i class="fa fa-check"></i><b>C.1.1</b> Process specification</a></li>
-<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-prev"><i class="fa fa-check"></i><b>C.1.2</b> HIV prevalence</a></li>
-<li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-cov"><i class="fa fa-check"></i><b>C.1.3</b> ART coverage</a></li>
-<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#hiv-inc"><i class="fa fa-check"></i><b>C.1.4</b> HIV incidence rate</a></li>
-<li class="chapter" data-level="C.1.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#anc-test"><i class="fa fa-check"></i><b>C.1.5</b> ANC testing</a></li>
-<li class="chapter" data-level="C.1.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#art-attend"><i class="fa fa-check"></i><b>C.1.6</b> ART attendance</a></li>
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.2</b> Model assessment</a></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.3</b> AGHQ and PCA-AGHQ details</a></li>
@@ -326,7 +321,7 @@ Figure 3.1: An example of Bayesian modelling and computation for a simple one pa
 </p>
 </div>
 <p>The primary goal in a Bayesian analysis is to obtain the posterior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span>.
-This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central to decisions made as a result of the analysis.
+This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central role in use of the analysis for decision making.
 Using the eponymous Bayes’ theorem, the posterior distribution is obtained by
 <span class="math display" id="eq:posterior">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = = \frac{p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})} = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \tag{3.1}
@@ -337,7 +332,7 @@ This is because of the potentially high-dimensional integral
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}\]</span>
 in the denominator of Equation <a href="bayes-st.html#eq:posterior">(3.1)</a>.
-The evidence <span class="math inline">\(p(\mathbf{y})\)</span> quantifies the probability of obtaining the data under the model, and
+The evidence <span class="math inline">\(p(\mathbf{y})\)</span> quantifies the probability of obtaining the data under the model, and… TODO.
 As such, although it is easy to evaluate a quantity proportional to the posterior distribution
 <span class="math display">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
@@ -357,7 +352,7 @@ These methods may broadly be divided into Monte Carlo algorithms, and determinis
 These samples may be used in any future computations involving functions of the posterior distribution.
 For example, if <span class="math inline">\(G = G(\boldsymbol{\mathbf{\phi}})\)</span> then the expectation of <span class="math inline">\(G\)</span> with respect to the posterior distribution can be approximated by
 <span class="math display">\[\begin{equation}
-\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \frac{1}{M} \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
 \end{equation}\]</span>
 Most quantities of interest can be cast as posterior expectations.</p>
 <p>Markov chain Monte Carlo (MCMC) methods <span class="citation">(<a href="#ref-roberts2004general">Roberts and Rosenthal 2004</a>)</span> are the most popular class of sampling algorithms.
@@ -370,7 +365,7 @@ Though these methods have found applications in specific domains, MCMC is more w
 HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings proposal distributions based on Hamiltonian dynamics.
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.</p>
-<p>After running a MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
+<p>After running an MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
 Panel B of Figure <a href="bayes-st.html#fig:stan">3.2</a> shows a traceplot for a Markov chain which has converged.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:stan"></span>

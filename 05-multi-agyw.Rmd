@@ -35,22 +35,21 @@ resource_version <- "20230627-144735-3da88508"
 \markboth{A model for risk group proportions}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-In this chapter I describe an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
+This chapter describes an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
-I developed the statistical model, building upon an earlier version of the analysis conducted by Kathryn Risher.
-The model and results for 13 countries are presented in @howes2023spatio.
-Kathryn has also created a spreadsheet tool using the estimates ([`https://hivtools.unaids.org/pse/`](`https://hivtools.unaids.org/pse/`)) for use in national HIV response planning.
+I developed the statistical model, building upon an earlier version of the analysis conducted by Dr. Kathryn Risher.
+The model and results for 13 countries are presented in @howes2023spatio, and implemented in a spreadsheet tool ([`https://hivtools.unaids.org/pse/`](https://hivtools.unaids.org/pse/)) for use in national HIV response planning.
 The tool is being updated by inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
 
 ## Background
 
-In SSA, adolescent girls and young women (AGYW) aged 15-29 are a demographic group at increased risk of HIV infection.
+In SSA, adolescent girls and young women (AGYW) aged 15-29 are at increased risk of HIV infection.
 Though AGYW are only 28% of the population, they comprise 44% of new infections [@unaids2021update].
 HIV incidence for AGYW is 2.4 times higher than for similarly aged (15-29) males.
 The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, a younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services.
-Significant investments, such as the DREAMS partnership [@saul2018dreams] and by the GFATM [@global2018measurement], have been made to support prevention programming.
+Significant investments, such as the DREAMS partnership [@saul2018dreams] and by the the Global Fund [@global2018measurement], have been made to support prevention programming.
 
 The Global AIDS Strategy 2021-2026 [@unaids2021global] was adopted by the United Nations (UN) General Assembly in June 2021, and "outlines the strategic priorities and actions to be implemented by global, regional, country and community partners to get on-track to ending AIDS".
 It proposed stratifying HIV prevention packages to AGYW based on two factors
@@ -64,7 +63,7 @@ I illustrate this stylistically in Figure \@ref(fig:risk-grid).
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
 Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.
 
-(ref:risk-grid) Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively. This figure is adapted from a presentation I gave for High Impact Medicine.
+(ref:risk-grid) Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively.
 
 ```{r risk-grid, fig.cap="(ref:risk-grid)"}
 knitr::include_graphics("figures/multi-agyw/risk-grid.png")
@@ -158,18 +157,18 @@ The incidence rate ratio for women with non-regular or multiple sexual partner(s
 Among FSW, the incidence rate ratio (25.0, 13.0, 9.0, 6.0, 3.0) depended on the level of HIV incidence among the general population (<0.1\%, 0.1-0.3\%, 0.3-1.0\%, 1.0-3.0\%, >3.0\%), such that higher local HIV incidence in the general population corresponded to a lower incidence rate ratio for FSW.
 Estimates of HIV incidence rate ratios for FSW were derived by UNAIDS based on patterns of relative HIV prevalence among FSW compared to general population prevalence.
 
-(ref:available-surveys) Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.
-
-```{r available-surveys, fig.cap="(ref:available-surveys)"}
-knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
-```
-
-I used household survey data from 13 countries identified by the GFATM [@global2018measurement] as priority countries for implementation of AGYW HIV prevention.
+I used household survey data from 13 countries identified by the the Global Fund [@global2018measurement] as priority countries for implementation of AGYW HIV prevention.
 These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Namibia, South Africa, Eswatini, Tanzania, Uganda, Zambia and Zimbabwe.
 Surveys conducted in these countries between 1999 and 2018 were included in which both women were interviewed about their sexual behaviour, and sufficient geographic information was available to locate survey clusters to health districts.
 There were `r total_surveys` suitable surveys (Figure \@ref(fig:available-surveys)), with a total sample size of `r comma(agyw_surveyed)` women aged 15-29 years.
 Of the respondents, `r comma(agyw_surveyed_age$Y015_019)` were aged 15-19 years, `r comma(agyw_surveyed_age$Y020_024)` were aged 20-24 years, and `r comma(agyw_surveyed_age$Y025_029)` were aged 25-29 years.
 The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.
+
+(ref:available-surveys) Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.
+
+```{r available-surveys, fig.cap="(ref:available-surveys)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
+```
 
 For each survey, I classified respondents into one of four behavioural risk groups $k = 1, 2, 3, 4$ according to reported sexual risk behaviour in the past 12 months (Figure \@ref(fig:category-flowchart)).
 In increasing order of HIV acquisition risk, these risk groups were:
@@ -182,18 +181,18 @@ In increasing order of HIV acquisition risk, these risk groups were:
 The HIV incidence rate ratio $\text{RR}_k$ was assumed to vary by risk group (Table \@ref(tab:risk-groups)), with the one cohabiting partner risk group as baseline.
 
 Exact survey questions varied slightly across survey types and between survey phases.
-Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so how with many partners.
+Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so with how many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
 Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
-Full survey questions used are provided in Appendix \@ref(survey-questions).
+Full survey questions used are in Appendix \@ref(survey-questions).
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
 
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
 In these surveys, 2.64\% of women reported transactional sex.
 In surveys without such a question, women almost never (0.01\%) answered that one of their three most recent partners was a sex work client.
 This incomparability made it inappropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
-Of the total `r total_surveys` surveys included in the analysis, `r length(giftsvar_surveys)` had a specific transactional sex question, with a total sample size of `r comma(agyw_surveyed_giftsvar - giftsvar_Y025_029_overcount)` (`r comma(agyw_surveyed_giftsvar_age$Y015_019)` aged 15-19 years, `r comma(agyw_surveyed_giftsvar_age$Y020_024)` aged 20-24 years, and `r comma(agyw_surveyed_giftsvar_age$Y025_029 - giftsvar_Y025_029_overcount)` aged 25-29 years.
-The sample size for women aged 25-29 is smaller beccause there were `r length(giftsvar_exclude_Y025_029)` DHS surveys which excluded women 25-29 from the transactional sex survey question.
+Of the total `r total_surveys` surveys included in the analysis, `r length(giftsvar_surveys)` had a specific transactional sex question, with a total sample size of `r comma(agyw_surveyed_giftsvar - giftsvar_Y025_029_overcount)` (`r comma(agyw_surveyed_giftsvar_age$Y015_019)` aged 15-19 years, `r comma(agyw_surveyed_giftsvar_age$Y020_024)` aged 20-24 years, and `r comma(agyw_surveyed_giftsvar_age$Y025_029 - giftsvar_Y025_029_overcount)` aged 25-29 years).
+The sample size for women aged 25-29 is smaller because there were `r length(giftsvar_exclude_Y025_029)` DHS surveys which excluded women 25-29 from the transactional sex survey question.
 
 (ref:category-flowchart) Flowchart giving classification of survey respondents to HIV risk groups.
 
@@ -203,17 +202,19 @@ knitr::include_graphics(paste0("figures/multi-agyw/category-flowchart.png"))
 
 ### Other data
 
-As well as the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model [@eaton2021naomi].
+In addition to the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model [@eaton2021naomi].
 I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
 I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries.
-Exceptions are Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
+Exceptions were Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
 
 ## Model for risk group proportions
 
-Owing to incomparability across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
+Owing to the incomparability in estimating the $k = 4$ risk gorup across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
 Denote being in either the third or fourth risk group as $k = 3^{+}$.
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model to estimate the proportion of AGYW in the risk groups $k \in \{1, 2, 3^{+}\}$.
+This model is described in Section \@ref(st-multinomial).
 Then, using only those surveys with a specific transactional sex question, I fit a spatial logistic regression model to estimate the proportion of those in the $k = 3^{+}$ risk group that were in the $k = 3$ and $k = 4$ risk groups respectively.
+This model is described in Section \@ref(s-logistic).
 
 ### Spatio-temporal multinomial logistic regression {#st-multinomial}
 
@@ -298,7 +299,7 @@ I considered four models (Table \@ref(tab:multinomial-models)) for $\eta_{ita}$ 
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 \end{equation}
 <!-- + \delta_{itk} -->
-Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ with a vague prior distribution were included in all models I considered to ensure the multinomial-Poisson transformation was valid.
+Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ with a vague prior distribution were included in all models to ensure the multinomial-Poisson transformation was valid.
 To capture country-specific proportion estimates for each category, I included category random effects $\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})$ and country-category random effects $\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})$.
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects $\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})$.
 I considered several specifications for the space-cateogry $u_{ik}$ and time-cateogry effects $\gamma_{tk}$, described in Sections \@ref(spatial-re) and \@ref(temporal-re).
@@ -311,7 +312,7 @@ The only exception were the observation random effects, which were included as a
 For the space-category random effects $u_{ik}$ I considered two specifications:
 
 1. Independent and identically distributed (IID) $u_{ik} \sim \mathcal{N}(0, \tau_u^{-1})$,
-2. Besag [@besag1991bayesian] grouped by category
+2. The Besag improper conditional autoregressive (ICAR) model [@besag1991bayesian] grouped by category
 $$
 \mathbf{u} = (u_{11}, \ldots, u_{n1}, \ldots, u_{1{3^{+}}}, \ldots u_{n3^{+}})^\top \sim \mathcal{N}(\mathbf{0}, (\tau_u \mathbf{R}^\star_u)^{-}).
 $$
@@ -320,8 +321,7 @@ I followed best practices for the Besag model as described in Chapter \@ref(beyo
 To implement the Kronecker product I used the `group` option in `R-INLA` [Section 3.5.5; @gomez2020bayesian] setting the random effect to be `f(area_idx, model = "besag", group = cat_idx, control.group = list(model = "iid"), ...)`.
 Though the Kronecker product is symmetric, performance is better in `R-INLA` when the more complicated effect is written as the first variable rather than the grouping variable.
 
-In preliminary testing, I excluded spatial random effects from the model, and found that this negatively effected performance.
-I also tested using the BYM2 model [@simpson2017penalising] in place of the Besag.
+In preliminary testing I used the BYM2 model [@simpson2017penalising] in place of the Besag.
 I found that the proportion parameter posteriors tended to be highly peaked at the value one.
 For simplicity and to avoid numerical issues, by using Besag random effects I effectively decided to fix this proportion to one.
 
@@ -376,7 +376,7 @@ where $\nu = - \ln(0.01) / 2.5$ such that  $\mathbb{P}(\sigma > 2.5) = 0.01$.
 For the lag-one correlation parameter $\rho$, I used the PC prior distribution, as derived by @sorbye2017penalised, with base model $\rho = 1$ and condition $\mathbb{P}(\rho > 0 = 0.75)$.
 I chose the base model $\rho = 1$ corresponding to no change in behaviour over time, rather than the alternative $\rho = 0$ corresponding to no correlation in behaviour over time, as I judged the former to be more plausible a priori.
 
-#### Constraints
+#### Identifiability constraints
 
 To facilitate interpretability of the posterior inferences, I applied sum-to-zero constraints (Table \@ref(tab:constraints)) such that none of the category interaction random effects altered overall category probabilities.
 In testing of the space-time-category random effects, I applied analogous sum-to-zero constraints to maintain roles of the space-category and time-category random effects.
@@ -395,7 +395,7 @@ Table: (\#tab:constraints) Applying sum-to-zero constraints to interaction effec
 
 #### Survey weighted likelihood
 
-I accounted survey design using a weighted pseudo-likelihood where the observed counts $y$ are replaced by effective counts $y^\star$, as described in Section \@ref(survey).
+I accounted for the survey design using a weighted pseudo-likelihood where the observed counts $y$ are replaced by effective counts $y^\star$, as described in Section \@ref(survey).
 These counts may not be integers, and as such the Poisson likelihood given in Equation \@ref(eq:poisson1) is not appropriate.
 Instead, I used a generalised Poisson pseudo-likelihood $y^\star \sim \text{xPoisson}(\kappa)$ given by
 \begin{equation}
@@ -407,8 +407,8 @@ This working likelihood is implemented by `family = "xPoisson"` in `R-INLA`.
 #### Model selection
 
 I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion [@pettit1990conditional].
-For reference, I also computed the deviance information criterion (DIC) [@spiegelhalter2002bayesian] and widely applicable information criterion (WAIC) [@watanabe2013widely].
-Each of these criterion can be calculated in `R-INLA` without requiriing model refitting.
+For comparison, I also computed the deviance information criterion (DIC) [@spiegelhalter2002bayesian] and widely applicable information criterion (WAIC) [@watanabe2013widely].
+Each of these criterion can be calculated in `R-INLA` without requiring model refitting.
 The results are presented in Figure \@ref(fig:model-comparison).
 
 (ref:model-comparison) For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
@@ -735,11 +735,11 @@ I ensured that log odds ratios for the FSW risk group were at least as large as 
 Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV $H_{ia}$ on the logit scale using numerical optimisation.
 I did this by by finding the values of $\theta_{ia}$ which minimise the equation
 \begin{equation}
-f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia}
+f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia},
 \end{equation}
 where
 \begin{equation}
-\text{logistic}(x) = \exp(x) / (1 + \exp(x))
+\text{logistic}(x) = \exp(x) / (1 + \exp(x)),
 \end{equation}
 such that
 \begin{equation}
@@ -747,7 +747,7 @@ such that
 \end{equation}
 These values are given by
 \begin{equation}
-\hat \theta_{ia} = \text{argmin}_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2,
+\hat \theta_{ia} = \text{argmin}_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2.
 \end{equation}
 The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{iak}$ is the risk group population size.
 

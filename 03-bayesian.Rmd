@@ -73,7 +73,7 @@ knitr::include_graphics("figures/bayesian/conjugate.png")
 ```
 
 The primary goal in a Bayesian analysis is to obtain the posterior distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$.
-This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central to decisions made as a result of the analysis.
+This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central role in use of the analysis for decision making.
 Using the eponymous Bayes' theorem, the posterior distribution is obtained by
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = = \frac{p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})} = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. (\#eq:posterior)
@@ -85,7 +85,7 @@ This is because of the potentially high-dimensional integral
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}
 in the denominator of Equation \@ref(eq:posterior).
-The evidence $p(\mathbf{y})$ quantifies the probability of obtaining the data under the model, and 
+The evidence $p(\mathbf{y})$ quantifies the probability of obtaining the data under the model, and... TODO.
 As such, although it is easy to evaluate a quantity proportional to the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
@@ -107,7 +107,7 @@ Monte Carlo algorithms [@robert2005monte] aim to generate samples from the poste
 These samples may be used in any future computations involving functions of the posterior distribution.
 For example, if $G = G(\boldsymbol{\mathbf{\phi}})$ then the expectation of $G$ with respect to the posterior distribution can be approximated by
 \begin{equation}
-\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
+\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \frac{1}{M} \sum_{i = 1}^M G(\boldsymbol{\mathbf{\phi}}_i).
 \end{equation}
 Most quantities of interest can be cast as posterior expectations.
 
@@ -124,7 +124,7 @@ HMC uses derivatives of the posterior distribution to generate efficient Metropo
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 
-After running a MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
+After running an MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
 Panel B of Figure \@ref(fig:stan) shows a traceplot for a Markov chain which has converged.
 
 (ref:stan) NUTS can be used to sample from the posterior distribution in the example of Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value.

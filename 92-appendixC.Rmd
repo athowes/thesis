@@ -6,7 +6,7 @@ resource_version <- "20230811-095752-5b8181d8"
 
 ## Simplified Naomi model description
 
-In this section we describe the simplified Naomi model [@eaton2021naomi] in complete detail.
+This section describes the simplified version of the Naomi model [@eaton2021naomi] in complete detail.
 
 ### Process specification 
 
@@ -19,23 +19,24 @@ In this section we describe the simplified Naomi model [@eaton2021naomi] in comp
 | \@ref(art-attend) | ART attendance     | $n$          | 1              |
 |                   | Total              | $51 + 14n$   | 24             |
 
-### HIV prevalence {#hiv-prev}
+Table: (\#tab:process)
 
-HIV prevalence $\rho_{x, s, a} \in [0, 1]$ is modelled on the logit scale using the linear predictor
+#### HIV prevalence {#hiv-prev}
+
+HIV prevalence $\rho_{x, s, a} \in [0, 1]$ was modelled on the logit scale using the linear predictor
 \begin{equation}
-\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \bu^\rho_a + \bu_a^{\rho, s = \text{M}} + \bu^\rho_x + \bu_x^{\rho, s = \text{M}} + \bu_x^{\rho, a < 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. \label{eq:prev}
+\text{logit}(\rho_{x, s, a}) = \beta^\rho_0 + \beta_{S}^{\rho, s = \text{M}} + \mathbf{u}^\rho_a + \mathbf{u}_a^{\rho, s = \text{M}} + \mathbf{u}^\rho_x + \mathbf{u}_x^{\rho, s = \text{M}} + \mathbf{u}_x^{\rho, a < 15} + \boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}. (\#eq:prev)
 \end{equation}
-Table \ref{tab:prev} provides a description of the terms included in Equation \ref{eq:prev}.
-
-Half-normal prior distributions are chosen for the standard deviation terms
+Table \@ref(tab:prev) provides a description of the terms included in Equation \@ref(eq:prev).
+Independent half-normal prior distributions were chosen for the five standard deviation terms
 \begin{equation}
 \{\sigma_A^\rho, \sigma_{AS}^\rho, \sigma_X^\rho, \sigma_{XS}^\rho, \sigma_{XA}^\rho\} \sim \mathcal{N}^{+}(0, 2.5),
 \end{equation}
-uniform prior distributions for the AR1 correlation parameters
+independent uniform prior distributions for the two AR1 correlation parameters
 \begin{equation}
 \{\phi_A^\rho, \phi_{AS}^\rho\} \sim \mathcal{U}(-1, 1),
 \end{equation}
-and beta prior distributions for the BYM2 proportion parameters
+and independent beta prior distributions for the two BYM2 proportion parameters
 \begin{equation}
 \{\phi_X^\rho, \phi_{XS}^\rho\} \sim \text{Beta}(0.5, 0.5).
 \end{equation}
@@ -49,21 +50,23 @@ and beta prior distributions for the BYM2 proportion parameters
 | $\mathbf{u}^\rho_x$                     | $\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)$       | Spatial random effects for women                                                                                |
 | $\mathbf{u}_x^{\rho, s = \text{M}}$     | $\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)$ | Spatial random effects for the difference in logit prevalence for men compared to women in district $x$         |
 | $\mathbf{u}_x^{\rho, a < 15}$           | $\text{ICAR}(\sigma_{XA}^\rho)$                 | Spatial random effects for the ratio of paediatric prevalence to adult women prevalence                         |
-| $\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}$        | $-$                                             | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data are available |
+| $\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}$        | $-$                                             | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available |
 
-### ART coverage {#art-cov}
+Table: (\#tab:prev)
 
-ART coverage $\alpha_{x, s, a} \in [0, 1]$ is modelled on the logit scale using the linear predictor
+#### ART coverage {#art-cov}
+
+ART coverage $\alpha_{x, s, a} \in [0, 1]$ was modelled on the logit scale using the linear predictor
 \begin{equation}
-\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \bu^\alpha_a + \bu_a^{\alpha, s = \text{M}} + \bu^\alpha_x + \bu_x^{\alpha, s = \text{M}} + \bu_x^{\alpha, a < 15} + \bmeta^\alpha_{R_x, s, a} 
+\text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_a + \mathbf{u}_a^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_x + \mathbf{u}_x^{\alpha, s = \text{M}} + \mathbf{u}_x^{\alpha, a < 15} + \boldsymbol{\mathbf{\eta}}^\alpha_{R_x, s, a} 
 \end{equation}
-with terms and priors analogous to the HIV prevalence process model in Section \ref{sec:hiv-prev} above.
+with terms and priors analogous to the HIV prevalence process model in Section \@ref(hiv-prev) above.
 
-### HIV incidence rate {#hiv-inc}
+#### HIV incidence rate {#hiv-inc}
 
-HIV incidence rate $\lambda_{x, s, a} > 0$ is modelled on the log scale using the linear predictor
+HIV incidence rate $\lambda_{x, s, a} > 0$ was modelled on the log scale using the linear predictor
 \begin{equation}
-\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \bu_x^\lambda + \bmeta_{R_x, s, a}^\lambda. \label{eq:inc}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. \label{eq:inc}
 \end{equation}
 Table \ref{tab:inc} provides a description of the terms included in Equation \ref{eq:inc}.
 
@@ -74,39 +77,39 @@ Table \ref{tab:inc} provides a description of the terms included in Equation \re
 | $\rho_{x}^{\text{15-49}}$         | $-$                              | The HIV prevalence among adults 15-49 calculated by aggregating age-specific HIV prevalences                                                                  |
 | $\alpha_{x}^{\text{15-49}}$       | $-$                              | The ART coverage among adults 15-49 calculated by aggregating age-specific ART coverages                                                                      |
 | $\omega = 0.7$                    | $-$                              | Average reduction in HIV transmission rate per increase in population ART coverage fixed based on inputs to the Estimation and Projection Package (EPP) model |
-| $\bu_x^\lambda$                   | $\mathcal{N}(0, \sigma^\lambda)$ | IID spatial random effects with $\sigma^\lambda \sim \mathcal{N}^+(0, 1)$                                                                                     |
-| $\bmeta^\lambda_{R_x, s, a}$      | $-$                              | Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output                                                                    |
-The proportion recently infected among HIV positive persons $\kappa_{x, s, a} \in [0, 1]$ are modelled as
+| $\mathbf{u}_x^\lambda$                   | $\mathcal{N}(0, \sigma^\lambda)$ | IID spatial random effects with $\sigma^\lambda \sim \mathcal{N}^+(0, 1)$                                                                                     |
+| $\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}$      | $-$                              | Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output                                                                    |
+The proportion recently infected among HIV positive persons $\kappa_{x, s, a} \in [0, 1]$ were modelled as
 \begin{equation}
 \kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
 \end{equation}
 where $\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})$ is the mean duration of recent infection, and $\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})$ is the false recent ratio.
-The prior distribution for $\Omega_T$ is informed by the characteristics of the recent infection testing algorithm.
-For PHIA surveys this is $\Omega_{T_0} = 130 \text{ days}$ and $\sigma^{\Omega_T} = 6.12 \text{ days}$, and further there is assumed to be no false recency, such that $\beta_{T_0} = 0.0$ and $\sigma^{\beta_T} = 0.0$.
+The prior distribution for $\Omega_T$ was informed by the characteristics of the recent infection testing algorithm.
+For PHIA surveys this was $\Omega_{T_0} = 130 \text{ days}$ and $\sigma^{\Omega_T} = 6.12 \text{ days}$, and further there was assumed to be no false recency, such that $\beta_{T_0} = 0.0$ and $\sigma^{\beta_T} = 0.0$.
 
-### ANC testing {#anc-test}
+#### ANC testing {#anc-test}
 
-HIV prevalence $\rho_{x, a}^\text{ANC}$ and ART coverage $\alpha_{x, a}^\text{ANC}$ among pregnant women are modelled as being offset on the logit scale from the corresponding district-age indicators $\rho_{x, F, a}$ and $\alpha_{x, F, a}$ according to
+HIV prevalence $\rho_{x, a}^\text{ANC}$ and ART coverage $\alpha_{x, a}^\text{ANC}$ among pregnant women were modelled as being offset on the logit scale from the corresponding district-age indicators $\rho_{x, F, a}$ and $\alpha_{x, F, a}$ according to
 \begin{align}
-\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \bu_x^{\rho^{\text{ANC}}} + \bmeta_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
-\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \bu_x^{\alpha^{\text{ANC}}} + \bmeta_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
 \end{align}
 Table \ref{tab:anc} provides a description of the terms included in Equation \ref{eq:anc1} and Equation \ref{eq:anc2}.
 
 | Term                                    | Distribution                                     | Description                                                                                                                                                                                                    |
 |-----------------------------------------|--------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | $\beta^{\theta^{\text{ANC}}}$           | $\mathcal{N}(0, 5)$                              | Intercept giving the average difference between population and ANC outcomes                                                                                                                                    |
-| $\bu_x^{\theta^{\text{ANC}}}$           | $\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})$ | IID district random effects with $\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)$                                                                                                                     |
-| $\bmeta_{R_x, a}^{\theta^{\text{ANC}}}$ | $-$                                              | Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region $R_x$ |
+| $\mathbf{u}_x^{\theta^{\text{ANC}}}$           | $\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})$ | IID district random effects with $\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)$                                                                                                                     |
+| $\boldsymbol{\mathbf{\eta}}_{R_x, a}^{\theta^{\text{ANC}}}$ | $-$                                              | Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region $R_x$ |
 
-In the full Naomi model, for adult women 15-49 the number of ANC clients $\Psi_{x, a} > 0$ are modelled as
+In the full Naomi model, for adult women 15-49 the number of ANC clients $\Psi_{x, a} > 0$ were modelled as
 $$
-\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \bu_x^\psi,
+\log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \mathbf{u}_x^\psi,
 $$
-where $N_{x, \text{F}, a}$ are the female population sizes, $\psi_{R_x, a}$ are fixed age-sex fertility ratios in Spectrum region $R_x$, $\beta^\psi$ are log rate ratios for the number of ANC clients relative to the predicted fertility, and $\bu_x^\psi \sim \mathcal{N}(0, \sigma^\psi)$ are district random effects.
-Here we fix $\beta^\psi = 0$ and $\bu_x^\psi = \mathbf{0}$ such that $\Psi_{x, a}$ are simply constants.
+where $N_{x, \text{F}, a}$ are the female population sizes, $\psi_{R_x, a}$ are fixed age-sex fertility ratios in Spectrum region $R_x$, $\beta^\psi$ are log rate ratios for the number of ANC clients relative to the predicted fertility, and $\mathbf{u}_x^\psi \sim \mathcal{N}(0, \sigma^\psi)$ are district random effects.
+Here we fix $\beta^\psi = 0$ and $\mathbf{u}_x^\psi = \mathbf{0}$ such that $\Psi_{x, a}$ are simply constants.
 
-### ART attendance {#art-attend}
+#### ART attendance {#art-attend}
 
 ```{r}
 log_odds <- function(p) log(p / (1 - p))
@@ -118,9 +121,9 @@ Let $\gamma_{x, x'} \in [0, 1]$ be the probability that a person on ART residing
 We assume that $\gamma_{x, x'} = 0$ for $x \notin \{x, \text{ne}(x)\}$ such that individuals seek treatment only in their residing district or its neighbours $\text{ne}(x) = \{x': x' \sim x\}$, where $\sim$ is an adjacency relation, and $\sum_{x' \in \{x, \text{ne}(x)\}} \gamma_{x, x'} = 1$.
 To model $\gamma_{x, x'}$ for $x \sim x'$ we use a multinomial logistic regression model, based on the log-odds ratios
 \begin{equation}
-\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \bu_x^{\tilde \gamma}, \label{eq:log-or}
+\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, \label{eq:log-or}
 \end{equation}
-where $\tilde \gamma_0 = -4$ is a fixed intercept, and $\bu_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})$ are district random effects with $\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)$.
+where $\tilde \gamma_0 = -4$ is a fixed intercept, and $\mathbf{u}_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})$ were district random effects with $\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)$.
 Note that Equation \ref{eq:log-or} does not depend on $x'$, such that $\gamma_{x, x'}$ is only a function of $x$.
 Choice of $\tilde \gamma_0 = -4$ implies a prior mean on $\gamma_{x, x'}$ of 1.8%, such that $(100 - 1.8 \times \text{ne}(x))\%$ of ART clients in district $x$ obtain treatment in their home district, a-priori.
 We fix $\tilde \gamma_{x, x} = 0$ and recover the multinomial probabilities using the softmax
