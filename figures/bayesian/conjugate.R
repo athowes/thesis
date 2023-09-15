@@ -15,7 +15,7 @@ ggplot(data = data.frame(x = c(0, 8)), aes(x)) +
   geom_function(aes(col = "Posterior"), fun = dgamma, n = 500, args = list(shape = a + sum(y), rate = b + length(y))) +
   geom_vline(aes(col = "Truth", xintercept = truth)) +
   scale_color_manual(values = cbpalette) +
-  geom_point(data = data.frame(x = y, y = 0), aes(x = x, y = y), inherit.aes = FALSE, alpha = 0.7, size = 2) +
+  geom_point(data = data.frame(x = y, y = 0), aes(x = x, y = y), inherit.aes = FALSE, alpha = 0.7, size = 2, shape = 1) +
   geom_col(data = data.frame(x = c(0, 0, 0), y = c(0, 0, 0), type = c("Posterior", "Prior", "Truth")), aes(x = x, y = y, fill = type)) +
   scale_fill_manual(values = cbpalette) +
   labs(x = "", y = "", col = "", fill = "") +

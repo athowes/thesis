@@ -23,14 +23,17 @@ opt_bfgs <- aghq::optimize_theta(
   ff, 1, control = aghq::default_control(method = "BFGS")
 )
 
+unnormalised_posterior <- function(phi) {
+  phi^8 * exp(-4 * phi)
+}
+
 ggplot(data = data.frame(x = c(0, 8)), aes(x)) +
   geom_function(aes(col = "Prior"), fun = dgamma, n = 500, args = list(shape = a, rate = b)) +
   geom_function(aes(col = "Posterior"), fun = dgamma, n = 500, args = list(shape = a + sum(y), rate = b + length(y))) +
   stat_function(aes(col = "Laplace"), fun = dnorm, n = 500, args = list(mean = opt_bfgs$mode, sd = sqrt(1 / opt_bfgs$hessian))) +
-  stat_function(fun = unnormalised_posterior, n = 500) +
   geom_vline(aes(col = "Truth", xintercept = truth)) +
   scale_color_manual(values = c("#CC79A7", "#56B4E9","#009E73", "#E69F00")) +
-  geom_point(data = data.frame(x = y, y = 0), aes(x = x, y = y), inherit.aes = FALSE, alpha = 0.7, size = 2) +
+  geom_point(data = data.frame(x = y, y = 0), aes(x = x, y = y), inherit.aes = FALSE, alpha = 0.7, size = 2, shape = 1) +
   geom_col(data = data.frame(x = c(0, 0, 0, 0), y = c(0, 0, 0, 0), type = as.factor(c("Laplace", "Posterior", "Prior", "Truth"))), aes(x = x, y = y, fill = type)) +
   scale_fill_manual(values = c("#CC79A7", "#56B4E9","#009E73", "#E69F00")) +
   labs(x = "", y = "", col = "", fill = "") +
@@ -41,10 +44,6 @@ ggsave("figures/naomi-aghq/laplace.png", h = 3, w = 6.25, bg = "white")
 
 opt_bfgs$mode
 sqrt(1 / opt_bfgs$hessian)
-
-unnormalised_posterior <- function(phi) {
-  phi^8 * exp(-4 * phi)
-}
 
 lognormconst <- log(gamma(9)) - 9 * log(4)
 lognormconst
