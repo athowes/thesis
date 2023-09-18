@@ -24,12 +24,17 @@ resource_version <- "20230811-095752-5b8181d8"
 This chapter describes a novel Bayesian inference method.
 Development of the method was motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators [@unaids2023global].
-The complexity of the model makes obtaining the fast and accurate Bayesian inferences required in this setting challenging.
+The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
 As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
-This is undesirable as it leads to underestimating the uncertainty in key HIV indicators, and ultimately worse policy.
+This is undesirable as it could result in underestimating the uncertainty of HIV indicators, ultimately leading to worse policy decisions.
 
-The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and descend from the integrated nested Laplace approximation of @rue2009approximate.
-I implement an INLA-like algorithm using automatic differentiation, and enable the use of this algorithm for a wider class of models than previously possible.
+The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method of @rue2009approximate.
+INLA is a popular method which has enabled fast and accurate Bayesian inferences for a wide range of models, across a large number of scientific fields.
+The success of INLA is in large part due to its implementation in the `R-INLA` software.
+Use or development of INLA outside the `R-INLA` software has been limited, with some notable exceptions.
+In pursuit of an a suitable inference approach for the Naomi model, I implemented an INLA-like method outside `R-INLA`, building upon @stringer2022fast.
+My implementation is compatible with a wider range of models than `R-INLA`, and uses automatic differentiation to obtain the derivatives required for the Laplace approximation.
+Potential use cases include applied statisticians who would like to perform inference for complex models, and methods developers looking to extending the INLA methodology.
 
 I began work on this project at the start of my PhD, and only began making meaningful progress after reading @stringer2022fast.
 I am grateful to later have had the opportunity to collaborate with Alex Stringer, including visiting the University of Waterloo in fall term of 2022.

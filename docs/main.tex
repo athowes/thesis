@@ -676,7 +676,7 @@ Checks of this kind {[}\textcite{gelman2013bayesian}; Chapter 6{]} can be used t
 
 }
 
-\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of models being considered (This situation is sometimes known \autocite{bernardo2001bayesian} as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified .) Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.}\label{fig:conjugate}
+\caption{An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of models being considered (This situation is sometimes known \autocite{bernardo2001bayesian} as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.}\label{fig:conjugate}
 \end{figure}
 
 The primary goal in a Bayesian analysis is to obtain the posterior distribution \(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\).
@@ -858,7 +858,7 @@ Those of the same sex are more likely to be similar, as are those of similar age
 
 }
 
-\caption{Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size (\(m = 5, 25, 125\)) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the ratio \(y_i / m\). Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. HIV estimates for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from \href{https://github.com/athowes/zambia-unaids}{\texttt{https://github.com/athowes/zambia-unaids}}.}\label{fig:zmb-maps}
+\caption{Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size \(m = 5, 25, 125\) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the ratio \(y_i / m\). Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. HIV estimates for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure is adapted from a presentation I gave for the Zambia HIV Estimates Technical Working Group, available from \href{https://github.com/athowes/zambia-unaids}{\texttt{https://github.com/athowes/zambia-unaids}}.}\label{fig:zmb-maps}
 \end{figure}
 
 
@@ -2297,12 +2297,17 @@ These findings underscore the importance of providing effective HIV prevention o
 This chapter describes a novel Bayesian inference method.
 Development of the method was motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (\href{https://naomi.unaids.org}{\texttt{https://naomi.unaids.org}}) to produce subnational estimates of HIV indicators \autocite{unaids2023global}.
-The complexity of the model makes obtaining the fast and accurate Bayesian inferences required in this setting challenging.
+The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
 As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
-This is undesirable as it leads to underestimating the uncertainty in key HIV indicators, and ultimately worse policy.
+This is undesirable as it could result in underestimating the uncertainty of HIV indicators, ultimately leading to worse policy decisions.
 
-The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and descend from the integrated nested Laplace approximation of \textcite{rue2009approximate}.
-I implement an INLA-like algorithm using automatic differentiation, and enable the use of this algorithm for a wider class of models than previously possible.
+The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method of \textcite{rue2009approximate}.
+INLA is a popular method which has enabled fast and accurate Bayesian inferences for a wide range of models, across a large number of scientific fields.
+The success of INLA is in large part due to its implementation in the \texttt{R-INLA} software.
+Use or development of INLA outside the \texttt{R-INLA} software has been limited, with some notable exceptions.
+In pursuit of an a suitable inference approach for the Naomi model, I implemented an INLA-like method outside \texttt{R-INLA}, building upon \textcite{stringer2022fast}.
+My implementation is compatible with a wider range of models than \texttt{R-INLA}, and uses automatic differentiation to obtain the derivatives required for the Laplace approximation.
+Potential use cases include applied statisticians who would like to perform inference for complex models, and methods developers looking to extending the INLA methodology.
 
 I began work on this project at the start of my PhD, and only began making meaningful progress after reading \textcite{stringer2022fast}.
 I am grateful to later have had the opportunity to collaborate with Alex Stringer, including visiting the University of Waterloo in fall term of 2022.
