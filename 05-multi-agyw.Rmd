@@ -240,7 +240,7 @@ A standard multinomial logistic regression model [e.g. @gelman2013bayesian] is s
     \log \left( \frac{p_{itak}}{p_{ita1}} \right) &= \eta_{itak}, \quad k = 2, 3^{+}, (\#eq:mlr2)
 \end{align}
 where the number in risk group $k$ is $y_{itak}$, the fixed sample size is $m_{ita} = \sum_{k = 1}^{3^{+}} y_{itak}$, and $k = 1$ is chosen as the baseline category.
-This model is not an LGM because each observation $y_{itak}$ for $k \in \{1, 2, 3^{+}\}$ depends on multiple structured additive predictors $\{\eta_{itak}, k = 1, 2, 3^{+}\}$.
+This model is not an latent Gaussian model [LGM; @rue2009approximate] because each observation $y_{itak}$ for $k \in \{1, 2, 3^{+}\}$ depends non-linearly on multiple structured additive predictors $\{\eta_{itak}, k = 1, 2, 3^{+}\}$.
 
 The model, defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups, is too large for MCMC to be tractable in reasonable time.
 To recast this model as an LGM, I used the multinomial-Poisson transformation (detailed in Section \@ref(mp-transformation)).
