@@ -23,15 +23,15 @@ resource_version <- "20230811-095752-5b8181d8"
 
 This chapter describes a novel Bayesian inference method.
 Development of the method was motivated the Naomi small-area estimation model.
-Over 35 countries have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators [@unaids2023global].
+Over 35 countries have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators [@unaids2023global] by synthesising evidence from multiple data sources.
 The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
 As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
-This is undesirable as it could result in underestimating the uncertainty of HIV indicators, ultimately leading to worse policy decisions.
+This is undesirable as it could result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.
 
-The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method of @rue2009approximate.
-INLA is a popular method which has enabled fast and accurate Bayesian inferences for a wide range of models, across a large number of scientific fields.
-The success of INLA is in large part due to its implementation in the `R-INLA` software.
-Use or development of INLA outside the `R-INLA` software has been limited, with some notable exceptions.
+The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
+The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
+The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
+Most applications of and methodological developments relating to the INLA method have used `R-INLA`, with a small number of exceptions [@wood2020simplified; @stringer2022fast].
 In pursuit of an a suitable inference approach for the Naomi model, I implemented an INLA-like method outside `R-INLA`, building upon @stringer2022fast.
 My implementation is compatible with a wider range of models than `R-INLA`, and uses automatic differentiation to obtain the derivatives required for the Laplace approximation.
 
@@ -197,7 +197,7 @@ Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule designed 
 \begin{equation}
 \int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). (\#eq:ghqexact)
 \end{equation}
-The term $\varphi(\cdot)$ is a standard multivariate normal density $\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})$, where $\mathbf{0}$ is the zero-vector and $\mathbf{I}$ is the identify matrix of relevant dimension, and the term $P_\alpha(\cdot)$ is a polynomial with highest degree monomial $\alpha$.
+The term $\varphi(\cdot)$ is a standard multivariate normal density $\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})$, where $\mathbf{0}$ is the zero-vector and $\mathbf{I}$ is the identify matrix of relevant dimension, and the term $P_\alpha(\cdot)$ is a polynomial with highest degree monomial $\alpha \leq 2k - 1$, where $k$ is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
 Bernstein–von Mises theorem.
 
@@ -224,7 +224,7 @@ The corresponding weighting function $\omega: \mathcal{Q}(1, k) \to \mathbb{R}$ 
 \omega(z) = \frac{k!}{\varphi(z) \cdot [H_{k + 1}(z)]^2}.
 \end{equation}
 
-Multivariate GHQ rules are usually constructed using the product rule over identical univariate GHQ rules in each dimension.
+Multivariate GHQ rules are usually constructed using the product rule with identical univariate GHQ rules in each dimension.
 In $d$ dimensions, the multivariate GHQ nodes $\mathbf{z} \in \mathcal{Q}(d, k)$ are defined by
 \begin{equation}
 \mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k).
@@ -288,17 +288,22 @@ Following @stringer2022fast I consider use of AGHQ as the particular quadrature 
 Let $\mathbf{z} \in \mathcal{Q}(m, k)$ be the $m$-dimensional GHQ nodes constructed using the product rule with $k$ nodes per dimension, and $\omega: \mathbb{R}^m \to \mathbb{R}$ the corresponding weighting function.
 These nodes are adapted by $\boldsymbol{\mathbf{\theta}}(\mathbf{z}) = \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$ where
 \begin{align}
-\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} &= \arg\max_{\boldsymbol{\mathbf{\theta}}} \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}), \\
-\hat{\boldsymbol{\mathbf{H}}}^{-1} &= \hat{\mathbf{P}}_\texttt{LA} \hat{\mathbf{P}}_\texttt{LA}^\top.
+\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} &= \arg\max_{\boldsymbol{\mathbf{\theta}}} \log \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}), \\
+\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA} &= - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\theta}} \partial \boldsymbol{\mathbf{\theta}}^\top} \log \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) \rvert_{\boldsymbol{\mathbf{\theta}} = \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}}, \\
+\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}^{-1} &= \hat{\mathbf{P}}_\texttt{LA} \hat{\mathbf{P}}_\texttt{LA}^\top.
 \end{align}
 The nested AGHQ estimate of the posterior normalising constant is then
 \begin{equation}
-\tilde p_{\texttt{AQ}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}).
+\tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}}_\texttt{LA} | \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}).
 \end{equation}
 
 #### Gaussian marginals
 
+Multinomial then Gaussian.
+
 #### Laplace marginals
+
+Move equations for this here.
 
 #### Simplfied Laplace marginals
 
@@ -310,12 +315,6 @@ The nested AGHQ estimate of the posterior normalising constant is then
 
 ## Software
 
-### `TMB`
-
-Template Model Builder [TMB, or when referring to the software `TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
-In `TMB` derivatives are obtained using automatic differentiation [AD; @baydin2017automatic], a rule-based method based on decomposition of calculations into elementary operations, which can be combined by repeated use of the chain rule.
-Give an example of TMB use.
-
 ### `R-INLA`
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
@@ -326,20 +325,31 @@ This interface is easy to engage with for new users, but be limiting for more ad
 For more information, including recent developments, see the `R-INLA` website [`https://r-inla.org`](https://r-inla.org).
 The `inlabru` R package [@bachl2019inlabru] is one notable example.
 
+### `TMB`
+
+Template Model Builder [TMB, or when referring to the software `TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
+In `TMB` derivatives are obtained using automatic differentiation [AD; @baydin2017automatic], a rule-based method based on decomposition of calculations into elementary operations, which can be combined by repeated use of the chain rule.
+Give an example of TMB use.
+
+`TMB` C++ templates are compatible with other software.
+`tmbstan` [@monnahan2018no] allows running HMC via Stan.
+`aghq` [@stringer2021implementing] allows use of AGHQ via `mvQuad` [@weiser2016mvquad].
+
 ## A universal INLA implementation based on AD
 
-In this section, I implement the INLA method, using the `TMB` package.
+In this section, I implement the INLA method, with Laplace marginals, using the `TMB` package.
 This implementation is universal in that it is compatible with any model with a `TMB` C++ template.
-This opens the door for application of INLA to models which are not compatible with `R-INLA`.
+This leads the way for application of INLA to models which are not compatible with `R-INLA`.
 Indeed, @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthors of TMB) in discussion of @rue2009approximate, noting that such a system would be "fast, flexible, and easy-to-use".
-As this suggestion was made close to 15 years ago, it a surprise that its potential remains unrealised.
+This suggestion was made close to 15 years ago, so it is surprising that its potential remains unrealised.
 
 ### Epilepsy example
 
-To demonstrate the implementation, consider the epilepsy generalised linear mixed model example of @spiegelhalter1996bugs.
+Consider the epilepsy generalised linear mixed model example of @spiegelhalter1996bugs.
 This model is based on that of @breslow1993approximate, a modification of @thall1990some, and the data are from an epilespy drug double-blind clinical trial [@leppik1985double].
-@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of either the Gaussian or Laplace approximation for some parameters.
+@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
+As such, it is a good choice of example to use as demonstration.
 
 In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th visit.
@@ -353,7 +363,22 @@ The observations were modelled using a Poisson distribution $y_{ij} \sim \text{P
    \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4],
 \end{align*}
 where the prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
-The random effects are IID $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
+The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ random effects were IID with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
+
+The linear predictor for this model is can be specified in `R-INLA` by:
+
+```
+formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
+  f(rand, model = "iid", hyper = tau_prior) +  #' Nu random effect
+  f(Ind,  model = "iid", hyper = tau_prior)    #' Epsilon random effect
+```  
+
+The TMB C++ template for the model is in Appendix \@ref(tmb-epil).
+
+### Another example
+
+Choose an example, potentially from Stringer et al, of a model that `R-INLA` can't fit but INLA with `TMB` can.
+Demonstrate whether Laplace marginals make a difference to Gaussian marginals there.
 
 ## The Naomi model {#naomi}
 

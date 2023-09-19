@@ -3,7 +3,7 @@
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 134/~200 pages, and many/~tending to zero mistakes.
+> 136/~200 pages, and many/~tending to zero mistakes.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -62,13 +62,14 @@ Thanks for being interested! You can read either the
 [PDF](https://athowes.github.io/thesis/main.pdf) version. I know, an
 overwhelming choice. It’s still very much a work in progress at the
 moment though, so I’d recommend checking back in a few months unless you
-love non sequiturs.
+love non-sequiturs.
 
 > How did you format this thesis?
 
 I used the R package
 [`thesisdown`](https://github.com/ismayc/thesisdown), inspired by
-[`bookdown`](https://github.com/rstudio/bookdown).
+[`bookdown`](https://github.com/rstudio/bookdown). So far it has been
+working relatively seamlessly, so I’d recommend it!
 
 > Are there any resources you’d recommend for an introduction to this
 > area of research?
