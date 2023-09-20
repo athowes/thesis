@@ -2340,14 +2340,15 @@ This chapter describes a novel Bayesian inference method.
 Development of the method was motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (\href{https://naomi.unaids.org}{\texttt{https://naomi.unaids.org}}) to produce subnational estimates of HIV indicators \autocite{unaids2023global} by synthesising evidence from multiple data sources.
 The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
-This is undesirable as it could result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.
+As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are set using optimisation of the marginal posterior \autocite{casella1985introduction}.
+This approximation is undesirable as it can result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.
 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by \textcite{rue2009approximate}.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields \autocite{rue2017bayesian}.
 The success of INLA is in large part due to its accessible implementation in the \texttt{R-INLA} software.
-Most applications and methodological developments of the INLA method, with few exceptions \autocite{wood2020simplified,stringer2022fast}, have used \texttt{R-INLA}.
-In pursuit of an a suitable inference approach for the Naomi model, I implemented an INLA-like method outside \texttt{R-INLA}, building upon \textcite{stringer2022fast}.
+Most applications and methodological developments of the INLA method have used \texttt{R-INLA}.
+Exceptions include the simplified INLA approach of \textcite{wood2020simplified}, implemented in the \texttt{mgcv} R package, and \textcite{stringer2022fast}.
+In pursuit of a suitable inference approach for the Naomi model, I implemented an INLA-like method outside \texttt{R-INLA}, building upon \textcite{stringer2022fast}.
 My implementation is compatible with a wider range of models than \texttt{R-INLA}, and uses automatic differentiation to obtain the derivatives required for the Laplace approximation.
 
 Though I began working on this project close to the start of my PhD, I only began making meaningful progress after reading \textcite{stringer2022fast}.
@@ -2355,8 +2356,8 @@ I am grateful to later have had the opportunity to collaborate with Alex Stringe
 The results of our work are presented in \textcite{howes2023fast}.
 Code for the analysis in this chapter is available from \href{https://github.com/athowes/elgm-inf}{\texttt{https://github.com/athowes/naomi-aghq}}.
 
-\hypertarget{inference-methods}{%
-\section{Inference methods}\label{inference-methods}}
+\hypertarget{inference-methods-and-software}{%
+\section{Inference methods and software}\label{inference-methods-and-software}}
 
 In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
@@ -2383,10 +2384,11 @@ For this reason, approximations to the posterior distribution \(\tilde p(\boldsy
 
 Some approximate Bayesian inference methods avoid directly calculating the posterior normalising constant, instead working with the unnormalised posterior distribution
 \begin{equation}
-p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}).
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}),
 \end{equation}
+where \(p(\mathbf{y})\) is not a function of \(\boldsymbol{\mathbf{\phi}}\) and so can be removed as a constant.
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
-The methods in this chapter fall into this later category.
+The methods in this chapter fall into this latter category.
 
 \hypertarget{the-laplace-approximation}{%
 \subsection{The Laplace approximation}\label{the-laplace-approximation}}
@@ -2444,7 +2446,7 @@ Derivatives may also be used to improve the performance of the optimisation algo
 \subsubsection{The marginal Laplace approximation}\label{marginal-la}}
 
 Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
-An alternative approach is to approximate the marginal posterior distribution of some subset of the parameters, which do have a posterior distributions which can be reasonably assumed to be Gaussian.
+An alternative approach is to approximate the marginal posterior distribution of some subset of the parameters, which do posterior distributions which are well approximated by a Gaussian distribution.
 The remaining non-Gaussian parameters may then be handled using another, more appropriate, method.
 
 Let \(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\) and consider a three-stage hierarchical model
@@ -2469,19 +2471,19 @@ The resulting marginal Laplace approximation, for a particular value of the hype
 &= \frac{p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{align}
 
-The marginal Laplace approximation is most accurate when then marginal posterior \(p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) is accurately approximated by a Gaussian
+The marginal Laplace approximation is most accurate when the marginal posterior \(p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\) is accurately approximated by a Gaussian
 distribution.
 For the class of latent Gaussian models \autocite{rue2009approximate} the prior distribution on the latent field is Gaussian \(\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}})\).
 Although the marginal posterior distribution
 \begin{align}
 p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) \propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})
 \end{align}
-is not Gaussian, its deviation from Gaussianity can be expected to be small if \(\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\) satisfies some condition.
+is not Gaussian, its deviation from Gaussianity can be expected to be small if \(\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\) satisfies some condition which remains to be detailed.
 
 \hypertarget{quadrature}{%
 \subsection{Quadrature}\label{quadrature}}
 
-Quadrature is an method used to approximate integrals using a weighted sum of function evaluations.
+Quadrature is a method used to approximate integrals using a weighted sum of function evaluations.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 Let \(\mathcal{Q}\) be a set of quadrature nodes \(\mathbf{z} \in \mathcal{Q}\) and \(\omega: \mathbb{R}^d \to \mathbb{R}\) be a weighting function.
 Then, quadrature can be used to estimate the posterior normalising constant (Equation \eqref{eq:evidence}) by
@@ -2489,7 +2491,8 @@ Then, quadrature can be used to estimate the posterior normalising constant (Equ
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}
 
-To illustrate quadrature for a simple example, consider integrating the univariate function \(f(z) = z \sin(z)\) between \(z = 0\) and \(z = \pi\), known analytically to be \(\pi\).
+To illustrate quadrature for a simple example, consider integrating the univariate function \(f(z) = z \sin(z)\) between \(z = 0\) and \(z = \pi\).
+This integral is known analytically to be \(\pi\).
 A quadrature approximation of this integral is
 \begin{equation}
 \pi = \int_{0}^\pi z \sin(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} z \sin(z) \omega(z), \label{eq:zsinz}
@@ -2529,7 +2532,7 @@ Gauss-Hermite quadrature {[}GHQ; \textcite{davis1975methods}{]} is a quadrature 
 \end{equation}
 The term \(\varphi(\cdot)\) is a standard multivariate normal density \(\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})\), where \(\mathbf{0}\) is the zero-vector and \(\mathbf{I}\) is the identify matrix of relevant dimension, and the term \(P_\alpha(\cdot)\) is a polynomial with highest degree monomial \(\alpha \leq 2k - 1\), where \(k\) is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
-Bernstein--von Mises theorem.
+This statement requires support using the Bernstein--von Mises theorem in combination with other arguments.
 
 I follow the notation for GHQ established by \textcite{bilodeau2022stochastic}.
 First, to construct the univariate GHQ rule for \(z \in \mathbb{R}\), let \(H_k(z)\) be the \(k\)th (probabilist's) Hermite polynomial
@@ -2679,14 +2682,14 @@ The approximate posterior marginal \(\tilde p(x_i \, | \, \mathbf{y})\) may then
 \hypertarget{simplifed-inla}{%
 \subsubsection{Simplifed INLA}\label{simplifed-inla}}
 
-\textcite{wood2020simplified} approximate the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieve good performance.
-For splines, as with ELGMs, the precision matrix cannot be assumed to be as sparse.
+\textcite{wood2020simplified} approximates the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieves good performance.
+For splines, as with ELGMs, the precision matrix cannot be assumed to be so sparse.
 
 \hypertarget{software}{%
-\section{Software}\label{software}}
+\subsection{Software}\label{software}}
 
 \hypertarget{r-inla}{%
-\subsection{\texorpdfstring{\texttt{R-INLA}}{R-INLA}}\label{r-inla}}
+\subsubsection{\texorpdfstring{\texttt{R-INLA}}{R-INLA}}\label{r-inla}}
 
 The \texttt{R-INLA} software \autocite{martins2013bayesian} implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of \textcite{lindgren2011explicit}.
 \texttt{R-INLA} is the R interface to the core \texttt{inla} program, which is written in C \autocite{martino2009implementing} and uses algorithms from the \texttt{GMRFLib} C library \autocite{rue2001gmrflib}.
@@ -2698,7 +2701,7 @@ The \texttt{inlabru} R package \autocite{bachl2019inlabru} is one notable exampl
 \textcite{gaedke2023parallelized} review recent computational improvements to \texttt{R-INLA}, including parallelism via \texttt{OpenMP} \autocite{diaz2018openmp} and use of the PARDISO sparse linear equation solver \autocite{bollhofer2020state}.
 
 \hypertarget{tmb}{%
-\subsection{\texorpdfstring{\texttt{TMB}}{TMB}}\label{tmb}}
+\subsubsection{\texorpdfstring{\texttt{TMB}}{TMB}}\label{tmb}}
 
 Template Model Builder {[}TMB, or when referring to the software \texttt{TMB}; \textcite{kristensen2016tmb}{]} is an R package which implements the Laplace approximation.
 In \texttt{TMB} derivatives are obtained using automatic differentiation {[}AD; \textcite{baydin2017automatic}{]}, a rule-based method based on decomposition of calculations into elementary operations, which can be combined by repeated use of the chain rule.
@@ -2709,7 +2712,7 @@ Give an example of \texttt{TMB} use.
 \texttt{aghq} \autocite{stringer2021implementing} allows use of AGHQ via \texttt{mvQuad} \autocite{weiser2016mvquad}.
 
 \hypertarget{mgcv}{%
-\subsection{\texorpdfstring{\texttt{mgcv}}{mgcv}}\label{mgcv}}
+\subsubsection{\texorpdfstring{\texttt{mgcv}}{mgcv}}\label{mgcv}}
 
 Talk a little about \texttt{mgcv::ginla} and what it is capable of.
 
@@ -2720,14 +2723,14 @@ In this section, I implement the INLA method, with Laplace marginals, using the 
 This implementation is universal in that it is compatible with any model with a \texttt{TMB} C++ template.
 This leads the way for application of INLA to models which are not compatible with \texttt{R-INLA}.
 Indeed, \textcite{martino2019integrated} note that ``implementing INLA from scratch is a complex task'' and as a result ``applications of INLA are limited to the (large class of) models implemented {[}in \texttt{R-INLA}{]}''.
-The potential benefits of a more flexible INLA implementation based on AD were noted by \textcite{skaug2009approximate} (a coauthors of TMB) in discussion of \textcite{rue2009approximate}, noting that such a system would be ``fast, flexible, and easy-to-use''.
+The potential benefits of a more flexible INLA implementation based on AD were noted by \textcite{skaug2009approximate} (a coauthor of TMB) in discussion of \textcite{rue2009approximate}, noting that such a system would be ``fast, flexible, and easy-to-use''.
 This suggestion was made close to 15 years ago, so it is surprising that its potential remains unrealised.
 
 \hypertarget{epilepsy-example}{%
 \subsection{Epilepsy example}\label{epilepsy-example}}
 
 Consider the epilepsy generalised linear mixed model example of \textcite{spiegelhalter1996bugs}.
-This model is based on that of \textcite{breslow1993approximate}, a modification of \textcite{thall1990some}, and the data are from an epilespy drug double-blind clinical trial \autocite{leppik1985double}.
+This model is based on that of \textcite{breslow1993approximate}, a modification of \textcite{thall1990some}, and the data are from an epilepsy drug double-blind clinical trial \autocite{leppik1985double}.
 \textcite{rue2009approximate} (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
 As such, it is a good choice of example to use as demonstration.
 
@@ -2745,7 +2748,7 @@ The observations were modelled using a Poisson distribution \(y_{ij} \sim \text{
 where the prior distribution on each of the regression parameters, including the intercept, was \(\mathcal{N}(0, 100^2)\).
 The patient \(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\) and patient-visit \(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\) random effects were IID with precision prior distributions \(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\).
 
-The linear predictor for this model is can be specified in \texttt{R-INLA} by:
+The linear predictor for this model can be specified in \texttt{R-INLA} by:
 
 \begin{verbatim}
 formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
@@ -2823,10 +2826,10 @@ where \(\theta_{I}\) are the following weighted aggregates
 
 Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters.
 However, it is an ELGM rather than an LGM, for the reasons below.
-Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation, and as such should be considered illustrative.
+Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation.
 
-\hypertarget{extending-aghq-to-moderate-dimensions}{%
-\section{Extending AGHQ to moderate dimensions}\label{extending-aghq-to-moderate-dimensions}}
+\hypertarget{aghq-in-moderate-dimensions}{%
+\section{AGHQ in moderate dimensions}\label{aghq-in-moderate-dimensions}}
 
 The Naomi model has \(m = 24\) hyperparameters.
 AGHQ with the product rule grid requires evaluation of \(|\mathcal{Q}(m, k)| = k^m\) quadrature points.
@@ -2925,14 +2928,14 @@ We aimed to develop a quadrature grid which allocates more effort to more import
 While PCA is a sensible approach, there are avenues where it does not behave as one might hope, or otherwise overlooks potential benefits.
 The first challenge we identified was using PCA when the dimensions have different scales.
 Specifically, we found logit-scale hyperparamters to be systematically favoured over those on the log-scale.
-Second, the amount of variation explained for the Hessian matrix is not of directly interest, rather the effect of the different dimensions on the relevant outputs.
+Second, the amount of variation explained for the Hessian matrix is not of direct interest, rather the effect of the different dimensions on the relevant outputs.
 Using measures of importance from sensitivity analysis, such as Shapley values \autocite{shapley1953value} may be preferable.
 Third, it is more important to allocate quadrature nodes to those marginals which are non-Gaussian.
 This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficiently.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
 This could be done if there were a cheap way to obtain posterior means, which could then be compared to posterior modes obtained using optimisation.
 Another approach would be to measure the fit of marginal samples from a cheap approximation, like TMB.
-The main challenge is that the measurements have to for marginals, ruling out approaches like PSIS which operate on joint distributions \autocite{yao2018yes}.
+The main challenge is that the measurements have to be for marginals, ruling out approaches like PSIS which operate on joint distributions \autocite{yao2018yes}.
 
 \hypertarget{computational-speed-ups}{%
 \subsubsection{Computational speed-ups}\label{computational-speed-ups}}
