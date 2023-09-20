@@ -269,6 +269,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.2.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#r-inla"><i class="fa fa-check"></i><b>6.2.1</b> <code>R-INLA</code></a></li>
 <li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#tmb"><i class="fa fa-check"></i><b>6.2.2</b> <code>TMB</code></a></li>
+<li class="chapter" data-level="6.2.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#mgcv"><i class="fa fa-check"></i><b>6.2.3</b> <code>mgcv</code></a></li>
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation-based-on-ad"><i class="fa fa-check"></i><b>6.3</b> A universal INLA implementation based on AD</a>
 <ul>
@@ -622,36 +623,42 @@ The normalised marginal Laplace approximation is
 Methods for obtaining <span class="math inline">\(\tilde p(\mathbf{x} \, | \, \mathbf{y})\)</span> vary.</p>
 <div id="gaussian-marginals" class="section level4 hasAnchor" number="6.1.3.1">
 <h4><span class="header-section-number">6.1.3.1</span> Gaussian marginals<a href="naomi-aghq.html#gaussian-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Inferences for the latent field can be obtained by <span class="citation">(<a href="#ref-rue2007approximate">Håvard Rue and Martino 2007</a>)</span>
+<p>Inferences for the latent field can be obtained by approximation of <span class="math inline">\(p(\mathbf{x} \, | \, \mathbf{y})\)</span> using nested application of the quadrature rule <span class="citation">(<a href="#ref-rue2007approximate">Håvard Rue and Martino 2007</a>)</span>
+<span class="math display" id="eq:mixgaussian">\[\begin{align}
+p(\mathbf{x} \, | \, \mathbf{y}) &amp;= \int p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
+&amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). \tag{6.11}
+\end{align}\]</span>
+The quadrature rule <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> is used both internally to normalise the marginal Laplace approximation, and externally to perform integration with respect to the hyperparameters.
+Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.11)</a> is a mixture of Gaussian distributions <span class="math inline">\(p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})\)</span> with multinomial probabilities
 <span class="math display">\[\begin{equation}
-\tilde p(\mathbf{x} \, | \, \mathbf{y}) = |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}) \tilde p_\texttt{LA}(\hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \omega(\mathbf{z}). \label{eq:nest}
+\lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}),
 \end{equation}\]</span>
-Samples from this mixture of Gaussian distributions may be obtained by drawing a node <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> with multinomial probabilities
-<span class="math display">\[\begin{equation}
-\lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| p_\texttt{LA}(\hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \omega(\mathbf{z}),
-\end{equation}\]</span>
-then drawing from the corresponding Gaussian distribution <span class="citation">(<a href="#ref-rue2001fast">Håvard Rue 2001</a>)</span>
-<span class="math display">\[\begin{align}
-\mathbf{x} \sim \tilde p_\texttt{G}(\mathbf{x} \, | \, \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}).
-\end{align}\]</span></p>
+where <span class="math inline">\(\sum \lambda(\mathbf{z}) = 1\)</span> and <span class="math inline">\(\lambda(\mathbf{z}) &gt; 0\)</span>.
+Samples may therefore be easily obtained for the complete vector <span class="math inline">\(\mathbf{x}\)</span> jointly by first drawing a node <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> with multinomial probabilities <span class="math inline">\(\lambda(\mathbf{z})\)</span> then drawing a sample from the corresponding Gaussian distribution.
+Algorithms for fast simulation from a Gaussian distribution include that of <span class="citation">Håvard Rue (<a href="#ref-rue2001fast">2001</a>)</span>.</p>
 </div>
 <div id="laplace-marginals" class="section level4 hasAnchor" number="6.1.3.2">
 <h4><span class="header-section-number">6.1.3.2</span> Laplace marginals<a href="naomi-aghq.html#laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p><span class="math display">\[\begin{equation}
-\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
-\end{equation}\]</span></p>
-<p><span class="math display">\[\begin{align}
+<p>An alternative, more accurate but more computationally intensive approach is to calculate a marginal Laplace approximation excluding <span class="math inline">\(x_i\)</span> from the Gaussian approximation.
+That is, to let
+<span class="math display">\[\begin{equation}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})},
+\end{equation}\]</span>
+where <span class="math inline">\(p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x}_{-i} \, | \, \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}))\)</span> with
+<span class="math display">\[\begin{align}
 \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) &amp;= \arg\max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}), \\
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) &amp;= - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
-\end{align}\]</span></p>
+\end{align}\]</span>
+The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> may then be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, in a similar fashion to Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.11)</a>.</p>
 </div>
 <div id="simplfied-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplfied Laplace marginals<a href="naomi-aghq.html#simplfied-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p><span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> use GMRFs to approximate the Laplace marginals.</p>
+<p><span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> use the properties of GMRFs to approximate the Laplace marginals.</p>
 </div>
 <div id="simplifed-inla" class="section level4 hasAnchor" number="6.1.3.4">
 <h4><span class="header-section-number">6.1.3.4</span> Simplifed INLA<a href="naomi-aghq.html#simplifed-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p><span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> don’t use GMRFs to approximate the Laplace marginals and still do fine.</p>
+<p><span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> approximate the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieve good performance.
+For splines, as with ELGMs, the precision matrix cannot be assumed to be as sparse.</p>
 </div>
 </div>
 </div>
@@ -676,6 +683,10 @@ Give an example of <code>TMB</code> use.</p>
 <p><code>TMB</code> C++ templates are compatible with other software.
 <code>tmbstan</code> <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span> allows running HMC via Stan.
 <code>aghq</code> <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> allows use of AGHQ via <code>mvQuad</code> <span class="citation">(<a href="#ref-weiser2016mvquad">Weiser 2016</a>)</span>.</p>
+</div>
+<div id="mgcv" class="section level3 hasAnchor" number="6.2.3">
+<h3><span class="header-section-number">6.2.3</span> <code>mgcv</code><a href="naomi-aghq.html#mgcv" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Talk a little about <code>mgcv::ginla</code> and what it is capable of.</p>
 </div>
 </div>
 <div id="a-universal-inla-implementation-based-on-ad" class="section level2 hasAnchor" number="6.3">
@@ -725,8 +736,8 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 <p>I consider a simplified version of Naomi defined only at the time of the most recent household survey with HIV testing.
 This version omits nowcasting and temporal projection.
 These time points involve limited inferences.</p>
-<div id="household-survey-component" class="section level4 hasAnchor" number="6.4.1.1">
-<h4><span class="header-section-number">6.4.1.1</span> Household survey component <a href="naomi-aghq.html#household-survey-component" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="household-survey-component-household" class="section level4 hasAnchor" number="6.4.1.1">
+<h4><span class="header-section-number">6.4.1.1</span> Household survey component {household}<a href="naomi-aghq.html#household-survey-component-household" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Consider a country in sub-Saharan Africa where a household survey with complex survey design has taken place.
 Let <span class="math inline">\(x \in \mathcal{X}\)</span> index district, <span class="math inline">\(a \in \mathcal{A}\)</span> index five-year age group, and <span class="math inline">\(s \in \mathcal{S}\)</span> index sex.
 For ease of notation, let <span class="math inline">\(i\)</span> index the finest district-age-sex division included in the model.
@@ -738,7 +749,7 @@ HIV incidence rate is modelled on the log scale as <span class="math inline">\(\
 Let <span class="math inline">\(\kappa_i\)</span> be the proportion recently infected among HIV positive persons.
 This proportion is linked to HIV incidence via
 <span class="math display" id="eq:kappa">\[\begin{equation}
-\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.11}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.12}
 \end{equation}\]</span>
 where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are strongly informed by prior distributions for the particular survey.</p>
 <p>These processes are each informed by household survey data.
@@ -1040,7 +1051,7 @@ Ward, Brian. 2023. <em>Bridgestan: BridgeStan, Accessing Stan Model Functions in
 Weiser, Constantin. 2016. <em><span class="nocase">mvQuad</span>: Methods for Multivariate Quadrature.</em> <a href="http://CRAN.R-project.org/package=mvQuad">http://CRAN.R-project.org/package=mvQuad</a>.
 </div>
 <div id="ref-wood2020simplified" class="csl-entry">
-Wood, Simon N. 2020. <span>“<span class="nocase">Simplified integrated nested Laplace approximation</span>.”</span> <em>Biometrika</em> 107 (1): 223–30.
+———. 2020. <span>“<span class="nocase">Simplified integrated nested Laplace approximation</span>.”</span> <em>Biometrika</em> 107 (1): 223–30.
 </div>
 <div id="ref-yao2018yes" class="csl-entry">
 Yao, Yuling, Aki Vehtari, Daniel Simpson, and Andrew Gelman. 2018. <span>“Yes, but Did It Work?: Evaluating Variational Inference.”</span> In <em>International Conference on Machine Learning</em>, 5581–90. PMLR.

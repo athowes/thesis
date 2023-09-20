@@ -1018,6 +1018,7 @@ In spatio-temporal statistics, structured spatial and temporal random effects ar
 Spatial random effects are the subject of Chapter \ref{beyond-borders}.
 
 Give equation for a generalised linear mixed model (GLMM) here.
+Describe connection between generalised additive model {[}GAMs; \textcite{wood2017generalized}; \textcite{hastie1987generalized}{]} and GLMMs.
 
 \hypertarget{latent-gaussian-model}{%
 \subsection{Latent Gaussian model}\label{latent-gaussian-model}}
@@ -2641,40 +2642,45 @@ Methods for obtaining \(\tilde p(\mathbf{x} \, | \, \mathbf{y})\) vary.
 \hypertarget{gaussian-marginals}{%
 \subsubsection{Gaussian marginals}\label{gaussian-marginals}}
 
-Inferences for the latent field can be obtained by \autocite{rue2007approximate}
-\begin{equation}
-\tilde p(\mathbf{x} \, | \, \mathbf{y}) = |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}) \tilde p_\texttt{LA}(\hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \omega(\mathbf{z}). \label{eq:nest}
-\end{equation}
-Samples from this mixture of Gaussian distributions may be obtained by drawing a node \(\mathbf{z} \in \mathcal{Q}(m, k)\) with multinomial probabilities
-\begin{equation}
-\lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| p_\texttt{LA}(\hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \omega(\mathbf{z}),
-\end{equation}
-then drawing from the corresponding Gaussian distribution \autocite{rue2001fast}
+Inferences for the latent field can be obtained by approximation of \(p(\mathbf{x} \, | \, \mathbf{y})\) using nested application of the quadrature rule \autocite{rue2007approximate}
 \begin{align}
-\mathbf{x} \sim \tilde p_\texttt{G}(\mathbf{x} \, | \, \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}).
+p(\mathbf{x} \, | \, \mathbf{y}) &= \int p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
+&\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). \label{eq:mixgaussian}
 \end{align}
+The quadrature rule \(\mathbf{z} \in \mathcal{Q}(m, k)\) is used both internally to normalise the marginal Laplace approximation, and externally to perform integration with respect to the hyperparameters.
+Equation \eqref{eq:mixgaussian} is a mixture of Gaussian distributions \(p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})\) with multinomial probabilities
+\begin{equation}
+\lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}),
+\end{equation}
+where \(\sum \lambda(\mathbf{z}) = 1\) and \(\lambda(\mathbf{z}) > 0\).
+Samples may therefore be easily obtained for the complete vector \(\mathbf{x}\) jointly by first drawing a node \(\mathbf{z} \in \mathcal{Q}(m, k)\) with multinomial probabilities \(\lambda(\mathbf{z})\) then drawing a sample from the corresponding Gaussian distribution.
+Algorithms for fast simulation from a Gaussian distribution include that of \textcite{rue2001fast}.
 
 \hypertarget{laplace-marginals}{%
 \subsubsection{Laplace marginals}\label{laplace-marginals}}
 
+An alternative, more accurate but more computationally intensive approach is to calculate a marginal Laplace approximation excluding \(x_i\) from the Gaussian approximation.
+That is, to let
 \begin{equation}
-\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})},
 \end{equation}
-
+where \(p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x}_{-i} \, | \, \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}))\) with
 \begin{align}
 \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) &= \arg\max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}), \\
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{align}
+The approximate posterior marginal \(\tilde p(x_i \, | \, \mathbf{y})\) may then be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, in a similar fashion to Equation \eqref{eq:mixgaussian}.
 
 \hypertarget{simplfied-laplace-marginals}{%
 \subsubsection{Simplfied Laplace marginals}\label{simplfied-laplace-marginals}}
 
-\textcite{rue2009approximate} use GMRFs to approximate the Laplace marginals.
+\textcite{rue2009approximate} use the properties of GMRFs to approximate the Laplace marginals.
 
 \hypertarget{simplifed-inla}{%
 \subsubsection{Simplifed INLA}\label{simplifed-inla}}
 
-\textcite{wood2020simplified} don't use GMRFs to approximate the Laplace marginals and still do fine.
+\textcite{wood2020simplified} approximate the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieve good performance.
+For splines, as with ELGMs, the precision matrix cannot be assumed to be as sparse.
 
 \hypertarget{software}{%
 \section{Software}\label{software}}
@@ -2701,6 +2707,11 @@ Give an example of \texttt{TMB} use.
 \texttt{TMB} C++ templates are compatible with other software.
 \texttt{tmbstan} \autocite{monnahan2018no} allows running HMC via Stan.
 \texttt{aghq} \autocite{stringer2021implementing} allows use of AGHQ via \texttt{mvQuad} \autocite{weiser2016mvquad}.
+
+\hypertarget{mgcv}{%
+\subsection{\texorpdfstring{\texttt{mgcv}}{mgcv}}\label{mgcv}}
+
+Talk a little about \texttt{mgcv::ginla} and what it is capable of.
 
 \hypertarget{a-universal-inla-implementation-based-on-ad}{%
 \section{A universal INLA implementation based on AD}\label{a-universal-inla-implementation-based-on-ad}}
@@ -2762,8 +2773,8 @@ I consider a simplified version of Naomi defined only at the time of the most re
 This version omits nowcasting and temporal projection.
 These time points involve limited inferences.
 
-\hypertarget{household-survey-component}{%
-\subsubsection{\texorpdfstring{Household survey component \label{sec:household}}{Household survey component }}\label{household-survey-component}}
+\hypertarget{household-survey-component-household}{%
+\subsubsection{Household survey component \{household\}}\label{household-survey-component-household}}
 
 Consider a country in sub-Saharan Africa where a household survey with complex survey design has taken place.
 Let \(x \in \mathcal{X}\) index district, \(a \in \mathcal{A}\) index five-year age group, and \(s \in \mathcal{S}\) index sex.
