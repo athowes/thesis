@@ -25,7 +25,7 @@ This chapter describes a novel Bayesian inference method.
 Development of the method was motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators [@unaids2023global] by synthesising evidence from multiple data sources.
 The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are set using optimisation of the marginal posterior [@casella1985introduction]. 
+As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are obtained by optimisation of the marginal posterior [@casella1985introduction]. 
 This approximation is undesirable as it can result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.
 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
@@ -114,7 +114,7 @@ The Laplace approximation may be thought of as approximating the posterior distr
 Calculation of the Laplace approximation requires obtaining the second derivative of $h$ with respect to $\boldsymbol{\mathbf{\phi}}$ (Equation \@ref(eq:hessian)).
 Derivatives may also be used to improve the performance of the optimisation algorithm used to obtain the maxima of $h$ (Equation \@ref(eq:posterior-mode)) by providing access to the gradient of $h$ with respect to $\boldsymbol{\mathbf{\phi}}$.
 
-(ref:laplace) Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure \@ref(fig:conjugate). The unnormalised posterior is $p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)$, and can be recognised as the unnomalised gamma distribution $\text{Gamma}(9, 4)$. The true log normalising constant is $\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046$, whereas the Laplace approximate log normalising constant is $\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458$, resulting from the Gaussian approximation $p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)$.
+(ref:laplace) Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure \@ref(fig:conjugate). The unnormalised posterior is $p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)$, and can be recognised as the unnormalised gamma distribution $\text{Gamma}(9, 4)$. The true log normalising constant is $\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046$, whereas the Laplace approximate log normalising constant is $\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458$, resulting from the Gaussian approximation $p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)$.
 
 ```{r laplace, fig.cap="(ref:laplace)"}
 knitr::include_graphics("figures/naomi-aghq/laplace.png")
@@ -335,11 +335,11 @@ where $p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \
 \end{align}
 The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ may then be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, in a similar fashion to Equation \@ref(eq:mixgaussian).
 
-#### Simplfied Laplace marginals
+#### Simplified Laplace marginals
 
 @rue2009approximate use the properties of GMRFs to approximate the Laplace marginals.
 
-#### Simplifed INLA
+#### Simplified INLA
 
 @wood2020simplified approximates the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieves good performance.
 For splines, as with ELGMs, the precision matrix cannot be assumed to be so sparse.
@@ -356,6 +356,10 @@ This interface is easy to engage with for new users, but be limiting for more ad
 For more information, including recent developments, see the `R-INLA` website [`https://r-inla.org`](https://r-inla.org).
 The `inlabru` R package [@bachl2019inlabru] is one notable example.
 @gaedke2023parallelized review recent computational improvements to `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state].
+
+The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to one of  `"gaussian"` (Section), `"laplace"` (Section) or `"simplified.laplace"` (Section).
+The quadrature grid used can be chosen by setting `grid` to one of...
+Figure showing a default `R-INLA` grid.
 
 #### `TMB`
 
@@ -389,7 +393,7 @@ As such, it is a good choice of example to use as demonstration.
 
 In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th visit.
-The covariates used in the model were age $\texttt{Age}_i$, baseline seizure counts $\texttt{Base}_i$ and an indicator for the final clinic visit $\texttt{V}_4$, which were all centered.
+The covariates used in the model were age $\texttt{Age}_i$, baseline seizure counts $\texttt{Base}_i$ and an indicator for the final clinic visit $\texttt{V}_4$, which were all centred.
 The observations were modelled using a Poisson distribution $y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})$ with linear predictor 
 \begin{align*}
 \eta_{ij}
@@ -476,10 +480,10 @@ Naomi is a spatio-temporal model with a large Gaussian latent field, governed by
 However, it is an ELGM rather than an LGM, for the reasons below.
 Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation.
 
-<!-- 1. In the household survey component, HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppresed viral load such that such that $\lambda \propto \rho (1 - \omega \cdot \alpha)$, with $\omega = 0.7$ a fixed constant. As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors (where 28 arises from the product of 2 sexes [male and female], 7 age groups, [$\{\text{15-19}, \ldots, \text{45-49}\}$], and 2 indicators [HIV prevalence and ART coverage]). -->
+<!-- 1. In the household survey component, HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load such that such that $\lambda \propto \rho (1 - \omega \cdot \alpha)$, with $\omega = 0.7$ a fixed constant. As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors (where 28 arises from the product of 2 sexes [male and female], 7 age groups, [$\{\text{15-19}, \ldots, \text{45-49}\}$], and 2 indicators [HIV prevalence and ART coverage]). -->
 <!-- 2. In the household survey component, HIV incidence and HIV prevalence are linked to the proportion recently infected via Equation \ref{eq:kappa}. -->
 <!-- 3. In the ANC testing component, HIV prevalence and ART coverage depend upon the respective indicators in the household survey component. Though $\text{logit}(\rho_i)$ and $\text{logit}(\alpha_i)$ are Gaussian, this nonetheless introduces dependence of each mean response on two structured additive predictors. -->
-<!-- 4. Throughout the model components, processes are modelled at the finest distict-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors. -->
+<!-- 4. Throughout the model components, processes are modelled at the finest district-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors. -->
 <!-- 5. Individuals taking ART, or who have been recently infected, must be HIV positive.  -->
 <!-- 6. The ART attendance component uses a multinomial model with softmax link function which takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district. -->
 <!-- 7. Multiple link functions are used throughout the model, such that there is no one inverse link function $g$. -->
@@ -561,7 +565,7 @@ Among the ELGM-type structures of particular interest in spatial epidemiology ar
 We aimed to develop a quadrature grid which allocates more effort to more important dimensions.
 While PCA is a sensible approach, there are avenues where it does not behave as one might hope, or otherwise overlooks potential benefits.
 The first challenge we identified was using PCA when the dimensions have different scales. 
-Specifically, we found logit-scale hyperparamters to be systematically favoured over those on the log-scale.
+Specifically, we found logit-scale hyperparameters to be systematically favoured over those on the log-scale.
 Second, the amount of variation explained for the Hessian matrix is not of direct interest, rather the effect of the different dimensions on the relevant outputs.
 Using measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] may be preferable.
 Third, it is more important to allocate quadrature nodes to those marginals which are non-Gaussian.
@@ -575,7 +579,7 @@ The main challenge is that the measurements have to be for marginals, ruling out
 
 Integration over a moderate number of hyperparameters posed a challenge, and led us to use a quadrature grids with a large number of nodes.
 However, computation at each node is independent, such that the run-time of the algorithm could potentially be significantly improved by parallel computing.
-Further computational speed-ups might be obtained using graphics processing units (GPUs) speciallised for the relevant matrix operations.
+Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
 
 #### Comparison to other MCMC algorithms
 
@@ -596,6 +600,6 @@ Similarly, implementation in Stan could be possible by use of the `bridgestan` p
 
 @stringer2022fast (Theorem 1) bound the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory might be established for PCA-AGHQ, or more generally AGHQ with varying numbers of nodes per dimension.
-The challenge of connecting this theory to use of the quadrature rule within nested compuations remains an open question.
+The challenge of connecting this theory to use of the quadrature rule within nested computations remains an open question.
 
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->

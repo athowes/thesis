@@ -355,7 +355,7 @@ div.csl-indent {
 Development of the method was motivated the Naomi small-area estimation model.
 Over 35 countries have used the Naomi model software (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a>) to produce subnational estimates of HIV indicators <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span> by synthesising evidence from multiple data sources.
 The complexity of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are set using optimisation of the marginal posterior <span class="citation">(<a href="#ref-casella1985introduction">Casella 1985</a>)</span>.
+As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are obtained by optimisation of the marginal posterior <span class="citation">(<a href="#ref-casella1985introduction">Casella 1985</a>)</span>.
 This approximation is undesirable as it can result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.</p>
 <p>The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields <span class="citation">(<a href="#ref-rue2017bayesian">Håvard Rue et al. 2017</a>)</span>.
@@ -437,9 +437,9 @@ The Laplace approximation may be thought of as approximating the posterior distr
 Derivatives may also be used to improve the performance of the optimisation algorithm used to obtain the maxima of <span class="math inline">\(h\)</span> (Equation <a href="naomi-aghq.html#eq:posterior-mode">(6.2)</a>) by providing access to the gradient of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:laplace"></span>
-<img src="figures/naomi-aghq/laplace.png" alt="Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure 3.1. The unnormalised posterior is \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\), and can be recognised as the unnomalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)." width="95%" />
+<img src="figures/naomi-aghq/laplace.png" alt="Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure 3.1. The unnormalised posterior is \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\), and can be recognised as the unnormalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)." width="95%" />
 <p class="caption">
-Figure 6.1: Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. The unnormalised posterior is <span class="math inline">\(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\)</span>, and can be recognised as the unnomalised gamma distribution <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. The true log normalising constant is <span class="math inline">\(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\)</span>, whereas the Laplace approximate log normalising constant is <span class="math inline">\(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\)</span>, resulting from the Gaussian approximation <span class="math inline">\(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)</span>.
+Figure 6.1: Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. The unnormalised posterior is <span class="math inline">\(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\)</span>, and can be recognised as the unnormalised gamma distribution <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. The true log normalising constant is <span class="math inline">\(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\)</span>, whereas the Laplace approximate log normalising constant is <span class="math inline">\(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\)</span>, resulting from the Gaussian approximation <span class="math inline">\(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)</span>.
 </p>
 </div>
 <div id="marginal-la" class="section level4 hasAnchor" number="6.1.1.1">
@@ -649,12 +649,12 @@ where <span class="math inline">\(p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \bol
 \end{align}\]</span>
 The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> may then be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, in a similar fashion to Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.11)</a>.</p>
 </div>
-<div id="simplfied-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
-<h4><span class="header-section-number">6.1.3.3</span> Simplfied Laplace marginals<a href="naomi-aghq.html#simplfied-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
+<h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> use the properties of GMRFs to approximate the Laplace marginals.</p>
 </div>
-<div id="simplifed-inla" class="section level4 hasAnchor" number="6.1.3.4">
-<h4><span class="header-section-number">6.1.3.4</span> Simplifed INLA<a href="naomi-aghq.html#simplifed-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="simplified-inla" class="section level4 hasAnchor" number="6.1.3.4">
+<h4><span class="header-section-number">6.1.3.4</span> Simplified INLA<a href="naomi-aghq.html#simplified-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> approximates the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieves good performance.
 For splines, as with ELGMs, the precision matrix cannot be assumed to be so sparse.</p>
 </div>
@@ -671,6 +671,9 @@ This interface is easy to engage with for new users, but be limiting for more ad
 For more information, including recent developments, see the <code>R-INLA</code> website <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.
 The <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span> is one notable example.
 <span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span> review recent computational improvements to <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>.</p>
+<p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to one of <code>"gaussian"</code> (Section), <code>"laplace"</code> (Section) or <code>"simplified.laplace"</code> (Section).
+The quadrature grid used can be chosen by setting <code>grid</code> to one of…
+Figure showing a default <code>R-INLA</code> grid.</p>
 </div>
 <div id="tmb" class="section level4 hasAnchor" number="6.1.4.2">
 <h4><span class="header-section-number">6.1.4.2</span> <code>TMB</code><a href="naomi-aghq.html#tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -703,7 +706,7 @@ This model is based on that of <span class="citation">Breslow and Clayton (<a hr
 As such, it is a good choice of example to use as demonstration.</p>
 <p>In the trial, patients <span class="math inline">\(i = 1, \ldots, 59\)</span> were each assigned either the new drug <span class="math inline">\(\texttt{Trt}_i = 1\)</span> or placebo <span class="math inline">\(\texttt{Trt}_i = 0\)</span>.
 Each patient made four visits the clinic <span class="math inline">\(j = 1, \ldots, 4\)</span>, and the observations <span class="math inline">\(y_{ij}\)</span> are the number of seizures of the <span class="math inline">\(i\)</span>th person in the two weeks preceding their <span class="math inline">\(j\)</span>th visit.
-The covariates used in the model were age <span class="math inline">\(\texttt{Age}_i\)</span>, baseline seizure counts <span class="math inline">\(\texttt{Base}_i\)</span> and an indicator for the final clinic visit <span class="math inline">\(\texttt{V}_4\)</span>, which were all centered.
+The covariates used in the model were age <span class="math inline">\(\texttt{Age}_i\)</span>, baseline seizure counts <span class="math inline">\(\texttt{Base}_i\)</span> and an indicator for the final clinic visit <span class="math inline">\(\texttt{V}_4\)</span>, which were all centred.
 The observations were modelled using a Poisson distribution <span class="math inline">\(y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})\)</span> with linear predictor
 <span class="math display">\[\begin{align*}
 \eta_{ij}
@@ -781,10 +784,10 @@ where <span class="math inline">\(\theta_{I}\)</span> are the following weighted
 <p>Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters.
 However, it is an ELGM rather than an LGM, for the reasons below.
 Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation.</p>
-<!-- 1. In the household survey component, HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppresed viral load such that such that $\lambda \propto \rho (1 - \omega \cdot \alpha)$, with $\omega = 0.7$ a fixed constant. As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors (where 28 arises from the product of 2 sexes [male and female], 7 age groups, [$\{\text{15-19}, \ldots, \text{45-49}\}$], and 2 indicators [HIV prevalence and ART coverage]). -->
+<!-- 1. In the household survey component, HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load such that such that $\lambda \propto \rho (1 - \omega \cdot \alpha)$, with $\omega = 0.7$ a fixed constant. As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors (where 28 arises from the product of 2 sexes [male and female], 7 age groups, [$\{\text{15-19}, \ldots, \text{45-49}\}$], and 2 indicators [HIV prevalence and ART coverage]). -->
 <!-- 2. In the household survey component, HIV incidence and HIV prevalence are linked to the proportion recently infected via Equation \ref{eq:kappa}. -->
 <!-- 3. In the ANC testing component, HIV prevalence and ART coverage depend upon the respective indicators in the household survey component. Though $\text{logit}(\rho_i)$ and $\text{logit}(\alpha_i)$ are Gaussian, this nonetheless introduces dependence of each mean response on two structured additive predictors. -->
-<!-- 4. Throughout the model components, processes are modelled at the finest distict-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors. -->
+<!-- 4. Throughout the model components, processes are modelled at the finest district-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors. -->
 <!-- 5. Individuals taking ART, or who have been recently infected, must be HIV positive.  -->
 <!-- 6. The ART attendance component uses a multinomial model with softmax link function which takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district. -->
 <!-- 7. Multiple link functions are used throughout the model, such that there is no one inverse link function $g$. -->
@@ -872,7 +875,7 @@ Among the ELGM-type structures of particular interest in spatial epidemiology ar
 <p>We aimed to develop a quadrature grid which allocates more effort to more important dimensions.
 While PCA is a sensible approach, there are avenues where it does not behave as one might hope, or otherwise overlooks potential benefits.
 The first challenge we identified was using PCA when the dimensions have different scales.
-Specifically, we found logit-scale hyperparamters to be systematically favoured over those on the log-scale.
+Specifically, we found logit-scale hyperparameters to be systematically favoured over those on the log-scale.
 Second, the amount of variation explained for the Hessian matrix is not of direct interest, rather the effect of the different dimensions on the relevant outputs.
 Using measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> may be preferable.
 Third, it is more important to allocate quadrature nodes to those marginals which are non-Gaussian.
@@ -886,7 +889,7 @@ The main challenge is that the measurements have to be for marginals, ruling out
 <h4><span class="header-section-number">6.6.1.2</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Integration over a moderate number of hyperparameters posed a challenge, and led us to use a quadrature grids with a large number of nodes.
 However, computation at each node is independent, such that the run-time of the algorithm could potentially be significantly improved by parallel computing.
-Further computational speed-ups might be obtained using graphics processing units (GPUs) speciallised for the relevant matrix operations.</p>
+Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</p>
 </div>
 <div id="comparison-to-other-mcmc-algorithms" class="section level4 hasAnchor" number="6.6.1.3">
 <h4><span class="header-section-number">6.6.1.3</span> Comparison to other MCMC algorithms<a href="naomi-aghq.html#comparison-to-other-mcmc-algorithms" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -907,7 +910,7 @@ Similarly, implementation in Stan could be possible by use of the <code>bridgest
 <h4><span class="header-section-number">6.6.1.5</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> (Theorem 1) bound the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory might be established for PCA-AGHQ, or more generally AGHQ with varying numbers of nodes per dimension.
-The challenge of connecting this theory to use of the quadrature rule within nested compuations remains an open question.</p>
+The challenge of connecting this theory to use of the quadrature rule within nested computations remains an open question.</p>
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 
 </div>

@@ -8,13 +8,17 @@ spell_check <- function(filename) {
 
   misspelled_words <- hunspell(words, dict = 'en_GB')
   misspelled_words <- unlist(misspelled_words)
-  common_words <- c(
+  correct_words <- c(
     "hiv", "unaids", "howes", "eaton", "flaxman", "athowes", "aghq", "agyw", "naomi", "plhiv", "bayesian", "laplace", "inla",
-    "knitr", "bookdown", "mcmc", "github", "mathbf", "mathcal", "poisson"
+    "knitr", "bookdown", "mcmc", "github", "mathbf", "mathcal", "poisson", "bayes", "tmbstan", "stan", "phd", "texttt", "ldots",
+    "tex", "biblatex", "documentclass", "adjustmtc", "mgcv", "waterloo", "stringer", "elgm", "hermite", "tmb", "malawi", "africa",
+    "unnormalised", "besag", "daly", "dalys", "markboth", "png", "hmc", "antiretroviral", "pepfar", "saharan", "boldsymbol", "glm",
+    "glmm", "waic", "bic", "dic", "cdot", "propto", "hamiltonian", "mathbb", "scipen", "zambia", "african", "argmin", "zimbabwe",
+    "risher", "mozambique", "lesotho", "kronecker"
   )
-  misspelled_words <- setdiff(misspelled_words, common_words)
+  misspelled_words <- setdiff(misspelled_words, correct_words)
 
-  return(misspelled_words)
+  return(sort(misspelled_words))
 }
 
 spell_check("01-introduction.Rmd")
