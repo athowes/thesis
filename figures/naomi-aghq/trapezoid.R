@@ -14,18 +14,28 @@ finegrid <- seq(0, pi, length.out = 1000)
 f <- function(x) sin(x) * x
 
 trapezoid_df <- function(N) {
+  trapezoid <- c(0, 0, rep(1:(N - 1), each = 4), 0, 0)
   grid <- seq(0, pi, length.out = N)
-  df <- data.frame(x = grid, y = f(grid), N = N - 2)
-  int <- trapezoid_rule(x = df$y, spacing = df$x[2] - df$x[1])
+  int <- trapezoid_rule(x = f(grid), spacing = grid[2] - grid[1])
+  
+  df <- data.frame(
+    index = 1:(4 * N),
+    trapezoid = trapezoid,
+    x = rep(grid, each = 4)
+  )
+
+  y <- f(grid)
+  df$y <- c(rbind(y, 0, 0, y))
   df$int <- int
-  df$spacing <- df$x[2] - df$x[1]
+  df$spacing <- grid[2] - grid[1]
+  df$N <- (N - 1)
   return(df)
 }
 
-df <- bind_rows(trapezoid_df(N = 7), trapezoid_df(N = 27), trapezoid_df(N = 127))
+df <- bind_rows(trapezoid_df(N = 6), trapezoid_df(N = 11), trapezoid_df(N = 21))
 
 ggplot(df) +
-  geom_col(aes(x = x, y = y, width = spacing * 0.95), fill = "#56B4E9", alpha = 0.8) +
+  geom_polygon(aes(x, y, group = trapezoid), fill = "grey90", col = "grey80", alpha = 0.8) +
   geom_function(fun = f, n = 500, col = "#009E73") +
   geom_text(
     data = df %>% select(N, int) %>% unique(),

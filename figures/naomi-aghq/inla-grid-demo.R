@@ -105,7 +105,7 @@ explore_direction <- function(j, m, delta_z, delta_pi) {
   as.data.frame(points)
 }
 
-d_z <- 0.5
+d_z <- 0.75
 d_pi <- 2
 
 z_grid <- expand.grid(
@@ -141,3 +141,6 @@ fig1 <- fig0 +
 fig1 + fig0 + labs(tag = "B")
 
 ggsave("figures/naomi-aghq/inla-grid-demo.png", h = 3.5, w = 6.25)
+
+install.packages("rsm")
+rsm::ccd(2, n0 = 1, alpha = "face", randomize = FALSE)

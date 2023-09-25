@@ -185,7 +185,7 @@ The more quadrature nodes are used, the more accurate the estimate of the integr
 Under some regularity conditions on $f$, as $\epsilon \to 0$ the quadrature estimate obtained using the trapezoid rule converges to the true value of the integral.
 Indeed, this approach was used by Riemann to provide the first rigorous definition of the integral.
 
-(ref:trapezoid) The trapezoid rule with $k = 5, 25, 125$ equally-spaced ($\epsilon_i = \epsilon > 0$) quadrature nodes can be used to integrate the function $f(z) = z \sin(z)$ in the domain $[0, \pi]$. Here, the exact solution is $\pi \approx 3.1416$. As $k$ increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.
+(ref:trapezoid) The trapezoid rule with $k = 5, 10, 20$ equally-spaced ($\epsilon_i = \epsilon > 0$) quadrature nodes can be used to integrate the function $f(z) = z \sin(z)$ in the domain $[0, \pi]$. Here, the exact solution is $\pi \approx 3.1416$. As $k$ increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.
 
 ```{r trapezoid, fig.cap="(ref:trapezoid)"}
 knitr::include_graphics("figures/naomi-aghq/trapezoid.png")
@@ -194,8 +194,8 @@ knitr::include_graphics("figures/naomi-aghq/trapezoid.png")
 Quadrature methods are most effective when integrating over small dimensions.
 This is because the number of quadrature nodes required to be evaluated in the computation grows exponentially with the dimension.
 For even moderate dimension, this quickly becomes intractable.
-For example, using 5, 25, or 125 quadrature nodes per dimension, as in Figure \@ref(fig:trapezoid), in three-dimensions (rather than one) would require 125, 15625 or 1953125 quadrature nodes respectively.
-Though quadrature is embarrassingly parallel, solutions requiring the evaluation of upwards of millions of quadrature nodes are unlikely to be tractable.
+For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure \@ref(fig:trapezoid), in five-dimensions (rather than one) would require 3125, 100000 or 3200000 quadrature nodes respectively.
+Though quadrature is embarrassingly parallel, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.
 
 #### Gauss-Hermite quadrature
 
@@ -344,15 +344,18 @@ An alternative more accurate, but more computationally intensive, approach is to
 \begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}. (\#eq:lamarginaljoint)
 \end{equation}
-The variable $x_i$ is excluded from the Gaussian approximation
+The variable $x_i$ is excluded from the Gaussian approximation such that
 \begin{equation}
-p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x}_{-i} \, | \, \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}))
+p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x}_{-i} \, | \, \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}})),
 \end{equation}
-with $(N - 1)$-dimensional posterior mode and $(N - 1) \times (N - 1)$-dimensional Hessian matrix evaluated at the posterior mode
-\begin{align}
-\hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) &= \arg\max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}), \\
-\hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
-\end{align}
+with $(N - 1)$-dimensional posterior mode
+\begin{equation}
+\hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}),
+\end{equation}
+and $(N - 1) \times (N - 1)$-dimensional Hessian matrix evaluated at the posterior mode
+\begin{equation}
+\hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
+\end{equation}
 The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ can be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, similarly to Equation \@ref(eq:mixgaussian)
 \begin{align}
 p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
@@ -360,12 +363,13 @@ p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \m
 \end{align}
 
 The term $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ is obtained by normalising Equation \@ref(eq:lamarginaljoint) using an estimate of the evidence $\tilde p(\mathbf{y})$.
-It's possible to reuse the previously obtained posterior normalising constant estimate from Equation \@ref(eq:aghqnormconst).
-Alternatively...
+Either the previously obtained posterior normalising constant estimate from Equation \@ref(eq:aghqnormconst) may be reused, or a new estimate may be computed.
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
 @rue2009approximate use the properties of Gauss-Markov random fields (GMRFs) to efficiently approximate the Laplace marginals.
+The simplified approximation is acheived by a Taylor expansion on the numerator and denominator of Equation \@ref(eq:lamarginaljoint) up to third order.
+This approach is analogous to correcting the Gaussian approximation in Section \@ref(gaussian-marginals) for location and skewness.
 
 #### Simplified INLA {#simplified-inla}
 
@@ -378,18 +382,19 @@ For splines, as with extended latent Gaussian models [ELGMs; @stringer2022fast],
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
 `R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing] and uses algorithms from the `GMRFLib` C library [@rue2001gmrflib].
-A formula interface of the form `y ~ ...` to specify the connection between the latent field $\mathbf{x}$ and the structured additive predictor $\boldsymbol{\mathbf{\eta}}$.
+A formula interface of the form `y ~ ...` is used to specify the connection between the latent field $\mathbf{x}$ and the structured additive predictor $\boldsymbol{\mathbf{\eta}}$.
 For example, a model with one fixed effect `a` and one IID random effect `b` is written as `y ~ a + f(b, model = "iid")`.
-This interface is easy to engage with for new users, but be limiting for more advanced users.
+This interface is easy to engage with for new users, but can be limiting for more advanced users.
 For more information, including recent developments, see the `R-INLA` website [`https://r-inla.org`](https://r-inla.org).
 The `inlabru` R package [@bachl2019inlabru] is one notable example.
 @gaedke2023parallelized review recent computational improvements to `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state].
 
-The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `"gaussian"` (Section \@ref(gaussian-marginals)), `"laplace"` (Section \@ref(laplace-marginals)) or `"simplified.laplace"` (Section \@ref(simplified-laplace-marginals)).
-The quadrature grid used can be chosen by setting `int.strategy` to `"eb"` (empirical Bayes, one quadrature node), `"grid"`, or `"ccd"` [Box-Wilson central composite design; @box1992experimental].
+The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `gaussian` (Section \@ref(gaussian-marginals)), `laplace` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
+The quadrature grid used can be chosen by setting `int.strategy` to `eb` (empirical Bayes, one quadrature node), `grid` (a dense grid), or `ccd` [Box-Wilson central composite design; @box1992experimental].
 Figure \@ref(fig:inla-grid-demo) demonstrates the two latter integration strategies.
+By default, the `grid` strategy is used for $m \leq 2$ and the `ccd` strategy is used for $m > 2$.
 
-(ref:inla-grid-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the grid method as used in `R-INLA` and detailed in Section 3.1 of @rue2009approximate. Briefly, equally-weighted quadrature points are generated by taking steps of size $\delta_z$ along each eigenvector of the inverse curvature at the mode, until the difference in log-scale function evaluations is below some threshold $\delta_\pi$. Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set $\delta_z = 0.5$ and $\delta_\pi = 2$.
+(ref:inla-grid-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the grid method as used in `R-INLA` and detailed in Section 3.1 of @rue2009approximate. Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size $\delta_z$ along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold $\delta_\pi$. Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set $\delta_z = 0.75$ and $\delta_\pi = 2$. Panel B shows a CCD with...
 
 ```{r inla-grid-demo, fig.cap="(ref:inla-grid-demo)"}
 knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
@@ -398,49 +403,58 @@ knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
 #### `TMB`
 
 Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
-In `TMB` derivatives are obtained using automatic differentiation [AD; @baydin2017automatic], a rule-based method based on decomposition of calculations into elementary operations, which can be combined by repeated use of the chain rule.
-Uses state of the art C++ packages such as `Eigen` and `CppAD`.
-Give an example of `TMB` use.
+In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
+The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives that may be composed by repeat use of the chain rule.
+`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD and `Eigen` for linear algebra.
 
-`TMB` C++ templates are compatible with other software.
-`tmbstan` [@monnahan2018no] allows running HMC via Stan.
-`aghq` [@stringer2021implementing] allows use of AGHQ via `mvQuad` [@weiser2016mvquad].
+Models can be specified in `TMB` using a C++ template file.
+`TMB` C++ templates are compatible with other software, including `tmbstan` [@monnahan2018no] which allows running HMC via Stan, and `aghq` [@stringer2021implementing] which allows use of AGHQ via `mvQuad` [@weiser2016mvquad].
+The `glmmTMB` R package [@brooks2017glmmtmb] allows specification of common GLMM models via a formula interface.
+It is possible to extract the `TMB` C++ template implicitly used by `glmmTMB`
 
 #### `mgcv`
 
-Talk a little about `mgcv::ginla` and what it is capable of.
+The `mgcv` [Mixed GAM computation vehicle; @wood2017generalized] R package is a formula-based interface for estimating generalised additive models (GAMs).
+The function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified.
 
-## A universal INLA implementation based on AD
+## A universal INLA implementation
 
-In this section, I implement the INLA method, with Laplace marginals, using the `TMB` package.
-This implementation is universal in that it is compatible with any model with a `TMB` C++ template.
-This leads the way for application of INLA to models which are not compatible with `R-INLA`.
-Indeed, @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
+This section is about implementation of the INLA method, including with Laplace marginals (Section \@ref(laplace-marginals)), using the `TMB` package.
+The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being formula-based [@vstrumbelj2023past].
+
+@martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
+A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
 The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of TMB) in discussion of @rue2009approximate, noting that such a system would be "fast, flexible, and easy-to-use".
 This suggestion was made close to 15 years ago, so it is surprising that its potential remains unrealised.
 
+The implementation is demonstrated via two applications.
+The first is compatible with `R-INLA`, and used as an example in Section 5.2 of @rue2009approximate.
+It has a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
+The second is an example of a model that `R-INLA` is not compatible with.
+
 ### Epilepsy example
 
-Consider the epilepsy generalised linear mixed model example of @spiegelhalter1996bugs.
-This model is based on that of @breslow1993approximate, a modification of @thall1990some, and the data are from an epilepsy drug double-blind clinical trial [@leppik1985double].
-@rue2009approximate (Section 5.2) demonstrate the INLA method using this example, and find a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
-As such, it is a good choice of example to use as demonstration.
+Consider the epilepsy drug double-blind clinical trial [@leppik1985double] generalised linear mixed model (GLMM) example of @spiegelhalter1996bugs.
+The model is based on that of @breslow1993approximate, itself a modification of @thall1990some.
 
 In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th visit.
-The covariates used in the model were age $\texttt{Age}_i$, baseline seizure counts $\texttt{Base}_i$ and an indicator for the final clinic visit $\texttt{V}_4$, which were all centred.
+The covariates used in the model were baseline seizure counts $\texttt{Base}_i$, treatment $\texttt{Trt}_i$, a treatment baseline seizure counts interaction, age $\texttt{Age}_i$, and an indicator for the final clinic visit ${\texttt{V}_4}_j$.
+Each of the covariates was centred.
 The observations were modelled using a Poisson distribution $y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})$ with linear predictor 
-\begin{align*}
+\begin{align}
 \eta_{ij}
 &= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
-   \beta_{\texttt{Trt} \times \texttt{Base}} \texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4) \\ 
+   \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4)) \\ 
 &+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
-   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4],
-\end{align*}
-where the prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
-The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ random effects were IID with precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
+   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4]. (\#eq:epil)
+\end{align}
+The prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
+The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ random effects were IID with gamma precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
 
-The linear predictor for this model can be specified in `R-INLA` by:
+#### INLA with `R-INLA`
+
+The linear predictor (Equation \@ref(eq:epil)) is specified in `R-INLA` by:
 
 ```
 formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
@@ -448,22 +462,28 @@ formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
   f(Ind,  model = "iid", hyper = tau_prior)    #' Epsilon random effect
 ```  
 
+#### Gaussian approximation and EB with `TMB`
+
 The `TMB` C++ template for the model is in Appendix \@ref(tmb-epil).
+
+#### Gaussian approximation and AGHQ with `TMB`
+
+#### Laplace approximation and AGHQ with `TMB`
 
 ### Another example
 
-Choose an example of a model that `R-INLA` can't fit but INLA with `TMB` can.
+An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
 
 ## The Naomi model {#naomi}
 
 The Naomi small-area estimation model [@eaton2021naomi] synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
+This section describes a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing.
+Nowcasting and temporal projection are omitted, as these time points involve limited inferences.
 
 ### Model structure
 
-I consider a simplified version of Naomi defined only at the time of the most recent household survey with HIV testing.
-This version omits nowcasting and temporal projection.
-These time points involve limited inferences.
+Naomi can be described as having three components corresponding to the three data sources used.
 
 #### Household survey component {#household}
 
@@ -596,54 +616,64 @@ The Naomi model, as described in Section \@ref(naomi), was fit to data from Mala
 
 ## Discussion
 
-There are two primary contributions of this chapter.
+There are three two contributions in this chapter.
 First, an implementation of INLA using automatic differentiation and compatible with any model which can be expressed as a `TMB` C++ template.
-Second, an approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters, motivated by a challenging problem in small-area estimation of HIV indicators. 
+Second, an approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters, with application to a challenging problem in small-area estimation of HIV indicators.
 
-For the simplified Naomi model in Malawi (Section \@(malawi)) INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring posterior distributions of model parameters, across a broad range of metrics, than with an empirical Bayes quadrature strategy, and substantially faster than NUTS.
-However, improvements in accuracy for model parameters did not translate into model outputs.
-Indeed, we found approximate posterior exceedance probabilities to have systematic inaccuracies, with the potential to meaningfully mislead policy.
-If possible, though not a desirable situation, it could be advisable to provide gold-standard NUTS results after the workshop has concluded.
-However, running NUTS for Naomi took days, and in countries with 100s of districts it may simply not be feasible.
+### A univeral INLA implementation
 
-PCA-AGHQ could be added to the Naomi web interface as an alternative to `TMB`.
+To discuss.
+
+### PCA-AGHQ with application to Naomi
+
+For the simplified Naomi model in Malawi (Section \@ref(malawi)) INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an empirical Bayes quadrature rule.
+Both INLA approaches were substantially faster than NUTS, which took over two days to reach convergence.
+However, there was limited transfer in latent field posterior marginal distribution accuracy to model output posterior marginal distributions accuracy.
+The approximate posterior exceedance probabilities from INLA, with both empirical Bayes and PCA-AGHQ quadrature rule, had systematic inaccuracies as compared with NUTS.
+
+The inaccuracies in model outputs from INLA methods do have the potential to meaningfully mislead policy, and as such where possible gold-standard NUTS results should be computed.
+Though NUTS is to slow to run during the workshop, it could be run after the workshops resolution.
+However, running NUTS for Naomi in Malawi, one of the smallest countries where the model is used, took days and so for larger countries, with hundreds of districts, it may be infeasible to run NUTS to convergence.
+
+NUTS and INLA with the PCA-AGHQ integration strategy could be added to the Naomi web interface as an alternative to INLA with empirical Bayes.
 Analysts may then quickly iterate over model options using a fast inference approach, before switching to a more accurate approach once they are happy with the results.
-By selecting $s$ and $k$, PCA-AGHQ can be adjusted to suit the computational budget available. 
-We selected $s$ based on the Scree plot, and for the most part fixed $k = 3$.
-Whether it is preferable, for a given computational budget, to increase $s$ or increase $k$ is an open question.
-Further strategies, such as gradually lowering $k$ over the principal components, could also be considered.
 
-We hope that our work further encourages use of deterministic inference algorithms for ELGMs in applied settings, as well as methodological exploration of their accuracy and limitations.
-Among the ELGM-type structures of particular interest in spatial epidemiology are aggregated Gaussian process models [@nandi2020disaggregation] and evidence synthesis models [@amoah2020geostatistical].
+PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA $s$ and the number of points per dimension $k$.
+The scree plot is a well established heuristic for choosing $s$.
+Heuristics for choosing $k$ are less well established.
+Whether it is preferable for a given computational budget to increase $s$ or increase $k$ is an open question.
+Further strategies, such as gradually lowering $k$ over the principal components, could also be considered.
 
 ### Suggestions for future work
 
-#### Improved quadrature grids for moderate dimensions
+#### Quadrature grids for moderate dimensions
 
-Section \@ref(pca-aghq) aimed to develop a quadrature rule for moderate dimensions.
-It is desirable that this quadrature rule would allocate more computation to dimensions which contribute more to the integral.
-While PCA is a sensible approach, there are avenues where it does not behave as one might hope, or otherwise overlooks potential benefits.
-The first challenge identified was in the use of PCA when the dimensions have different scales. 
-Specifically, logit-scale hyperparameters were systematically favoured over those on the log-scale.
-Second, the amount of variation explained for the Hessian matrix is not of direct interest, rather the effect of the different dimensions on the relevant outputs.
-Using measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] may be preferable.
-Third, it is more important to allocate quadrature nodes to those marginals which are non-Gaussian.
-This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficiently.
+Section \@ref(pca-aghq) aimed to develop a quadrature rule for moderate dimensions, primarily for use within the INLA algorithm.
+This quadrature rule should aim to allocate more computation to dimensions which contribute more to the integrals it is used to compute.
+Though PCA is a sensible approach, there are avenues where it overlooks potential benefits, or otherwise does not behave as one might ideally hope.
+
+1. Use of PCA is challenging when the dimensions have different scales. 
+For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
+2. The amount of variation explained in the Hessian matrix may not be of direct interest.
+For the Naomi model, rather interest is in the effect of including each dimension on the relevant model outputs.
+As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indicies, could be preferable.
+3. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
+This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficient.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
 This could be done if there were a cheap way to obtain posterior means, which could then be compared to posterior modes obtained using optimisation.
-Another approach would be to measure the fit of marginal samples from a cheap approximation, like `TMB`.
-The main challenge is that the measurements have to be for marginals, ruling out approaches like PSIS which operate on joint distributions [@yao2018yes].
+Another approach would be to measure the fit of marginal samples from a cheap approximation, like empirical Bayes.
+The measures of fit would have to be for marginals, ruling out approaches like PSIS [@yao2018yes] which operate on joint distributions.
 
 #### Statistical theory
 
-@stringer2022fast (Theorem 1) bound the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
+Theorem 1 of @stringer2022fast bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
 The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an open question.
 
 #### Computational speed-ups
 
-Integration over a moderate number of hyperparameters posed a challenge, and led us to use a quadrature grids with a large number of nodes.
-However, computation at each node is independent, such that the run-time of the algorithm could potentially be significantly improved by parallel computing.
+Integration over a moderate number of hyperparameters posed a challenge, and resulted in use of quadrature grids with a large number of nodes.
+However, as computation at each node is independent, the run-time of the algorithm could potentially be significantly improved using parallel computing.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
 
 #### Implementation in probabilistic programming languages
@@ -664,3 +694,9 @@ Blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice]
 These algorithms are available, and customisable, including the choice of block structure, within `NIMBLE`.
 
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
+
+#### Exploration of the accuracy of INLA for complex models
+
+Among the ELGM-type structures of particular interest in spatial epidemiology are aggregated Gaussian process models [@nandi2020disaggregation] and evidence synthesis models [@amoah2020geostatistical].
+
+
