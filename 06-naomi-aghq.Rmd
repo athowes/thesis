@@ -23,22 +23,27 @@ resource_version <- "20230811-095752-5b8181d8"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter describes a novel Bayesian inference method.
-Development of the method was motivated the Naomi small-area estimation model [@eaton2021naomi].
-Over 35 countries [@unaids2023global] have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators by synthesising evidence from multiple data sources.
+Development of the method was motivated by the Naomi small-area estimation model [@eaton2021naomi].
+Over 35 countries [@unaids2023global] have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators.
+Evidence is synthesised from household surveys and routinely collected health data to generate estimates by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference, where hyperparameters are obtained by optimisation of the marginal posterior [@casella1985introduction]. 
-This approximation is undesirable as it can result in underestimation of uncertainty, ultimately leading to worse policy decisions stemming from overconfidence.
+As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
+In this approximation hyperparameters are obtained by optimisation of the marginal posterior [@casella1985introduction]. 
+This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stemm from overconfidence.
 Instead, I propose integrating over the moderate dimensional hyperparameters using an modified adaptive Gauss-Hermite quadrature [@naylor1982applications] rule.
 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
 The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
-Most applications and methodological developments of the INLA method have used `R-INLA`.
-Exceptions include the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, and @stringer2022fast.
-In pursuit of a suitable inference approach for the Naomi model, I implemented an INLA-like method outside `R-INLA`, building upon @stringer2022fast.
-My implementation is compatible with a wider range of models than `R-INLA`, and uses automatic differentiation to obtain the derivatives required for the Laplace approximation.
+Use of the software and method are nearly ubiquitous in applied settings.
+Most methodological developments have also used `R-INLA`, with two notable exceptions.
+First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposes an approximation to the Laplace approximation of latent field marginal posterior distributions which does not rely on Markov structure of the latent field.
+Second, @stringer2022fast extend the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive predictors, referred to by @van2023new as the "modern" formulation of the INLA methodology.
+This allows application of INLA to an extended class of latent Gaussian models.
+Not only is Naomi is a member of this class of models, but the Template Model Builder [`TMB`; @kristensen2016tmb] R package used to implement inference for Naomi also forms the basis for the `aghq` [@stringer2021implementing] R package used to implement @stringer2022fast.
+The work in this chapter builds towards an implementation of INLA using automatic differentiation via `TMB` to obtain the derivatives required for the Laplace approximation.
 
-Though I began working on this project close to the start of my PhD, I only began making meaningful progress after reading @stringer2022fast.
+Though I began working on this project at the beginning of my PhD in 2020, I only began making meaningful progress after reading @stringer2022fast.
 I am grateful to later have had the opportunity to collaborate with Alex Stringer, and work closely together during my visit to the University of Waterloo in the fall term of 2022.
 The results of our work are presented in @howes2023fast.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
@@ -48,33 +53,34 @@ Code for the analysis in this chapter is available from [`https://github.com/ath
 In a Bayesian analysis, the primary goal is to perform inference.
 That is, to obtain the posterior distribution
 \begin{equation}
-p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})},
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, (\#eq:bayes)
 \end{equation}
 or some way to compute relevant functions of it.
-The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$, which I assume to be vectors.
+The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$, which here I assume to be expressable as vectors.
 
 Inference is a sensible goal because the posterior distribution is sufficient for use in decision making.
-Given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$ the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
+That is, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
 \begin{equation}
 \mathbb{E}(l(a, \boldsymbol{\mathbf{\phi}}) \, | \, \mathbf{y}) = \int_{\mathbb{R}^d} l(a, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}
 For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.
+As such, the information provided for strategic response to the HIV epidemic can be thought of as functions of the posterior distribution.
 
 It is usually intractable to straightforwardly obtain the posterior distribution.
-This is because the denominator contains a potentially high-dimensional integral, depending on the value of $d \in \mathbb{Z}^+$, over the parameters
+This is because the denominator in Equation \@ref(eq:bayes) contains a potentially high-dimensional integral over the $d \in \mathbb{Z}^+$ -dimensional parameters
 \begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}, (\#eq:evidence)
 \end{equation}
 sometimes called the evidence or posterior normalising constant.
 For this reason, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
 
-Some approximate Bayesian inference methods, like Markov chain Monte Carlo (MCMC), avoid directly calculating the posterior normalising constant, instead working with the unnormalised posterior distribution
+Some approximate Bayesian inference methods, like Markov chain Monte Carlo (MCMC), avoid directly calculating the posterior normalising constant, instead finding ways to work with the unnormalised posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}),
 \end{equation}
 where $p(\mathbf{y})$ is not a function of $\boldsymbol{\mathbf{\phi}}$ and so can be removed as a constant.
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
-The methods in this chapter fall into this latter category, sometimes described as deterministic Bayesian inference methods.
+The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods.
 This section provides background on these methods and the software used to implement them.
 
 ### The Laplace approximation
@@ -126,8 +132,8 @@ knitr::include_graphics("figures/naomi-aghq/laplace.png")
 #### The marginal Laplace approximation {#marginal-la}
 
 Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
-An alternative approach is to approximate the marginal posterior distribution of some subset of the parameters.
-The remaining non-Gaussian parameters may then be handled using another, more appropriate, method.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
+The remaining non-Gaussian parameters may then be handled using another more suitable method.
 
 Let $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ and consider a three-stage hierarchical model
 \begin{equation}
@@ -171,48 +177,55 @@ Then, quadrature can be used to estimate the posterior normalising constant (Equ
 \end{equation}
 
 To illustrate quadrature for a simple example, consider integrating the univariate function $f(z) = z \sin(z)$ between $z = 0$ and $z = \pi$.
-This integral is known analytically to be $\pi$.
+This integral can be calculated analytically using integration by parts and evaluates to $\pi$.
 A quadrature approximation of this integral is
 \begin{equation}
-\pi = \int_{0}^\pi z \sin(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} z \sin(z) \omega(z), (\#eq:zsinz)
+\pi = \sin(z) - z \cos(z) \bigg|_0^\pi = \int_{0}^\pi z \sin(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} z \sin(z) \omega(z), (\#eq:zsinz)
 \end{equation}
-where $\mathcal{Q} = \{z_1, \ldots z_k\}$ are a set of $k$ quadrature nodes and $\omega: \mathbb{R} \to \mathbb{R}$.
+where $\mathcal{Q} = \{z_1, \ldots z_k\}$ are a set of $k$ quadrature nodes and $\omega: \mathbb{R} \to \mathbb{R}$ is a weighting function.
 
-The trapezoid rule is an example of a quadrature rule, in which quadrature nodes are spaced throughout the domain according to $\epsilon_i = z_i - z_{i - 1} > 0$ for $1 < i < k$.
-The weighting function is $\omega(z_i) = \epsilon_i$ for $1 < i < k$ and $\omega(z_i) = \epsilon_i / 2$ for $i \in \{1, k\}$.
-Figure \@ref(fig:trapezoid) shows application of the trapezoid rule to Equation \@ref(eq:zsinz).
+The trapezoid rule is an example of a quadrature rule, in which quadrature nodes are spaced throughout the domain with $\epsilon_i = z_i - z_{i - 1} > 0$ for $1 < i < k$.
+The weighting function is
+\begin{equation}
+\omega(z_i) = 
+\begin{cases}
+  \epsilon_i & 1 < i < k, \\
+  \epsilon_i / 2 & i \in \{1, k\}.
+\end{cases}
+\end{equation}
+Figure \@ref(fig:trapezoid) shows application of the trapezoid rule to integration of $z \sin(z)$ as described in Equation \@ref(eq:zsinz).
 The more quadrature nodes are used, the more accurate the estimate of the integrand is.
-Under some regularity conditions on $f$, as $\epsilon \to 0$ the quadrature estimate obtained using the trapezoid rule converges to the true value of the integral.
+Under some regularity conditions on $f$, as the spacing between quadrature nodes $\epsilon \to 0$ the estimate obtained using the trapezoid rule converges to the true value of the integral.
 Indeed, this approach was used by Riemann to provide the first rigorous definition of the integral.
 
-(ref:trapezoid) The trapezoid rule with $k = 5, 10, 20$ equally-spaced ($\epsilon_i = \epsilon > 0$) quadrature nodes can be used to integrate the function $f(z) = z \sin(z)$ in the domain $[0, \pi]$. Here, the exact solution is $\pi \approx 3.1416$. As $k$ increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution.
+(ref:trapezoid) The trapezoid rule with $k = 5, 10, 20$ equally-spaced ($\epsilon_i = \epsilon > 0$) quadrature nodes can be used to integrate the function $f(z) = z \sin(z)$, shown in green, in the domain $[0, \pi]$. Here, the exact solution is $\pi \approx 3.1416$. As $k$ increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution. The trapezoid rule estimate is given by the sum of the areas of the grey trapezoids.
 
 ```{r trapezoid, fig.cap="(ref:trapezoid)"}
 knitr::include_graphics("figures/naomi-aghq/trapezoid.png")
 ```
 
-Quadrature methods are most effective when integrating over small dimensions.
-This is because the number of quadrature nodes required to be evaluated in the computation grows exponentially with the dimension.
-For even moderate dimension, this quickly becomes intractable.
-For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure \@ref(fig:trapezoid), in five-dimensions (rather than one) would require 3125, 100000 or 3200000 quadrature nodes respectively.
-Though quadrature is embarrassingly parallel, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.
+Quadrature methods are most effective when integrating over small dimensions, say three or less.
+This is because the number of quadrature nodes at which the function is required to be evaluated in the computation grows exponentially with the dimension.
+For even moderate dimension, this quickly makes computation intractable.
+For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure \@ref(fig:trapezoid), in five-dimensions (rather than one, as shown) would require 3125, 100000 or 3200000 quadrature nodes respectively.
+Though quadrature is embarrassingly parallel, in that function evaluation at each node is entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.
 
 #### Gauss-Hermite quadrature
 
-Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule designed to integrate functions of the form $f(\mathbf{z}) = \varphi(\mathbf{z}) P_\alpha(\mathbf{z})$ exactly such that
+It is possible to find quadrature rules which are highly accurate when the integrand adheres to certain assumptions [Chapter 4; @press2007numerical].
+Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule designed to integrate functions of the form $f(\mathbf{z}) = \varphi(\mathbf{z}) P_\alpha(\mathbf{z})$ exactly, that is with no error, such that
 \begin{equation}
 \int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). (\#eq:ghqexact)
 \end{equation}
-The term $\varphi(\cdot)$ is a standard multivariate normal density $\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})$, where $\mathbf{0}$ is the zero-vector and $\mathbf{I}$ is the identify matrix of relevant dimension, and the term $P_\alpha(\cdot)$ is a polynomial with highest degree monomial $\alpha \leq 2k - 1$, where $k$ is the number of quadrature nodes per dimension.
+In this equation, the term $\varphi(\cdot)$ is a standard multivariate normal density $\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})$, where $\mathbf{0}$ and $\mathbf{I}$ are the zero-vector and identify matrix of relevant dimension, and the term $P_\alpha(\cdot)$ is a polynomial with highest degree monomial $\alpha \leq 2k - 1$, where $k$ is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
-This statement requires support using the Bernstein–von Mises theorem in combination with other arguments.
+The Bernstein–von Mises theorem states that, under some regularity conditions, as the number of data points increases the posterior distribution convergences to a Gaussian.
 
 I follow the notation for GHQ established by @bilodeau2022stochastic.
 First, to construct the univariate GHQ rule for $z \in \mathbb{R}$, let $H_k(z)$ be the $k$th (probabilist's) Hermite polynomial
-\begin{align}
-H_k(z) &= (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
-&= (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
-\end{align}
+\begin{equation}
+H_k(z) = (-1)^k \exp(z^2 / 2) \frac{\text{d}}{\text{d}z^k} \exp(-z^2 / 2)
+\end{equation}
 The Hermite polynomials are defined to be orthogonal with respect to the standard Gaussian probability density function
 \begin{equation}
 \int H_k(z) H_l(z) \varphi(z) \text{d} z = \delta_{kl},
@@ -226,49 +239,54 @@ H_1(z) = z = 0 \implies \mathcal{Q}(1, 1) &= \{0\}, \\
 H_2(z) = z^2 - 1 = 0 \implies \mathcal{Q}(1, 2) &= \{-0.707, 0.707\}, \\
 H_3(z) = z^3 - 3z = 0 \implies \mathcal{Q}(1, 3) &= \{-1.225, 0, 1.225\}.
 \end{align}
+The quadrature nodes are symmetric about zero, and include zero when $k$ is odd.
 The corresponding weighting function $\omega: \mathcal{Q}(1, k) \to \mathbb{R}$ chosen to satisfy Equation \@ref(eq:ghqexact) is given by
 \begin{equation}
 \omega(z) = \frac{k!}{\varphi(z) \cdot [H_{k + 1}(z)]^2}.
 \end{equation}
 
 Multivariate GHQ rules are usually constructed using the product rule with identical univariate GHQ rules in each dimension.
-In $d$ dimensions, the multivariate GHQ nodes $\mathbf{z} \in \mathcal{Q}(d, k)$ are defined by
+As such, in $d$ dimensions, the multivariate GHQ nodes $\mathbf{z} \in \mathcal{Q}(d, k)$ are defined by
 \begin{equation}
 \mathcal{Q}(d, k) = \mathcal{Q}(1, k)^d = \mathcal{Q}(1, k) \times \cdots \times \mathcal{Q}(1, k).
 \end{equation}
-The corresponding weighting function $\omega: \mathcal{Q}(d, k) \to \mathbb{R}$ is given by $\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)$.
+The corresponding weighting function $\omega: \mathcal{Q}(d, k) \to \mathbb{R}$ is given by a product of the univariate weighting functions $\omega(\mathbf{z}) = \prod_{j = 1}^d \omega(z_j)$.
 
 #### Adaptive quadrature
 
-In adaptive quadrature, the quadrature nodes and weights depend on the specific integrand being considered.
-Using an adaptive quadrature rules is particularly important for Bayesian inference problems because the posterior normalising constant $p(\mathbf{y})$ is a function of the data.
-No fixed quadrature rule can be expected to effectively integrate all possible posterior distributions produced by observation of certain data $\mathbf{y}$.
-For example, effective use of the trapezoid rule requires good choices for the start and end point, and spacing between quadrature nodes.
+In adaptive quadrature, the quadrature nodes and weights selected depend on the specific integrand being considered.
+For example, adaptive use of the trapezoid rule requires specifying a rule for the start point, end point, and spacing between quadrature nodes.
+It is particularly important to use an adaptive quadrature rule for Bayesian inference problems because the posterior normalising constant $p(\mathbf{y})$ is a function of the data.
+No fixed quadrature rule can be expected to effectively integrate all possible posterior distributions.
 
 In adaptive GHQ [AGHQ; @naylor1982applications] the quadrature nodes are shifted by the mode of the integrand, and rotated based on a matrix decomposition of the inverse curvature at the mode.
-Consider application of AGHQ to calculation of the posterior normalising constant.
-The transformation of the GHQ nodes $\mathcal{Q}(d, k)$ is then
+To demonstrate AGHQ, consider its application to calculation of the posterior normalising constant.
+The relevant transformation of the GHQ nodes $\mathcal{Q}(d, k)$ is
 \begin{equation}
 \boldsymbol{\mathbf{\phi}}(\mathbf{z}) = \hat{\mathbf{P}} \mathbf{z} + \hat{\boldsymbol{\mathbf{\phi}}},
 \end{equation}
 where $\hat{\mathbf{P}}$ is a matrix decomposition of $\hat{\boldsymbol{\mathbf{H}}}^{-1} = \hat{\mathbf{P}} \hat{\mathbf{P}}^\top$.
-The resulting adaptive quadrature estimate of the posterior normalising constant is
-\begin{equation}
-\tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}(\mathbf{z})) \omega(\mathbf{z}) =  | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \hat{\mathbf{P}} \mathbf{z} + \hat{\boldsymbol{\mathbf{\phi}}}) \omega(\mathbf{z}).
-\end{equation}
+To account for the transformation, the weighting function may be redefined to include a matrix determinant, analogous to the Jacobian determinant, or more simply the matrix determinant may be written outside the integral.
+Taking the later approach, the resulting adaptive quadrature estimate of the posterior normalising constant is
+\begin{align}
+\tilde p_{\texttt{AQ}}(\mathbf{y})
+&= | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}(\mathbf{z})) \omega(\mathbf{z}) \\
+&=  | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \hat{\mathbf{P}} \mathbf{z} + \hat{\boldsymbol{\mathbf{\phi}}}) \omega(\mathbf{z}).
+\end{align}
 
 The quantities $\hat{\boldsymbol{\mathbf{\phi}}}$ and $\hat{\boldsymbol{\mathbf{H}}}$ are exactly those given in Equations \@ref(eq:posterior-mode) and \@ref(eq:hessian) and used in the Laplace approximation.
 Indeed, when $k = 1$ then AGHQ corresponds to the Laplace approximation.
-To see this, we have $H_1(z)$ with zero $z = 0$ such that the adapted node is given by the mode $\boldsymbol{\mathbf{\phi}}(\mathbf{z} = \mathbf{0}) = \hat{\boldsymbol{\mathbf{\phi}}}$.
+To see this, we have $H_1(z)$ with univariate zero $z = 0$ such that the adapted node is given by the mode $\boldsymbol{\mathbf{\phi}}(\mathbf{z} = \mathbf{0} = 0 \times \cdots \times 0) = \hat{\boldsymbol{\mathbf{\phi}}}$.
 The weighting function is given by 
 \begin{equation}
 \omega(0)^d = \left( \frac{1!}{\varphi(0) \cdot H_{2}(0)^2} \right)^d = \left( \frac{1}{\varphi(0)} \right)^d = \left(2 \pi\right)^{d / 2}.
 \end{equation}
-The AGHQ estimate of the normalising constant for $k = 1$ is given by
+The AGHQ estimate of the normalising constant for $k = 1$ is then given by
 \begin{equation}
 \tilde p_{\texttt{AQ}}(\mathbf{y}) = p(\mathbf{y}, \hat{\boldsymbol{\mathbf{\phi}}}) \cdot | \hat{\mathbf{P}} | \cdot (2 \pi)^{d / 2} = p(\mathbf{y}, \hat{\boldsymbol{\mathbf{\phi}}}) \cdot \frac{(2 \pi)^{d / 2}}{| \hat{\mathbf{H}} | ^{1/2}},
 \end{equation}
-and corresponds to the Laplace approximation $\tilde p_{\texttt{LA}}(\mathbf{y})$ given in Equation \@ref(eq:la2).
+which corresponds to the Laplace approximation $\tilde p_{\texttt{LA}}(\mathbf{y})$ given in Equation \@ref(eq:la2).
+This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than $k = 1$ is required.
 
 (ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$. For each quadrature rule, the estimate of the integral is given by...
 
@@ -300,7 +318,10 @@ Consider the marginal Laplace approximation of Section \@ref(marginal-la) for a 
 \begin{equation}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-To complete approximation of the posterior normalising constant, the marginal Laplace approximation can be integrated over the hyperparameters using a quadrature rule.
+To complete approximation of the posterior normalising constant, the marginal Laplace approximation can be integrated over the hyperparameters using a quadrature rule
+\begin{equation}
+\tilde p(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} \tilde p_\texttt{LA}(\mathbf{z}, \mathbf{y}) \omega(\mathbf{z}). (\#eq:inlanormconst)
+\end{equation}
 Following @stringer2022fast I consider use of AGHQ as the particular quadrature rule.
 Let $\mathbf{z} \in \mathcal{Q}(m, k)$ be the $m$-dimensional GHQ nodes constructed using the product rule with $k$ nodes per dimension, and $\omega: \mathbb{R}^m \to \mathbb{R}$ the corresponding weighting function.
 These nodes are adapted by $\boldsymbol{\mathbf{\theta}}(\mathbf{z}) = \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$ where
@@ -319,7 +340,7 @@ The normalised marginal Laplace approximation is
 \end{equation}
 The posterior marginals $\tilde p(\theta_j \, | \, \mathbf{y})$ may be obtained by...
 
-The following sections discuss methods for obtaining $\tilde p(\mathbf{x} \, | \, \mathbf{y})$.
+Multiple methods have been proposed for obtaining $\tilde p(\mathbf{x} \, | \, \mathbf{y})$, varying in both accuracy and computational expense.
 
 #### Gaussian marginals {#gaussian-marginals}
 
@@ -340,7 +361,7 @@ The posterior marginals for any subset of the complete vector can be obtained by
 
 #### Laplace marginals {#laplace-marginals}
 
-An alternative more accurate, but more computationally intensive, approach is to calculate a Laplace approximation to the marginal posterior
+An alternative more accurate, but more computationally expensive, approach is to calculate a Laplace approximation to the marginal posterior
 \begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}. (\#eq:lamarginaljoint)
 \end{equation}
@@ -362,19 +383,32 @@ p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \m
 &\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:lamarginal)
 \end{align}
 
-The term $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ is obtained by normalising Equation \@ref(eq:lamarginaljoint) using an estimate of the evidence $\tilde p(\mathbf{y})$.
-Either the previously obtained posterior normalising constant estimate from Equation \@ref(eq:aghqnormconst) may be reused, or a new estimate may be computed.
+The term $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ is obtained by normalising Equation \@ref(eq:lamarginaljoint)
+\begin{equation}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}
+\end{equation}
+In the denominator, the previously obtained estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused.
+Alternatively, a new estimate may be computed.
+Equation \@ref(eq:lamarginal) is a mixture of the Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
+However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample from these Laplace approximations.
+As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from a AGHQ rule. 
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
-@rue2009approximate use the properties of Gauss-Markov random fields (GMRFs) to efficiently approximate the Laplace marginals.
-The simplified approximation is acheived by a Taylor expansion on the numerator and denominator of Equation \@ref(eq:lamarginaljoint) up to third order.
-This approach is analogous to correcting the Gaussian approximation in Section \@ref(gaussian-marginals) for location and skewness.
+When the latent field $\mathbf{x}$ is a Gauss-Markov random fields [GMRF; @rue2005gaussian] it is possible to efficiently approximate the Laplace marginals in Section \@ref(laplace-marginals).
+The simplified approximation [@rue2009approximate] is achieved by a Taylor expansion on the numerator and denominator of Equation \@ref(eq:lamarginaljoint) up to third order.
+The approach is analogous to correcting the Gaussian approximation in Section \@ref(gaussian-marginals) for location and skewness.
 
 #### Simplified INLA {#simplified-inla}
 
 @wood2020simplified approximates the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieves good performance.
 For splines, as with extended latent Gaussian models [ELGMs; @stringer2022fast], the precision matrix is not as sparse.
+
+#### Inclusion of the structured additive predictor in the latent field
+
+In @rue2009approximate...
+In @stringer2022fast...
+Discussed in @van2023new.
 
 ### Software
 
@@ -386,8 +420,8 @@ A formula interface of the form `y ~ ...` is used to specify the connection betw
 For example, a model with one fixed effect `a` and one IID random effect `b` is written as `y ~ a + f(b, model = "iid")`.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.
 For more information, including recent developments, see the `R-INLA` website [`https://r-inla.org`](https://r-inla.org).
-The `inlabru` R package [@bachl2019inlabru] is one notable example.
 @gaedke2023parallelized review recent computational improvements to `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state].
+The `inlabru` R package [@bachl2019inlabru] is a notable extension to `R-INLA`, providing a simpler syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of `R-INLA`.
 
 The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `gaussian` (Section \@ref(gaussian-marginals)), `laplace` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
 The quadrature grid used can be chosen by setting `int.strategy` to `eb` (empirical Bayes, one quadrature node), `grid` (a dense grid), or `ccd` [Box-Wilson central composite design; @box1992experimental].
