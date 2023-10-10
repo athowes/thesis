@@ -212,14 +212,14 @@ Though quadrature is embarrassingly parallel, in that function evaluation at eac
 
 #### Gauss-Hermite quadrature
 
-It is possible to find quadrature rules which are highly accurate when the integrand adheres to certain assumptions [Chapter 4; @press2007numerical].
+It is possible to construct quadrature rules which use relatively few nodes and are highly accurate when the integrand adheres to certain assumptions [Chapter 4; @press2007numerical].
 Gauss-Hermite quadrature [GHQ; @davis1975methods] is a quadrature rule designed to integrate functions of the form $f(\mathbf{z}) = \varphi(\mathbf{z}) P_\alpha(\mathbf{z})$ exactly, that is with no error, such that
 \begin{equation}
 \int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). (\#eq:ghqexact)
 \end{equation}
 In this equation, the term $\varphi(\cdot)$ is a standard multivariate normal density $\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})$, where $\mathbf{0}$ and $\mathbf{I}$ are the zero-vector and identify matrix of relevant dimension, and the term $P_\alpha(\cdot)$ is a polynomial with highest degree monomial $\alpha \leq 2k - 1$, where $k$ is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
-The Bernstein–von Mises theorem states that, under some regularity conditions, as the number of data points increases the posterior distribution convergences to a Gaussian.
+Support for this statement is provided by the Bernstein–von Mises theorem, which states that, under some regularity conditions, as the number of data points increases the posterior distribution convergences to a Gaussian.
 
 I follow the notation for GHQ established by @bilodeau2022stochastic.
 First, to construct the univariate GHQ rule for $z \in \mathbb{R}$, let $H_k(z)$ be the $k$th (probabilist's) Hermite polynomial
@@ -231,7 +231,7 @@ The Hermite polynomials are defined to be orthogonal with respect to the standar
 \int H_k(z) H_l(z) \varphi(z) \text{d} z = \delta_{kl},
 \end{equation}
 where $\delta_{kl} = 1$ if $k = l$ and $\delta_{kl} = 0$ otherwise.
-The relevance of the above equation is that...
+<!-- The relevance of the above equation is that... -->
 The GHQ nodes $z \in \mathcal{Q}(1, k)$ are given by the $k$ zeroes of the $k$th Hermite polynomial.
 For $k = 1, 2, 3$ these zeros, up to three decimal places, are
 \begin{align}
@@ -309,7 +309,7 @@ is a lower triangular matrix.
 For the spectral decomposition $\hat{\mathbf{P}} = \hat{\mathbf{E}} \hat{\mathbf{\Lambda}}^{1/2}$, where $\hat{\mathbf{E}} = (\hat{\mathbf{e}}_{1}, \ldots \hat{\mathbf{e}}_{d})$ contains the eigenvectors of $\hat{\mathbf{H}}^{-1}$ and $\hat{\mathbf{\Lambda}}$ is a diagonal matrix containing its eigenvalues $(\hat \lambda_{1}, \ldots, \hat \lambda_{d})$.
 Figure \@ref(fig:aghq-demo) demonstrates GHQ and AGHQ for a two-dimensional example, using both decomposition approaches.
 Using the Cholesky decomposition results in adapted quadrature nodes which collapse along one of the dimensions, as a result of the matrix $\hat{\mathbf{L}}$ being lower triangular.
-On the other hand, using the spectral decompositions results in adapted quadrature nodes which lie along the orthogonal eigenvectors of $\hat{\mathbf{H}}^{-1}$.
+On the other hand, using the spectral decomposition results in adapted quadrature nodes which lie along the orthogonal eigenvectors of $\hat{\mathbf{H}}^{-1}$.
 
 ### Integrated nested Laplace approximation {#inla}
 
@@ -334,13 +334,14 @@ The nested AGHQ estimate of the posterior normalising constant is then
 \begin{equation}
 \tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}}_\texttt{LA} | \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}). (\#eq:aghqnormconst)
 \end{equation}
-The normalised marginal Laplace approximation is
+This estimate can be used to normalise the marginal Laplace approximation as follows
 \begin{equation}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_{\texttt{AQ}}(\mathbf{y})}.
 \end{equation}
 The posterior marginals $\tilde p(\theta_j \, | \, \mathbf{y})$ may be obtained by...
 
-Multiple methods have been proposed for obtaining $\tilde p(\mathbf{x} \, | \, \mathbf{y})$, varying in both accuracy and computational expense.
+Multiple methods have been proposed for obtaining the $\tilde p(\mathbf{x} \, | \, \mathbf{y})$ or individual marginals $\tilde p(x_i \, | \, \mathbf{y})$
+The methods trade-off vary accuracy with computational expense.
 
 #### Gaussian marginals {#gaussian-marginals}
 
@@ -390,7 +391,7 @@ The term $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf
 In the denominator, the previously obtained estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused.
 Alternatively, a new estimate may be computed.
 Equation \@ref(eq:lamarginal) is a mixture of the Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
-However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample from these Laplace approximations.
+However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
 As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from a AGHQ rule. 
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
@@ -412,21 +413,25 @@ Discussed in @van2023new.
 
 ### Software
 
-#### `R-INLA`
+#### `R-INLA` {#r-inla}
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
 `R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing] and uses algorithms from the `GMRFLib` C library [@rue2001gmrflib].
-A formula interface of the form `y ~ ...` is used to specify the connection between the latent field $\mathbf{x}$ and the structured additive predictor $\boldsymbol{\mathbf{\eta}}$.
-For example, a model with one fixed effect `a` and one IID random effect `b` is written as `y ~ a + f(b, model = "iid")`.
-This interface is easy to engage with for new users, but can be limiting for more advanced users.
-For more information, including recent developments, see the `R-INLA` website [`https://r-inla.org`](https://r-inla.org).
-@gaedke2023parallelized review recent computational improvements to `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state].
-The `inlabru` R package [@bachl2019inlabru] is a notable extension to `R-INLA`, providing a simpler syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of `R-INLA`.
+For a review recent computational features of `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state], see @gaedke2023parallelized.
 
-The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `gaussian` (Section \@ref(gaussian-marginals)), `laplace` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
+A formula interface of the form `y ~ ...`, similar to that used in the `lm` function in core R `stats` package, is used to specify the connection between the latent field $\mathbf{x}$ and the structured additive predictor $\boldsymbol{\mathbf{\eta}}$.
+For a model with one fixed effect `a` and one IID random effect `b`, the formula would be written as `y ~ a + f(b, model = "iid")`.
+This interface is easy to engage with for new users, but can be limiting for more advanced users.
+
+The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `"gaussian"` (Section \@ref(gaussian-marginals)), `"laplace"` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
 The quadrature grid used can be chosen by setting `int.strategy` to `eb` (empirical Bayes, one quadrature node), `grid` (a dense grid), or `ccd` [Box-Wilson central composite design; @box1992experimental].
 Figure \@ref(fig:inla-grid-demo) demonstrates the two latter integration strategies.
 By default, the `grid` strategy is used for $m \leq 2$ and the `ccd` strategy is used for $m > 2$.
+
+Software packages have been built using `R-INLA`.
+The `inlabru` R package [@bachl2019inlabru] provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of `R-INLA`.
+
+For more information about `R-INLA`, including recent developments, see [`https://r-inla.org`](https://r-inla.org).
 
 (ref:inla-grid-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the grid method as used in `R-INLA` and detailed in Section 3.1 of @rue2009approximate. Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size $\delta_z$ along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold $\delta_\pi$. Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set $\delta_z = 0.75$ and $\delta_\pi = 2$. Panel B shows a CCD with...
 
@@ -453,22 +458,24 @@ The function `mgcv::ginla` implements the simplified INLA approach of @wood2020s
 
 ## A universal INLA implementation
 
-This section is about implementation of the INLA method, including with Laplace marginals (Section \@ref(laplace-marginals)), using the `TMB` package.
+This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals
 The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being formula-based [@vstrumbelj2023past].
+A probabilistic programming language can be said to be universal when it is Turing complete.
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
-The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of TMB) in discussion of @rue2009approximate, noting that such a system would be "fast, flexible, and easy-to-use".
-This suggestion was made close to 15 years ago, so it is surprising that its potential remains unrealised.
+Naomi is one among many examples.
+The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of TMB) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
+As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.
 
 The implementation is demonstrated via two applications.
 The first is compatible with `R-INLA`, and used as an example in Section 5.2 of @rue2009approximate.
-It has a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
-The second is an example of a model that `R-INLA` is not compatible with.
+It has a significant difference in approximation error depending on use of Gaussian or Laplace marginals, and so is useful as a demonstration of the correspondence between my implementation and that of `R-INLA` with `method` set to `"gaussian"` or `"laplace"`.
+The second is an example of a model that `R-INLA` is not compatible with, and so demonstrates the benefit of a more generally applicable implementation.
 
 ### Epilepsy example
 
-Consider the epilepsy drug double-blind clinical trial [@leppik1985double] generalised linear mixed model (GLMM) example of @spiegelhalter1996bugs.
+Consider the generalised linear mixed model (GLMM) example of @spiegelhalter1996bugs for an epilepsy drug double-blind clinical trial [@leppik1985double].
 The model is based on that of @breslow1993approximate, itself a modification of @thall1990some.
 
 In the trial, patients $i = 1, \ldots, 59$ were each assigned either the new drug $\texttt{Trt}_i = 1$ or placebo $\texttt{Trt}_i = 0$.
@@ -478,8 +485,8 @@ Each of the covariates was centred.
 The observations were modelled using a Poisson distribution $y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})$ with linear predictor 
 \begin{align}
 \eta_{ij}
-&= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
-   \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4)) \\ 
+&= \beta_0 + \beta_\texttt{Base} \log(\texttt{Base}_i / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
+   \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Base}_i / 4)) \\ 
 &+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
    \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4]. (\#eq:epil)
 \end{align}
@@ -488,23 +495,85 @@ The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit 
 
 #### INLA with `R-INLA`
 
-The linear predictor (Equation \@ref(eq:epil)) is specified in `R-INLA` by:
+After installing and loading the `R-INLA` package, the epilepsy data is available via `data("Epil")`.
+The covariates may be centered and modified by:
 
+```r
+center <- function(x) (x - mean(x))
+
+Epil <- Epil %>%
+  mutate(CTrt    = center(Trt),
+         ClBase4 = center(log(Base/4)),
+         CV4     = center(V4),
+         ClAge   = center(log(Age)),
+         CBT     = center(Trt * log(Base/4)))
 ```
+
+The linear predictor (Equation \@ref(eq:epil)) is then specified by:
+
+```r
 formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
-  f(rand, model = "iid", hyper = tau_prior) +  #' Nu random effect
-  f(Ind,  model = "iid", hyper = tau_prior)    #' Epsilon random effect
+  f(rand, model = "iid", hyper = tau_prior) +  
+  f(Ind,  model = "iid", hyper = tau_prior)
 ```  
+
+The object `tau_prior` specifies the $\Gamma(0.001, 0.001)$ precision prior via:
+
+```r
+tau_prior <- list(prec = list(
+  prior = "loggamma",
+  param = c(0.001, 0.001),
+  initial = 1,
+  fixed = FALSE)
+)
+```
+
+Inference may then be performed specifying the latent field posterior marginals approach `strat` and quadrature approach `int_strat` via:
+
+```r
+beta_prior <- list(mean = 0, prec = 1 / 100^2)
+
+epil_inla <- function(strat, int_strat) {
+  inla(
+    formula,
+    control.fixed = beta_prior,
+    family = "poisson",
+    data = Epil,
+    control.inla = list(strategy = strat, int.strategy = int_strat),
+    control.predictor = list(compute = TRUE)
+  )
+}
+```
+
+The object `beta_prior` specifies the $\mathcal{N}(0, 100^2)$ regression coefficient prior.
+The Poisson likelihood is specified via the `family` argument.
+Inferences may be then obtained via the `fit` object:
+
+```r
+fit <- epil_inla(strat = "gaussian", int_strat = "grid")
+```
+
+As described in Section \@ref(r-inla), `strat` may be set to one of `"gaussian"`, `"laplace"`, or `"simplified.laplace"` and `int_strat` may be set to one of `"eb"`, `"grid"`, or `"ccd"`.
 
 #### Gaussian approximation and EB with `TMB`
 
-The `TMB` C++ template for the model is in Appendix \@ref(tmb-epil).
+Obtaining inferences with `TMB` requires writing a C++ template for the log-posterior of the model.
+This is often a more involved task then specifying a formula.
+The `TMB` C++ template for the epilepsy GLMM is in Appendix \@ref(tmb-epil).
+
+Briefly, lines of code in the template can be divided as follows.
+The lines with a `DATA_` prefix specify the fixed data inputs to be passed to `TMB`.
+Examples of data inputs include the data $\mathbf{y}$ and the covariate design matrix.
+The lines with a `PARAMETER_` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
+It is recommended to specify all parameters on the real scale to help the optimisation procedure.
+More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER_` section.
+Finally, an object `nlp` is created representing the negative log-posterior, which is then incremented using statements of the form `nlp -= ddist(...)` where `dist` is the name of a distribution.
 
 #### Gaussian approximation and AGHQ with `TMB`
 
 #### Laplace approximation and AGHQ with `TMB`
 
-### Another example
+### An example that `R-INLA` doesn't work for
 
 An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.

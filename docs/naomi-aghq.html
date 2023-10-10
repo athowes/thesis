@@ -269,7 +269,7 @@ div.csl-indent {
 <li class="chapter" data-level="6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation"><i class="fa fa-check"></i><b>6.2</b> A universal INLA implementation</a>
 <ul>
 <li class="chapter" data-level="6.2.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#epilepsy-example"><i class="fa fa-check"></i><b>6.2.1</b> Epilepsy example</a></li>
-<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#another-example"><i class="fa fa-check"></i><b>6.2.2</b> Another example</a></li>
+<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#an-example-that-r-inla-doesnt-work-for"><i class="fa fa-check"></i><b>6.2.2</b> An example that <code>R-INLA</code> doesn’t work for</a></li>
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi"><i class="fa fa-check"></i><b>6.3</b> The Naomi model</a>
 <ul>
@@ -533,14 +533,14 @@ For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure <a 
 Though quadrature is embarrassingly parallel, in that function evaluation at each node is entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.</p>
 <div id="gauss-hermite-quadrature" class="section level4 hasAnchor" number="6.1.2.1">
 <h4><span class="header-section-number">6.1.2.1</span> Gauss-Hermite quadrature<a href="naomi-aghq.html#gauss-hermite-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>It is possible to find quadrature rules which are highly accurate when the integrand adheres to certain assumptions [Chapter 4; <span class="citation">Press et al. (<a href="#ref-press2007numerical">2007</a>)</span>].
+<p>It is possible to construct quadrature rules which use relatively few nodes and are highly accurate when the integrand adheres to certain assumptions [Chapter 4; <span class="citation">Press et al. (<a href="#ref-press2007numerical">2007</a>)</span>].
 Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate functions of the form <span class="math inline">\(f(\mathbf{z}) = \varphi(\mathbf{z}) P_\alpha(\mathbf{z})\)</span> exactly, that is with no error, such that
 <span class="math display" id="eq:ghqexact">\[\begin{equation}
 \int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). \tag{6.11}
 \end{equation}\]</span>
 In this equation, the term <span class="math inline">\(\varphi(\cdot)\)</span> is a standard multivariate normal density <span class="math inline">\(\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})\)</span>, where <span class="math inline">\(\mathbf{0}\)</span> and <span class="math inline">\(\mathbf{I}\)</span> are the zero-vector and identify matrix of relevant dimension, and the term <span class="math inline">\(P_\alpha(\cdot)\)</span> is a polynomial with highest degree monomial <span class="math inline">\(\alpha \leq 2k - 1\)</span>, where <span class="math inline">\(k\)</span> is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
-The Bernstein–von Mises theorem states that, under some regularity conditions, as the number of data points increases the posterior distribution convergences to a Gaussian.</p>
+Support for this statement is provided by the Bernstein–von Mises theorem, which states that, under some regularity conditions, as the number of data points increases the posterior distribution convergences to a Gaussian.</p>
 <p>I follow the notation for GHQ established by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>.
 First, to construct the univariate GHQ rule for <span class="math inline">\(z \in \mathbb{R}\)</span>, let <span class="math inline">\(H_k(z)\)</span> be the <span class="math inline">\(k\)</span>th (probabilist’s) Hermite polynomial
 <span class="math display">\[\begin{equation}
@@ -551,7 +551,7 @@ The Hermite polynomials are defined to be orthogonal with respect to the standar
 \int H_k(z) H_l(z) \varphi(z) \text{d} z = \delta_{kl},
 \end{equation}\]</span>
 where <span class="math inline">\(\delta_{kl} = 1\)</span> if <span class="math inline">\(k = l\)</span> and <span class="math inline">\(\delta_{kl} = 0\)</span> otherwise.
-The relevance of the above equation is that…
+<!-- The relevance of the above equation is that... -->
 The GHQ nodes <span class="math inline">\(z \in \mathcal{Q}(1, k)\)</span> are given by the <span class="math inline">\(k\)</span> zeroes of the <span class="math inline">\(k\)</span>th Hermite polynomial.
 For <span class="math inline">\(k = 1, 2, 3\)</span> these zeros, up to three decimal places, are
 <span class="math display">\[\begin{align}
@@ -626,7 +626,7 @@ is a lower triangular matrix.
 For the spectral decomposition <span class="math inline">\(\hat{\mathbf{P}} = \hat{\mathbf{E}} \hat{\mathbf{\Lambda}}^{1/2}\)</span>, where <span class="math inline">\(\hat{\mathbf{E}} = (\hat{\mathbf{e}}_{1}, \ldots \hat{\mathbf{e}}_{d})\)</span> contains the eigenvectors of <span class="math inline">\(\hat{\mathbf{H}}^{-1}\)</span> and <span class="math inline">\(\hat{\mathbf{\Lambda}}\)</span> is a diagonal matrix containing its eigenvalues <span class="math inline">\((\hat \lambda_{1}, \ldots, \hat \lambda_{d})\)</span>.
 Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a> demonstrates GHQ and AGHQ for a two-dimensional example, using both decomposition approaches.
 Using the Cholesky decomposition results in adapted quadrature nodes which collapse along one of the dimensions, as a result of the matrix <span class="math inline">\(\hat{\mathbf{L}}\)</span> being lower triangular.
-On the other hand, using the spectral decompositions results in adapted quadrature nodes which lie along the orthogonal eigenvectors of <span class="math inline">\(\hat{\mathbf{H}}^{-1}\)</span>.</p>
+On the other hand, using the spectral decomposition results in adapted quadrature nodes which lie along the orthogonal eigenvectors of <span class="math inline">\(\hat{\mathbf{H}}^{-1}\)</span>.</p>
 </div>
 </div>
 <div id="inla" class="section level3 hasAnchor" number="6.1.3">
@@ -652,12 +652,13 @@ The nested AGHQ estimate of the posterior normalising constant is then
 <span class="math display" id="eq:aghqnormconst">\[\begin{equation}
 \tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}}_\texttt{LA} | \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}). \tag{6.13}
 \end{equation}\]</span>
-The normalised marginal Laplace approximation is
+This estimate can be used to normalise the marginal Laplace approximation as follows
 <span class="math display">\[\begin{equation}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_{\texttt{AQ}}(\mathbf{y})}.
 \end{equation}\]</span>
 The posterior marginals <span class="math inline">\(\tilde p(\theta_j \, | \, \mathbf{y})\)</span> may be obtained by…</p>
-<p>Multiple methods have been proposed for obtaining <span class="math inline">\(\tilde p(\mathbf{x} \, | \, \mathbf{y})\)</span>, varying in both accuracy and computational expense.</p>
+<p>Multiple methods have been proposed for obtaining the <span class="math inline">\(\tilde p(\mathbf{x} \, | \, \mathbf{y})\)</span> or individual marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span>
+The methods trade-off vary accuracy with computational expense.</p>
 <div id="gaussian-marginals" class="section level4 hasAnchor" number="6.1.3.1">
 <h4><span class="header-section-number">6.1.3.1</span> Gaussian marginals<a href="naomi-aghq.html#gaussian-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Inferences for the latent field can be obtained by approximation of <span class="math inline">\(p(\mathbf{x} \, | \, \mathbf{y})\)</span> using another application of the quadrature rule <span class="citation">(<a href="#ref-rue2007approximate">Håvard Rue and Martino 2007</a>)</span>
@@ -705,7 +706,7 @@ p(x_i \, | \, \mathbf{y}) &amp;= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \
 In the denominator, the previously obtained estimate of the evidence in Equation <a href="naomi-aghq.html#eq:aghqnormconst">(6.13)</a> may be reused.
 Alternatively, a new estimate may be computed.
 Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> is a mixture of the Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
-However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample from these Laplace approximations.
+However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample each Laplace approximation.
 As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> may be represented by its evaluation at a number of nodes, such as those from a AGHQ rule.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
@@ -732,16 +733,17 @@ Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new
 <h4><span class="header-section-number">6.1.4.1</span> <code>R-INLA</code><a href="naomi-aghq.html#r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The <code>R-INLA</code> software <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span> implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span>.
 <code>R-INLA</code> is the R interface to the core <code>inla</code> program, which is written in C <span class="citation">(<a href="#ref-martino2009implementing">Martino and Rue 2009</a>)</span> and uses algorithms from the <code>GMRFLib</code> C library <span class="citation">(<a href="#ref-rue2001gmrflib">Håvard Rue and Follestad 2001</a>)</span>.
-A formula interface of the form <code>y ~ ...</code> is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
-For example, a model with one fixed effect <code>a</code> and one IID random effect <code>b</code> is written as <code>y ~ a + f(b, model = "iid")</code>.
-This interface is easy to engage with for new users, but can be limiting for more advanced users.
-For more information, including recent developments, see the <code>R-INLA</code> website <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.
-<span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span> review recent computational improvements to <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>.
-The <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span> is a notable extension to <code>R-INLA</code>, providing a simpler syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
-<p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to <code>gaussian</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>laplace</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
+For a review recent computational features of <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>, see <span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span>.</p>
+<p>A formula interface of the form <code>y ~ ...</code>, similar to that used in the <code>lm</code> function in core R <code>stats</code> package, is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
+For a model with one fixed effect <code>a</code> and one IID random effect <code>b</code>, the formula would be written as <code>y ~ a + f(b, model = "iid")</code>.
+This interface is easy to engage with for new users, but can be limiting for more advanced users.</p>
+<p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to <code>"gaussian"</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>"laplace"</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
 The quadrature grid used can be chosen by setting <code>int.strategy</code> to <code>eb</code> (empirical Bayes, one quadrature node), <code>grid</code> (a dense grid), or <code>ccd</code> [Box-Wilson central composite design; <span class="citation">Box and Wilson (<a href="#ref-box1992experimental">1992</a>)</span>].
 Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the two latter integration strategies.
 By default, the <code>grid</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>ccd</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
+<p>Software packages have been built using <code>R-INLA</code>.
+The <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span> provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
+<p>For more information about <code>R-INLA</code>, including recent developments, see <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
 <img src="figures/naomi-aghq/inla-grid-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the grid method as used in R-INLA and detailed in Section 3.1 of Håvard Rue, Martino, and Chopin (2009). Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size \(\delta_z\) along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold \(\delta_\pi\). Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set \(\delta_z = 0.75\) and \(\delta_\pi = 2\). Panel B shows a CCD with…" width="95%" />
@@ -770,19 +772,21 @@ The function <code>mgcv::ginla</code> implements the simplified INLA approach of
 </div>
 <div id="a-universal-inla-implementation" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>This section is about implementation of the INLA method, including with Laplace marginals (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>), using the <code>TMB</code> package.
-The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being formula-based <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.</p>
+<p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals
+The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being formula-based <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
+A probabilistic programming language can be said to be universal when it is Turing complete.</p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
 A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>.
-The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of TMB) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, noting that such a system would be “fast, flexible, and easy-to-use”.
-This suggestion was made close to 15 years ago, so it is surprising that its potential remains unrealised.</p>
+Naomi is one among many examples.
+The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of TMB) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, who noted that such a system would be “fast, flexible, and easy-to-use”, as well as “automatic from a user’s perspective”.
+As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.</p>
 <p>The implementation is demonstrated via two applications.
 The first is compatible with <code>R-INLA</code>, and used as an example in Section 5.2 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.
-It has a significant difference in approximation error depending on use of Gaussian or Laplace marginals.
-The second is an example of a model that <code>R-INLA</code> is not compatible with.</p>
+It has a significant difference in approximation error depending on use of Gaussian or Laplace marginals, and so is useful as a demonstration of the correspondence between my implementation and that of <code>R-INLA</code> with <code>method</code> set to <code>"gaussian"</code> or <code>"laplace"</code>.
+The second is an example of a model that <code>R-INLA</code> is not compatible with, and so demonstrates the benefit of a more generally applicable implementation.</p>
 <div id="epilepsy-example" class="section level3 hasAnchor" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Epilepsy example<a href="naomi-aghq.html#epilepsy-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Consider the epilepsy drug double-blind clinical trial <span class="citation">(<a href="#ref-leppik1985double">Leppik et al. 1985</a>)</span> generalised linear mixed model (GLMM) example of <span class="citation">D. Spiegelhalter et al. (<a href="#ref-spiegelhalter1996bugs">1996</a>)</span>.
+<p>Consider the generalised linear mixed model (GLMM) example of <span class="citation">D. Spiegelhalter et al. (<a href="#ref-spiegelhalter1996bugs">1996</a>)</span> for an epilepsy drug double-blind clinical trial <span class="citation">(<a href="#ref-leppik1985double">Leppik et al. 1985</a>)</span>.
 The model is based on that of <span class="citation">Breslow and Clayton (<a href="#ref-breslow1993approximate">1993</a>)</span>, itself a modification of <span class="citation">Thall and Vail (<a href="#ref-thall1990some">1990</a>)</span>.</p>
 <p>In the trial, patients <span class="math inline">\(i = 1, \ldots, 59\)</span> were each assigned either the new drug <span class="math inline">\(\texttt{Trt}_i = 1\)</span> or placebo <span class="math inline">\(\texttt{Trt}_i = 0\)</span>.
 Each patient made four visits the clinic <span class="math inline">\(j = 1, \ldots, 4\)</span>, and the observations <span class="math inline">\(y_{ij}\)</span> are the number of seizures of the <span class="math inline">\(i\)</span>th person in the two weeks preceding their <span class="math inline">\(j\)</span>th visit.
@@ -791,8 +795,8 @@ Each of the covariates was centred.
 The observations were modelled using a Poisson distribution <span class="math inline">\(y_{ij} \sim \text{Poisson}(e^{\eta_{ij}})\)</span> with linear predictor
 <span class="math display" id="eq:epil">\[\begin{align}
 \eta_{ij}
-&amp;= \beta_0 + \beta_\texttt{Base} \log(\texttt{Baseline}_j / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
-   \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Baseline}_j / 4)) \\
+&amp;= \beta_0 + \beta_\texttt{Base} \log(\texttt{Base}_i / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
+   \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Base}_i / 4)) \\
 &amp;+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
    \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4]. \tag{6.17}
 \end{align}\]</span>
@@ -800,14 +804,58 @@ The prior distribution on each of the regression parameters, including the inter
 The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and patient-visit <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> random effects were IID with gamma precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
 <div id="inla-with-r-inla" class="section level4 hasAnchor" number="6.2.1.1">
 <h4><span class="header-section-number">6.2.1.1</span> INLA with <code>R-INLA</code><a href="naomi-aghq.html#inla-with-r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The linear predictor (Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a>) is specified in <code>R-INLA</code> by:</p>
-<pre><code>formula &lt;- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
-  f(rand, model = &quot;iid&quot;, hyper = tau_prior) +  #&#39; Nu random effect
-  f(Ind,  model = &quot;iid&quot;, hyper = tau_prior)    #&#39; Epsilon random effect</code></pre>
+<p>After installing and loading the <code>R-INLA</code> package, the epilepsy data is available via <code>data("Epil")</code>.
+The covariates may be centered and modified by:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="naomi-aghq.html#cb1-1" tabindex="-1"></a>center <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x))</span>
+<span id="cb1-2"><a href="naomi-aghq.html#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="naomi-aghq.html#cb1-3" tabindex="-1"></a>Epil <span class="ot">&lt;-</span> Epil <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="naomi-aghq.html#cb1-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CTrt    =</span> <span class="fu">center</span>(Trt),</span>
+<span id="cb1-5"><a href="naomi-aghq.html#cb1-5" tabindex="-1"></a>         <span class="at">ClBase4 =</span> <span class="fu">center</span>(<span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)),</span>
+<span id="cb1-6"><a href="naomi-aghq.html#cb1-6" tabindex="-1"></a>         <span class="at">CV4     =</span> <span class="fu">center</span>(V4),</span>
+<span id="cb1-7"><a href="naomi-aghq.html#cb1-7" tabindex="-1"></a>         <span class="at">ClAge   =</span> <span class="fu">center</span>(<span class="fu">log</span>(Age)),</span>
+<span id="cb1-8"><a href="naomi-aghq.html#cb1-8" tabindex="-1"></a>         <span class="at">CBT     =</span> <span class="fu">center</span>(Trt <span class="sc">*</span> <span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)))</span></code></pre></div>
+<p>The linear predictor (Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a>) is then specified by:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="naomi-aghq.html#cb2-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span></span>
+<span id="cb2-2"><a href="naomi-aghq.html#cb2-2" tabindex="-1"></a>  <span class="fu">f</span>(rand, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior) <span class="sc">+</span>  </span>
+<span id="cb2-3"><a href="naomi-aghq.html#cb2-3" tabindex="-1"></a>  <span class="fu">f</span>(Ind,  <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior)</span></code></pre></div>
+<p>The object <code>tau_prior</code> specifies the <span class="math inline">\(\Gamma(0.001, 0.001)\)</span> precision prior via:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="naomi-aghq.html#cb3-1" tabindex="-1"></a>tau_prior <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">prec =</span> <span class="fu">list</span>(</span>
+<span id="cb3-2"><a href="naomi-aghq.html#cb3-2" tabindex="-1"></a>  <span class="at">prior =</span> <span class="st">&quot;loggamma&quot;</span>,</span>
+<span id="cb3-3"><a href="naomi-aghq.html#cb3-3" tabindex="-1"></a>  <span class="at">param =</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.001</span>),</span>
+<span id="cb3-4"><a href="naomi-aghq.html#cb3-4" tabindex="-1"></a>  <span class="at">initial =</span> <span class="dv">1</span>,</span>
+<span id="cb3-5"><a href="naomi-aghq.html#cb3-5" tabindex="-1"></a>  <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-6"><a href="naomi-aghq.html#cb3-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>Inference may then be performed specifying the latent field posterior marginals approach <code>strat</code> and quadrature approach <code>int_strat</code> via:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="naomi-aghq.html#cb4-1" tabindex="-1"></a>beta_prior <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">prec =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">100</span><span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb4-2"><a href="naomi-aghq.html#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="naomi-aghq.html#cb4-3" tabindex="-1"></a>epil_inla <span class="ot">&lt;-</span> <span class="cf">function</span>(strat, int_strat) {</span>
+<span id="cb4-4"><a href="naomi-aghq.html#cb4-4" tabindex="-1"></a>  <span class="fu">inla</span>(</span>
+<span id="cb4-5"><a href="naomi-aghq.html#cb4-5" tabindex="-1"></a>    formula,</span>
+<span id="cb4-6"><a href="naomi-aghq.html#cb4-6" tabindex="-1"></a>    <span class="at">control.fixed =</span> beta_prior,</span>
+<span id="cb4-7"><a href="naomi-aghq.html#cb4-7" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb4-8"><a href="naomi-aghq.html#cb4-8" tabindex="-1"></a>    <span class="at">data =</span> Epil,</span>
+<span id="cb4-9"><a href="naomi-aghq.html#cb4-9" tabindex="-1"></a>    <span class="at">control.inla =</span> <span class="fu">list</span>(<span class="at">strategy =</span> strat, <span class="at">int.strategy =</span> int_strat),</span>
+<span id="cb4-10"><a href="naomi-aghq.html#cb4-10" tabindex="-1"></a>    <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-11"><a href="naomi-aghq.html#cb4-11" tabindex="-1"></a>  )</span>
+<span id="cb4-12"><a href="naomi-aghq.html#cb4-12" tabindex="-1"></a>}</span></code></pre></div>
+<p>The object <code>beta_prior</code> specifies the <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span> regression coefficient prior.
+The Poisson likelihood is specified via the <code>family</code> argument.
+Inferences may be then obtained via the <code>fit</code> object:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="naomi-aghq.html#cb5-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">epil_inla</span>(<span class="at">strat =</span> <span class="st">&quot;gaussian&quot;</span>, <span class="at">int_strat =</span> <span class="st">&quot;grid&quot;</span>)</span></code></pre></div>
+<p>As described in Section <a href="naomi-aghq.html#r-inla">6.1.4.1</a>, <code>strat</code> may be set to one of <code>"gaussian"</code>, <code>"laplace"</code>, or <code>"simplified.laplace"</code> and <code>int_strat</code> may be set to one of <code>"eb"</code>, <code>"grid"</code>, or <code>"ccd"</code>.</p>
 </div>
 <div id="gaussian-approximation-and-eb-with-tmb" class="section level4 hasAnchor" number="6.2.1.2">
 <h4><span class="header-section-number">6.2.1.2</span> Gaussian approximation and EB with <code>TMB</code><a href="naomi-aghq.html#gaussian-approximation-and-eb-with-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The <code>TMB</code> C++ template for the model is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-epil">C.1.1</a>.</p>
+<p>Obtaining inferences with <code>TMB</code> requires writing a C++ template for the log-posterior of the model.
+This is often a more involved task then specifying a formula.
+The <code>TMB</code> C++ template for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-epil">C.1.1</a>.</p>
+<p>Briefly, lines of code in the template can be divided as follows.
+The lines with a <code>DATA_</code> prefix specify the fixed data inputs to be passed to <code>TMB</code>.
+Examples of data inputs include the data <span class="math inline">\(\mathbf{y}\)</span> and the covariate design matrix.
+The lines with a <code>PARAMETER_</code> prefix specify the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> to be estimated.
+It is recommended to specify all parameters on the real scale to help the optimisation procedure.
+More familiar versions of parameters, such as the precision rather than log precision, may be created outside the <code>PARAMETER_</code> section.
+Finally, an object <code>nlp</code> is created representing the negative log-posterior, which is then incremented using statements of the form <code>nlp -= ddist(...)</code> where <code>dist</code> is the name of a distribution.</p>
 </div>
 <div id="gaussian-approximation-and-aghq-with-tmb" class="section level4 hasAnchor" number="6.2.1.3">
 <h4><span class="header-section-number">6.2.1.3</span> Gaussian approximation and AGHQ with <code>TMB</code><a href="naomi-aghq.html#gaussian-approximation-and-aghq-with-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -816,8 +864,8 @@ The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\e
 <h4><span class="header-section-number">6.2.1.4</span> Laplace approximation and AGHQ with <code>TMB</code><a href="naomi-aghq.html#laplace-approximation-and-aghq-with-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
 </div>
-<div id="another-example" class="section level3 hasAnchor" number="6.2.2">
-<h3><span class="header-section-number">6.2.2</span> Another example<a href="naomi-aghq.html#another-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="an-example-that-r-inla-doesnt-work-for" class="section level3 hasAnchor" number="6.2.2">
+<h3><span class="header-section-number">6.2.2</span> An example that <code>R-INLA</code> doesn’t work for<a href="naomi-aghq.html#an-example-that-r-inla-doesnt-work-for" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>An example of a model that <code>R-INLA</code> can’t fit but INLA with <code>TMB</code> can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.</p>
 </div>
