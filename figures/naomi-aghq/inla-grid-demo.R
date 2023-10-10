@@ -143,4 +143,10 @@ fig1 + fig0 + labs(tag = "B")
 ggsave("figures/naomi-aghq/inla-grid-demo.png", h = 3.5, w = 6.25)
 
 install.packages("rsm")
-rsm::ccd(2, n0 = 1, alpha = "face", randomize = FALSE)
+factor1 <- c(-1, -0.5, 0, 0.5, 1)  # Levels for Factor 1
+factor2 <- c(-1, -0.5, 0, 0.5, 1)  # Levels for Factor 2
+
+ccd_design <- rsm::ccd(factors = list(Factor1 = factor1, Factor2 = factor2))
+
+rsm::ccd(basis = 2, n0 = 1)
+
