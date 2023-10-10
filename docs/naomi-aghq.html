@@ -802,6 +802,13 @@ The observations were modelled using a Poisson distribution <span class="math in
 \end{align}\]</span>
 The prior distribution on each of the regression parameters, including the intercept, was <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span>.
 The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and patient-visit <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> random effects were IID with gamma precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil"></span>
+<img src="figures/naomi-aghq/epil.png" alt="The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group in baseline seizures and age so help estimate a causal treatment effect." width="95%" />
+<p class="caption">
+Figure 6.5: The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group in baseline seizures and age so help estimate a causal treatment effect.
+</p>
+</div>
 <div id="inla-with-r-inla" class="section level4 hasAnchor" number="6.2.1.1">
 <h4><span class="header-section-number">6.2.1.1</span> INLA with <code>R-INLA</code><a href="naomi-aghq.html#inla-with-r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>After installing and loading the <code>R-INLA</code> package, the epilepsy data is available via <code>data("Epil")</code>.
@@ -915,6 +922,9 @@ Finally, an object <code>nlp</code> is created representing the negative log-pos
 </div>
 <div id="laplace-approximation-and-aghq-with-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace approximation and AGHQ with <code>TMB</code><a href="naomi-aghq.html#laplace-approximation-and-aghq-with-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="section" class="section level4" number="6.2.1.6">
+<h4><span class="header-section-number">6.2.1.6</span> </h4>
 </div>
 </div>
 <div id="an-example-that-r-inla-doesnt-work-for" class="section level3 hasAnchor" number="6.2.2">
@@ -1089,7 +1099,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3." width="95%" />
 <p class="caption">
-Figure 6.5: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>.
+Figure 6.6: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>.
 </p>
 </div>
 </div>
@@ -1100,10 +1110,16 @@ Figure 6.5: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using TMB." width="95%" />
 <p class="caption">
-Figure 6.6: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using <code>TMB</code>.
+Figure 6.7: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using <code>TMB</code>.
 </p>
 </div>
-<p>The Naomi model, as described in Section <a href="naomi-aghq.html#naomi">6.3</a>, was fit to data from Malawi using three inferential approaches.</p>
+<p>Malawi is a country in sub-Saharan Africa with among the fewest districts.
+The Naomi model (Section <a href="naomi-aghq.html#naomi">6.3</a>) was fit to data from Malawi using three inferential approaches:</p>
+<ol style="list-style-type: decimal">
+<li>A Gaussian approximation at <span class="math inline">\(\hat{\btheta}_\texttt{LA}\)</span>.</li>
+<li>PCA-AGHQ: a Gaussian approximation mixture at the adapted nodes <span class="math inline">\(\z \in \mathcal{Q}(m, s, k)\)</span>.</li>
+<li>NUTS: the HMC algorithm No-U-Turn Sampling using Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> implemented via the <code>tmbstan</code> package <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span>.</li>
+</ol>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 </div>
@@ -1231,6 +1247,9 @@ Breslow, Norman E, and David G Clayton. 1993. <span>“Approximate Inference in 
 </div>
 <div id="ref-brooks2017glmmtmb" class="csl-entry">
 Brooks, Mollie E, Kasper Kristensen, Koen J Van Benthem, Arni Magnusson, Casper W Berg, Anders Nielsen, Hans J Skaug, Martin Machler, and Benjamin M Bolker. 2017. <span>“glmmTMB Balances Speed and Flexibility Among Packages for Zero-Inflated Generalized Linear Mixed Modeling.”</span> <em>The R Journal</em> 9 (2): 378–400.
+</div>
+<div id="ref-carpenter2017stan" class="csl-entry">
+Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).
 </div>
 <div id="ref-casella1985introduction" class="csl-entry">
 Casella, George. 1985. <span>“An Introduction to Empirical Bayes Data Analysis.”</span> <em>The American Statistician</em> 39 (2): 83–87.

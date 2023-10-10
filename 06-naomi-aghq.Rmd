@@ -493,6 +493,13 @@ The observations were modelled using a Poisson distribution $y_{ij} \sim \text{P
 The prior distribution on each of the regression parameters, including the intercept, was $\mathcal{N}(0, 100^2)$.
 The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ random effects were IID with gamma precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
 
+(ref:epil) The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group in baseline seizures and age so help estimate a causal treatment effect.
+
+```{r epil, fig.cap="(ref:epil)"}
+knitr::include_graphics("figures/naomi-aghq/epil.png")
+```
+
+
 #### INLA with `R-INLA`
 
 After installing and loading the `R-INLA` package, the epilepsy data is available via `data("Epil")`.
@@ -631,6 +638,8 @@ fit <- glmmTMB(formula, data = Epil, family = poisson(link = "log"))
 #### Laplace approximation and EB with `TMB`
 
 #### Laplace approximation and AGHQ with `TMB`
+
+#### 
 
 ### An example that `R-INLA` doesn't work for
 
@@ -821,7 +830,12 @@ knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/figB.png"))
 ```
 
-The Naomi model, as described in Section \@ref(naomi), was fit to data from Malawi using three inferential approaches.
+Malawi is a country in sub-Saharan Africa with among the fewest districts.
+The Naomi model (Section \@ref(naomi)) was fit to data from Malawi using three inferential approaches:
+
+1. A Gaussian approximation at $\hat{\btheta}_\texttt{LA}$.
+2. PCA-AGHQ: a Gaussian approximation mixture at the adapted nodes $\z \in \mathcal{Q}(m, s, k)$.
+3. NUTS: the HMC algorithm No-U-Turn Sampling using Stan [@carpenter2017stan] implemented via the `tmbstan` package [@monnahan2018no].
 
 ### NUTS convergence
 
