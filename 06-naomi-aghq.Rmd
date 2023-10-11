@@ -22,10 +22,10 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter describes a novel Bayesian inference method.
+This chapter describes a novel Bayesian inference method for extended latent Gaussian models with a moderate number of hyperparameters.
 Development of the method was motivated by the Naomi small-area estimation model [@eaton2021naomi].
 Over 35 countries [@unaids2023global] have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators.
-Evidence is synthesised from household surveys and routinely collected health data to generate estimates by district, age, and sex.
+Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV prevalence, HIV incidence, and ART coverage by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
 As such, inferences have previously been obtained using an empirical Bayes approximation to full Bayesian inference.
 In this approximation hyperparameters are obtained by optimisation of the marginal posterior [@casella1985introduction]. 
@@ -43,6 +43,8 @@ This allows application of INLA to an extended class of latent Gaussian models.
 Not only is Naomi is a member of this class of models, but the Template Model Builder [`TMB`; @kristensen2016tmb] R package used to implement inference for Naomi also forms the basis for the `aghq` [@stringer2021implementing] R package used to implement @stringer2022fast.
 The work in this chapter builds towards an implementation of INLA using automatic differentiation via `TMB` to obtain the derivatives required for the Laplace approximation.
 
+<!-- Ennumerate contributions and refer to the sections where they come in -->
+
 Though I began working on this project at the beginning of my PhD in 2020, I only began making meaningful progress after reading @stringer2022fast.
 I am grateful to later have had the opportunity to collaborate with Alex Stringer, and work closely together during my visit to the University of Waterloo in the fall term of 2022.
 The results of our work are presented in @howes2023fast.
@@ -56,7 +58,7 @@ That is, to obtain the posterior distribution
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, (\#eq:bayes)
 \end{equation}
 or some way to compute relevant functions of it.
-The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$, which here I assume to be expressable as vectors.
+The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$, which here I assume to be expressible as vectors.
 
 Inference is a sensible goal because the posterior distribution is sufficient for use in decision making.
 That is, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
@@ -66,7 +68,7 @@ That is, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected 
 For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.
 As such, the information provided for strategic response to the HIV epidemic can be thought of as functions of the posterior distribution.
 
-It is usually intractable to straightforwardly obtain the posterior distribution.
+It is usually intractable to obtain the posterior distribution.
 This is because the denominator in Equation \@ref(eq:bayes) contains a potentially high-dimensional integral over the $d \in \mathbb{Z}^+$ -dimensional parameters
 \begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}, (\#eq:evidence)
@@ -148,8 +150,7 @@ and $N \times N$-dimensional Hessian matrix evaluated at the posterior mode
 \begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. (\#eq:marginal-hessian)
 \end{equation}
-Dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit in both Equation \@ref(eq:marginal-posterior-mode) and \@ref(eq:marginal-hessian).
-In other words, there is a a Gaussian approximation to the marginal posterior of the latent field $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ at each value $\boldsymbol{\mathbf{\theta}}$ in the space $\mathbb{R}^m$.
+Dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit in both Equation \@ref(eq:marginal-posterior-mode) and \@ref(eq:marginal-hessian) such that there is a a Gaussian approximation to the marginal posterior of the latent field $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ at each value $\boldsymbol{\mathbf{\theta}}$ in the space $\mathbb{R}^m$.
 The resulting marginal Laplace approximation, for a particular value of the hyperparameters, is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} (\#eq:marginalla) \\
@@ -635,16 +636,33 @@ fit <- glmmTMB(formula, data = Epil, family = poisson(link = "log"))
 
 #### Gaussian approximation and AGHQ with `aghq`
 
+```r
+# aghq code here
+```
+
 #### Laplace approximation and EB with `TMB`
+
+```r
+# code here
+```
 
 #### Laplace approximation and AGHQ with `TMB`
 
-#### 
+```r
+# code here
+```
+
+#### Hamiltonian Monte Carlo
+
+```r
+# tmbstan code here
+```
 
 ### An example that `R-INLA` doesn't work for
 
 An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
+In this section, 
 
 ## The Naomi model {#naomi}
 
@@ -830,14 +848,32 @@ knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/figB.png"))
 ```
 
-Malawi is a country in sub-Saharan Africa with among the fewest districts.
-The Naomi model (Section \@ref(naomi)) was fit to data from Malawi using three inferential approaches:
+This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
+Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the `naomi` R package vignette available from [`https://github.com/mrc-ide/naomi`](https://github.com/mrc-ide/naomi).
+Malawi was chosen in part because it has a small number of districts, reducing the computational demand of the model.
 
-1. A Gaussian approximation at $\hat{\btheta}_\texttt{LA}$.
-2. PCA-AGHQ: a Gaussian approximation mixture at the adapted nodes $\z \in \mathcal{Q}(m, s, k)$.
-3. NUTS: the HMC algorithm No-U-Turn Sampling using Stan [@carpenter2017stan] implemented via the `tmbstan` package [@monnahan2018no].
+Three Bayesian inference methods were considered (Table \@ref(tab:bayes-methods)).
+The `TMB` C++ user-template used to specify the log-posterior was the same for each approach.
+The dimension of the latent field was $N = 467$ and the dimension of the hyperparameters was $m = 24$.
+For the deterministic methods, following inference we simulated hyperparameter and latent field samples.
+For all methods, we simulated age-sex-district specific HIV prevalence, ART coverage and HIV incidence from the latent field and hyperparameter posteriors.
+Model outputs are illustrated in Figure \@ref(fig:naomi-output).
+
+| Method name | Mathematical description | Implementation | Purpose |
+| ----------- | ----------- | -------------- | -------------- |
+| EB          | Gaussian approximation to the latent field $\tilde p_\texttt{G}(\mathbf{x} \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y})$ | `TMB` | Baseline |
+| PCA-AGHQ    | Mixture of Gaussian approximations $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ at the PCA-AGHQ nodes obtained by adapting $\mathbf{z} \in \mathcal{Q}(m, s, k)$ | `TMB` and `aghq` | Novel method |
+| NUTS        | The Hamiltonian Monte Carlo (HMC) algorithm No-U-Turn Sampling (NUTS) | `tmbstan` | Gold-standard |
+
+Table: (\#tab:bayes-methods) Bayesian inference methods.
 
 ### NUTS convergence
+
+The effective sample size ratios were low.
+As a result, obtaining acceptable NUTS diagnostics required four chains run in parallel for 100000 iterations.
+These samples were thinned by a factor of 20 for ease-of-storage.
+There were no divergent transitions, and the largest potential scale reduction factor [@gelman1992inference; @vehtari2021rank] was $\hat R = 1.021$ (Figure \ref{fig:rhat}).
+Though inaccuracies remain possible, the results from NUTS were treated as a gold-standard.
 
 ### Use of PCA-AGHQ
 
