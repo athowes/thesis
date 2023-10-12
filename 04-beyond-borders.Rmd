@@ -22,20 +22,21 @@ resource_version <- "temp"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications.
-My investigation was motivated by a fundamental question encountered during model construction.
+This investigation was motivated by a fundamental question encountered during model construction.
 Namely, should the model be augmented to capture a conjectured feature of the data?
 The results are presented in @howes2023beyond.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
 
 ## Background
 
-## Models based on adjacency
+## Models based on adjacency {#adjacency}
 
 ### The Besag model
 
 Spatial structure can be encoded using a symmetric relation between areas.
 Let $i \sim j$ if the areas $A_i$ and $A_j$ are adjacent or neighbouring.
 Adjacency is often defined by a shared border, though other choices are possible [@paciorek2013spatial].
+
 The Besag model [@besag1991bayesian] is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the $i$th spatial random effect is given by
 \begin{equation}
     u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), (\#eq:besag)
@@ -44,9 +45,9 @@ where $\delta i$ is the set of neighbours of $A_i$ with cardinality $n_{\delta i
 The conditional mean of the random effect $u_i$ is the average of its neighbours $\{u_j\}_{j \sim i}$ and the precision $n_{\delta i}\tau_u$ is proportional to the number of neighbours $n_{\delta i}$.
 By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
 \begin{equation}
-    \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}), (\#eq:gmrf)
+    \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}). (\#eq:gmrf)
 \end{equation}
-where $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient structure matrix $\mathbf{R}$, so-called because it defines the structure of the precision matrix, with entries
+The matrix $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient structure matrix $\mathbf{R}$, so-called because it defines the structure of the precision matrix, with entries
 \begin{equation}
     R_{ij} =
     \begin{cases}
@@ -65,12 +66,12 @@ Rewriting Equation \@ref(eq:gmrf), the probability density function of $\mathbf{
     \propto \exp \left( -\frac{\tau_u}{2} \mathbf{u}^\top \mathbf{R} \mathbf{u} \right)
     \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). (\#eq:pdfu)
 \end{equation}
-This density is a function of the pairwise differences $u_i - u_j$ and so is invariant to the addition of a constant $c$ to each entry $p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})$, leading to an improper uniform distribution on the average of the $u_i$.
+This density is a function of the pairwise differences $u_i - u_j$ and so is invariant to the addition of a constant $c$ to each entry $p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})$, resulting in an improper uniform distribution on the average of the $u_i$.
 If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and $\text{rank}(\mathbf{R}) = n - 1$, while if $\mathcal{G}$ is disconnected, and composed of $n_c \geq 2$ connected components with index sets $I_1, \ldots, I_{n_c}$, then the corresponding structure matrix $\mathbf{R}$ has rank $n - n_c$ and the density is invariant to the addition of a constant to each of the connected components $p(\mathbf{u}_{I}) = p(\mathbf{u}_{I} + c\mathbf{1})$ where $I = I_1, \ldots, I_{n_c}$.
 
 ### Best practises for the Besag model
 
-@freni2018note recommended three best practices:
+@freni2018note recommended three best practices for use of the Besag model:
 
 1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance, defined by the geometric mean of the diagonal elements of its generalised inverse
 \begin{equation}
@@ -168,7 +169,106 @@ This problem does not only apply locally: since the effect of $\sigma^2_u$ appli
 
 ## Models using kernels
 
+Section \@ref(adjacency) reviewed ways to construct spatial random effect precision matrices using an adjacency relation.
+An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas $K: \mathcal{P}(\Sc) \times \mathcal{P}(\Sc) \to \mathbb{R}$, where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\Sc)$ is the space of subsets of the study region.
+If $K$ is positive semi-definite, then define areal kernel spatial random effects by
+\begin{equation}
+    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), \label{eq:arealkernel}
+\end{equation}
+where the $n \times n$ Gram matrix $\mathbf{K}$ with entries $K_{ij} = K(A_i, A_j)$ is a valid covariance matrix.
+Here, the precision parameter $\tau_\phi$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices.
+Most well-known spatial process models define the correlation structure between a pair of points using a kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$.
+A simple method to construct $K$ from $k$ is to average the kernel $k$ computed on some collection of points from within each area.
+
+### Centroid kernel
+
+The simplest approach is to use a single point such that $K(A_i, A_j) = k(p_i, p_j)$.
+A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.^[Note it is not guaranteed for the centroid to (even) lie within the area i.e. we may have $c_i \notin A_i$.]
+This results in the centroid kernel
+\begin{equation}
+    K(A_i, A_j) = k(c_i, c_j).
+\end{equation}
+The centroid kernel has been used in environmental epidemiology [@wakefield1999spatial] and to model the reproduction number of COVID-19 [@teh2021efficient].
+A model comparison study [Section 3; @best2005comparison] simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
+That said, it is unsuprising that a stationary covariance would struggle to recover non-stationary structure.
+
+### Integrated kernel
+
+Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
+This results in the integrated kernel
+\begin{equation}
+K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. \label{eq:ik1}
+\end{equation}
+This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
+
+#### Accounting for heterogeneity
+
+Additional information accounting for heterogeneity over $A_i$ may be incorporated into the integrated kernel^[Analogously, weighted centroids could also be used in the centroid kernel.]
+This can be accomplished using weighting distributions $\{W_i\}$ which represent an unequal contribution of each point to the similarity measure, to give a weighted integrated kernel
+\begin{equation}
+K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', \label{eq:ik2}
+\end{equation}
+This may be useful in disease mapping, where we expect regions with populations who live close to their shared border to be more strongly correlated than regions whose populations live far apart, which could be accounted for by weighting according to a high resolution measure of population density.
+
+#### Computation
+
+Most of the time we do not expect to be able to calculate Equation \ref{eq:ik2} analytically.
+Instead, given $n$ collections of $L_i$ samples $\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)$ drawn uniformly from each area then the integral may be approximated using Monte Carlo by the double sum
+\begin{equation}
+K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
+w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
+k \left( s^{(i)}_l, s^{(j)}_m \right). \label{eq:mcintegratedkernel}
+\end{equation}
+Equivalently, samples drawn from $W_i$ may be used without weighting by $w_i(s)$.
+Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
+These approaches require $\mathcal{O}(\sum_{i = 1}^n \sum_{j = 1}^n L_i L_j)$ evaluations of the kernel $k$ to compute the $n \times n$ Gram matrix $K$.
+This imposes a significant computational cost if the Gram matrix is often recomputed during inference, as is the case in MCMC when any of the kernel hyperparameters are learnt, placing a limit on the number of samples or nodes it is feasible to use.
+@kelsall2002modeling make inference more feasible by using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.
+
+#### Mismatch to data generating process
+
+Aggregation via the integrated kernel occurs at the level of the latent field rather than at the level of the data.
+<!-- This corresponds to a generative model of the form $y_i \sim p(y_i \, | \,  g^{-1}(x_i))$, with $x_i = |A_i|^{-1}\int_{A_i} x(s) \text{d} s$. -->
+If the link function $g$ is the identity or linear then aggregation at the level of the latent field is equivalent to aggregation at the level of the data.
+On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
+<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
+<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
+
+#### Log-Gaussian Cox processes
+
+The log-Gaussian Cox Process framework [@diggle2013spatial] arrives naturally at the integrated kernel formulation.
+A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function $\{ x(s), s \in \Sc \}$ such that conditional on the realisation of $x(s)$ the number of points in any area $A_i$ follows a Poisson distribution.
+The rate parameter of this Poisson distribution is explicitly aggregated as follows
+\begin{equation}
+y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
+\end{equation}
+In a LGCP the log intensity $\log x(s) = \eta(s)$ is modelled using a Gaussian process prior $\eta(s) \sim \mathcal{GP}(\mu(s), k(s, s'))$.
+@johnson2019spatially obtain Equation \ref{eq:ik2} by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby $\eta(s)$ is approximated by a piecewise constant $\eta_i = \mu_i + \phi_i$ in each area $A_i$.
+The $i$th discrete spatial random effect is then $\phi_i = \int_{A_i} w_i(s) \phi(s) \text{d}s$,
+with covariance structure
+\begin{equation}
+\text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s') \phi(s') \text{d}s' \right)
+= \int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d}s\text{d}s',
+\end{equation}
+corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.
+
+<!-- Discuss Gary's paper here? [@konstantinoudis2020discrete] -->
+
+#### Disaggregation regression
+
+Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
+Rather than focusing on the aggregate nature of areal observations as primarily a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @nandi2023disaggregation].
+<!-- Accurate point-level estimates are close to being a necessary intermediate goal towards obtaining accurate area-level estimates. -->
+<!-- Disaggregation is challenging without auxiliary information. -->
+<!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. -->
+
 ## Simulation study
+
+We tested the ability of inferential models with varying spatial random effect specifications to accurately recover small-area quantities.
+The data and modelling choices were designed with a spatial epidemiology setting in mind.
+
+### Synthetic data-sets
 
 ## HIV prevalence study
 

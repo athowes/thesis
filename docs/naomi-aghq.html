@@ -216,15 +216,22 @@ div.csl-indent {
 <li class="chapter" data-level="4" data-path="beyond-borders.html"><a href="beyond-borders.html"><i class="fa fa-check"></i><b>4</b> Models for spatial structure</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="beyond-borders.html"><a href="beyond-borders.html#background-1"><i class="fa fa-check"></i><b>4.1</b> Background</a></li>
-<li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#models-based-on-adjacency"><i class="fa fa-check"></i><b>4.2</b> Models based on adjacency</a>
+<li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#adjacency"><i class="fa fa-check"></i><b>4.2</b> Models based on adjacency</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.2.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.2.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.2.2</b> Best practises for the Besag model</a></li>
 <li class="chapter" data-level="4.2.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.2.3</b> The reparameterised Besag-York-Mollié model</a></li>
 <li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s representation of space</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a></li>
-<li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.4</b> Simulation study</a></li>
+<li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="beyond-borders.html"><a href="beyond-borders.html#centroid-kernel"><i class="fa fa-check"></i><b>4.3.1</b> Centroid kernel</a></li>
+<li class="chapter" data-level="4.3.2" data-path="beyond-borders.html"><a href="beyond-borders.html#integrated-kernel"><i class="fa fa-check"></i><b>4.3.2</b> Integrated kernel</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.4</b> Simulation study</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="beyond-borders.html"><a href="beyond-borders.html#synthetic-data-sets"><i class="fa fa-check"></i><b>4.4.1</b> Synthetic data-sets</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="beyond-borders.html"><a href="beyond-borders.html#hiv-prevalence-study"><i class="fa fa-check"></i><b>4.5</b> HIV prevalence study</a></li>
 <li class="chapter" data-level="4.6" data-path="beyond-borders.html"><a href="beyond-borders.html#discussion"><i class="fa fa-check"></i><b>4.6</b> Discussion</a></li>
 </ul></li>
@@ -291,7 +298,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.6</b> Discussion</a>
 <ul>
-<li class="chapter" data-level="6.6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-univeral-inla-implementation"><i class="fa fa-check"></i><b>6.6.1</b> A univeral INLA implementation</a></li>
+<li class="chapter" data-level="6.6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation"><i class="fa fa-check"></i><b>6.6.1</b> A universal INLA implementation</a></li>
 <li class="chapter" data-level="6.6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#pca-aghq-with-application-to-naomi"><i class="fa fa-check"></i><b>6.6.2</b> PCA-AGHQ with application to Naomi</a></li>
 <li class="chapter" data-level="6.6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#suggestions-for-future-work"><i class="fa fa-check"></i><b>6.6.3</b> Suggestions for future work</a></li>
 </ul></li>
@@ -733,15 +740,15 @@ Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new
 <code>R-INLA</code> is the R interface to the core <code>inla</code> program, which is written in C <span class="citation">(<a href="#ref-martino2009implementing">Martino and Rue 2009</a>)</span> and uses algorithms from the <code>GMRFLib</code> C library <span class="citation">(<a href="#ref-rue2001gmrflib">Håvard Rue and Follestad 2001</a>)</span>.
 For a review recent computational features of <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>, see <span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span>.
 Further information about <code>R-INLA</code>, including recent developments, can be found at <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.</p>
-<p>A formula interface of the form <code>y ~ ...</code>, similar to that used in the <code>lm</code> function in core R <code>stats</code> package, is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
+<p>A formula interface of the form <code>y ~ ...</code>, similar to that used in the <code>lm</code> function in the core <code>stats</code> R package, is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
 For a model with one fixed effect <code>a</code> and one IID random effect <code>b</code>, the formula would be written as <code>y ~ a + f(b, model = "iid")</code>.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.</p>
 <p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to <code>"gaussian"</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>"laplace"</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
-The quadrature grid used can be chosen by setting <code>int.strategy</code> to <code>eb</code> (empirical Bayes, one quadrature node), <code>grid</code> (a dense grid), or <code>ccd</code> [Box-Wilson central composite design; <span class="citation">Box and Wilson (<a href="#ref-box1992experimental">1992</a>)</span>].
-Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the two latter integration strategies.
-By default, the <code>grid</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>ccd</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
-<p>Software packages have been built using <code>R-INLA</code>.
-The <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span> provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
+The quadrature grid used can be chosen by setting <code>int.strategy</code> to <code>"eb"</code> (empirical Bayes, one quadrature node), <code>"grid"</code> (a dense grid), or <code>"ccd"</code> [Box-Wilson central composite design; <span class="citation">Box and Wilson (<a href="#ref-box1992experimental">1992</a>)</span>].
+Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the latter two integration strategies.
+By default, the <code>"grid"</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>"ccd"</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
+<p>Various software packages have been built using <code>R-INLA</code>.
+Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>, which provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
 <img src="figures/naomi-aghq/inla-grid-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the grid method as used in R-INLA and detailed in Section 3.1 of Håvard Rue, Martino, and Chopin (2009). Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size \(\delta_z\) along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold \(\delta_\pi\). Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set \(\delta_z = 0.75\) and \(\delta_\pi = 2\). Panel B shows a CCD as used in R-INLA and detailed in Section 6.5 of Håvard Rue, Martino, and Chopin (2009). I generated the CCD using the rsm R package (Lenth 2009)." width="95%" />
@@ -1181,22 +1188,26 @@ Though inaccuracies remain possible, these diagnostics are sufficient to treat r
 </div>
 <div id="discussion-2" class="section level2 hasAnchor" number="6.6">
 <h2><span class="header-section-number">6.6</span> Discussion<a href="naomi-aghq.html#discussion-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The primary contributions of this chapter are two-fold.
-First, an implementation of INLA using automatic differentiation and compatible with any model which can be expressed as a <code>TMB</code> C++ template.
-Second, an approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters, with application to a challenging problem in small-area estimation of HIV indicators.</p>
-<div id="a-univeral-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
-<h3><span class="header-section-number">6.6.1</span> A univeral INLA implementation<a href="naomi-aghq.html#a-univeral-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The main contributions of this chapter are two-fold:</p>
+<ol style="list-style-type: decimal">
+<li>An implementation of INLA using automatic differentiation and compatible with any model which can be expressed as a <code>TMB</code> C++ template.</li>
+<li>An approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters.
+This algorithm was applied to a challenging and important problem in small-area estimation of HIV indicators.</li>
+</ol>
+<p>This section discusses these contributions in turn, before moving on to broader suggestions for future work.</p>
+<div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
+<h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 </div>
 <div id="pca-aghq-with-application-to-naomi" class="section level3 hasAnchor" number="6.6.2">
 <h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For the simplified Naomi model in Malawi (Section <a href="naomi-aghq.html#malawi">6.5</a>) INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
-Both INLA approaches were substantially faster than NUTS, which took over two days to reach convergence.
-However, there was limited transfer in latent field posterior marginal distribution accuracy to model output posterior marginal distributions accuracy.
-The approximate posterior exceedance probabilities from INLA, with both EB and PCA-AGHQ quadrature rule, had systematic inaccuracies as compared with NUTS.</p>
-<p>The inaccuracies in model outputs from INLA methods do have the potential to meaningfully mislead policy, and as such where possible gold-standard NUTS results should be computed.
+Both EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
+However, model output posterior marginal distributions accuracy did not appear to be improved by latent field posterior marginal accuracy.
+The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.</p>
+<p>The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy, and as such where possible gold-standard NUTS results should be computed.
 Though NUTS is to slow to run during the workshop, it could be run after the workshops resolution.
 However, running NUTS for Naomi in Malawi, one of the smallest countries where the model is used, took days and so for larger countries, with hundreds of districts, it may be infeasible to run NUTS to convergence.</p>
-<p>NUTS and INLA with the PCA-AGHQ integration strategy could be added to the Naomi web interface as an alternative to INLA with EB.
+<p>NUTS and PCA-AGHQ could be added to the Naomi web interface as an alternative to EB.
 Analysts may then quickly iterate over model options using a fast inference approach, before switching to a more accurate approach once they are happy with the results.</p>
 <p>PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA <span class="math inline">\(s\)</span> and the number of points per dimension <span class="math inline">\(k\)</span>.
 The scree plot is a well established heuristic for choosing <span class="math inline">\(s\)</span>.
@@ -1206,10 +1217,29 @@ Further strategies, such as gradually lowering <span class="math inline">\(k\)</
 </div>
 <div id="suggestions-for-future-work" class="section level3 hasAnchor" number="6.6.3">
 <h3><span class="header-section-number">6.6.3</span> Suggestions for future work<a href="naomi-aghq.html#suggestions-for-future-work" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="quadrature-grids-for-moderate-dimensions" class="section level4 hasAnchor" number="6.6.3.1">
-<h4><span class="header-section-number">6.6.3.1</span> Quadrature grids for moderate dimensions<a href="naomi-aghq.html#quadrature-grids-for-moderate-dimensions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.1">
+<h4><span class="header-section-number">6.6.3.1</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
+<img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
+<p class="caption">
+Figure 6.8: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
+</p>
+</div>
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and driven in large part by use of <code>glmmTMB</code>.
+For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.</p>
+<p>Rather than look disseminate methods via <code>glmmTMB</code>, another direction would implement methods into other probabilistic programming languages.
+Implementation in Stan would be possible by use of the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a Stan model, together with the adjoint-differentiated Laplace approximation of <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
+The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of Stan users are interested in specifying their own model.
+Implementation in <code>NIMBLE</code> <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] built using <code>CppAD</code> like <code>TMB</code>, as of .
+Indeed, both the <code>NIMBLE</code> and Stan developers are actively looking into implementation of similar algorithms.
+<!-- Note: can fit hyperparameters with Laplace on latent field using HMC via tmbstan::tmbstan(laplace = TRUE) -->
+<!-- What Charles Margossian has implemented for Stan is done similarly by default in TMB --></p>
+</div>
+<div id="quadrature-grids-for-moderate-dimensions" class="section level4 hasAnchor" number="6.6.3.2">
+<h4><span class="header-section-number">6.6.3.2</span> Quadrature grids for moderate dimensions<a href="naomi-aghq.html#quadrature-grids-for-moderate-dimensions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Section <a href="naomi-aghq.html#pca-aghq">6.4</a> aimed to develop a quadrature rule for moderate dimensions, primarily for use within the INLA algorithm.
-This quadrature rule should aim to allocate more computation to dimensions which contribute more to the integrals it is used to compute.
+It is desirable that the quadrature rule allocate more computation to dimensions which contribute more to the integral in question.
 Though PCA is a sensible approach, there are avenues where it overlooks potential benefits, or otherwise does not behave as one might ideally hope.</p>
 <ol style="list-style-type: decimal">
 <li>Use of PCA is challenging when the dimensions have different scales.
@@ -1225,38 +1255,31 @@ Another approach would be to measure the fit of marginal samples from a cheap ap
 The measures of fit would have to be for marginals, ruling out approaches like PSIS <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span> which operate on joint distributions.</li>
 </ol>
 </div>
-<div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.2">
-<h4><span class="header-section-number">6.6.3.2</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Theorem 1 of <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
-Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
-The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an open question.</p>
-</div>
 <div id="computational-speed-ups" class="section level4 hasAnchor" number="6.6.3.3">
 <h4><span class="header-section-number">6.6.3.3</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Integration over a moderate number of hyperparameters posed a challenge, and resulted in use of quadrature grids with a large number of nodes.
 However, as computation at each node is independent, the run-time of the algorithm could potentially be significantly improved using parallel computing.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</p>
 </div>
-<div id="implementation-in-probabilistic-programming-languages" class="section level4 hasAnchor" number="6.6.3.4">
-<h4><span class="header-section-number">6.6.3.4</span> Implementation in probabilistic programming languages<a href="naomi-aghq.html#implementation-in-probabilistic-programming-languages" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> remains relatively small.
-Furthermore, for users unfamiliar with C++, it can be challenging to use.
-As such, it could be beneficial to implement the inference methods described in the chapter within other probabilistic programming languages.
-Implementation in <code>NIMBLE</code> <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span> would be relatively straightforward, as it (as of version &gt;1.0.0) has functionality for automatic differentiation and Laplace approximation, built using <code>CppAD</code> like <code>TMB</code>.
-Similarly, implementation in Stan could be possible by use of the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span> together with the adjoint-differentiated Laplace approximation of <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
-Indeed, both the <code>NIMBLE</code> and Stan developers are actively looking into implementating similar algorithms.</p>
-<!-- Note: can fit hyperparameters with Laplace on latent field using HMC via tmbstan::tmbstan(laplace = TRUE) -->
-<!-- What Charles Margossian has implemented for Stan is done similarly by default in TMB -->
+<div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.4">
+<h4><span class="header-section-number">6.6.3.4</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Theorem 1 of <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
+Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
+The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an important open question.</p>
 </div>
-<div id="comparison-to-other-mcmc-algorithms" class="section level4 hasAnchor" number="6.6.3.5">
-<h4><span class="header-section-number">6.6.3.5</span> Comparison to other MCMC algorithms<a href="naomi-aghq.html#comparison-to-other-mcmc-algorithms" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>, may be better suited than NUTS to sampling from Naomi.
-These algorithms are available, and customisable, including the choice of block structure, within <code>NIMBLE</code>.</p>
+<div id="further-comparisons" class="section level4 hasAnchor" number="6.6.3.5">
+<h4><span class="header-section-number">6.6.3.5</span> Further comparisons<a href="naomi-aghq.html#further-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>It would be valuable to include further comparisons in Section <a href="naomi-aghq.html#malawi">6.5</a>.
+Two instances stand-out.
+First, to compare PCA-AGHQ to other quadrature grids designed for moderate dimensions, such as a CCD.
+Second, to conduct inference with an MCMC algorithm better suited to sampling from Naomi than NUTS, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>.
+Both of these algorithms are available and customisable, including the choice of block structure, within <code>NIMBLE</code>.</p>
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 </div>
 <div id="exploration-of-the-accuracy-of-inla-for-complex-models" class="section level4 hasAnchor" number="6.6.3.6">
 <h4><span class="header-section-number">6.6.3.6</span> Exploration of the accuracy of INLA for complex models<a href="naomi-aghq.html#exploration-of-the-accuracy-of-inla-for-complex-models" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Among the ELGM-type structures of particular interest in spatial epidemiology are aggregated Gaussian process models <span class="citation">(<a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span> and evidence synthesis models <span class="citation">(<a href="#ref-amoah2020geostatistical">Amoah, Diggle, and Giorgi 2020</a>)</span>.</p>
+<p>The universal INLA implementation of Section <a href="naomi-aghq.html#universal">6.2</a> can be used to assess the accuracy of the INLA method for models which have yet to be considered.
+Among the ELGM-type structures of particular interest are aggregated Gaussian process models <span class="citation">(<a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span> and evidence synthesis models <span class="citation">(<a href="#ref-amoah2020geostatistical">Amoah, Diggle, and Giorgi 2020</a>)</span>.</p>
 
 </div>
 </div>
@@ -1297,8 +1320,14 @@ Casella, George. 1985. <span>“An Introduction to Empirical Bayes Data Analysis
 <div id="ref-chen2014use" class="csl-entry">
 Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“The Use of Sampling Weights in Bayesian Hierarchical Models for Small Area Estimation.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 11: 33–43.
 </div>
+<div id="ref-cranlogs" class="csl-entry">
+Csárdi, Gábor. 2023. <em>Cranlogs: Download Logs from the ’RStudio’ ’CRAN’ Mirror</em>.
+</div>
 <div id="ref-davis1975methods" class="csl-entry">
 Davis, Philip J, and Philip Rabinowitz. 1975. <em>Methods of Numerical Integration</em>. Academic Press.
+</div>
+<div id="ref-nimblemanual" class="csl-entry">
+de Valpine, Perry, Christopher Paciorek, Daniel Turek, Nick Michaud, Cliff Anderson-Bergman, Fritz Obermeyer, Claudia Wehrhahn Cortes, Abel Rodrìguez, Duncan Temple Lang, and Sally Paganin. 2023. <em><span>NIMBLE</span> User Manual</em> (version 1.0.1). <a href="https://doi.org/10.5281/zenodo.1211190">https://doi.org/10.5281/zenodo.1211190</a>.
 </div>
 <div id="ref-diaz2018openmp" class="csl-entry">
 Diaz, Jose Monsalve, Swaroop Pophale, Oscar Hernandez, David E Bernholdt, and Sunita Chandrasekaran. 2018. <span>“Openmp 4.5 Validation and Verification Suite for Device Offload.”</span> In <em>Evolving OpenMP for Evolving Architectures: 14th International Workshop on OpenMP, IWOMP 2018, Barcelona, Spain, September 26–28, 2018, Proceedings 14</em>, 82–95. Springer.
