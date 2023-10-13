@@ -268,7 +268,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-methods-and-software"><i class="fa fa-check"></i><b>6.1</b> Inference methods and software</a>
 <ul>
-<li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#the-laplace-approximation"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
+<li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#la"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
 <li class="chapter" data-level="6.1.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#quadrature"><i class="fa fa-check"></i><b>6.1.2</b> Quadrature</a></li>
 <li class="chapter" data-level="6.1.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inla"><i class="fa fa-check"></i><b>6.1.3</b> Integrated nested Laplace approximation</a></li>
 <li class="chapter" data-level="6.1.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#software"><i class="fa fa-check"></i><b>6.1.4</b> Software</a></li>
@@ -281,7 +281,7 @@ div.csl-indent {
 <li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi"><i class="fa fa-check"></i><b>6.3</b> The Naomi model</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-structure"><i class="fa fa-check"></i><b>6.3.1</b> Model structure</a></li>
-<li class="chapter" data-level="6.3.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#connection-to-elgms"><i class="fa fa-check"></i><b>6.3.2</b> Connection to ELGMs</a></li>
+<li class="chapter" data-level="6.3.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#summary-and-connection-to-elgms"><i class="fa fa-check"></i><b>6.3.2</b> Summary and connection to ELGMs</a></li>
 </ul></li>
 <li class="chapter" data-level="6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#pca-aghq"><i class="fa fa-check"></i><b>6.4</b> AGHQ in moderate dimensions</a>
 <ul>
@@ -299,7 +299,7 @@ div.csl-indent {
 <li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.6</b> Discussion</a>
 <ul>
 <li class="chapter" data-level="6.6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#a-universal-inla-implementation"><i class="fa fa-check"></i><b>6.6.1</b> A universal INLA implementation</a></li>
-<li class="chapter" data-level="6.6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#pca-aghq-with-application-to-naomi"><i class="fa fa-check"></i><b>6.6.2</b> PCA-AGHQ with application to Naomi</a></li>
+<li class="chapter" data-level="6.6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi"><i class="fa fa-check"></i><b>6.6.2</b> PCA-AGHQ with application to INLA for Naomi</a></li>
 <li class="chapter" data-level="6.6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#suggestions-for-future-work"><i class="fa fa-check"></i><b>6.6.3</b> Suggestions for future work</a></li>
 </ul></li>
 </ul></li>
@@ -362,32 +362,38 @@ div.csl-indent {
 <div id="naomi-aghq" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">6</span> Fast approximate Bayesian inference<a href="naomi-aghq.html#naomi-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-<p>This chapter describes a novel Bayesian inference method for extended latent Gaussian models, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
-Over 35 countries <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span> have used the Naomi model software (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a>) to produce subnational estimates of HIV indicators.
+<p>This chapter describes development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
+Over 35 countries <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span> have used the Naomi model web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a> to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
-The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes (EB) approximation to full Bayesian inference.
-In this approximation hyperparameters are obtained by optimisation of the marginal posterior <span class="citation">(<a href="#ref-casella1985introduction">Casella 1985</a>)</span>.
-This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.
-Instead, I propose integrating over the moderate-dimensional hyperparameters using a modified adaptive Gauss-Hermite quadrature [AGHQ; <span class="citation">Naylor and Smith (<a href="#ref-naylor1982applications">1982</a>)</span>] rule, described in Section <a href="naomi-aghq.html#pca-aghq">6.4</a>.</p>
+The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.</p>
 <p>The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields <span class="citation">(<a href="#ref-rue2017bayesian">Håvard Rue et al. 2017</a>)</span>.
 The success of INLA is in large part due to its accessible implementation in the <code>R-INLA</code> software.
-Use of the software and method are nearly ubiquitous in applied settings.
-Most methodological developments have also used <code>R-INLA</code>, with two notable exceptions.
-First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposes an approximation to the Laplace approximation of latent field marginal posterior distributions which does not rely on Markov structure of the latent field.
-Second, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> extend the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive predictors, referred to by <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> as the “modern” formulation of the INLA methodology.
-This allows application of INLA to an extended class of latent Gaussian models.
-Not only is Naomi is a member of this class of models, but the Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] R package used to implement inference for Naomi also forms the basis for the <code>aghq</code> <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> R package used to implement <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>.
-Section <a href="naomi-aghq.html#universal">6.2</a> builds towards a universally applicable implementation of INLA, where automatic differentiation is used to obtain the derivatives required for the Laplace approximation.</p>
-<p>Though I began working on this project at the beginning of my PhD in 2020, I only began making meaningful progress after reading <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>.
-I am grateful to later have had the opportunity to collaborate with Alex Stringer, and work closely together during my visit to the University of Waterloo in the fall term of 2022.
-The results of our work are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
+Use of the INLA method and <code>R-INLA</code> software are close to ubiquitous in applied settings.
+However, the Naomi model is not compatible with <code>R-INLA</code>, largely because it is too complex to be expressed using a formula interface.
+As a result, inference for the Naomi model have previously been obtained using an empirical Bayes [EB; <span class="citation">Casella (<a href="#ref-casella1985introduction">1985</a>)</span>] approximation to full Bayesian inference, with the Laplace approximation implemented by the more flexible Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] R package.
+In the EB approximation hyperparameters are fixed by optimisation of the marginal posterior.
+This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.</p>
+<p>Most methodological work on INLA has taken place using the <code>R-INLA</code> software package.
+There are two notable exceptions.
+First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposed an fast Laplace approximation appoach which does not rely on Markov structure of the latent field.
+Second, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive linear predictors, enabling application of INLA to a wider class of extended latent Gaussian models (ELGMs), which includes Naomi.
+This approach is referred to by <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> as the “modern” formulation of the INLA method, as opposed to the “classic” formulation of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, and is included in <code>R-INLA</code> using <code>inla.mode = "experimental"</code>.
+Along with removing the noisy structured additive predictor, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> propose use of the adaptive Gauss-Hermite quadrature [AGHQ; <span class="citation">Naylor and Smith (<a href="#ref-naylor1982applications">1982</a>)</span>] rule to integrate with respect to the hyperparameters.
+The methodological contributions of this chapter extend <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> in two directions:</p>
+<ol style="list-style-type: decimal">
+<li>The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via <code>TMB</code> is is used to obtain the derivatives required for the Laplace approximation.
+Section <a href="naomi-aghq.html#universal">6.2</a> demonstrates the implementation using two examples, one compatible with <code>R-INLA</code> and one incompatible.</li>
+<li>The second direction is a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section <a href="naomi-aghq.html#pca-aghq">6.4</a>.
+This quadrature rule is used to perform inference for the Naomi model by integrating the marginal Laplace approximation with respect to the moderate-dimensional hyperparameters within an INLA algorithm implemented in <code>TMB</code> in Section <a href="naomi-aghq.html#malawi">6.5</a>.</li>
+</ol>
+<p>This work was conducted in collaboration with Prof. Alex Stringer, who I visited at the University of Waterloo in the fall term of 2022.
+The results are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/naomi-aghq"><code>https://github.com/athowes/naomi-aghq</code></a>.</p>
 <div id="inference-methods-and-software" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Inference methods and software<a href="naomi-aghq.html#inference-methods-and-software" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In a Bayesian analysis, the primary goal is to perform inference.
-That is, to obtain the posterior distribution
+<p>This section reviews existing deterministic Bayesian inference methods (Sections <a href="naomi-aghq.html#la">6.1.1</a>, <a href="naomi-aghq.html#quadrature">6.1.2</a>, <a href="naomi-aghq.html#inla">6.1.3</a>) and software (Section <a href="naomi-aghq.html#software">6.1.4</a>).
+Inference comprises obtaining the posterior distribution
 <span class="math display" id="eq:bayes">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, \tag{6.1}
 \end{equation}\]</span>
@@ -413,10 +419,9 @@ p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\
 \end{equation}\]</span>
 where <span class="math inline">\(p(\mathbf{y})\)</span> is not a function of <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> and so can be removed as a constant.
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
-The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods.
-This section provides background on these methods and the software used to implement them.</p>
-<div id="the-laplace-approximation" class="section level3 hasAnchor" number="6.1.1">
-<h3><span class="header-section-number">6.1.1</span> The Laplace approximation<a href="naomi-aghq.html#the-laplace-approximation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods.</p>
+<div id="la" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> The Laplace approximation<a href="naomi-aghq.html#la" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Laplace’s method <span class="citation">(<a href="#ref-laplace1774memoire">Laplace 1774</a>)</span> is a technique used to approximate integrals of the form
 <span class="math display">\[\begin{equation}
 \int \exp(C h(\mathbf{z})) \text{d}\mathbf{z},
@@ -463,8 +468,9 @@ Figure 6.1: Demonstration of the Laplace approximation for the simple Bayesian i
 <div id="marginal-la" class="section level4 hasAnchor" number="6.1.1.1">
 <h4><span class="header-section-number">6.1.1.1</span> The marginal Laplace approximation<a href="naomi-aghq.html#marginal-la" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
-An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
-The remaining non-Gaussian parameters may then be handled using another more suitable method.</p>
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters, referred to as the marginal Laplace approximation.
+It remains to integrate out the remaining parameters, using another more suitable method.
+This approach is the basis of the INLA method.</p>
 <p>Let <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> and consider a three-stage hierarchical model
 <span class="math display">\[\begin{equation}
 p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) = p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}}),
@@ -487,12 +493,17 @@ The resulting marginal Laplace approximation, for a particular value of the hype
 \end{align}\]</span></p>
 <p>The marginal Laplace approximation is most accurate when the marginal posterior <span class="math inline">\(p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> is accurately approximated by a Gaussian
 distribution.
-For the class of latent Gaussian models <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> the prior distribution on the latent field is Gaussian <span class="math inline">\(\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}})\)</span>.
+For the class of latent Gaussian models <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span> the prior distribution on the latent field is Gaussian
+<span class="math display">\[\begin{equation}
+\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) = \mathcal{N}(\mathbf{x} \, | \, \mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}})),
+\end{equation}\]</span>
+with assumed zero mean <span class="math inline">\(\mathbf{0}\)</span>, and precision matrix <span class="math inline">\(\mathbf{Q}(\boldsymbol{\mathbf{\theta}})\)</span>.
 Although the marginal posterior distribution
 <span class="math display">\[\begin{align}
-p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) \propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})
+p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;\propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \\
+&amp;\propto \exp \left( - \frac{1}{2} \mathbf{x}^\top \mathbf{Q}(\boldsymbol{\mathbf{\theta}}) \mathbf{x} + \log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \right)
 \end{align}\]</span>
-is not Gaussian, its deviation from Gaussianity can be expected to be small if <span class="math inline">\(\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> satisfies some condition which remains to be detailed.</p>
+is not Gaussian, its deviation from Gaussianity can be expected to be small if <span class="math inline">\(\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> is small.</p>
 </div>
 </div>
 <div id="quadrature" class="section level3 hasAnchor" number="6.1.2">
@@ -748,7 +759,7 @@ The quadrature grid used can be chosen by setting <code>int.strategy</code> to <
 Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the latter two integration strategies.
 By default, the <code>"grid"</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>"ccd"</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
 <p>Various software packages have been built using <code>R-INLA</code>.
-Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>, which provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
+Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>, which provides a simplified syntax, and capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
 <img src="figures/naomi-aghq/inla-grid-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the grid method as used in R-INLA and detailed in Section 3.1 of Håvard Rue, Martino, and Chopin (2009). Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size \(\delta_z\) along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold \(\delta_\pi\). Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set \(\delta_z = 0.75\) and \(\delta_\pi = 2\). Panel B shows a CCD as used in R-INLA and detailed in Section 6.5 of Håvard Rue, Martino, and Chopin (2009). I generated the CCD using the rsm R package (Lenth 2009)." width="95%" />
@@ -761,25 +772,27 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <h4><span class="header-section-number">6.1.4.2</span> <code>TMB</code><a href="naomi-aghq.html#tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an R package which implements the Laplace approximation.
 In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
-The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives that may be composed by repeat use of the chain rule.
-<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD and <code>Eigen</code> for linear algebra.</p>
+The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
+These derivates may then be composed by repeat use of the chain rule to obtain the function’s derivative.
+<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD, and <code>Eigen</code> for linear algebra.</p>
 <p>Models can be specified in <code>TMB</code> using a C++ template file.
 <code>TMB</code> C++ templates are compatible with other software.
-The <code>tmbstan</code> R package <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span> allows running the Hamiltonian Monte Carlo (HMC) algorithm via Stan, and <code>aghq</code> <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> which allows use of AGHQ via <code>mvQuad</code> <span class="citation">(<a href="#ref-weiser2016mvquad">Weiser 2016</a>)</span>.
+The <code>tmbstan</code> R package <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span> allows running the Hamiltonian Monte Carlo (HMC) algorithm via <code>Stan</code>.
+The <code>aghq</code> R package <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the <code>mvQuad</code> R package <span class="citation">(<a href="#ref-weiser2016mvquad">Weiser 2016</a>)</span>.
 The <code>glmmTMB</code> R package <span class="citation">(<a href="#ref-brooks2017glmmtmb">Brooks et al. 2017</a>)</span> allows specification of common GLMM models via a formula interface.
-It is possible to extract the <code>TMB</code> C++ template implicitly used by <code>glmmTMB</code></p>
+It is possible to extract the <code>TMB</code> objective function used by <code>glmmTMB</code>, which may then be passed into <code>aghq</code> or <code>tmbstan</code>.</p>
 </div>
-<div id="mgcv" class="section level4 hasAnchor" number="6.1.4.3">
-<h4><span class="header-section-number">6.1.4.3</span> <code>mgcv</code><a href="naomi-aghq.html#mgcv" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The <code>mgcv</code> [Mixed GAM computation vehicle; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>] R package is a formula-based interface for estimating generalised additive models (GAMs).
-The function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.</p>
+<div id="other-software" class="section level4 hasAnchor" number="6.1.4.3">
+<h4><span class="header-section-number">6.1.4.3</span> Other software<a href="naomi-aghq.html#other-software" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The <code>mgcv</code> [Mixed GAM computation vehicle; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>] R package estimates generalised additive models (GAMs) specified using a formula interface.
+This package is briefly mentioned here because the function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> as described in Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>.</p>
 </div>
 </div>
 </div>
 <div id="universal" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#universal" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals.
-The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a formula <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span> llike <code>R-INLA</code>.
+The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a formula interface like <code>R-INLA</code> <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. --></p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
 A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>, including Naomi as one among many examples.
@@ -796,7 +809,8 @@ This example is used as a demonstration of the benefit of a more generally appli
 </ol>
 <div id="epil" class="section level3 hasAnchor" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Epilepsy GLMM<a href="naomi-aghq.html#epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Consider a GLMM <span class="citation">(<a href="#ref-thall1990some">Thall and Vail 1990</a>; <a href="#ref-breslow1993approximate">Breslow and Clayton 1993</a>; <a href="#ref-spiegelhalter1996bugs">D. Spiegelhalter et al. 1996</a>)</span> for an epilepsy drug double-blind clinical trial <span class="citation">(<a href="#ref-leppik1985double">Leppik et al. 1985</a>)</span> as described below.
+<p>Consider a GLMM for an epilepsy drug double-blind clinical trial <span class="citation">(<a href="#ref-leppik1985double">Leppik et al. 1985</a>)</span>.
+The original model of <span class="citation">Thall and Vail (<a href="#ref-thall1990some">1990</a>)</span> was modified by <span class="citation">Breslow and Clayton (<a href="#ref-breslow1993approximate">1993</a>)</span> and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; <span class="citation">D. Spiegelhalter et al. (<a href="#ref-spiegelhalter1996bugs">1996</a>)</span>] manual.
 Patients <span class="math inline">\(i = 1, \ldots, 59\)</span> were each assigned either a new drug <span class="math inline">\(\texttt{Trt}_i = 1\)</span> or a placebo <span class="math inline">\(\texttt{Trt}_i = 0\)</span>.
 Each patient made four visits the clinic <span class="math inline">\(j = 1, \ldots, 4\)</span>, and the observations <span class="math inline">\(y_{ij}\)</span> are the number of seizures of the <span class="math inline">\(i\)</span>th person in the two weeks preceding their <span class="math inline">\(j\)</span>th clinic visit.
 The covariates used in the model were baseline seizure counts <span class="math inline">\(\texttt{Base}_i\)</span>, treatment <span class="math inline">\(\texttt{Trt}_i\)</span>, age <span class="math inline">\(\texttt{Age}_i\)</span>, and an indicator for the final clinic visit <span class="math inline">\({\texttt{V}_4}_j\)</span>.
@@ -805,7 +819,7 @@ The observations were modelled using a Poisson distribution
 <span class="math display">\[\begin{equation}
 y_{ij} \sim \text{Poisson}(e^{\eta_{ij}}),
 \end{equation}\]</span>
-with linear predictor
+with structured additive predictor
 <span class="math display" id="eq:epil">\[\begin{align}
 \eta_{ij}
 &amp;= \beta_0 + \beta_\texttt{Base} \log(\texttt{Base}_i / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
@@ -846,7 +860,7 @@ The covariates may be obtained by:</p>
 <span id="cb1-6"><a href="naomi-aghq.html#cb1-6" tabindex="-1"></a>         <span class="at">CV4     =</span> <span class="fu">center</span>(V4),</span>
 <span id="cb1-7"><a href="naomi-aghq.html#cb1-7" tabindex="-1"></a>         <span class="at">ClAge   =</span> <span class="fu">center</span>(<span class="fu">log</span>(Age)),</span>
 <span id="cb1-8"><a href="naomi-aghq.html#cb1-8" tabindex="-1"></a>         <span class="at">CBT     =</span> <span class="fu">center</span>(Trt <span class="sc">*</span> <span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)))</span></code></pre></div>
-<p>The linear predictor (Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a>) is then specified by:</p>
+<p>The structured additive predictor (Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a>) is then specified by:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="naomi-aghq.html#cb2-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span></span>
 <span id="cb2-2"><a href="naomi-aghq.html#cb2-2" tabindex="-1"></a>  <span class="fu">f</span>(rand, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior) <span class="sc">+</span>  </span>
 <span id="cb2-3"><a href="naomi-aghq.html#cb2-3" tabindex="-1"></a>  <span class="fu">f</span>(Ind,  <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior)</span></code></pre></div>
@@ -889,72 +903,62 @@ The lines with a <code>PARAMETER_</code> prefix specify the parameters <span cla
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
 More familiar versions of parameters, such as the precision rather than log precision, may be created outside the <code>PARAMETER_</code> section.
 Finally, an object <code>nlp</code> is created representing the negative log-posterior, which is then incremented using statements of the form <code>nlp -= ddist(...)</code> where <code>dist</code> is the name of a distribution.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="naomi-aghq.html#cb6-1" tabindex="-1"></a>make_epsilon_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(N, J) {</span>
-<span id="cb6-2"><a href="naomi-aghq.html#cb6-2" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">outer</span>(<span class="dv">1</span><span class="sc">:</span>N, <span class="dv">1</span><span class="sc">:</span>(N <span class="sc">*</span> J), <span class="cf">function</span>(r, c) <span class="fu">as.numeric</span>((J<span class="sc">*</span>(r <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">&lt;</span> c) <span class="sc">&amp;</span> (c <span class="sc">&lt;=</span> J<span class="sc">*</span>r))))</span>
-<span id="cb6-3"><a href="naomi-aghq.html#cb6-3" tabindex="-1"></a>}</span>
-<span id="cb6-4"><a href="naomi-aghq.html#cb6-4" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="naomi-aghq.html#cb6-5" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb6-6"><a href="naomi-aghq.html#cb6-6" tabindex="-1"></a>  <span class="at">N =</span> <span class="dv">59</span>,</span>
-<span id="cb6-7"><a href="naomi-aghq.html#cb6-7" tabindex="-1"></a>  <span class="at">J =</span> <span class="dv">4</span>,</span>
-<span id="cb6-8"><a href="naomi-aghq.html#cb6-8" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">6</span>,</span>
-<span id="cb6-9"><a href="naomi-aghq.html#cb6-9" tabindex="-1"></a>  <span class="at">X =</span> <span class="fu">model.matrix</span>(<span class="fu">formula</span>(<span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT), <span class="at">data =</span> Epil),</span>
-<span id="cb6-10"><a href="naomi-aghq.html#cb6-10" tabindex="-1"></a>  <span class="at">y =</span> Epil<span class="sc">$</span>y,</span>
-<span id="cb6-11"><a href="naomi-aghq.html#cb6-11" tabindex="-1"></a>  <span class="at">E =</span> <span class="fu">make_epsilon_matrix</span>(<span class="dv">59</span>, <span class="dv">4</span>)</span>
-<span id="cb6-12"><a href="naomi-aghq.html#cb6-12" tabindex="-1"></a>)</span>
-<span id="cb6-13"><a href="naomi-aghq.html#cb6-13" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="naomi-aghq.html#cb6-14" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil.cpp&quot;</span>)</span>
-<span id="cb6-15"><a href="naomi-aghq.html#cb6-15" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil&quot;</span>))</span>
-<span id="cb6-16"><a href="naomi-aghq.html#cb6-16" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="naomi-aghq.html#cb6-17" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb6-18"><a href="naomi-aghq.html#cb6-18" tabindex="-1"></a>  <span class="at">beta =</span> <span class="fu">rep</span>(<span class="dv">0</span>, dat<span class="sc">$</span>K),</span>
-<span id="cb6-19"><a href="naomi-aghq.html#cb6-19" tabindex="-1"></a>  <span class="at">epsilon =</span> <span class="fu">rep</span>(<span class="dv">0</span>, dat<span class="sc">$</span>N),</span>
-<span id="cb6-20"><a href="naomi-aghq.html#cb6-20" tabindex="-1"></a>  <span class="at">nu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, dat<span class="sc">$</span>N <span class="sc">*</span> dat<span class="sc">$</span>J),</span>
-<span id="cb6-21"><a href="naomi-aghq.html#cb6-21" tabindex="-1"></a>  <span class="at">l_tau_epsilon =</span> <span class="dv">0</span>,</span>
-<span id="cb6-22"><a href="naomi-aghq.html#cb6-22" tabindex="-1"></a>  <span class="at">l_tau_nu =</span> <span class="dv">0</span></span>
-<span id="cb6-23"><a href="naomi-aghq.html#cb6-23" tabindex="-1"></a>)</span>
-<span id="cb6-24"><a href="naomi-aghq.html#cb6-24" tabindex="-1"></a></span>
-<span id="cb6-25"><a href="naomi-aghq.html#cb6-25" tabindex="-1"></a>obj <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">MakeADFun</span>(</span>
-<span id="cb6-26"><a href="naomi-aghq.html#cb6-26" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
-<span id="cb6-27"><a href="naomi-aghq.html#cb6-27" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
-<span id="cb6-28"><a href="naomi-aghq.html#cb6-28" tabindex="-1"></a>  <span class="at">random =</span> <span class="fu">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;epsilon&quot;</span>, <span class="st">&quot;nu&quot;</span>),</span>
-<span id="cb6-29"><a href="naomi-aghq.html#cb6-29" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil&quot;</span>,</span>
-<span id="cb6-30"><a href="naomi-aghq.html#cb6-30" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span></span>
-<span id="cb6-31"><a href="naomi-aghq.html#cb6-31" tabindex="-1"></a>)</span>
-<span id="cb6-32"><a href="naomi-aghq.html#cb6-32" tabindex="-1"></a></span>
-<span id="cb6-33"><a href="naomi-aghq.html#cb6-33" tabindex="-1"></a>its <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb6-34"><a href="naomi-aghq.html#cb6-34" tabindex="-1"></a></span>
-<span id="cb6-35"><a href="naomi-aghq.html#cb6-35" tabindex="-1"></a>opt <span class="ot">&lt;-</span> <span class="fu">nlminb</span>(</span>
-<span id="cb6-36"><a href="naomi-aghq.html#cb6-36" tabindex="-1"></a>  <span class="at">start =</span> obj<span class="sc">$</span>par,</span>
-<span id="cb6-37"><a href="naomi-aghq.html#cb6-37" tabindex="-1"></a>  <span class="at">objective =</span> obj<span class="sc">$</span>fn,</span>
-<span id="cb6-38"><a href="naomi-aghq.html#cb6-38" tabindex="-1"></a>  <span class="at">gradient =</span> obj<span class="sc">$</span>gr,</span>
-<span id="cb6-39"><a href="naomi-aghq.html#cb6-39" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">iter.max =</span> its, <span class="at">trace =</span> <span class="dv">0</span>)</span>
-<span id="cb6-40"><a href="naomi-aghq.html#cb6-40" tabindex="-1"></a>)</span>
-<span id="cb6-41"><a href="naomi-aghq.html#cb6-41" tabindex="-1"></a></span>
-<span id="cb6-42"><a href="naomi-aghq.html#cb6-42" tabindex="-1"></a>sd_out <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">sdreport</span>(</span>
-<span id="cb6-43"><a href="naomi-aghq.html#cb6-43" tabindex="-1"></a>  obj,</span>
-<span id="cb6-44"><a href="naomi-aghq.html#cb6-44" tabindex="-1"></a>  <span class="at">par.fixed =</span> opt<span class="sc">$</span>par,</span>
-<span id="cb6-45"><a href="naomi-aghq.html#cb6-45" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
-<span id="cb6-46"><a href="naomi-aghq.html#cb6-46" tabindex="-1"></a>)</span></code></pre></div>
+<p>First, the <code>TMB</code> template is compiled:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="naomi-aghq.html#cb6-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil.cpp&quot;</span>)</span>
+<span id="cb6-2"><a href="naomi-aghq.html#cb6-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil&quot;</span>))</span></code></pre></div>
+<p>The objective function <code>obj</code> may then be created:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="naomi-aghq.html#cb7-1" tabindex="-1"></a>obj <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">MakeADFun</span>(</span>
+<span id="cb7-2"><a href="naomi-aghq.html#cb7-2" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
+<span id="cb7-3"><a href="naomi-aghq.html#cb7-3" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
+<span id="cb7-4"><a href="naomi-aghq.html#cb7-4" tabindex="-1"></a>  <span class="at">random =</span> <span class="fu">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;epsilon&quot;</span>, <span class="st">&quot;nu&quot;</span>),</span>
+<span id="cb7-5"><a href="naomi-aghq.html#cb7-5" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil&quot;</span>,</span>
+<span id="cb7-6"><a href="naomi-aghq.html#cb7-6" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-7"><a href="naomi-aghq.html#cb7-7" tabindex="-1"></a>)</span></code></pre></div>
+<p>The object <code>dat</code> is a list of data inputs passed to <code>TMB</code>.
+The object <code>param</code> is a list of parameter starting values passed to <code>TMB</code>.
+The argument <code>random</code> determines which parameters are integrated out with a Laplace approximation.
+Here, the parameters <span class="math inline">\((\beta, \epsilon, \nu) = \mathbf{x}\)</span> are selected.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="naomi-aghq.html#cb8-1" tabindex="-1"></a>its <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb8-2"><a href="naomi-aghq.html#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="naomi-aghq.html#cb8-3" tabindex="-1"></a>opt <span class="ot">&lt;-</span> <span class="fu">nlminb</span>(</span>
+<span id="cb8-4"><a href="naomi-aghq.html#cb8-4" tabindex="-1"></a>  <span class="at">start =</span> obj<span class="sc">$</span>par,</span>
+<span id="cb8-5"><a href="naomi-aghq.html#cb8-5" tabindex="-1"></a>  <span class="at">objective =</span> obj<span class="sc">$</span>fn,</span>
+<span id="cb8-6"><a href="naomi-aghq.html#cb8-6" tabindex="-1"></a>  <span class="at">gradient =</span> obj<span class="sc">$</span>gr,</span>
+<span id="cb8-7"><a href="naomi-aghq.html#cb8-7" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">iter.max =</span> its, <span class="at">trace =</span> <span class="dv">0</span>)</span>
+<span id="cb8-8"><a href="naomi-aghq.html#cb8-8" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="naomi-aghq.html#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="naomi-aghq.html#cb8-10" tabindex="-1"></a>sd_out <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">sdreport</span>(</span>
+<span id="cb8-11"><a href="naomi-aghq.html#cb8-11" tabindex="-1"></a>  obj,</span>
+<span id="cb8-12"><a href="naomi-aghq.html#cb8-12" tabindex="-1"></a>  <span class="at">par.fixed =</span> opt<span class="sc">$</span>par,</span>
+<span id="cb8-13"><a href="naomi-aghq.html#cb8-13" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-14"><a href="naomi-aghq.html#cb8-14" tabindex="-1"></a>)</span></code></pre></div>
 <p>A similar model, with different priors, can more sufficiently be fit using a formula interface in <code>glmmTMB</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="naomi-aghq.html#cb7-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
-<span id="cb7-2"><a href="naomi-aghq.html#cb7-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula, <span class="at">data =</span> Epil, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="naomi-aghq.html#cb9-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand)</span>
+<span id="cb9-2"><a href="naomi-aghq.html#cb9-2" tabindex="-1"></a>                 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
+<span id="cb9-3"><a href="naomi-aghq.html#cb9-3" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula, <span class="at">data =</span> Epil, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
 </div>
 <div id="epil-gauss-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.3">
 <h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>aghq</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>For more information about the <code>aghq</code> R package see the software paper.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="naomi-aghq.html#cb8-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu))</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(</span>
+<span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>  obj,</span>
+<span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">3</span>, </span>
+<span id="cb10-4"><a href="naomi-aghq.html#cb10-4" tabindex="-1"></a>  <span class="at">startingvalue =</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
+<span id="cb10-5"><a href="naomi-aghq.html#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
+<p>The argument <code>k</code> specifies the number of quadrature nodes to be used per dimension.
+For more information about the <code>aghq</code> R package see the software paper.</p>
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
 <h4><span class="header-section-number">6.2.1.4</span> Laplace marginals and EB with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-eb-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="naomi-aghq.html#cb9-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
+<p>Running NUTS with <code>tmbstan</code> using the objective function <code>obj</code> is also easy to do:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.7">
 <h4><span class="header-section-number">6.2.1.7</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -968,21 +972,24 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 </div>
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> The Naomi model<a href="naomi-aghq.html#naomi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-This section describes a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing.
-Although the nowcasting and temporal projection are omitted here, these time points involve limited inferences, and so are unlikely to change to conclusions drawn.</p>
+<p>This section provides a description of the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
+Here, a version of Naomi defined only at the time of the most recent household survey with HIV testing is considered.
+The nowcasting and temporal projection are omitted as these time points are not involved in inference.
+Although the most relevant features of Naomi are included in this section, a complete description is left to Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.</p>
 <div id="model-structure" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Naomi can be described as having three components.
-The three components correspond to the three data sources used, which are the household survey, the X and the Y.</p>
+<p>Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
+The model can be described as having three components, corresponding to the three data sources used.
+These components are the household survey component, the ANC testing component, and the ART attendance component.
+After specifying common notation used throughout the model, each of these components is described in turn.</p>
 <div id="notation" class="section level4 hasAnchor" number="6.3.1.1">
 <h4><span class="header-section-number">6.3.1.1</span> Notation<a href="naomi-aghq.html#notation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Consider a country in sub-Saharan Africa where a household survey with complex design has taken place.
 Let <span class="math inline">\(x \in \mathcal{X}\)</span> index district, <span class="math inline">\(a \in \mathcal{A}\)</span> index five-year age group, and <span class="math inline">\(s \in \mathcal{S}\)</span> index sex.
 For ease of notation, let <span class="math inline">\(i\)</span> index the finest district-age-sex division included in the model.
 A district-age-sex specific quantity <span class="math inline">\(z_{ias}\)</span> may then be written as <span class="math inline">\(z_i\)</span>.
-Let <span class="math inline">\(N_i \in \mathbb{N}\)</span> be the known, fixed population size, <span class="math inline">\(\rho_i \in [0, 1]\)</span> be the HIV prevalence, <span class="math inline">\(\alpha_i \in [0, 1]\)</span> be the antiretroviral therapy (ART) coverage, <span class="math inline">\(\kappa_i \in [0, 1]\)</span> be the proportion recently infected among HIV positive persons, and <span class="math inline">\(\lambda_i &gt; 0\)</span> be the annual HIV incidence rate.</p>
-<p>It is possible that observations are made at an aggregate level.
+Let <span class="math inline">\(N_i \in \mathbb{N}\)</span> be the known, fixed population size, <span class="math inline">\(\rho_i \in [0, 1]\)</span> be the HIV prevalence, <span class="math inline">\(\alpha_i \in [0, 1]\)</span> be the antiretroviral therapy (ART) coverage, <span class="math inline">\(\kappa_i \in [0, 1]\)</span> be the proportion recently infected among HIV positive persons, and <span class="math inline">\(\lambda_i &gt; 0\)</span> be the annual HIV incidence rate.
+It is possible that observations are made at an aggregate level.
 Let <span class="math inline">\(I \subseteq \mathcal{X} \times \mathcal{A} \times \mathcal{S}\)</span> be a set of indices <span class="math inline">\(i\)</span> for which an aggregate observation is reported.
 The set of all <span class="math inline">\(I\)</span> is denoted <span class="math inline">\(\mathcal{I}\)</span> such that <span class="math inline">\(I \in \mathcal{I}\)</span>.</p>
 </div>
@@ -1001,20 +1008,20 @@ HIV incidence rate is modelled on the log scale as
 <span class="math display">\[\begin{equation}
 \log(\lambda_i) = \eta^\lambda_i.
 \end{equation}\]</span>
-The linear predictor <span class="math inline">\(\eta^\lambda_i\)</span> includes terms for adult HIV prevalence and adult ART coverage.
+The structured additive predictor <span class="math inline">\(\eta^\lambda_i\)</span> includes terms for adult HIV prevalence and adult ART coverage.
 The proportion recently infected among HIV positive persons is linked to HIV incidence via
 <span class="math display" id="eq:kappa">\[\begin{equation}
 \kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.18}
 \end{equation}\]</span>
 where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are strongly informed by prior distributions for the particular survey.</p>
-<p>These processes are each informed by household survey data.
+<p>These processes are each primarily informed by household survey data.
 Weighted aggregate survey observations are calculated as
-<span class="math display">\[\begin{equation}
-\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j},
+<span class="math display" id="eq:surveyobs">\[\begin{equation}
+\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j}, \tag{6.19}
 \end{equation}\]</span>
 with individual responses <span class="math inline">\(\theta_j \in \{0, 1\}\)</span> and survey weights <span class="math inline">\(w_j\)</span> for each of <span class="math inline">\(\theta \in \{\rho, \alpha, \kappa\}\)</span>.
 The survey weights are supplied by the survey provider and aim to reduce bias by decreasing possible correlation between response and recording mechanism <span class="citation">(<a href="#ref-meng2018statistical">Meng 2018</a>)</span>.
-The index <span class="math inline">\(j\)</span> runs across all individuals in strata <span class="math inline">\(i \in I\)</span> within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
+Equation <a href="naomi-aghq.html#eq:surveyobs">(6.19)</a> is imprecise about the set over which index <span class="math inline">\(j\)</span> runs, which comprises all individuals in strata <span class="math inline">\(i \in I\)</span> within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
 The weighted observed number of outcomes are
 <span class="math display">\[\begin{equation}
 y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I},
@@ -1062,13 +1069,29 @@ with <span class="math inline">\(\Psi_i\)</span> the number of pregnant women, w
 </div>
 <div id="art" class="section level4 hasAnchor" number="6.3.1.4">
 <h4><span class="header-section-number">6.3.1.4</span> ART attendance component<a href="naomi-aghq.html#art" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>People living with HIV sometimes choose to access ART services outside of the district that they reside in.
+To account for this fact, the probabilities of accessing services outside the home district are modelled using multinomial logistic regressions.
+Briefly, let <span class="math inline">\(\gamma_{x, x&#39;}\)</span> be the probability that a person on ART residing in district <span class="math inline">\(x\)</span> receives ART in district <span class="math inline">\(x&#39;\)</span>, and assume <span class="math inline">\(\gamma_{x, x&#39;} = 0\)</span> unless <span class="math inline">\(x = x&#39;\)</span> or the two districts are neighbouring such that <span class="math inline">\(x \sim x&#39;\)</span>.
+The log-odds are modelled using a structured additive predictor which only depends on the home district <span class="math inline">\(x\)</span>
+<span class="math display">\[\begin{equation}
+\tilde \gamma_{x, x&#39;} = \text{logit}(\gamma_{x, x&#39;}) = \eta_x^{\tilde \gamma}.
+\end{equation}\]</span>
+As such, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
+Each aggregate ART attendance observation <span class="math inline">\(y^{N^\text{ART}}_I\)</span> is modelled using a Gaussian approximation to a sum of binomials.
+This sum is over both strata <span class="math inline">\(i \in I\)</span> and the number of ART clients travelling from district <span class="math inline">\(x&#39;\)</span> to <span class="math inline">\(x\)</span>.</p>
 </div>
 </div>
-<div id="connection-to-elgms" class="section level3 hasAnchor" number="6.3.2">
-<h3><span class="header-section-number">6.3.2</span> Connection to ELGMs<a href="naomi-aghq.html#connection-to-elgms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters.
-However, it is an ELGM rather than an LGM, for the reasons below.
-Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation.</p>
+<div id="summary-and-connection-to-elgms" class="section level3 hasAnchor" number="6.3.2">
+<h3><span class="header-section-number">6.3.2</span> Summary and connection to ELGMs<a href="naomi-aghq.html#summary-and-connection-to-elgms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In all, Naomi is a joint model on the observations
+<span class="math display">\[\begin{equation}
+\mathbf{y} = (y^{\theta}_I) \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, I \in \mathcal{I}.
+\end{equation}\]</span>
+The structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span> includes intercept effects, age random effects, and spatial random effects which we collectively describe as the latent field <span class="math inline">\(\mathbf{x}\)</span>.
+The latent field is controlled by hyperparamters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span>] proportion parameters.</p>
+<p>Although Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters, it is not an LGM.
+The list below ennumerates the reasons why Naomi is an ELGM rather than LGM.
+Note that in the items, when dependence on a specific number of structured additive predictors is given, it is for that item in isolation, rather than when each item is considered together.</p>
 <ol style="list-style-type: decimal">
 <li>In the household survey component (Section <a href="naomi-aghq.html#household">6.3.1.2</a>) HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load
 <span class="math display">\[\begin{equation}
@@ -1188,27 +1211,26 @@ Though inaccuracies remain possible, these diagnostics are sufficient to treat r
 </div>
 <div id="discussion-2" class="section level2 hasAnchor" number="6.6">
 <h2><span class="header-section-number">6.6</span> Discussion<a href="naomi-aghq.html#discussion-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The main contributions of this chapter are two-fold:</p>
-<ol style="list-style-type: decimal">
-<li>An implementation of INLA using automatic differentiation and compatible with any model which can be expressed as a <code>TMB</code> C++ template.</li>
-<li>An approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters.
-This algorithm was applied to a challenging and important problem in small-area estimation of HIV indicators.</li>
-</ol>
-<p>This section discusses these contributions in turn, before moving on to broader suggestions for future work.</p>
+<p>This chapter made two main contributions.
+First, the universal INLA implementation of Section <a href="naomi-aghq.html#universal">6.2</a>.
+Second, the PCA-AGHQ rule (Sections <a href="naomi-aghq.html#pca-aghq">6.4</a>) with application to INLA for Naomi (Section <a href="naomi-aghq.html#malawi">6.5</a>).
+This section discusses these contributions in turn, before outlining suggestions for future related work.</p>
 <div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
 <h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 </div>
-<div id="pca-aghq-with-application-to-naomi" class="section level3 hasAnchor" number="6.6.2">
-<h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>For the simplified Naomi model in Malawi (Section <a href="naomi-aghq.html#malawi">6.5</a>) INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
-Both EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
-However, model output posterior marginal distributions accuracy did not appear to be improved by latent field posterior marginal accuracy.
-The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.</p>
-<p>The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy, and as such where possible gold-standard NUTS results should be computed.
-Though NUTS is to slow to run during the workshop, it could be run after the workshops resolution.
-However, running NUTS for Naomi in Malawi, one of the smallest countries where the model is used, took days and so for larger countries, with hundreds of districts, it may be infeasible to run NUTS to convergence.</p>
-<p>NUTS and PCA-AGHQ could be added to the Naomi web interface as an alternative to EB.
-Analysts may then quickly iterate over model options using a fast inference approach, before switching to a more accurate approach once they are happy with the results.</p>
+<div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
+<h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to INLA for Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For the simplified Naomi model in Malawi INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
+However, model output posterior marginals were not improved in the same way.
+The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.
+EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.</p>
+<p>The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy.
+As such, where possible gold-standard NUTS results should be computed.
+Though NUTS is to slow too run during a workshop, it could be run afterwards.
+That said, Malawi is one of the countries with the fewest number of districts.
+As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may not be possible to run NUTS to convergence.</p>
+<p>PCA-AGHQ and NUTS could be added to the Naomi web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a>) as an alternative to EB.
+Analysts would be able to quickly iterate over model options using EB, before switching to a more accurate approach once they are happy with the results.</p>
 <p>PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA <span class="math inline">\(s\)</span> and the number of points per dimension <span class="math inline">\(k\)</span>.
 The scree plot is a well established heuristic for choosing <span class="math inline">\(s\)</span>.
 Heuristics for choosing <span class="math inline">\(k\)</span> are less well established.
@@ -1217,36 +1239,40 @@ Further strategies, such as gradually lowering <span class="math inline">\(k\)</
 </div>
 <div id="suggestions-for-future-work" class="section level3 hasAnchor" number="6.6.3">
 <h3><span class="header-section-number">6.6.3</span> Suggestions for future work<a href="naomi-aghq.html#suggestions-for-future-work" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.1">
-<h4><span class="header-section-number">6.6.3.1</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
-<img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
-<p class="caption">
-Figure 6.8: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
-</p>
-</div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and driven in large part by use of <code>glmmTMB</code>.
-For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.</p>
-<p>Rather than look disseminate methods via <code>glmmTMB</code>, another direction would implement methods into other probabilistic programming languages.
-Implementation in Stan would be possible by use of the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a Stan model, together with the adjoint-differentiated Laplace approximation of <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
-The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of Stan users are interested in specifying their own model.
-Implementation in <code>NIMBLE</code> <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] built using <code>CppAD</code> like <code>TMB</code>, as of .
-Indeed, both the <code>NIMBLE</code> and Stan developers are actively looking into implementation of similar algorithms.
-<!-- Note: can fit hyperparameters with Laplace on latent field using HMC via tmbstan::tmbstan(laplace = TRUE) -->
-<!-- What Charles Margossian has implemented for Stan is done similarly by default in TMB --></p>
-</div>
-<div id="quadrature-grids-for-moderate-dimensions" class="section level4 hasAnchor" number="6.6.3.2">
-<h4><span class="header-section-number">6.6.3.2</span> Quadrature grids for moderate dimensions<a href="naomi-aghq.html#quadrature-grids-for-moderate-dimensions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Section <a href="naomi-aghq.html#pca-aghq">6.4</a> aimed to develop a quadrature rule for moderate dimensions, primarily for use within the INLA algorithm.
-It is desirable that the quadrature rule allocate more computation to dimensions which contribute more to the integral in question.
-Though PCA is a sensible approach, there are avenues where it overlooks potential benefits, or otherwise does not behave as one might ideally hope.</p>
+<p>Though some relate more to one contribution than the other, suggestions for future work relating to this chapter are presented here together.</p>
+<div id="further-comparisons" class="section level4 hasAnchor" number="6.6.3.1">
+<h4><span class="header-section-number">6.6.3.1</span> Further comparisons<a href="naomi-aghq.html#further-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Comparison to additional Bayesian inference methods could be included in Section <a href="naomi-aghq.html#malawi">6.5</a>.
+Three further comparisons might be particularly valuable:</p>
 <ol style="list-style-type: decimal">
+<li>There exist other quadrature rules for moderate dimension, such as the CCD.
+It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.</li>
+<li>NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
+Other MCMC algorithms, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>, could be considered.
+Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the <code>NIMBLE</code> probabilistic programming language <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span>.</li>
+<li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in <code>tmbstan</code> by setting <code>laplace = TRUE</code>, is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">Margossian et al. 2020</a>)</span>.
+Wen run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.</li>
+</ol>
+<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
+<!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
+</div>
+<div id="investigation-of-quadrature-grid" class="section level4 hasAnchor" number="6.6.3.2">
+<h4><span class="header-section-number">6.6.3.2</span> Investigation of quadrature grid<a href="naomi-aghq.html#investigation-of-quadrature-grid" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Gaussian times polynomial kernel fit to the 24 dimensional NUTS hyperparameter samples.
+Assess whether PCA-AGHQ is suitable.
+Or whether AGHQ is suitable.
+Could be generalised.</p>
+</div>
+<div id="better-quadrature-grids" class="section level4 hasAnchor" number="6.6.3.3">
+<h4><span class="header-section-number">6.6.3.3</span> Better quadrature grids<a href="naomi-aghq.html#better-quadrature-grids" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
+However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:</p>
+<ol style="list-style-type: decimal">
+<li>The amount of variation explained in the Hessian matrix may not be of direct interest.
+For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
+As such, using alternative measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> or Sobol indicies, could be preferable.</li>
 <li>Use of PCA is challenging when the dimensions have different scales.
 For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.</li>
-<li>The amount of variation explained in the Hessian matrix may not be of direct interest.
-For the Naomi model, rather interest is in the effect of including each dimension on the relevant model outputs.
-As such, using alternative measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> or Sobol indicies, could be preferable.</li>
 <li>When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
 This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficient.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
@@ -1255,31 +1281,41 @@ Another approach would be to measure the fit of marginal samples from a cheap ap
 The measures of fit would have to be for marginals, ruling out approaches like PSIS <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span> which operate on joint distributions.</li>
 </ol>
 </div>
-<div id="computational-speed-ups" class="section level4 hasAnchor" number="6.6.3.3">
-<h4><span class="header-section-number">6.6.3.3</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Integration over a moderate number of hyperparameters posed a challenge, and resulted in use of quadrature grids with a large number of nodes.
-However, as computation at each node is independent, the run-time of the algorithm could potentially be significantly improved using parallel computing.
+<div id="computational-speed-ups" class="section level4 hasAnchor" number="6.6.3.4">
+<h4><span class="header-section-number">6.6.3.4</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
+Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</p>
 </div>
-<div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.4">
-<h4><span class="header-section-number">6.6.3.4</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Theorem 1 of <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
+<div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.5">
+<h4><span class="header-section-number">6.6.3.5</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The class of functions which are integrated exactly by PCA-AGHQ remains to be shown.
+Theorem 1 of <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
-The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an important open question.</p>
-</div>
-<div id="further-comparisons" class="section level4 hasAnchor" number="6.6.3.5">
-<h4><span class="header-section-number">6.6.3.5</span> Further comparisons<a href="naomi-aghq.html#further-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>It would be valuable to include further comparisons in Section <a href="naomi-aghq.html#malawi">6.5</a>.
-Two instances stand-out.
-First, to compare PCA-AGHQ to other quadrature grids designed for moderate dimensions, such as a CCD.
-Second, to conduct inference with an MCMC algorithm better suited to sampling from Naomi than NUTS, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>.
-Both of these algorithms are available and customisable, including the choice of block structure, within <code>NIMBLE</code>.</p>
-<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
+The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an important open question.
+<!-- Perhaps my clear formulation of the INLA algorithm with AGHQ rules helps --></p>
 </div>
 <div id="exploration-of-the-accuracy-of-inla-for-complex-models" class="section level4 hasAnchor" number="6.6.3.6">
 <h4><span class="header-section-number">6.6.3.6</span> Exploration of the accuracy of INLA for complex models<a href="naomi-aghq.html#exploration-of-the-accuracy-of-inla-for-complex-models" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The universal INLA implementation of Section <a href="naomi-aghq.html#universal">6.2</a> can be used to assess the accuracy of the INLA method for models which have yet to be considered.
+<p>The universal INLA implementation could be used to assess the accuracy of INLA for as of yet untested models.
 Among the ELGM-type structures of particular interest are aggregated Gaussian process models <span class="citation">(<a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span> and evidence synthesis models <span class="citation">(<a href="#ref-amoah2020geostatistical">Amoah, Diggle, and Giorgi 2020</a>)</span>.</p>
+</div>
+<div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.7">
+<h4><span class="header-section-number">6.6.3.7</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
+<img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
+<p class="caption">
+Figure 6.8: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
+</p>
+</div>
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and driven in large part by use of the more easy-to-use <code>glmmTMB</code> (Figure <a href="naomi-aghq.html#fig:package-downloads">6.8</a>).
+For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
+Rather than disseminating methods via <code>glmmTMB</code>, methods could be implemented in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
+Implementation in <code>Stan</code> is made possible by the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a <code>Stan</code> model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in <code>Stan</code> by <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
+The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of <code>Stan</code> users are interested in specifying their own model.
+Implementation in <code>NIMBLE</code> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] built using <code>CppAD</code> like <code>TMB</code>, as of .
+Both the <code>NIMBLE</code> and <code>Stan</code> developers are actively looking into implementation algorithms combining the Laplace approximation and quadrature.</p>
 
 </div>
 </div>
@@ -1418,6 +1454,9 @@ Rue, Håvard, Andrea Riebler, Sigrunn H Sørbye, Janine B Illian, Daniel P Simps
 </div>
 <div id="ref-shapley1953value" class="csl-entry">
 Shapley, Lloyd S et al. 1953. <span>“A Value for n-Person Games.”</span>
+</div>
+<div id="ref-simpson2017penalising" class="csl-entry">
+Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørbye, et al. 2017. <span>“<span class="nocase">Penalising model component complexity: A principled, practical approach to constructing priors</span>.”</span> <em>Statistical Science</em> 32 (1): 1–28.
 </div>
 <div id="ref-skaug2009approximate" class="csl-entry">
 Skaug, Hans J. 2009. <span>“<span class="nocase">Discussion of "Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations"</span>.”</span> In <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, 71:319–92. 2. Wiley Online Library.

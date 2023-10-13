@@ -22,35 +22,41 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter describes a novel Bayesian inference method for extended latent Gaussian models, motivated by the Naomi small-area estimation model [@eaton2021naomi].
-Over 35 countries [@unaids2023global] have used the Naomi model software ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators.
+This chapter describes development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi].
+Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org) to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
-As such, inferences have previously been obtained using an empirical Bayes (EB) approximation to full Bayesian inference.
-In this approximation hyperparameters are obtained by optimisation of the marginal posterior [@casella1985introduction]. 
-This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.
-Instead, I propose integrating over the moderate-dimensional hyperparameters using a modified adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule, described in Section \@ref(pca-aghq).
 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
 The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
-Use of the software and method are nearly ubiquitous in applied settings.
-Most methodological developments have also used `R-INLA`, with two notable exceptions.
-First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposes an approximation to the Laplace approximation of latent field marginal posterior distributions which does not rely on Markov structure of the latent field.
-Second, @stringer2022fast extend the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive predictors, referred to by @van2023new as the "modern" formulation of the INLA methodology.
-This allows application of INLA to an extended class of latent Gaussian models.
-Not only is Naomi is a member of this class of models, but the Template Model Builder [`TMB`; @kristensen2016tmb] R package used to implement inference for Naomi also forms the basis for the `aghq` [@stringer2021implementing] R package used to implement @stringer2022fast.
-Section \@ref(universal) builds towards a universally applicable implementation of INLA, where automatic differentiation is used to obtain the derivatives required for the Laplace approximation.
+Use of the INLA method and `R-INLA` software are close to ubiquitous in applied settings.
+However, the Naomi model is not compatible with `R-INLA`, largely because it is too complex to be expressed using a formula interface.
+As a result, inference for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, with the Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
+In the EB approximation hyperparameters are fixed by optimisation of the marginal posterior.
+This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.
 
-Though I began working on this project at the beginning of my PhD in 2020, I only began making meaningful progress after reading @stringer2022fast.
-I am grateful to later have had the opportunity to collaborate with Alex Stringer, and work closely together during my visit to the University of Waterloo in the fall term of 2022.
-The results of our work are presented in @howes2023fast.
+Most methodological work on INLA has taken place using the `R-INLA` software package.
+There are two notable exceptions.
+First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed an fast Laplace approximation appoach which does not rely on Markov structure of the latent field.
+Second, @stringer2022fast extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive linear predictors, enabling application of INLA to a wider class of extended latent Gaussian models (ELGMs), which includes Naomi.
+This approach is referred to by @van2023new as the "modern" formulation of the INLA method, as opposed to the "classic" formulation of @rue2009approximate, and is included in `R-INLA` using `inla.mode = "experimental"`.
+Along with removing the noisy structured additive predictor, @stringer2022fast propose use of the adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule to integrate with respect to the hyperparameters.
+The methodological contributions of this chapter extend @stringer2022fast in two directions:
+
+1. The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is is used to obtain the derivatives required for the Laplace approximation.
+Section \@ref(universal) demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible.
+2. The second direction is a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section \@ref(pca-aghq).
+This quadrature rule is used to perform inference for the Naomi model by integrating the marginal Laplace approximation with respect to the moderate-dimensional hyperparameters within an INLA algorithm implemented in `TMB` in Section \@ref(malawi).
+
+This work was conducted in collaboration with Prof. Alex Stringer, who I visited at the University of Waterloo in the fall term of 2022.
+The results are presented in @howes2023fast.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
 
 ## Inference methods and software
 
-In a Bayesian analysis, the primary goal is to perform inference.
-That is, to obtain the posterior distribution
+This section reviews existing deterministic Bayesian inference methods (Sections \@ref(la), \@ref(quadrature), \@ref(inla)) and software (Section \@ref(software)).
+Inference comprises obtaining the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, (\#eq:bayes)
 \end{equation}
@@ -80,9 +86,8 @@ p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\
 where $p(\mathbf{y})$ is not a function of $\boldsymbol{\mathbf{\phi}}$ and so can be removed as a constant.
 Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
 The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods.
-This section provides background on these methods and the software used to implement them.
 
-### The Laplace approximation
+### The Laplace approximation {#la}
 
 Laplace's method [@laplace1774memoire] is a technique used to approximate integrals of the form
 \begin{equation}
@@ -131,8 +136,9 @@ knitr::include_graphics("figures/naomi-aghq/laplace.png")
 #### The marginal Laplace approximation {#marginal-la}
 
 Approximating the full joint posterior distribution using a Gaussian distribution may be inaccurate.
-An alternative is to approximate the marginal posterior distribution of some subset of the parameters.
-The remaining non-Gaussian parameters may then be handled using another more suitable method.
+An alternative is to approximate the marginal posterior distribution of some subset of the parameters, referred to as the marginal Laplace approximation.
+It remains to integrate out the remaining parameters, using another more suitable method.
+This approach is the basis of the INLA method.
 
 Let $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ and consider a three-stage hierarchical model
 \begin{equation}
@@ -157,14 +163,19 @@ The resulting marginal Laplace approximation, for a particular value of the hype
 
 The marginal Laplace approximation is most accurate when the marginal posterior $p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ is accurately approximated by a Gaussian 
 distribution.
-For the class of latent Gaussian models [@rue2009approximate] the prior distribution on the latent field is Gaussian $\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}})$.
+For the class of latent Gaussian models [@rue2009approximate] the prior distribution on the latent field is Gaussian
+\begin{equation}
+\mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) = \mathcal{N}(\mathbf{x} \, | \, \mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}})),
+\end{equation}
+with assumed zero mean $\mathbf{0}$, and precision matrix $\mathbf{Q}(\boldsymbol{\mathbf{\theta}})$.
 Although the marginal posterior distribution
 \begin{align}
-p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) \propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})
+p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) &\propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \\
+&\propto \exp \left( - \frac{1}{2} \mathbf{x}^\top \mathbf{Q}(\boldsymbol{\mathbf{\theta}}) \mathbf{x} + \log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \right)
 \end{align}
-is not Gaussian, its deviation from Gaussianity can be expected to be small if $\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ satisfies some condition which remains to be detailed.
+is not Gaussian, its deviation from Gaussianity can be expected to be small if $\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ is small.
 
-### Quadrature
+### Quadrature {#quadrature}
 
 Quadrature is a method used to approximate integrals using a weighted sum of function evaluations.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
@@ -409,7 +420,7 @@ In @rue2009approximate...
 In @stringer2022fast...
 Discussed in @van2023new.
 
-### Software
+### Software {#software}
 
 #### `R-INLA` {#r-inla}
 
@@ -428,7 +439,7 @@ Figure \@ref(fig:inla-grid-demo) demonstrates the latter two integration strateg
 By default, the `"grid"` strategy is used for $m \leq 2$ and the `"ccd"` strategy is used for $m > 2$.
 
 Various software packages have been built using `R-INLA`.
-Perhaps the most substantial of which is the `inlabru` R package [@bachl2019inlabru], which provides a simplified syntax, and capabilities for fitting more general non-linear linear predictor expressions via linearisation and repeat use of `R-INLA`.
+Perhaps the most substantial of which is the `inlabru` R package [@bachl2019inlabru], which provides a simplified syntax, and capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
 
 (ref:inla-grid-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the grid method as used in `R-INLA` and detailed in Section 3.1 of @rue2009approximate. Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size $\delta_z$ along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold $\delta_\pi$. Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set $\delta_z = 0.75$ and $\delta_\pi = 2$. Panel B shows a CCD as used in `R-INLA` and detailed in Section 6.5 of @rue2009approximate. I generated the CCD using the `rsm` R package [@lenth2009rsm].
 
@@ -440,24 +451,26 @@ knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
 
 Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
 In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
-The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives that may be composed by repeat use of the chain rule.
-`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD and `Eigen` for linear algebra.
+The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
+These derivates may then be composed by repeat use of the chain rule to obtain the function's derivative.
+`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD, and `Eigen` for linear algebra.
 
 Models can be specified in `TMB` using a C++ template file.
 `TMB` C++ templates are compatible with other software.
-The `tmbstan` R package [@monnahan2018no] allows running the Hamiltonian Monte Carlo (HMC) algorithm via Stan, and `aghq` [@stringer2021implementing] which allows use of AGHQ via `mvQuad` [@weiser2016mvquad].
+The `tmbstan` R package [@monnahan2018no] allows running the Hamiltonian Monte Carlo (HMC) algorithm via `Stan`.
+The `aghq` R package [@stringer2021implementing] allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the `mvQuad` R package [@weiser2016mvquad].
 The `glmmTMB` R package [@brooks2017glmmtmb] allows specification of common GLMM models via a formula interface.
-It is possible to extract the `TMB` C++ template implicitly used by `glmmTMB`
+It is possible to extract the `TMB` objective function used by `glmmTMB`, which may then be passed into `aghq` or `tmbstan`.
 
-#### `mgcv`
+#### Other software
 
-The `mgcv` [Mixed GAM computation vehicle; @wood2017generalized] R package is a formula-based interface for estimating generalised additive models (GAMs).
-The function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified.
+The `mgcv` [Mixed GAM computation vehicle; @wood2017generalized] R package estimates generalised additive models (GAMs) specified using a formula interface.
+This package is briefly mentioned here because the function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified as described in Section \@ref(simplified-inla).
 
 ## A universal INLA implementation {#universal}
 
 This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals.
-The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a formula [@vstrumbelj2023past] llike `R-INLA`.
+The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a formula interface like `R-INLA` [@vstrumbelj2023past].
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. -->
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
@@ -476,7 +489,8 @@ This example is used as a demonstration of the benefit of a more generally appli
 
 ### Epilepsy GLMM {#epil}
 
-Consider a GLMM [@thall1990some; @breslow1993approximate; @spiegelhalter1996bugs] for an epilepsy drug double-blind clinical trial [@leppik1985double] as described below.
+Consider a GLMM for an epilepsy drug double-blind clinical trial [@leppik1985double].
+The original model of @thall1990some was modified by @breslow1993approximate and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; @spiegelhalter1996bugs] manual.
 Patients $i = 1, \ldots, 59$ were each assigned either a new drug $\texttt{Trt}_i = 1$ or a placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th clinic visit.
 The covariates used in the model were baseline seizure counts $\texttt{Base}_i$, treatment $\texttt{Trt}_i$, age $\texttt{Age}_i$, and an indicator for the final clinic visit ${\texttt{V}_4}_j$.
@@ -485,7 +499,7 @@ The observations were modelled using a Poisson distribution
 \begin{equation}
 y_{ij} \sim \text{Poisson}(e^{\eta_{ij}}),
 \end{equation}
-with linear predictor 
+with structured additive predictor 
 \begin{align}
 \eta_{ij}
 &= \beta_0 + \beta_\texttt{Base} \log(\texttt{Base}_i / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
@@ -531,7 +545,7 @@ Epil <- Epil %>%
          CBT     = center(Trt * log(Base/4)))
 ```
 
-The linear predictor (Equation \@ref(eq:epil)) is then specified by:
+The structured additive predictor (Equation \@ref(eq:epil)) is then specified by:
 
 ```r
 formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT +
@@ -592,31 +606,16 @@ It is recommended to specify all parameters on the real scale to help performanc
 More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER_` section.
 Finally, an object `nlp` is created representing the negative log-posterior, which is then incremented using statements of the form `nlp -= ddist(...)` where `dist` is the name of a distribution.
 
+First, the `TMB` template is compiled:
+
 ```r
-make_epsilon_matrix <- function(N, J) {
-  t(outer(1:N, 1:(N * J), function(r, c) as.numeric((J*(r - 1) < c) & (c <= J*r))))
-}
-
-dat <- list(
-  N = 59,
-  J = 4,
-  K = 6,
-  X = model.matrix(formula(~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT), data = Epil),
-  y = Epil$y,
-  E = make_epsilon_matrix(59, 4)
-)
-
 compile("epil.cpp")
 dyn.load(dynlib("epil"))
+```
 
-param <- list(
-  beta = rep(0, dat$K),
-  epsilon = rep(0, dat$N),
-  nu = rep(0, dat$N * dat$J),
-  l_tau_epsilon = 0,
-  l_tau_nu = 0
-)
+The objective function `obj` may then be created:
 
+```r
 obj <- TMB::MakeADFun(
   data = dat,
   parameters = param,
@@ -624,7 +623,14 @@ obj <- TMB::MakeADFun(
   DLL = "epil",
   silent = TRUE
 )
+```
 
+The object `dat` is a list of data inputs passed to `TMB`.
+The object `param` is a list of parameter starting values passed to `TMB`.
+The argument `random` determines which parameters are integrated out with a Laplace approximation.
+Here, the parameters $(\beta, \epsilon, \nu) = \mathbf{x}$ are selected.
+
+```r
 its <- 1000
 
 opt <- nlminb(
@@ -644,17 +650,23 @@ sd_out <- TMB::sdreport(
 A similar model, with different priors, can more sufficiently be fit using a formula interface in `glmmTMB`:
 
 ```r
-formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT + (1 | rand) + (1 | Ind)
+formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT + (1 | rand)
+                 + (1 | Ind)
 fit <- glmmTMB(formula, data = Epil, family = poisson(link = "log"))
 ```
 
 #### Gaussian marginals and AGHQ with `aghq` {#epil-gauss-aghq-tmb}
 
-For more information about the `aghq` R package see the software paper.
-
 ```r
-fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = c(param$l_tau_epsilon, param$l_tau_nu))
+fit <- aghq::marginal_laplace_tmb(
+  obj,
+  k = 3, 
+  startingvalue = c(param$l_tau_epsilon, param$l_tau_nu)
+)
 ```
+
+The argument `k` specifies the number of quadrature nodes to be used per dimension.
+For more information about the `aghq` R package see the software paper.
 
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
 
@@ -670,6 +682,8 @@ fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = c(param$l_tau_epsi
 
 #### NUTS with `tmbstan` {#epil-nuts}
 
+Running NUTS with `tmbstan` using the objective function `obj` is also easy to do:
+
 ```r
 fit <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 ```
@@ -683,14 +697,17 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 
 ## The Naomi model {#naomi}
 
-The Naomi small-area estimation model [@eaton2021naomi] synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-This section describes a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing.
-Although the nowcasting and temporal projection are omitted here, these time points involve limited inferences, and so are unlikely to change to conclusions drawn.
+This section provides a description of the Naomi model [@eaton2021naomi].
+Here, a version of Naomi defined only at the time of the most recent household survey with HIV testing is considered.
+The nowcasting and temporal projection are omitted as these time points are not involved in inference.
+Although the most relevant features of Naomi are included in this section, a complete description is left to Appendix \@ref(naomi-math).
 
 ### Model structure
 
-Naomi can be described as having three components.
-The three components correspond to the three data sources used, which are the household survey, the X and the Y.
+Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
+The model can be described as having three components, corresponding to the three data sources used.
+These components are the household survey component, the ANC testing component, and the ART attendance component.
+After specifying common notation used throughout the model, each of these components is described in turn.
 
 #### Notation
 
@@ -699,7 +716,6 @@ Let $x \in \mathcal{X}$ index district, $a \in \mathcal{A}$ index five-year age 
 For ease of notation, let $i$ index the finest district-age-sex division included in the model.
 A district-age-sex specific quantity $z_{ias}$ may then be written as $z_i$.
 Let $N_i \in \mathbb{N}$ be the known, fixed population size, $\rho_i \in [0, 1]$ be the HIV prevalence, $\alpha_i \in [0, 1]$ be the antiretroviral therapy (ART) coverage, $\kappa_i \in [0, 1]$ be the proportion recently infected among HIV positive persons, and $\lambda_i > 0$ be the annual HIV incidence rate.
-
 It is possible that observations are made at an aggregate level.
 Let $I \subseteq \mathcal{X} \times \mathcal{A} \times \mathcal{S}$ be a set of indices $i$ for which an aggregate observation is reported.
 The set of all $I$ is denoted $\mathcal{I}$ such that $I \in \mathcal{I}$.
@@ -719,21 +735,21 @@ HIV incidence rate is modelled on the log scale as
 \begin{equation}
 \log(\lambda_i) = \eta^\lambda_i.
 \end{equation}
-The linear predictor $\eta^\lambda_i$ includes terms for adult HIV prevalence and adult ART coverage.
+The structured additive predictor $\eta^\lambda_i$ includes terms for adult HIV prevalence and adult ART coverage.
 The proportion recently infected among HIV positive persons is linked to HIV incidence via
 \begin{equation}
 \kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), (\#eq:kappa)
 \end{equation}
 where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are strongly informed by prior distributions for the particular survey.
 
-These processes are each informed by household survey data.
+These processes are each primarily informed by household survey data.
 Weighted aggregate survey observations are calculated as
 \begin{equation}
-\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j},
+\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j}, (\#eq:surveyobs)
 \end{equation}
 with individual responses $\theta_j \in \{0, 1\}$ and survey weights $w_j$ for each of $\theta \in \{\rho, \alpha, \kappa\}$.
 The survey weights are supplied by the survey provider and aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
-The index $j$ runs across all individuals in strata $i \in I$ within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
+Equation \@ref(eq:surveyobs) is imprecise about the set over which index $j$ runs, which comprises all individuals in strata $i \in I$ within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
 The weighted observed number of outcomes are
 \begin{equation}
 y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I},
@@ -780,14 +796,31 @@ Similarly to the household survey component, the weighted aggregates used are
 \end{equation*}
 with $\Psi_i$ the number of pregnant women, which we assume to be fixed.
 
-
 #### ART attendance component {#art}
 
-### Connection to ELGMs
+People living with HIV sometimes choose to access ART services outside of the district that they reside in.
+To account for this fact, the probabilities of accessing services outside the home district are modelled using multinomial logistic regressions.
+Briefly, let $\gamma_{x, x'}$ be the probability that a person on ART residing in district $x$ receives ART in district $x'$, and assume $\gamma_{x, x'} = 0$ unless $x = x'$ or the two districts are neighbouring such that $x \sim x'$.
+The log-odds are modelled using a structured additive predictor which only depends on the home district $x$
+\begin{equation}
+\tilde \gamma_{x, x'} = \text{logit}(\gamma_{x, x'}) = \eta_x^{\tilde \gamma}.
+\end{equation}
+As such, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
+Each aggregate ART attendance observation $y^{N^\text{ART}}_I$ is modelled using a Gaussian approximation to a sum of binomials.
+This sum is over both strata $i \in I$ and the number of ART clients travelling from district $x'$ to $x$.
 
-Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters.
-However, it is an ELGM rather than an LGM, for the reasons below.
-Note that when dependence on a specific number of structured additive predictors is given, it is for that factor in isolation.
+### Summary and connection to ELGMs
+
+In all, Naomi is a joint model on the observations
+\begin{equation}
+\mathbf{y} = (y^{\theta}_I) \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, I \in \mathcal{I}.
+\end{equation}
+The structured additive predictor $\boldsymbol{\mathbf{\eta}}$ includes intercept effects, age random effects, and spatial random effects which we collectively describe as the latent field $\mathbf{x}$.
+The latent field is controlled by hyperparamters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
+
+Although Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters, it is not an LGM.
+The list below ennumerates the reasons why Naomi is an ELGM rather than LGM.
+Note that in the items, when dependence on a specific number of structured additive predictors is given, it is for that item in isolation, rather than when each item is considered together.
 
 1. In the household survey component (Section \@ref(household)) HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load
 \begin{equation}
@@ -904,29 +937,28 @@ Though inaccuracies remain possible, these diagnostics are sufficient to treat r
 
 ## Discussion
 
-The main contributions of this chapter are two-fold:
-
-1. An implementation of INLA using automatic differentiation and compatible with any model which can be expressed as a `TMB` C++ template.
-2. An approximate Bayesian inference algorithm, which combines AGHQ with PCA to enable use of INLA for moderate dimensional hyperparameters.
-This algorithm was applied to a challenging and important problem in small-area estimation of HIV indicators.
-
-This section discusses these contributions in turn, before moving on to broader suggestions for future work.
+This chapter made two main contributions.
+First, the universal INLA implementation of Section \@ref(universal).
+Second, the PCA-AGHQ rule (Sections \@ref(pca-aghq)) with application to INLA for Naomi (Section \@ref(malawi)).
+This section discusses these contributions in turn, before outlining suggestions for future related work.
 
 ### A universal INLA implementation
 
-### PCA-AGHQ with application to Naomi
+### PCA-AGHQ with application to INLA for Naomi
 
-For the simplified Naomi model in Malawi (Section \@ref(malawi)) INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
-Both EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
-However, model output posterior marginal distributions accuracy did not appear to be improved by latent field posterior marginal accuracy.
+For the simplified Naomi model in Malawi INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
+However, model output posterior marginals were not improved in the same way.
 The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.
+EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
 
-The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy, and as such where possible gold-standard NUTS results should be computed.
-Though NUTS is to slow to run during the workshop, it could be run after the workshops resolution.
-However, running NUTS for Naomi in Malawi, one of the smallest countries where the model is used, took days and so for larger countries, with hundreds of districts, it may be infeasible to run NUTS to convergence.
+The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy.
+As such, where possible gold-standard NUTS results should be computed.
+Though NUTS is to slow too run during a workshop, it could be run afterwards.
+That said, Malawi is one of the countries with the fewest number of districts.
+As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may not be possible to run NUTS to convergence.
 
-NUTS and PCA-AGHQ could be added to the Naomi web interface as an alternative to EB.
-Analysts may then quickly iterate over model options using a fast inference approach, before switching to a more accurate approach once they are happy with the results.
+PCA-AGHQ and NUTS could be added to the Naomi web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) as an alternative to EB.
+Analysts would be able to quickly iterate over model options using EB, before switching to a more accurate approach once they are happy with the results.
 
 PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA $s$ and the number of points per dimension $k$.
 The scree plot is a well established heuristic for choosing $s$.
@@ -936,36 +968,41 @@ Further strategies, such as gradually lowering $k$ over the principal components
 
 ### Suggestions for future work
 
-#### Methods dissemination
+Though some relate more to one contribution than the other, suggestions for future work relating to this chapter are presented here together.
 
-(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the @cranlogs R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure.
+#### Further comparisons
 
-```{r package-downloads, fig.cap="(ref:package-downloads)"}
-knitr::include_graphics("figures/naomi-aghq/package-downloads.png")
-```
+Comparison to additional Bayesian inference methods could be included in Section \@ref(malawi). 
+Three further comparisons might be particularly valuable:
 
-Though gaining in popularity, the user-base of `TMB` is relatively small, and driven in large part by use of `glmmTMB`.
-For users unfamiliar with C++, it can be challenging to use `TMB` directly.
+1. There exist other quadrature rules for moderate dimension, such as the CCD.
+It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.
+2. NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
+Other MCMC algorithms, such as blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice], could be considered.
+Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the `NIMBLE` probabilistic programming language [@de2017programming].
+3. Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in `tmbstan` by setting `laplace = TRUE`, is to run HMC [@monnahan2018no; @margossian2020hamiltonian].
+Wen run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.
 
-Rather than look disseminate methods via `glmmTMB`, another direction would implement methods into other probabilistic programming languages.
-Implementation in Stan would be possible by use of the `bridgestan` package [@bridgestan], which provides access to the methods of a Stan model, together with the adjoint-differentiated Laplace approximation of @margossian2020hamiltonian.
-The ratio of downloads of `rstan` as compared with `brms` suggests a larger proportion of Stan users are interested in specifying their own model.
-Implementation in `NIMBLE` [@de2017programming] is also possible as of version >1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; @nimblemanual] built using `CppAD` like `TMB`, as of  .
-Indeed, both the `NIMBLE` and Stan developers are actively looking into implementation of similar algorithms.
-<!-- Note: can fit hyperparameters with Laplace on latent field using HMC via tmbstan::tmbstan(laplace = TRUE) -->
-<!-- What Charles Margossian has implemented for Stan is done similarly by default in TMB -->
+<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
+<!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 
-#### Quadrature grids for moderate dimensions
+#### Investigation of quadrature grid
 
-Section \@ref(pca-aghq) aimed to develop a quadrature rule for moderate dimensions, primarily for use within the INLA algorithm.
-It is desirable that the quadrature rule allocate more computation to dimensions which contribute more to the integral in question.
-Though PCA is a sensible approach, there are avenues where it overlooks potential benefits, or otherwise does not behave as one might ideally hope.
+Gaussian times polynomial kernel fit to the 24 dimensional NUTS hyperparameter samples.
+Assess whether PCA-AGHQ is suitable.
+Or whether AGHQ is suitable.
+Could be generalised.
 
-1. Use of PCA is challenging when the dimensions have different scales. 
-For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
-2. The amount of variation explained in the Hessian matrix may not be of direct interest.
-For the Naomi model, rather interest is in the effect of including each dimension on the relevant model outputs.
+#### Better quadrature grids
+
+PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
+However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:
+
+1. The amount of variation explained in the Hessian matrix may not be of direct interest.
+For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
 As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indicies, could be preferable.
+2. Use of PCA is challenging when the dimensions have different scales. 
+For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
 3. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
 This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficient.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
@@ -975,27 +1012,35 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 
 #### Computational speed-ups
 
-Integration over a moderate number of hyperparameters posed a challenge, and resulted in use of quadrature grids with a large number of nodes.
-However, as computation at each node is independent, the run-time of the algorithm could potentially be significantly improved using parallel computing.
+Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
+Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
 
 #### Statistical theory
 
+The class of functions which are integrated exactly by PCA-AGHQ remains to be shown.
 Theorem 1 of @stringer2022fast bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
 The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an important open question.
-
-#### Further comparisons
-
-It would be valuable to include further comparisons in Section \@ref(malawi). 
-Two instances stand-out.
-First, to compare PCA-AGHQ to other quadrature grids designed for moderate dimensions, such as a CCD.
-Second, to conduct inference with an MCMC algorithm better suited to sampling from Naomi than NUTS, such as blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice].
-Both of these algorithms are available and customisable, including the choice of block structure, within `NIMBLE`.
-
-<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
+<!-- Perhaps my clear formulation of the INLA algorithm with AGHQ rules helps -->
 
 #### Exploration of the accuracy of INLA for complex models
 
-The universal INLA implementation of Section \@ref(universal) can be used to assess the accuracy of the INLA method for models which have yet to be considered.
+The universal INLA implementation could be used to assess the accuracy of INLA for as of yet untested models.
 Among the ELGM-type structures of particular interest are aggregated Gaussian process models [@nandi2023disaggregation] and evidence synthesis models [@amoah2020geostatistical].
+
+#### Methods dissemination
+
+(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the @cranlogs R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure.
+
+```{r package-downloads, fig.cap="(ref:package-downloads)"}
+knitr::include_graphics("figures/naomi-aghq/package-downloads.png")
+```
+
+Though gaining in popularity, the user-base of `TMB` is relatively small, and driven in large part by use of the more easy-to-use `glmmTMB` (Figure \@ref(fig:package-downloads)).
+For users unfamiliar with C++, it can be challenging to use `TMB` directly.
+Rather than disseminating methods via `glmmTMB`, methods could be implemented in other probabilistic programming languages, such as `Stan` or `NIMBLE`.
+Implementation in `Stan` is made possible by the `bridgestan` package [@bridgestan], which provides access to the methods of a `Stan` model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in `Stan` by @margossian2020hamiltonian.
+The ratio of downloads of `rstan` as compared with `brms` suggests a larger proportion of `Stan` users are interested in specifying their own model.
+Implementation in `NIMBLE` is also possible as of version >1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; @nimblemanual] built using `CppAD` like `TMB`, as of  .
+Both the `NIMBLE` and `Stan` developers are actively looking into implementation algorithms combining the Laplace approximation and quadrature.

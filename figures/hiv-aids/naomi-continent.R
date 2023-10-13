@@ -156,6 +156,10 @@ map <- data %>%
 
 dotplot + map
 
+ggsave("figures/hiv-aids/naomi-continent-insta.png", h = 9, w = 6.25, bg = "white")
+
+6.25 * 3091 / 2048 
+
 ggsave("figures/hiv-aids/naomi-continent.png", h = 4.5, w = 6.25)
 
 #' Numbers for text
