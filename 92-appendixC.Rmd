@@ -14,6 +14,7 @@ resource_version <- "20230811-095752-5b8181d8"
 ## Simplified Naomi model description {#naomi-math}
 
 This section describes the simplified version of the Naomi model [@eaton2021naomi] in complete detail.
+The concise $i$ notation used in Section \@ref(naomi) is replaced with more complete $x, s, a$ notation, and the terms in each structured additive predictor are given, along with their distributions.
 
 ### Process specification 
 
@@ -52,12 +53,12 @@ and independent beta prior distributions for the two BYM2 proportion parameters
 |----------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 | $\beta^\rho_0$                   | $\mathcal{N}(0, 5)$                             | Intercept                                                                                                       |
 | $\beta_{s}^{\rho, s = \text{M}}$ | $\mathcal{N}(0, 5)$                             | The difference in logit prevalence for men compared to women                                                    |
-| $\mathbf{u}^\rho_a$                     | $\text{AR}1(\sigma_A^\rho, \phi_A^\rho)$        | Age random effects for women                                                                                    |
-| $\mathbf{u}_a^{\rho, s = \text{M}}$     | $\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)$  | Age random effects for the difference in logit prevalence for men compared to women age $a$                     |
-| $\mathbf{u}^\rho_x$                     | $\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)$       | Spatial random effects for women                                                                                |
-| $\mathbf{u}_x^{\rho, s = \text{M}}$     | $\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)$ | Spatial random effects for the difference in logit prevalence for men compared to women in district $x$         |
-| $\mathbf{u}_x^{\rho, a < 15}$           | $\text{ICAR}(\sigma_{XA}^\rho)$                 | Spatial random effects for the ratio of paediatric prevalence to adult women prevalence                         |
-| $\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}$        | $-$                                             | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available |
+| $\mathbf{u}^\rho_a$              | $\text{AR}1(\sigma_A^\rho, \phi_A^\rho)$        | Age random effects for women                                                                                    |
+| $\mathbf{u}_a^{\rho, s = \text{M}}$ | $\text{AR}1(\sigma_{AS}^\rho, \phi_{AS}^\rho)$  | Age random effects for the difference in logit prevalence for men compared to women age $a$                  |
+| $\mathbf{u}^\rho_x$              | $\text{BYM}2(\sigma_X^\rho, \phi_X^\rho)$       | Spatial random effects for women                                                                                |
+| $\mathbf{u}_x^{\rho, s = \text{M}}$ | $\text{BYM}2(\sigma_{XS}^\rho, \phi_{XS}^\rho)$ | Spatial random effects for the difference in logit prevalence for men compared to women in district $x$      |
+| $\mathbf{u}_x^{\rho, a < 15}$    | $\text{ICAR}(\sigma_{XA}^\rho)$                 | Spatial random effects for the ratio of paediatric prevalence to adult women prevalence                         |
+| $\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}$ | $-$                                | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available, calculated from Spectrum model [@stover2019updates] outputs for region $R_x$ |
 
 Table: (\#tab:prev)
 
@@ -73,9 +74,9 @@ with terms and priors analogous to the HIV prevalence process model in Section \
 
 HIV incidence rate $\lambda_{x, s, a} > 0$ was modelled on the log scale using the structured additive predictor
 \begin{equation}
-\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. \label{eq:inc}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. (\#eq:inc)
 \end{equation}
-Table \ref{tab:inc} provides a description of the terms included in Equation \ref{eq:inc}.
+Table \@ref(tab:inc) provides a description of the terms included in Equation \@ref(eq:inc).
 
 | Term                              | Distribution                     | Description                                                                                                                                                   |
 |-----------------------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -84,37 +85,42 @@ Table \ref{tab:inc} provides a description of the terms included in Equation \re
 | $\rho_{x}^{\text{15-49}}$         | $-$                              | The HIV prevalence among adults 15-49 calculated by aggregating age-specific HIV prevalences                                                                  |
 | $\alpha_{x}^{\text{15-49}}$       | $-$                              | The ART coverage among adults 15-49 calculated by aggregating age-specific ART coverages                                                                      |
 | $\omega = 0.7$                    | $-$                              | Average reduction in HIV transmission rate per increase in population ART coverage fixed based on inputs to the Estimation and Projection Package (EPP) model |
-| $\mathbf{u}_x^\lambda$                   | $\mathcal{N}(0, \sigma^\lambda)$ | IID spatial random effects with $\sigma^\lambda \sim \mathcal{N}^+(0, 1)$                                                                                     |
-| $\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}$      | $-$                              | Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output                                                                    |
-The proportion recently infected among HIV positive persons $\kappa_{x, s, a} \in [0, 1]$ were modelled as
+| $\mathbf{u}_x^\lambda$                   | $\mathcal{N}(0, \sigma^\lambda)$ | IID spatial random effects with $\sigma^\lambda \sim \mathcal{N}^+(0, 1)$                                                                              |
+| $\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}$      | $-$          | Fixed log incidence rate ratios by sex and age group calculated from Spectrum model outputs for region $R_x$                                                                    |
+
+Table: (\#tab:inc)
+
+The proportion recently infected among HIV positive persons $\kappa_{x, s, a} \in [0, 1]$ was modelled as
 \begin{equation}
 \kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
 \end{equation}
 where $\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})$ is the mean duration of recent infection, and $\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})$ is the false recent ratio.
 The prior distribution for $\Omega_T$ was informed by the characteristics of the recent infection testing algorithm.
-For PHIA surveys this was $\Omega_{T_0} = 130 \text{ days}$ and $\sigma^{\Omega_T} = 6.12 \text{ days}$, and further there was assumed to be no false recency, such that $\beta_{T_0} = 0.0$ and $\sigma^{\beta_T} = 0.0$.
+For PHIA surveys this was $\Omega_{T_0} = 130 \text{ days}$ and $\sigma^{\Omega_T} = 6.12 \text{ days}$, and there was assumed to be no false recency, such that $\beta_{T_0} = 0.0$ and $\sigma^{\beta_T} = 0.0$.
 
 #### ANC testing {#anc-test}
 
 HIV prevalence $\rho_{x, a}^\text{ANC}$ and ART coverage $\alpha_{x, a}^\text{ANC}$ among pregnant women were modelled as being offset on the logit scale from the corresponding district-age indicators $\rho_{x, F, a}$ and $\alpha_{x, F, a}$ according to
 \begin{align}
-\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
-\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, (\#eq:anc1) \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} (\#eq:anc2).
 \end{align}
-Table \ref{tab:anc} provides a description of the terms included in Equation \ref{eq:anc1} and Equation \ref{eq:anc2}.
+Table \@ref(tab:anc) provides a description of the terms included in Equation \@ref(eq:anc1) and Equation \@ref(eq:anc2).
 
 | Term                                    | Distribution                                     | Description                                                                                                                                                                                                    |
 |-----------------------------------------|--------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | $\beta^{\theta^{\text{ANC}}}$           | $\mathcal{N}(0, 5)$                              | Intercept giving the average difference between population and ANC outcomes                                                                                                                                    |
-| $\mathbf{u}_x^{\theta^{\text{ANC}}}$           | $\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})$ | IID district random effects with $\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)$                                                                                                                     |
-| $\boldsymbol{\mathbf{\eta}}_{R_x, a}^{\theta^{\text{ANC}}}$ | $-$                                              | Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region $R_x$ |
+| $\mathbf{u}_x^{\theta^{\text{ANC}}}$    | $\mathcal{N}(0, \sigma_X^{\theta^{\text{ANC}}})$ | IID district random effects with $\sigma_X^{\theta^{\text{ANC}}} \sim \mathcal{N}^+(0, 1)$                                                                                                                     |
+| $\boldsymbol{\mathbf{\eta}}_{R_x, a}^{\theta^{\text{ANC}}}$ | $-$                          | Offsets for the log fertility rate ratios for HIV positive women compared to HIV negative women and for women on ART to HIV positive women not on ART, calculated from Spectrum model outputs for region $R_x$ |
+
+Table: (\#tab:anc)
 
 In the full Naomi model, for adult women 15-49 the number of ANC clients $\Psi_{x, a} > 0$ were modelled as
-$$
+\begin{equation}
 \log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \mathbf{u}_x^\psi,
-$$
+\end{equation}
 where $N_{x, \text{F}, a}$ are the female population sizes, $\psi_{R_x, a}$ are fixed age-sex fertility ratios in Spectrum region $R_x$, $\beta^\psi$ are log rate ratios for the number of ANC clients relative to the predicted fertility, and $\mathbf{u}_x^\psi \sim \mathcal{N}(0, \sigma^\psi)$ are district random effects.
-Here we fix $\beta^\psi = 0$ and $\mathbf{u}_x^\psi = \mathbf{0}$ such that $\Psi_{x, a}$ are simply constants.
+Here these terms are fixed to $\beta^\psi = 0$ and $\mathbf{u}_x^\psi = \mathbf{0}$ such that $\Psi_{x, a}$ are simply constants.
 
 #### ART attendance {#art-attend}
 
@@ -125,81 +131,115 @@ logistic <- function(x) 1 / (1 + exp(-x))
 ```
 
 Let $\gamma_{x, x'} \in [0, 1]$ be the probability that a person on ART residing in district $x$ receives ART in district $x'$.
-We assume that $\gamma_{x, x'} = 0$ for $x \notin \{x, \text{ne}(x)\}$ such that individuals seek treatment only in their residing district or its neighbours $\text{ne}(x) = \{x': x' \sim x\}$, where $\sim$ is an adjacency relation, and $\sum_{x' \in \{x, \text{ne}(x)\}} \gamma_{x, x'} = 1$.
-To model $\gamma_{x, x'}$ for $x \sim x'$ we use a multinomial logistic regression model, based on the log-odds ratios
+Assume that $\gamma_{x, x'} = 0$ for $x \notin \{x, \text{ne}(x)\}$ such that individuals seek treatment only in their residing district or its neighbours $\text{ne}(x) = \{x': x' \sim x\}$, where $\sim$ is an adjacency relation, and $\sum_{x' \in \{x, \text{ne}(x)\}} \gamma_{x, x'} = 1$.
+The probabilities $\gamma_{x, x'}$ for $x \sim x'$ were modelled using multinomial logistic regression model, based on the log-odds ratios
 \begin{equation}
-\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, \label{eq:log-or}
+\tilde \gamma_{x, x'} = \log \left( \frac{\gamma_{x, x'}}{1 - \gamma_{x, x'}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, (\#eq:log-or)
 \end{equation}
 where $\tilde \gamma_0 = -4$ is a fixed intercept, and $\mathbf{u}_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})$ were district random effects with $\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)$.
-Note that Equation \ref{eq:log-or} does not depend on $x'$, such that $\gamma_{x, x'}$ is only a function of $x$.
+Equation \@ref(eq:log-or) is independent of $x'$, such that $\gamma_{x, x'}$ is only a function of $x$.
 Choice of $\tilde \gamma_0 = -4$ implies a prior mean on $\gamma_{x, x'}$ of 1.8%, such that $(100 - 1.8 \times \text{ne}(x))\%$ of ART clients in district $x$ obtain treatment in their home district, a-priori.
-We fix $\tilde \gamma_{x, x} = 0$ and recover the multinomial probabilities using the softmax
+Fixing $\tilde \gamma_{x, x} = 0$ then the multinomial probabilities may be recoverd using the softmax
 \begin{equation}
 \gamma_{x, x'} = \frac{\exp(\tilde \gamma_{x, x'})}{\sum_{x^\star \in \{x, \text{ne}(x)\}} \exp(\tilde \gamma_{x, x^\star})}.
 \end{equation}
-Given the total number of PLHIV on ART $A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a}$, the number of ART clients who reside in district $x$ and obtain ART in district $x'$ are $A_{x, x', s, a} = A_{x, s, a} \cdot \gamma_{x, x'}$, and the total attending ART facilities in district $x'$ are 
+Given the total number of PLHIV on ART
+\begin{equation}
+A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a},
+\end{equation}
+the number of ART clients who reside in district $x$ and obtain ART in district $x'$ are
+\begin{equation}
+A_{x, x', s, a} = A_{x, s, a} \cdot \gamma_{x, x'},
+\end{equation}
+and the total attending ART facilities in district $x'$ are 
 \begin{equation}
 \tilde A_{x', s, a} = \sum_{x \in \{x', \text{ne}(x')\}} A_{x, x', s, a}.
 \end{equation}
 
 ### Likelihood specification
 
+#### Household survey data
+
+The generalised binomial $y \sim \text{xBin}(m, p)$ is defined for $y, m \in \mathbb{R}^+$ with $y \leq m$ such that
+\begin{equation}
+\log p(y) = \log \Gamma(m + 1) - \log \Gamma(y + 1) - \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
+\end{equation}
+where the gamma function $\Gamma$ is such that $\forall n \in \mathbb{N}$, $\Gamma(n) = (n - 1)!$.
+
+#### ANC testing data
+
+#### ART attendence data
+
+### Identifiability constraints
+
+If data are missing, some parameters are fixed to default values to help with identifiability.
+In particular:
+
+1. If survey data on HIV prevalence or ART coverage by age and sex are not available then $\mathbf{u}_a^\theta = 0$ and $\mathbf{u}_{a, s = \text{M}}^\theta = 0$.
+In this case, the average age-sex pattern from the Spectrum offset $\boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\theta$ is used.
+For the Malawi example considered in the main text, HIV prevalence and ART coverage data are not available for those aged 65+.
+As a result, there are $|\{\text{0-4}, \ldots, \text{50-54}\}| = 13$ age groups included for the age random effects.
+2. If no ART data, either survey or ART programme, are available but data on ART coverage among ANC clients are available, the level of ART coverage is not identifiable, but spatial variation is identifiable.
+In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that $\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha$.
+3. If survey data on recent HIV infection are not included in the model, then $\beta_0^\lambda = \beta_S^{\lambda, s = \text{M}} = 0$ and $\mathbf{u}_x^\lambda = \mathbf{0}$.
+The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum in the same years and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district estimates of HIV prevalence and ART coverage.
 
 ### Implementation
 
-The `TMB` C++ code for the negative log-posterior of the simplified Naomi model is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq)
+The `TMB` C++ code for the negative log-posterior of the simplified Naomi model is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
+(It is not given here, as it is over 500 lines.)
 For ease of understanding, Table \@ref(tab:tmb-lookup) provides correspondence between the mathematical notation used in Section \@ref(naomi-math) and the variable names used in the `TMB` code, for all hyperparameters and latent field parameters.
 For further reference on the `TMB` software see @tmbdocumentation.
 
 | Variable name          | Notation                                             | Type   | Size | Domain            | $\rho$ input? | $\alpha$ input? | $\lambda$ input? |
 |------------------------|------------------------------------------------------|--------|------|-------------------|---------------|-----------------|------------------|
-| `logit_phi_rho_x`      | $\text{logit}(\phi_X^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `log_sigma_rho_x`      | $\log(\sigma_X^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `logit_phi_rho_xs`     | $\text{logit}(\phi_{XS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `log_sigma_rho_xs`     | $\log(\sigma_{XS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `logit_phi_rho_a`      | $\text{logit}(\phi_A^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `log_sigma_rho_a`      | $\log(\sigma_A^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `logit_phi_rho_as`     | $\text{logit}(\phi_{AS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `log_sigma_rho_as`     | $\log(\sigma_{AS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `log_sigma_rho_xa`     | $\log(\sigma_{XA}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | \cmark        |                 |                  |
-| `logit_phi_alpha_x`    | $\text{logit}(\phi_X^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `log_sigma_alpha_x`    | $\log(\sigma_X^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `logit_phi_alpha_xs`   | $\text{logit}(\phi_{XS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `log_sigma_alpha_xs`   | $\log(\sigma_{XS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `logit_phi_alpha_a`    | $\text{logit}(\phi_A^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `log_sigma_alpha_a`    | $\log(\sigma_A^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `logit_phi_alpha_as`   | $\text{logit}(\phi_{AS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `log_sigma_alpha_as`   | $\log(\sigma_{AS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `log_sigma_alpha_xa`   | $\log(\sigma_{XA}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | \cmark          |                  |
-| `OmegaT_raw`           | $\Omega_T$                                           | Hyper  | 1    | $\mathbb{R}$      |               |                 | \cmark           |
-| `log_betaT`            | $\log(\beta_T)$                                      | Hyper  | 1    | $\mathbb{R}$      |               |                 | \cmark           |
-| `log_sigma_lambda_x`   | $\log(\sigma^\lambda)$                               | Hyper  | 1    | $\mathbb{R}$      |               |                 | \cmark           |
-| `log_sigma_ancrho_x`   | $\log(\sigma_X^{\rho^{\text{ANC}}})$                 | Hyper  | 1    | $\mathbb{R}$      |               |                 |                  |
-| `log_sigma_ancalpha_x` | $\log(\sigma_X^{\alpha^{\text{ANC}}})$               | Hyper  | 1    | $\mathbb{R}$      |               |                 |                  |
+| `logit_phi_rho_x`      | $\text{logit}(\phi_X^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `log_sigma_rho_x`      | $\log(\sigma_X^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `logit_phi_rho_xs`     | $\text{logit}(\phi_{XS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `log_sigma_rho_xs`     | $\log(\sigma_{XS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `logit_phi_rho_a`      | $\text{logit}(\phi_A^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `log_sigma_rho_a`      | $\log(\sigma_A^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `logit_phi_rho_as`     | $\text{logit}(\phi_{AS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `log_sigma_rho_as`     | $\log(\sigma_{AS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `log_sigma_rho_xa`     | $\log(\sigma_{XA}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
+| `logit_phi_alpha_x`    | $\text{logit}(\phi_X^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_alpha_x`    | $\log(\sigma_X^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `logit_phi_alpha_xs`   | $\text{logit}(\phi_{XS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_alpha_xs`   | $\log(\sigma_{XS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `logit_phi_alpha_a`    | $\text{logit}(\phi_A^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_alpha_a`    | $\log(\sigma_A^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `logit_phi_alpha_as`   | $\text{logit}(\phi_{AS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_alpha_as`   | $\log(\sigma_{AS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_alpha_xa`   | $\log(\sigma_{XA}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `OmegaT_raw`           | $\Omega_T$                                           | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
+| `log_betaT`            | $\log(\beta_T)$                                      | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
+| `log_sigma_lambda_x`   | $\log(\sigma^\lambda)$                               | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
+| `log_sigma_ancrho_x`   | $\log(\sigma_X^{\rho^{\text{ANC}}})$                 | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `log_sigma_ancalpha_x` | $\log(\sigma_X^{\alpha^{\text{ANC}}})$               | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
 | `log_sigma_or_gamma`   | $\log(\sigma_X^{\tilde \gamma})$                     | Hyper  | 1    | $\mathbb{R}$      |               |                 |                  |
-| `beta_rho`             | $(\beta^\rho_0, \beta_{s}^{\rho, s = \text{M}})$     | Latent | 2    | $\mathbb{R}^2$    | \cmark        |                 |                  |
-| `beta_alpha`           | $(\beta^\alpha_0, \beta_{S}^{\alpha, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               | \cmark          |                  |
-| `beta_lambda`          | $(\beta_0^\lambda, \beta_S^{\lambda, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               |                 | \cmark           |
-| `beta_anc_rho`         | $\beta^{\rho^{\text{ANC}}}$                          | Latent | 1    | $\mathbb{R}$      |               |                 |                  |
-| `beta_anc_alpha`       | $\beta^{\alpha^{\text{ANC}}}$                        | Latent | 1    | $\mathbb{R}$      |               |                 |                  |
-| `u_rho_x`              | $\w^\rho_x$                                          | Latent | $n$  | $\mathbb{R}^{n}$  | \cmark        |                 |                  |
-| `us_rho_x`             | $\bv^\rho_x$                                         | Latent | $n$  | $\mathbb{R}^{n}$  | \cmark        |                 |                  |
-| `u_rho_xs`             | $\w_x^{\rho, s = \text{M}}$                          | Latent | $n$  | $\mathbb{R}^{n}$  | \cmark        |                 |                  |
-| `us_rho_xs`            | $\bv_x^{\rho, s = \text{M}}$                         | Latent | $n$  | $\mathbb{R}^{n}$  | \cmark        |                 |                  |
-| `u_rho_a`              | $\bu^\rho_a$                                         | Latent | 10   | $\mathbb{R}^{10}$ | \cmark        |                 |                  |
-| `u_rho_as`             | $\bu_a^{\rho, s = \text{M}}$                         | Latent | 10   | $\mathbb{R}^{10}$ | \cmark        |                 |                  |
-| `u_rho_xa`             | $\bu_x^{\rho, a < 15}$                               | Latent | $n$  | $\mathbb{R}^{n}$  | \cmark        |                 |                  |
-| `u_alpha_x`            | $\w^\alpha_x$                                        | Latent | $n$  | $\mathbb{R}^{n}$  |               | \cmark          |                  |
-| `us_alpha_x`           | $\bv^\alpha_x$                                       | Latent | $n$  | $\mathbb{R}^{n}$  |               | \cmark          |                  |
-| `u_alpha_xs`           | $\w_x^{\alpha, s = \text{M}}$                        | Latent | $n$  | $\mathbb{R}^{n}$  |               | \cmark          |                  |
-| `us_alpha_xs`          | $\bv_x^{\alpha, s = \text{M}}$                       | Latent | $n$  | $\mathbb{R}^{n}$  |               | \cmark          |                  |
-| `u_alpha_a`            | $\bu^\alpha_a$                                       | Latent | 13   | $\mathbb{R}^{13}$ |               | \cmark          |                  |
-| `u_alpha_as`           | $\bu_a^{\alpha, s = \text{M}}$                       | Latent | 10   | $\mathbb{R}^{10}$ |               | \cmark          |                  |
-| `u_alpha_xa`           | $\bu_x^{\alpha, a < 15}$                             | Latent | $n$  | $\mathbb{R}^{n}$  |               | \cmark          |                  |
-| `ui_lambda_x`          | $\bu_x^\lambda$                                      | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 | \cmark           |
-| `ui_anc_rho_x`         | $\bu_x^{\rho^{\text{ANC}}}$                          | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 |                  |
-| `ui_anc_alpha_x`       | $\bu_x^{\alpha^{\text{ANC}}}$                        | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 |                  |
-| `log_or_gamma`         | $\bu_x^{\tilde \gamma}$                              | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 |                  |
+| `beta_rho`             | $(\beta^\rho_0, \beta_{s}^{\rho, s = \text{M}})$     | Latent | 2    | $\mathbb{R}^2$    | Yes           |                 |                  |
+| `beta_alpha`           | $(\beta^\alpha_0, \beta_{S}^{\alpha, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               | Yes             |                  |
+| `beta_lambda`          | $(\beta_0^\lambda, \beta_S^{\lambda, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               |                 | Yes              |
+| `beta_anc_rho`         | $\beta^{\rho^{\text{ANC}}}$                          | Latent | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `beta_anc_alpha`       | $\beta^{\alpha^{\text{ANC}}}$                        | Latent | 1    | $\mathbb{R}$      |               | Yes             |                  |
+| `u_rho_x`              | $\mathbf{w}^\rho_x$                                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
+| `us_rho_x`             | $\mathbf{v}^\rho_x$                                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
+| `u_rho_xs`             | $\mathbf{w}_x^{\rho, s = \text{M}}$                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
+| `us_rho_xs`            | $\mathbf{v}_x^{\rho, s = \text{M}}$                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
+| `u_rho_a`              | $\mathbf{u}^\rho_a$                                  | Latent | 10   | $\mathbb{R}^{10}$ | Yes           |                 |                  |
+| `u_rho_as`             | $\mathbf{u}_a^{\rho, s = \text{M}}$                  | Latent | 10   | $\mathbb{R}^{10}$ | Yes           |                 |                  |
+| `u_rho_xa`             | $\mathbf{u}_x^{\rho, a < 15}$                        | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
+| `u_alpha_x`            | $\mathbf{w}^\alpha_x$                                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `us_alpha_x`           | $\mathbf{v}^\alpha_x$                                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `u_alpha_xs`           | $\mathbf{w}_x^{\alpha, s = \text{M}}$                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `us_alpha_xs`          | $\mathbf{v}_x^{\alpha, s = \text{M}}$                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `u_alpha_a`            | $\mathbf{u}^\alpha_a$                                | Latent | 13   | $\mathbb{R}^{13}$ |               | Yes             |                  |
+| `u_alpha_as`           | $\mathbf{u}_a^{\alpha, s = \text{M}}$                | Latent | 10   | $\mathbb{R}^{10}$ |               | Yes             |                  |
+| `u_alpha_xa`           | $\mathbf{u}_x^{\alpha, a < 15}$                      | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `ui_lambda_x`          | $\mathbf{u}_x^\lambda$                               | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 | Yes              |
+| `ui_anc_rho_x`         | $\mathbf{u}_x^{\rho^{\text{ANC}}}$                   | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `ui_anc_alpha_x`       | $\mathbf{u}_x^{\alpha^{\text{ANC}}}$                 | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
+| `log_or_gamma`         | $\mathbf{u}_x^{\tilde \gamma}$                       | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 |                  |
 
 
 Table: (\#tab:tmb-lookup)

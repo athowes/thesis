@@ -697,16 +697,23 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 
 ## The Naomi model {#naomi}
 
-This section provides a description of the Naomi model [@eaton2021naomi].
-Here, a version of Naomi defined only at the time of the most recent household survey with HIV testing is considered.
-The nowcasting and temporal projection are omitted as these time points are not involved in inference.
-Although the most relevant features of Naomi are included in this section, a complete description is left to Appendix \@ref(naomi-math).
+The work in this chapter was conducted in pursuit of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
+This section first provides a description of a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing is considered (Section \@ref(naomi-model)).
+Although the nowcasting and temporal projection components of the complete model are omitted, these time points play a limited role in inference.
+As such, conclusions about inference for the simplified model were judged to be very likely transferable to the complete model.
+Only the most relevant features of the simplified model are included here, and a more complete description is left to Appendix \@ref(naomi-math).
+After outlining the model, reasons are given (Section \@ref(naomi-elgm)) why it is not a LGM [@rue2009approximate], but is an ELGM [@stringer2022fast].
 
-### Model structure
+### Model structure {#naomi-model}
 
 Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-The model can be described as having three components, corresponding to the three data sources used.
-These components are the household survey component, the ANC testing component, and the ART attendance component.
+It may be described as having three components, corresponding to the three data sources used.
+These model components are:
+
+* the household survey component (Section \@ref(household));
+* the antenatal care (ANC) clinic testing component (Section \@ref(art));
+* the antiretroviral therapy (ART) attendance component (Section \@ref(art)).
+
 After specifying common notation used throughout the model, each of these components is described in turn.
 
 #### Notation
@@ -714,16 +721,23 @@ After specifying common notation used throughout the model, each of these compon
 Consider a country in sub-Saharan Africa where a household survey with complex design has taken place.
 Let $x \in \mathcal{X}$ index district, $a \in \mathcal{A}$ index five-year age group, and $s \in \mathcal{S}$ index sex.
 For ease of notation, let $i$ index the finest district-age-sex division included in the model.
-A district-age-sex specific quantity $z_{ias}$ may then be written as $z_i$.
-Let $N_i \in \mathbb{N}$ be the known, fixed population size, $\rho_i \in [0, 1]$ be the HIV prevalence, $\alpha_i \in [0, 1]$ be the antiretroviral therapy (ART) coverage, $\kappa_i \in [0, 1]$ be the proportion recently infected among HIV positive persons, and $\lambda_i > 0$ be the annual HIV incidence rate.
-It is possible that observations are made at an aggregate level.
+(A district-age-sex specific quantity $z_{x,a,s}$ may then be written as $z_i$, and where required the district, age, and sex may be recovered by $x(i) = x$, $a(i) = a$, and $s(i) = s$.)
+Let:
+
+* $N_i \in \mathbb{N}$ be the known, fixed population size;
+* $\rho_i \in [0, 1]$ be the HIV prevalence;
+* $\alpha_i \in [0, 1]$ be the ART coverage;
+* $\kappa_i \in [0, 1]$ be the proportion recently infected among HIV positive persons;
+* $\lambda_i > 0$ be the annual HIV incidence rate.
+
+Some observations are made at an aggregate level over a collection of strata $i$ rather than for a single $i$.
 Let $I \subseteq \mathcal{X} \times \mathcal{A} \times \mathcal{S}$ be a set of indices $i$ for which an aggregate observation is reported.
 The set of all $I$ is denoted $\mathcal{I}$ such that $I \in \mathcal{I}$.
 
 #### Household survey component {#household}
 
 Independent logistic regression models are specified for HIV prevalence and ART coverage in the general population.
-Without specifying the linear predictors in detail, these models are given by
+Without giving the linear predictors in detail, these models are specified by
 \begin{equation}
 \text{logit}(\rho_i) = \eta^\rho_i,
 \end{equation}
@@ -743,24 +757,29 @@ The proportion recently infected among HIV positive persons is linked to HIV inc
 where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are strongly informed by prior distributions for the particular survey.
 
 These processes are each primarily informed by household survey data.
+Let $j$ denote a surveyed individual, in strata $i(j)$.
 Weighted aggregate survey observations are calculated as
 \begin{equation}
-\hat \theta_I = \frac{\sum_j w_j \cdot\theta_j}{\sum_j w_j}, (\#eq:surveyobs)
+\hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, (\#eq:survey-obs)
 \end{equation}
 with individual responses $\theta_j \in \{0, 1\}$ and survey weights $w_j$ for each of $\theta \in \{\rho, \alpha, \kappa\}$.
-The survey weights are supplied by the survey provider and aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
-Equation \@ref(eq:surveyobs) is imprecise about the set over which index $j$ runs, which comprises all individuals in strata $i \in I$ within the relevant denominator i.e. for ART coverage, only those individuals who are HIV positive.
-The weighted observed number of outcomes are
+<!-- Are the survey weights the same for each observation type? -->
+Survey weights are supplied by the survey provider.
+Their aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
+The weighted aggregate number of outcomes are obtained by multiplying Equation \@ref(eq:survey-obs) by the Kish effective sample size [ESS; @kish1965survey]
 \begin{equation}
-y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I},
+y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I}, (\#eq:weighted-aggregate)
 \end{equation}
 where
 \begin{equation}
-m^{\theta}_I = \frac{\left(\sum_j w_j\right)^2}{\sum_j w_j^2},
+m^{\theta}_I = \frac{\left(\sum_{i(j) \in I} w_j\right)^2}{\sum_{i(j) \in I} w_j^2}. (\#eq:kish-ess)
 \end{equation}
-is the Kish effective sample size [ESS; @kish1965survey].
-As the Kish ESS is maximised by constant survey weights, in exchange for reducing bias, the variance is increased.
-The weighted observed number of outcomes are modelled using a binomial working likelihood [@chen2014use] defined to operate on the reals
+As the Kish ESS is maximised by constant survey weights, in exchange for reducing bias, survey weighting increases variance.
+Equations \@ref(eq:survey-obs), \@ref(eq:weighted-aggregate) and \@ref(eq:kish-ess) are imprecise in the notation used does not reflect the fact that $j$ only runs over individuals within the relevant denominator.
+In particular, for ART coverage $\alpha$ and the proportion recently infected among HIV positive persons $\kappa$, only those individuals who are HIV positive are included in the set.
+The denominator for HIV prevalence $\rho$ includes all individuals.
+
+The weighted aggregate number of outcomes are modelled using a binomial working likelihood [@chen2014use] defined to operate on the reals
 \begin{equation}
 y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}).
 \end{equation}
@@ -768,71 +787,103 @@ The terms $\theta_{I}$ are the following weighted aggregates
 \begin{equation}
 \rho_{I} = \frac{\sum_{i \in I} N_i \rho_i}{\sum_{i \in I} N_i}, \quad
 \alpha_{I} = \frac{\sum_{i \in I} N_i \rho_i \alpha_i}{\sum_{i \in I} N_i \rho_i}, \quad
-\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}.
+\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}, (\#eq:weighted-aggregates)
 \end{equation}
+where the denominators of $\alpha_{I}$ and $\kappa_{I}$ reflect their restriction to HIV positive persons.
 
-#### ANC testing component {#abc}
+#### ANC testing component {#anc}
+
+HIV data are routinely collected from ANC clinics, to help prevent mother-to-child transmission.
 
 HIV prevalence $\rho^\text{ANC}_i \in [0, 1]$ and ART coverage $\alpha^\text{ANC}_i \in [0, 1]$ among pregnant women are modelled as offset from the general population indicators.
+(For $s(i)$ male, these quantities are not defined.)
 Again not detailing the linear predictors, the model is of the form
 \begin{align}
 \text{logit}(\rho^\text{ANC}_i) &= \text{logit}(\rho_i) + \eta^{\rho^\text{ANC}}_i, \\
 \text{logit}(\alpha^\text{ANC}_i) &= \text{logit}(\alpha_i) + \eta^{\alpha^\text{ANC}}_i.
 \end{align}
-The terms $\eta^{\rho^\text{ANC}}_i$ and $\eta^{\alpha^\text{ANC}}_i$ can be interpreted as the differences in HIV prevalence and ART coverage between pregnant women attending ART, and the general population.
+The terms $\eta^{\rho^\text{ANC}}_i$ and $\eta^{\alpha^\text{ANC}}_i$ can be interpreted as the differences in HIV prevalence and ART coverage between pregnant women attending ANC, and the general population.
+As such, both the household survey data informs ANC indicators, and the ANC indicator informs general population indicators.
 
 These two processes are informed by likelihoods specified for aggregate ANC clinic data from the year of the most recent survey.
-Let the number of ANC clients with ascertained status be fixed as $m^{\rho^\text{ANC}}_I$. 
-The number of those with positive status are $y^{\rho^\text{ANC}}_I \leq m^{\rho^\text{ANC}}_I$ and the number of those already on ART prior to their first ANC visit are $y^{\alpha^\text{ANC}}_I \leq y^{\rho^\text{ANC}}_I$.
+Let:
+
+* the number of ANC clients with ascertained status be fixed as $m^{\rho^\text{ANC}}_I$;
+* the number of those with positive status are $y^{\rho^\text{ANC}}_I \leq m^{\rho^\text{ANC}}_I$;
+* the number of those already on ART prior to their first ANC visit are $y^{\alpha^\text{ANC}}_I \leq y^{\rho^\text{ANC}}_I$.
+
 These data are modelled using nested binomial likelihoods
 \begin{align*}
 y^{\rho^\text{ANC}}_I &\sim \text{Bin}(m^{\rho^\text{ANC}}_I, \rho^\text{ANC}_{I}), \\
 y^{\alpha^\text{ANC}}_I &\sim \text{Bin}(y^{\rho^\text{ANC}}_I, \alpha^\text{ANC}_{I}).
 \end{align*}
-Similarly to the household survey component, the weighted aggregates used are
+It is not necessary to use an extended binomial working likelihood, as in Section \@ref(survey), because the ANC data are not survey weighted and therefore are integer valued.
+Analogous to Equation \@ref(eq:weighted-aggregates) in the household survey component, the weighted aggregates used here are
 \begin{equation*}
 \rho^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}}{\sum_{i \in I} \Psi_i}, \quad
 \alpha^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC} \alpha^\text{ANC}_i}{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}},
 \end{equation*}
-with $\Psi_i$ the number of pregnant women, which we assume to be fixed.
+where $\Psi_i$ are the number of pregnant women, which we assume to be fixed.
 
 #### ART attendance component {#art}
 
-People living with HIV sometimes choose to access ART services outside of the district that they reside in.
-To account for this fact, the probabilities of accessing services outside the home district are modelled using multinomial logistic regressions.
-Briefly, let $\gamma_{x, x'}$ be the probability that a person on ART residing in district $x$ receives ART in district $x'$, and assume $\gamma_{x, x'} = 0$ unless $x = x'$ or the two districts are neighbouring such that $x \sim x'$.
+Data on attendance of ART clinics are routinely collected.
+These data provide helpful information about HIV prevalence and coverage of ART, but are challenging to use because people living with HIV sometimes choose to access ART services outside of the district that they reside in.
+(Indeed, this section of the model is under active development [@esra2023improved].)
+
+Multinomial logistic regression equations are used to model the probabilities of individuals accessing treatment outside their home district.
+Briefly, let $\gamma_{x, x'}$ be the probability that a person on ART residing in district $x$ receives ART in district $x'$.
+These probabilities are set to $\gamma_{x, x'} = 0$ unless $x = x'$ or the two districts are neighbouring such that $x \sim x'$.
+As such, it is assumed that no one travels beyond their district or its immediate neighbours to receive ART services.
+(Of course, in reality this assumption is violated.)
 The log-odds are modelled using a structured additive predictor which only depends on the home district $x$
 \begin{equation}
 \tilde \gamma_{x, x'} = \text{logit}(\gamma_{x, x'}) = \eta_x^{\tilde \gamma}.
 \end{equation}
-As such, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
-Each aggregate ART attendance observation $y^{N^\text{ART}}_I$ is modelled using a Gaussian approximation to a sum of binomials.
-This sum is over both strata $i \in I$ and the number of ART clients travelling from district $x'$ to $x$.
+As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
+Let the number of people recieving ART in strata $i$ be $y^{N^\text{ART}}_i$ with corresponding aggregate $y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i$.
+Each aggregate attendance observation is modelled using a Gaussian approximation to a sum of binomials, given by
+\begin{equation}
+\text{To write}.
+\end{equation}
+This sum is over both strata $i \in I$ and the number of ART clients travelling from district $x'(i)$ to $x(i)$.
 
-### Summary and connection to ELGMs
+### Connection to ELGMs {#naomi-elgm}
 
 In all, Naomi is a joint model on the observations
 \begin{equation}
 \mathbf{y} = (y^{\theta}_I) \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, I \in \mathcal{I}.
 \end{equation}
-The structured additive predictor $\boldsymbol{\mathbf{\eta}}$ includes intercept effects, age random effects, and spatial random effects which we collectively describe as the latent field $\mathbf{x}$.
-The latent field is controlled by hyperparamters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
+The structured additive predictor $\boldsymbol{\mathbf{\eta}}$ includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field $\mathbf{x}$.
+The latent field is controlled by hyperparameters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
 
-Although Naomi is a spatio-temporal model with a large Gaussian latent field, governed by a smaller number of hyperparameters, it is not an LGM.
-The list below ennumerates the reasons why Naomi is an ELGM rather than LGM.
-Note that in the items, when dependence on a specific number of structured additive predictors is given, it is for that item in isolation, rather than when each item is considered together.
+Like an LGM, Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters $m < N$.
+However, it has some deviations from the LGM framework, which rather make it an ELGM, and are enumerated below.
+Note that when dependence on a specific number of structured additive predictors is given, it is for that item in isolation, rather than when each item is considered together.
 
-1. In the household survey component (Section \@ref(household)) HIV incidence depends on district-level adult HIV prevalence and ART coverage. This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load
+1. In the household survey component (Section \@ref(household)) HIV incidence depends on district-level adult HIV prevalence and ART coverage.
+This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load
 \begin{equation}
 \lambda \propto \rho (1 - \omega \cdot \alpha),
 \end{equation}
-with $\omega = 0.7$ a fixed constant. Each $\log(\lambda_i)$ depends on 28 structured additive predictors where 28 arises by the product of 2 sexes (male and female), 7 age groups ($\{\text{15-19}, \ldots, \text{45-49}\}$), and 2 indicators (HIV prevalence and ART coverage).
-2. In the household survey component (Section \@ref(household)) HIV incidence and HIV prevalence are linked to the proportion recently infected via Equation \@ref(eq:kappa).
-3. In the ANC testing component, HIV prevalence and ART coverage depend upon the respective indicators in the household survey component. Though $\text{logit}(\rho_i)$ and $\text{logit}(\alpha_i)$ are Gaussian, this nonetheless introduces dependence of each mean response on two structured additive predictors.
+with $\omega = 0.7$ a fixed constant.
+As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors where 28 arises by the product of 2 sexes (male and female), 7 age groups ($\{\text{15-19}, \ldots, \text{45-49}\}$), and 2 indicators, HIV prevalence and ART coverage.
+Though it is possible to use the `copy` feature in `R-INLA` to include one term in multiple structured additive predictors, this would not be sufficient to allow for this type of model structure.
+2. In the household survey component (Section \@ref(household)), HIV incidence and HIV prevalence are linked to the proportion recently infected via Equation \@ref(eq:kappa).
+3. In the ANC testing component (Section \@ref(anc)), HIV prevalence and ART coverage depend upon the respective indicators in the household survey component.
+Though $\text{logit}(\rho_i)$ and $\text{logit}(\alpha_i)$ are Gaussian, this nonetheless introduces dependence of each mean response on two structured additive predictors.
 4. Throughout the model components, processes are modelled at the finest district-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors.
 5. Individuals taking ART, or who have been recently infected, must be HIV positive.
-6. The ART attendance component uses a multinomial model with softmax link function which takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district. -->
+6. The ART attendance component uses a multinomial model with softmax link function which takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district.
 7. Multiple link functions are used throughout the model, such that there is no one inverse link function $g$.
+It is possible to specify models with several likelihoods in `R-INLA` by setting `family` to be vector valued.
+
+For the most part, this exercise is academic rather than practical.
+Naomi being an ELGM is not the reason that it can't be fit using `R-INLA`, and there is no fundamental reason why the `R-INLA` can not be used to fit ELGMs.
+Indeed, some ELGMs may be specified using the advanced features of `R-INLA` [Chapter 6; @gomez2020bayesian], as described above.
+Rather, the fundamental reason why Naomi cannot be fit using `R-INLA` is that it is not possible to specify such a complex model using a formula interface.
+This fact is not unique to `R-INLA`: any statistical software which does not grant full control over the model's specification will have users requesting additional features to satisfy their use-cases.
+This strongly motivates the value of a more univeral INLA implementation (Section \@ref(universal)).
 
 ## AGHQ in moderate dimensions {#pca-aghq}
 

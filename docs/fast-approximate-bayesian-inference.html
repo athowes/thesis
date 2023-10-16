@@ -280,8 +280,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi"><i class="fa fa-check"></i><b>6.3</b> The Naomi model</a>
 <ul>
-<li class="chapter" data-level="6.3.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-structure"><i class="fa fa-check"></i><b>6.3.1</b> Model structure</a></li>
-<li class="chapter" data-level="6.3.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#summary-and-connection-to-elgms"><i class="fa fa-check"></i><b>6.3.2</b> Summary and connection to ELGMs</a></li>
+<li class="chapter" data-level="6.3.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi-model"><i class="fa fa-check"></i><b>6.3.1</b> Model structure</a></li>
+<li class="chapter" data-level="6.3.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi-elgm"><i class="fa fa-check"></i><b>6.3.2</b> Connection to ELGMs</a></li>
 </ul></li>
 <li class="chapter" data-level="6.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#pca-aghq"><i class="fa fa-check"></i><b>6.4</b> AGHQ in moderate dimensions</a>
 <ul>
@@ -333,7 +333,8 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="C.2.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#process-specification"><i class="fa fa-check"></i><b>C.2.1</b> Process specification</a></li>
 <li class="chapter" data-level="C.2.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#likelihood-specification"><i class="fa fa-check"></i><b>C.2.2</b> Likelihood specification</a></li>
-<li class="chapter" data-level="C.2.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#implementation"><i class="fa fa-check"></i><b>C.2.3</b> Implementation</a></li>
+<li class="chapter" data-level="C.2.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#identifiability-constraints-1"><i class="fa fa-check"></i><b>C.2.3</b> Identifiability constraints</a></li>
+<li class="chapter" data-level="C.2.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#implementation"><i class="fa fa-check"></i><b>C.2.4</b> Implementation</a></li>
 </ul></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.3</b> Model assessment</a></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.4</b> AGHQ and PCA-AGHQ details</a></li>
@@ -414,7 +415,8 @@ div.csl-indent {
 </div>
 <div id="naomi-math" class="section level2 hasAnchor" number="10.2">
 <h2><span class="header-section-number">C.2</span> Simplified Naomi model description<a href="fast-approximate-bayesian-inference.html#naomi-math" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>This section describes the simplified version of the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> in complete detail.</p>
+<p>This section describes the simplified version of the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> in complete detail.
+The concise <span class="math inline">\(i\)</span> notation used in Section <a href="naomi-aghq.html#naomi">6.3</a> is replaced with more complete <span class="math inline">\(x, s, a\)</span> notation, and the terms in each structured additive predictor are given, along with their distributions.</p>
 <div id="process-specification" class="section level3 hasAnchor" number="10.2.1">
 <h3><span class="header-section-number">C.2.1</span> Process specification<a href="fast-approximate-bayesian-inference.html#process-specification" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <table>
@@ -544,7 +546,7 @@ and independent beta prior distributions for the two BYM2 proportion parameters
 <tr class="even">
 <td><span class="math inline">\(\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}\)</span></td>
 <td><span class="math inline">\(-\)</span></td>
-<td>Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available</td>
+<td>Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available, calculated from Spectrum model <span class="citation">(<a href="#ref-stover2019updates">Stover et al. 2019</a>)</span> outputs for region <span class="math inline">\(R_x\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -560,11 +562,12 @@ with terms and priors analogous to the HIV prevalence process model in Section <
 <div id="hiv-inc" class="section level4 hasAnchor" number="10.2.1.3">
 <h4><span class="header-section-number">C.2.1.3</span> HIV incidence rate<a href="fast-approximate-bayesian-inference.html#hiv-inc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>HIV incidence rate <span class="math inline">\(\lambda_{x, s, a} &gt; 0\)</span> was modelled on the log scale using the structured additive predictor
-<span class="math display">\[\begin{equation}
-\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. \label{eq:inc}
+<span class="math display" id="eq:inc">\[\begin{equation}
+\log(\lambda_{x, s, a}) = \beta_0^\lambda + \beta_S^{\lambda, s = \text{M}} + \log(\rho_{x}^{\text{15-49}}) + \log(1 - \omega \cdot \alpha_{x}^{\text{15-49}}) + \mathbf{u}_x^\lambda + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\lambda. \tag{C.2}
 \end{equation}\]</span>
-Table <span class="math inline">\(\ref{tab:inc}\)</span> provides a description of the terms included in Equation <span class="math inline">\(\ref{eq:inc}\)</span>.</p>
+Table <a href="fast-approximate-bayesian-inference.html#tab:inc">C.3</a> provides a description of the terms included in Equation <a href="fast-approximate-bayesian-inference.html#eq:inc">(C.2)</a>.</p>
 <table>
+<caption><span id="tab:inc">Table C.3: </span></caption>
 <colgroup>
 <col width="15%" />
 <col width="14%" />
@@ -611,27 +614,28 @@ Table <span class="math inline">\(\ref{tab:inc}\)</span> provides a description 
 <tr class="odd">
 <td><span class="math inline">\(\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}\)</span></td>
 <td><span class="math inline">\(-\)</span></td>
-<td>Fixed log incidence rate ratios by sex and age group calculated from Spectrum model output</td>
+<td>Fixed log incidence rate ratios by sex and age group calculated from Spectrum model outputs for region <span class="math inline">\(R_x\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>The proportion recently infected among HIV positive persons <span class="math inline">\(\kappa_{x, s, a} \in [0, 1]\)</span> were modelled as
+<p>The proportion recently infected among HIV positive persons <span class="math inline">\(\kappa_{x, s, a} \in [0, 1]\)</span> was modelled as
 <span class="math display">\[\begin{equation}
 \kappa_{x, s, a} = 1 - \exp \left(- \lambda_{x, s, a} \cdot \frac{1 - \rho_{x, s, a}}{\rho_{x, s, a}} \cdot (\Omega_T - \beta_T ) - \beta_T \right),
 \end{equation}\]</span>
 where <span class="math inline">\(\Omega_T \sim \mathcal{N}(\Omega_{T_0}, \sigma^{\Omega_T})\)</span> is the mean duration of recent infection, and <span class="math inline">\(\beta_T \sim \mathcal{N}^{+}(\beta_{T_0}, \sigma^{\beta_T})\)</span> is the false recent ratio.
 The prior distribution for <span class="math inline">\(\Omega_T\)</span> was informed by the characteristics of the recent infection testing algorithm.
-For PHIA surveys this was <span class="math inline">\(\Omega_{T_0} = 130 \text{ days}\)</span> and <span class="math inline">\(\sigma^{\Omega_T} = 6.12 \text{ days}\)</span>, and further there was assumed to be no false recency, such that <span class="math inline">\(\beta_{T_0} = 0.0\)</span> and <span class="math inline">\(\sigma^{\beta_T} = 0.0\)</span>.</p>
+For PHIA surveys this was <span class="math inline">\(\Omega_{T_0} = 130 \text{ days}\)</span> and <span class="math inline">\(\sigma^{\Omega_T} = 6.12 \text{ days}\)</span>, and there was assumed to be no false recency, such that <span class="math inline">\(\beta_{T_0} = 0.0\)</span> and <span class="math inline">\(\sigma^{\beta_T} = 0.0\)</span>.</p>
 </div>
 <div id="anc-test" class="section level4 hasAnchor" number="10.2.1.4">
 <h4><span class="header-section-number">C.2.1.4</span> ANC testing<a href="fast-approximate-bayesian-inference.html#anc-test" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>HIV prevalence <span class="math inline">\(\rho_{x, a}^\text{ANC}\)</span> and ART coverage <span class="math inline">\(\alpha_{x, a}^\text{ANC}\)</span> among pregnant women were modelled as being offset on the logit scale from the corresponding district-age indicators <span class="math inline">\(\rho_{x, F, a}\)</span> and <span class="math inline">\(\alpha_{x, F, a}\)</span> according to
-<span class="math display">\[\begin{align}
-\text{logit}(\rho_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, \label{eq:anc1} \\
-\text{logit}(\alpha_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} \label{eq:anc2}.
+<span class="math display" id="eq:anc2" id="eq:anc1">\[\begin{align}
+\text{logit}(\rho_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\rho_{x, F, a}) + \beta^{\rho^{\text{ANC}}} + \mathbf{u}_x^{\rho^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\rho^{\text{ANC}}}, \tag{C.3} \\
+\text{logit}(\alpha_{x, a}^{\text{ANC}}) &amp;= \text{logit}(\alpha_{x, F, a}) + \beta^{\alpha^{\text{ANC}}} + \mathbf{u}_x^{\alpha^{\text{ANC}}} + \boldsymbol{\mathbf{\eta}}_{R_x, a}^{\alpha^{\text{ANC}}} \tag{C.4}.
 \end{align}\]</span>
-Table <span class="math inline">\(\ref{tab:anc}\)</span> provides a description of the terms included in Equation <span class="math inline">\(\ref{eq:anc1}\)</span> and Equation <span class="math inline">\(\ref{eq:anc2}\)</span>.</p>
+Table <a href="fast-approximate-bayesian-inference.html#tab:anc">C.4</a> provides a description of the terms included in Equation <a href="fast-approximate-bayesian-inference.html#eq:anc1">(C.3)</a> and Equation <a href="fast-approximate-bayesian-inference.html#eq:anc2">(C.4)</a>.</p>
 <table>
+<caption><span id="tab:anc">Table C.4: </span></caption>
 <colgroup>
 <col width="13%" />
 <col width="16%" />
@@ -663,28 +667,36 @@ Table <span class="math inline">\(\ref{tab:anc}\)</span> provides a description 
 </tbody>
 </table>
 <p>In the full Naomi model, for adult women 15-49 the number of ANC clients <span class="math inline">\(\Psi_{x, a} &gt; 0\)</span> were modelled as
-<span class="math display">\[
+<span class="math display">\[\begin{equation}
 \log (\Psi_{x, a}) = \log (N_{x, \text{F}, a}) + \psi_{R_x, a} + \beta^\psi + \mathbf{u}_x^\psi,
-\]</span>
+\end{equation}\]</span>
 where <span class="math inline">\(N_{x, \text{F}, a}\)</span> are the female population sizes, <span class="math inline">\(\psi_{R_x, a}\)</span> are fixed age-sex fertility ratios in Spectrum region <span class="math inline">\(R_x\)</span>, <span class="math inline">\(\beta^\psi\)</span> are log rate ratios for the number of ANC clients relative to the predicted fertility, and <span class="math inline">\(\mathbf{u}_x^\psi \sim \mathcal{N}(0, \sigma^\psi)\)</span> are district random effects.
-Here we fix <span class="math inline">\(\beta^\psi = 0\)</span> and <span class="math inline">\(\mathbf{u}_x^\psi = \mathbf{0}\)</span> such that <span class="math inline">\(\Psi_{x, a}\)</span> are simply constants.</p>
+Here these terms are fixed to <span class="math inline">\(\beta^\psi = 0\)</span> and <span class="math inline">\(\mathbf{u}_x^\psi = \mathbf{0}\)</span> such that <span class="math inline">\(\Psi_{x, a}\)</span> are simply constants.</p>
 </div>
 <div id="art-attend" class="section level4 hasAnchor" number="10.2.1.5">
 <h4><span class="header-section-number">C.2.1.5</span> ART attendance<a href="fast-approximate-bayesian-inference.html#art-attend" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Let <span class="math inline">\(\gamma_{x, x&#39;} \in [0, 1]\)</span> be the probability that a person on ART residing in district <span class="math inline">\(x\)</span> receives ART in district <span class="math inline">\(x&#39;\)</span>.
-We assume that <span class="math inline">\(\gamma_{x, x&#39;} = 0\)</span> for <span class="math inline">\(x \notin \{x, \text{ne}(x)\}\)</span> such that individuals seek treatment only in their residing district or its neighbours <span class="math inline">\(\text{ne}(x) = \{x&#39;: x&#39; \sim x\}\)</span>, where <span class="math inline">\(\sim\)</span> is an adjacency relation, and <span class="math inline">\(\sum_{x&#39; \in \{x, \text{ne}(x)\}} \gamma_{x, x&#39;} = 1\)</span>.
-To model <span class="math inline">\(\gamma_{x, x&#39;}\)</span> for <span class="math inline">\(x \sim x&#39;\)</span> we use a multinomial logistic regression model, based on the log-odds ratios
-<span class="math display">\[\begin{equation}
-\tilde \gamma_{x, x&#39;} = \log \left( \frac{\gamma_{x, x&#39;}}{1 - \gamma_{x, x&#39;}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, \label{eq:log-or}
+Assume that <span class="math inline">\(\gamma_{x, x&#39;} = 0\)</span> for <span class="math inline">\(x \notin \{x, \text{ne}(x)\}\)</span> such that individuals seek treatment only in their residing district or its neighbours <span class="math inline">\(\text{ne}(x) = \{x&#39;: x&#39; \sim x\}\)</span>, where <span class="math inline">\(\sim\)</span> is an adjacency relation, and <span class="math inline">\(\sum_{x&#39; \in \{x, \text{ne}(x)\}} \gamma_{x, x&#39;} = 1\)</span>.
+The probabilities <span class="math inline">\(\gamma_{x, x&#39;}\)</span> for <span class="math inline">\(x \sim x&#39;\)</span> were modelled using multinomial logistic regression model, based on the log-odds ratios
+<span class="math display" id="eq:log-or">\[\begin{equation}
+\tilde \gamma_{x, x&#39;} = \log \left( \frac{\gamma_{x, x&#39;}}{1 - \gamma_{x, x&#39;}} \right) = \tilde \gamma_0 + \mathbf{u}_x^{\tilde \gamma}, \tag{C.5}
 \end{equation}\]</span>
 where <span class="math inline">\(\tilde \gamma_0 = -4\)</span> is a fixed intercept, and <span class="math inline">\(\mathbf{u}_x^{\tilde \gamma} \sim \mathcal{N}(0, \sigma_X^{\tilde \gamma})\)</span> were district random effects with <span class="math inline">\(\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)\)</span>.
-Note that Equation <span class="math inline">\(\ref{eq:log-or}\)</span> does not depend on <span class="math inline">\(x&#39;\)</span>, such that <span class="math inline">\(\gamma_{x, x&#39;}\)</span> is only a function of <span class="math inline">\(x\)</span>.
+Equation <a href="fast-approximate-bayesian-inference.html#eq:log-or">(C.5)</a> is independent of <span class="math inline">\(x&#39;\)</span>, such that <span class="math inline">\(\gamma_{x, x&#39;}\)</span> is only a function of <span class="math inline">\(x\)</span>.
 Choice of <span class="math inline">\(\tilde \gamma_0 = -4\)</span> implies a prior mean on <span class="math inline">\(\gamma_{x, x&#39;}\)</span> of 1.8%, such that <span class="math inline">\((100 - 1.8 \times \text{ne}(x))\%\)</span> of ART clients in district <span class="math inline">\(x\)</span> obtain treatment in their home district, a-priori.
-We fix <span class="math inline">\(\tilde \gamma_{x, x} = 0\)</span> and recover the multinomial probabilities using the softmax
+Fixing <span class="math inline">\(\tilde \gamma_{x, x} = 0\)</span> then the multinomial probabilities may be recoverd using the softmax
 <span class="math display">\[\begin{equation}
 \gamma_{x, x&#39;} = \frac{\exp(\tilde \gamma_{x, x&#39;})}{\sum_{x^\star \in \{x, \text{ne}(x)\}} \exp(\tilde \gamma_{x, x^\star})}.
 \end{equation}\]</span>
-Given the total number of PLHIV on ART <span class="math inline">\(A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a}\)</span>, the number of ART clients who reside in district <span class="math inline">\(x\)</span> and obtain ART in district <span class="math inline">\(x&#39;\)</span> are <span class="math inline">\(A_{x, x&#39;, s, a} = A_{x, s, a} \cdot \gamma_{x, x&#39;}\)</span>, and the total attending ART facilities in district <span class="math inline">\(x&#39;\)</span> are
+Given the total number of PLHIV on ART
+<span class="math display">\[\begin{equation}
+A_{x, s, a} = N_{x, s, a} \cdot \rho_{x, s, a} \cdot \alpha_{x, s, a},
+\end{equation}\]</span>
+the number of ART clients who reside in district <span class="math inline">\(x\)</span> and obtain ART in district <span class="math inline">\(x&#39;\)</span> are
+<span class="math display">\[\begin{equation}
+A_{x, x&#39;, s, a} = A_{x, s, a} \cdot \gamma_{x, x&#39;},
+\end{equation}\]</span>
+and the total attending ART facilities in district <span class="math inline">\(x&#39;\)</span> are
 <span class="math display">\[\begin{equation}
 \tilde A_{x&#39;, s, a} = \sum_{x \in \{x&#39;, \text{ne}(x&#39;)\}} A_{x, x&#39;, s, a}.
 \end{equation}\]</span></p>
@@ -692,14 +704,44 @@ Given the total number of PLHIV on ART <span class="math inline">\(A_{x, s, a} =
 </div>
 <div id="likelihood-specification" class="section level3 hasAnchor" number="10.2.2">
 <h3><span class="header-section-number">C.2.2</span> Likelihood specification<a href="fast-approximate-bayesian-inference.html#likelihood-specification" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="household-survey-data-1" class="section level4 hasAnchor" number="10.2.2.1">
+<h4><span class="header-section-number">C.2.2.1</span> Household survey data<a href="fast-approximate-bayesian-inference.html#household-survey-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The generalised binomial <span class="math inline">\(y \sim \text{xBin}(m, p)\)</span> is defined for <span class="math inline">\(y, m \in \mathbb{R}^+\)</span> with <span class="math inline">\(y \leq m\)</span> such that
+<span class="math display">\[\begin{equation}
+\log p(y) = \log \Gamma(m + 1) - \log \Gamma(y + 1) - \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
+\end{equation}\]</span>
+where the gamma function <span class="math inline">\(\Gamma\)</span> is such that <span class="math inline">\(\forall n \in \mathbb{N}\)</span>, <span class="math inline">\(\Gamma(n) = (n - 1)!\)</span>.</p>
 </div>
-<div id="implementation" class="section level3 hasAnchor" number="10.2.3">
-<h3><span class="header-section-number">C.2.3</span> Implementation<a href="fast-approximate-bayesian-inference.html#implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The <code>TMB</code> C++ code for the negative log-posterior of the simplified Naomi model is available from <a href="https://github.com/athowes/naomi-aghq"><code>https://github.com/athowes/naomi-aghq</code></a>
-For ease of understanding, Table <a href="fast-approximate-bayesian-inference.html#tab:tmb-lookup">C.3</a> provides correspondence between the mathematical notation used in Section <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a> and the variable names used in the <code>TMB</code> code, for all hyperparameters and latent field parameters.
+<div id="anc-testing-data" class="section level4 hasAnchor" number="10.2.2.2">
+<h4><span class="header-section-number">C.2.2.2</span> ANC testing data<a href="fast-approximate-bayesian-inference.html#anc-testing-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="art-attendence-data" class="section level4 hasAnchor" number="10.2.2.3">
+<h4><span class="header-section-number">C.2.2.3</span> ART attendence data<a href="fast-approximate-bayesian-inference.html#art-attendence-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+</div>
+<div id="identifiability-constraints-1" class="section level3 hasAnchor" number="10.2.3">
+<h3><span class="header-section-number">C.2.3</span> Identifiability constraints<a href="fast-approximate-bayesian-inference.html#identifiability-constraints-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If data are missing, some parameters are fixed to default values to help with identifiability.
+In particular:</p>
+<ol style="list-style-type: decimal">
+<li>If survey data on HIV prevalence or ART coverage by age and sex are not available then <span class="math inline">\(\mathbf{u}_a^\theta = 0\)</span> and <span class="math inline">\(\mathbf{u}_{a, s = \text{M}}^\theta = 0\)</span>.
+In this case, the average age-sex pattern from the Spectrum offset <span class="math inline">\(\boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\theta\)</span> is used.
+For the Malawi example considered in the main text, HIV prevalence and ART coverage data are not available for those aged 65+.
+As a result, there are <span class="math inline">\(|\{\text{0-4}, \ldots, \text{50-54}\}| = 13\)</span> age groups included for the age random effects.</li>
+<li>If no ART data, either survey or ART programme, are available but data on ART coverage among ANC clients are available, the level of ART coverage is not identifiable, but spatial variation is identifiable.
+In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that <span class="math inline">\(\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha\)</span>.</li>
+<li>If survey data on recent HIV infection are not included in the model, then <span class="math inline">\(\beta_0^\lambda = \beta_S^{\lambda, s = \text{M}} = 0\)</span> and <span class="math inline">\(\mathbf{u}_x^\lambda = \mathbf{0}\)</span>.
+The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum in the same years and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district estimates of HIV prevalence and ART coverage.</li>
+</ol>
+</div>
+<div id="implementation" class="section level3 hasAnchor" number="10.2.4">
+<h3><span class="header-section-number">C.2.4</span> Implementation<a href="fast-approximate-bayesian-inference.html#implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <code>TMB</code> C++ code for the negative log-posterior of the simplified Naomi model is available from <a href="https://github.com/athowes/naomi-aghq"><code>https://github.com/athowes/naomi-aghq</code></a>.
+(It is not given here, as it is over 500 lines.)
+For ease of understanding, Table <a href="fast-approximate-bayesian-inference.html#tab:tmb-lookup">C.5</a> provides correspondence between the mathematical notation used in Section <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a> and the variable names used in the <code>TMB</code> code, for all hyperparameters and latent field parameters.
 For further reference on the <code>TMB</code> software see <span class="citation">Kristensen (<a href="#ref-tmbdocumentation">2021</a>)</span>.</p>
 <table style="width:100%;">
-<caption><span id="tab:tmb-lookup">Table C.3: </span></caption>
+<caption><span id="tab:tmb-lookup">Table C.5: </span></caption>
 <colgroup>
 <col width="14%" />
 <col width="33%" />
@@ -729,7 +771,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -739,7 +781,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -749,7 +791,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -759,7 +801,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -769,7 +811,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -779,7 +821,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -789,7 +831,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -799,7 +841,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -809,7 +851,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Hyper</td>
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -820,7 +862,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -830,7 +872,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -840,7 +882,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -850,7 +892,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -860,7 +902,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -870,7 +912,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -880,7 +922,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -890,7 +932,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -900,7 +942,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -911,7 +953,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 </tr>
 <tr class="even">
 <td><code>log_betaT</code></td>
@@ -921,7 +963,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 </tr>
 <tr class="odd">
 <td><code>log_sigma_lambda_x</code></td>
@@ -931,7 +973,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 </tr>
 <tr class="even">
 <td><code>log_sigma_ancrho_x</code></td>
@@ -940,7 +982,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -950,7 +992,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -969,7 +1011,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>Latent</td>
 <td>2</td>
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
@@ -980,7 +1022,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>2</td>
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -991,7 +1033,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
 <td></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 </tr>
 <tr class="even">
 <td><code>beta_anc_rho</code></td>
@@ -1000,7 +1042,7 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -1010,182 +1052,182 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>u_rho_x</code></td>
-<td><span class="math inline">\(\w^\rho_x\)</span></td>
+<td><span class="math inline">\(\mathbf{w}^\rho_x\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>us_rho_x</code></td>
-<td><span class="math inline">\(\bv^\rho_x\)</span></td>
+<td><span class="math inline">\(\mathbf{v}^\rho_x\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>u_rho_xs</code></td>
-<td><span class="math inline">\(\w_x^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{w}_x^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>us_rho_xs</code></td>
-<td><span class="math inline">\(\bv_x^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{v}_x^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>u_rho_a</code></td>
-<td><span class="math inline">\(\bu^\rho_a\)</span></td>
+<td><span class="math inline">\(\mathbf{u}^\rho_a\)</span></td>
 <td>Latent</td>
 <td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>u_rho_as</code></td>
-<td><span class="math inline">\(\bu_a^{\rho, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_a^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>u_rho_xa</code></td>
-<td><span class="math inline">\(\bu_x^{\rho, a &lt; 15}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\rho, a &lt; 15}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>u_alpha_x</code></td>
-<td><span class="math inline">\(\w^\alpha_x\)</span></td>
+<td><span class="math inline">\(\mathbf{w}^\alpha_x\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>us_alpha_x</code></td>
-<td><span class="math inline">\(\bv^\alpha_x\)</span></td>
+<td><span class="math inline">\(\mathbf{v}^\alpha_x\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>u_alpha_xs</code></td>
-<td><span class="math inline">\(\w_x^{\alpha, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{w}_x^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>us_alpha_xs</code></td>
-<td><span class="math inline">\(\bv_x^{\alpha, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{v}_x^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>u_alpha_a</code></td>
-<td><span class="math inline">\(\bu^\alpha_a\)</span></td>
+<td><span class="math inline">\(\mathbf{u}^\alpha_a\)</span></td>
 <td>Latent</td>
 <td>13</td>
 <td><span class="math inline">\(\mathbb{R}^{13}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>u_alpha_as</code></td>
-<td><span class="math inline">\(\bu_a^{\alpha, s = \text{M}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_a^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
 <td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>u_alpha_xa</code></td>
-<td><span class="math inline">\(\bu_x^{\alpha, a &lt; 15}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\alpha, a &lt; 15}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>ui_lambda_x</code></td>
-<td><span class="math inline">\(\bu_x^\lambda\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^\lambda\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 </tr>
 <tr class="odd">
 <td><code>ui_anc_rho_x</code></td>
-<td><span class="math inline">\(\bu_x^{\rho^{\text{ANC}}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\rho^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>ui_anc_alpha_x</code></td>
-<td><span class="math inline">\(\bu_x^{\alpha^{\text{ANC}}}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\alpha^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
-<td></td>
+<td>Yes</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td><code>log_or_gamma</code></td>
-<td><span class="math inline">\(\bu_x^{\tilde \gamma}\)</span></td>
+<td><span class="math inline">\(\mathbf{u}_x^{\tilde \gamma}\)</span></td>
 <td>Latent</td>
 <td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
@@ -1227,6 +1269,9 @@ Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oli
 </div>
 <div id="ref-tmbdocumentation" class="csl-entry">
 Kristensen, Kasper. 2021. <span>“The Comprehensive TMB Documentation.”</span> <a href="https://kaskr.github.io/adcomp/_book/Introduction.html" class="uri">https://kaskr.github.io/adcomp/_book/Introduction.html</a>.
+</div>
+<div id="ref-stover2019updates" class="csl-entry">
+Stover, John, Robert Glaubius, Lynne Mofenson, Caitlin M Dugdale, Mary-Ann Davies, Gabriela Patten, and Constantin Yiannoutsos. 2019. <span>“Updates to the Spectrum/AIM Model for Estimating Key HIV Indicators at National and Subnational Levels.”</span> <em>AIDS (London, England)</em> 33 (Suppl 3): S227.
 </div>
 </div>
             </section>
