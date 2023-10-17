@@ -14,9 +14,15 @@ resource_version <- "20230811-095752-5b8181d8"
 ## Simplified Naomi model description {#naomi-math}
 
 This section describes the simplified version of the Naomi model [@eaton2021naomi] in complete detail.
-The concise $i$ notation used in Section \@ref(naomi) is replaced with more complete $x, s, a$ notation, and the terms in each structured additive predictor are given, along with their distributions.
+The more concise $i$ indexing used in Section \@ref(naomi) is replaced by more complete $x, s, a$ indexing.
+There are four sections:
 
-### Process specification 
+1. Section \@ref(naomi-process) describes the process specification, giving the terms in each structured additive predictor, along with their distributions.
+2. Section \@ref(naomi-likelihood)
+3. Section \@ref(naomi-identifiability)
+4. Section \@ref(naomi-implementation)
+
+### Process specification {#naomi-process}
 
 |                   | Model component    | Latent field | Hyperparameter |
 | ----------------- | ------------------ | ------------ | -------------- |
@@ -156,7 +162,10 @@ and the total attending ART facilities in district $x'$ are
 \tilde A_{x', s, a} = \sum_{x \in \{x', \text{ne}(x')\}} A_{x, x', s, a}.
 \end{equation}
 
-### Likelihood specification
+### Additional likelihood specification {#naomi-likelihood}
+
+Section \@ref(naomi) provides a complete description of the likelihood specification of the model.
+Any additional useful details are provided here.
 
 #### Household survey data
 
@@ -168,9 +177,13 @@ where the gamma function $\Gamma$ is such that $\forall n \in \mathbb{N}$, $\Gam
 
 #### ANC testing data
 
+Additional details here.
+
 #### ART attendence data
 
-### Identifiability constraints
+Additional details here.
+
+### Identifiability constraints {#naomi-identifiability}
 
 If data are missing, some parameters are fixed to default values to help with identifiability.
 In particular:
@@ -184,7 +197,7 @@ In this instance, overall ART coverage is determined by the Spectrum offset, and
 3. If survey data on recent HIV infection are not included in the model, then $\beta_0^\lambda = \beta_S^{\lambda, s = \text{M}} = 0$ and $\mathbf{u}_x^\lambda = \mathbf{0}$.
 The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum in the same years and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district estimates of HIV prevalence and ART coverage.
 
-### Implementation
+### Implementation {#naomi-implementation}
 
 The `TMB` C++ code for the negative log-posterior of the simplified Naomi model is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
 (It is not given here, as it is over 500 lines.)

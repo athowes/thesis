@@ -331,10 +331,10 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.2</b> Simplified Naomi model description</a>
 <ul>
-<li class="chapter" data-level="C.2.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#process-specification"><i class="fa fa-check"></i><b>C.2.1</b> Process specification</a></li>
-<li class="chapter" data-level="C.2.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#likelihood-specification"><i class="fa fa-check"></i><b>C.2.2</b> Likelihood specification</a></li>
-<li class="chapter" data-level="C.2.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#identifiability-constraints-1"><i class="fa fa-check"></i><b>C.2.3</b> Identifiability constraints</a></li>
-<li class="chapter" data-level="C.2.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#implementation"><i class="fa fa-check"></i><b>C.2.4</b> Implementation</a></li>
+<li class="chapter" data-level="C.2.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-process"><i class="fa fa-check"></i><b>C.2.1</b> Process specification</a></li>
+<li class="chapter" data-level="C.2.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-likelihood"><i class="fa fa-check"></i><b>C.2.2</b> Additional likelihood specification</a></li>
+<li class="chapter" data-level="C.2.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-identifiability"><i class="fa fa-check"></i><b>C.2.3</b> Identifiability constraints</a></li>
+<li class="chapter" data-level="C.2.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-implementation"><i class="fa fa-check"></i><b>C.2.4</b> Implementation</a></li>
 </ul></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-1"><i class="fa fa-check"></i><b>C.3</b> Model assessment</a></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.4</b> AGHQ and PCA-AGHQ details</a></li>
@@ -973,12 +973,13 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 </div>
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> The Naomi model<a href="naomi-aghq.html#naomi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The work in this chapter was conducted in pursuit of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
-This section first provides a description of a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing is considered (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>).
-Although the nowcasting and temporal projection components of the complete model are omitted, these time points play a limited role in inference.
-As such, conclusions about inference for the simplified model were judged to be very likely transferable to the complete model.
-Only the most relevant features of the simplified model are included here, and a more complete description is left to Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.
-After outlining the model, reasons are given (Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a>) why it is not a LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>, but is an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span>.</p>
+<p>The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
+This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by providing a description of a simplified version of Naomi.
+The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
+However, these time points play a limited role in inference as they are not associated to data.
+As such, findings about inference for the simplified model are very likely transferable to the complete model.
+Only the most relevant features of the simplified model are included here, with a more complete description is left to Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.
+After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is not an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span> rather than a LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>.</p>
 <div id="naomi-model" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
@@ -1093,13 +1094,13 @@ Analogous to Equation <a href="naomi-aghq.html#eq:weighted-aggregates">(6.22)</a
 \rho^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}}{\sum_{i \in I} \Psi_i}, \quad
 \alpha^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC} \alpha^\text{ANC}_i}{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}},
 \end{equation*}\]</span>
-where <span class="math inline">\(\Psi_i\)</span> are the number of pregnant women, which we assume to be fixed.</p>
+where <span class="math inline">\(\Psi_i\)</span> are the number of pregnant women, which are assume to be fixed.</p>
 </div>
 <div id="art" class="section level4 hasAnchor" number="6.3.1.4">
 <h4><span class="header-section-number">6.3.1.4</span> ART attendance component<a href="naomi-aghq.html#art" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Data on attendance of ART clinics are routinely collected.
 These data provide helpful information about HIV prevalence and coverage of ART, but are challenging to use because people living with HIV sometimes choose to access ART services outside of the district that they reside in.
-(Indeed, this section of the model is under active development <span class="citation">(<a href="#ref-esra2023improved">Esra 2023</a>)</span>.)</p>
+(Indeed, this section of the model remains a challenge, and is under active development <span class="citation">(<a href="#ref-esra2023improved">Esra 2023</a>)</span>.)</p>
 <p>Multinomial logistic regression equations are used to model the probabilities of individuals accessing treatment outside their home district.
 Briefly, let <span class="math inline">\(\gamma_{x, x&#39;}\)</span> be the probability that a person on ART residing in district <span class="math inline">\(x\)</span> receives ART in district <span class="math inline">\(x&#39;\)</span>.
 These probabilities are set to <span class="math inline">\(\gamma_{x, x&#39;} = 0\)</span> unless <span class="math inline">\(x = x&#39;\)</span> or the two districts are neighbouring such that <span class="math inline">\(x \sim x&#39;\)</span>.
@@ -1107,13 +1108,34 @@ As such, it is assumed that no one travels beyond their district or its immediat
 (Of course, in reality this assumption is violated.)
 The log-odds are modelled using a structured additive predictor which only depends on the home district <span class="math inline">\(x\)</span>
 <span class="math display">\[\begin{equation}
-\tilde \gamma_{x, x&#39;} = \text{logit}(\gamma_{x, x&#39;}) = \eta_x^{\tilde \gamma}.
+\tilde \gamma_{x, x&#39;} = \text{logit}(\gamma_{x, x&#39;}) = \eta_{x}^{\tilde \gamma}.
 \end{equation}\]</span>
-As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
-Let the number of people recieving ART in strata <span class="math inline">\(i\)</span> be <span class="math inline">\(y^{N^\text{ART}}_i\)</span> with corresponding aggregate <span class="math inline">\(y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i\)</span>.
-Each aggregate attendance observation is modelled using a Gaussian approximation to a sum of binomials, given by
+As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.</p>
+<p>Let the number of people receiving ART in strata <span class="math inline">\(i\)</span> be <span class="math inline">\(y^{N^\text{ART}}_i\)</span> with corresponding aggregate
 <span class="math display">\[\begin{equation}
-\text{To write}.
+y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i.
+\end{equation}\]</span>
+Let the probability of a person in strata <span class="math inline">\(i\)</span> travelling from district <span class="math inline">\(x(i) = x\)</span> (when <span class="math inline">\(x(i)\)</span> is unspecified, assume <span class="math inline">\(x(i) = x\)</span>) to <span class="math inline">\(x&#39;\)</span> to receive ART be
+<span class="math display">\[\begin{equation}
+\pi_{i, x(i), x&#39;} = \rho_{i, x(i)} \cdot \alpha_{i, x(i)} \times \gamma_{x(i), x&#39;}.
+\end{equation}\]</span>
+These probabilities are the product of three probabilities:</p>
+<ol style="list-style-type: decimal">
+<li>the probability of having HIV <span class="math inline">\(\rho_{i, x(i)}\)</span>,</li>
+<li>the probability of taking ART <span class="math inline">\(\alpha_{i, x(i)}\)</span>,</li>
+<li>the probability of travelling to district <span class="math inline">\(x&#39;\)</span> to receive ART <span class="math inline">\(\gamma_{x(i), x&#39;}\)</span>.</li>
+</ol>
+<p>Let the unobserved count of people in strata <span class="math inline">\(i\)</span> who travel to <span class="math inline">\(x&#39;\)</span> to receive ART be <span class="math inline">\(y^{N^\text{ART}}_{i, x(i), x&#39;}\)</span>, such that
+<span class="math display">\[\begin{equation}
+y^{N^\text{ART}}_i = \sum_{x&#39; \sim x, x&#39; = x} y^{N^\text{ART}}_{i, x(i) = x&#39;, x}.
+\end{equation}\]</span>
+Each of these unobserved counts can be considered as arising from a binomial distribution, with sample size given by the population in strata <span class="math inline">\(i\)</span> (with <span class="math inline">\(x(i) = x&#39;\)</span>)
+<span class="math display">\[\begin{equation}
+y^{N^\text{ART}}_{i, x(i) = x&#39;, x} \sim \text{Bin}(N_{i, x(i) = x&#39;}, \pi_{i, x(i) = x&#39;, x})
+\end{equation}\]</span></p>
+<p>Each aggregate attendance observation is modelled using a Gaussian approximation to a sum of binomials, given by
+<span class="math display">\[\begin{equation}
+y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, \sigma^\text{ART}_I).
 \end{equation}\]</span>
 This sum is over both strata <span class="math inline">\(i \in I\)</span> and the number of ART clients travelling from district <span class="math inline">\(x&#39;(i)\)</span> to <span class="math inline">\(x(i)\)</span>.</p>
 </div>

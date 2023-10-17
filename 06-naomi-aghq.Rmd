@@ -697,12 +697,13 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 
 ## The Naomi model {#naomi}
 
-The work in this chapter was conducted in pursuit of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
-This section first provides a description of a simplified version of Naomi, defined only at the time of the most recent household survey with HIV testing is considered (Section \@ref(naomi-model)).
-Although the nowcasting and temporal projection components of the complete model are omitted, these time points play a limited role in inference.
-As such, conclusions about inference for the simplified model were judged to be very likely transferable to the complete model.
-Only the most relevant features of the simplified model are included here, and a more complete description is left to Appendix \@ref(naomi-math).
-After outlining the model, reasons are given (Section \@ref(naomi-elgm)) why it is not a LGM [@rue2009approximate], but is an ELGM [@stringer2022fast].
+The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
+This section begins (Section \@ref(naomi-model)) by providing a description of a simplified version of Naomi.
+The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
+However, these time points play a limited role in inference as they are not associated to data.
+As such, findings about inference for the simplified model are very likely transferable to the complete model.
+Only the most relevant features of the simplified model are included here, with a more complete description is left to Appendix \@ref(naomi-math).
+After outlining the model, Section \@ref(naomi-elgm) explains why it is not an ELGM [@stringer2022fast] rather than a LGM [@rue2009approximate].
 
 ### Model structure {#naomi-model}
 
@@ -823,13 +824,13 @@ Analogous to Equation \@ref(eq:weighted-aggregates) in the household survey comp
 \rho^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}}{\sum_{i \in I} \Psi_i}, \quad
 \alpha^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC} \alpha^\text{ANC}_i}{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}},
 \end{equation*}
-where $\Psi_i$ are the number of pregnant women, which we assume to be fixed.
+where $\Psi_i$ are the number of pregnant women, which are assume to be fixed.
 
 #### ART attendance component {#art}
 
 Data on attendance of ART clinics are routinely collected.
 These data provide helpful information about HIV prevalence and coverage of ART, but are challenging to use because people living with HIV sometimes choose to access ART services outside of the district that they reside in.
-(Indeed, this section of the model is under active development [@esra2023improved].)
+(Indeed, this section of the model remains a challenge, and is under active development [@esra2023improved].)
 
 Multinomial logistic regression equations are used to model the probabilities of individuals accessing treatment outside their home district.
 Briefly, let $\gamma_{x, x'}$ be the probability that a person on ART residing in district $x$ receives ART in district $x'$.
@@ -838,13 +839,36 @@ As such, it is assumed that no one travels beyond their district or its immediat
 (Of course, in reality this assumption is violated.)
 The log-odds are modelled using a structured additive predictor which only depends on the home district $x$
 \begin{equation}
-\tilde \gamma_{x, x'} = \text{logit}(\gamma_{x, x'}) = \eta_x^{\tilde \gamma}.
+\tilde \gamma_{x, x'} = \text{logit}(\gamma_{x, x'}) = \eta_{x}^{\tilde \gamma}.
 \end{equation}
 As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
-Let the number of people recieving ART in strata $i$ be $y^{N^\text{ART}}_i$ with corresponding aggregate $y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i$.
+
+Let the number of people receiving ART in strata $i$ be $y^{N^\text{ART}}_i$ with corresponding aggregate
+\begin{equation}
+y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i.
+\end{equation}
+Let the probability of a person in strata $i$ travelling from district $x(i) = x$ (when $x(i)$ is unspecified, assume $x(i) = x$) to $x'$ to receive ART be
+\begin{equation}
+\pi_{i, x(i), x'} = \rho_{i, x(i)} \cdot \alpha_{i, x(i)} \times \gamma_{x(i), x'}.
+\end{equation}
+These probabilities are the product of three probabilities:
+
+1. the probability of having HIV $\rho_{i, x(i)}$,
+2. the probability of taking ART $\alpha_{i, x(i)}$,
+3. the probability of travelling to district $x'$ to receive ART $\gamma_{x(i), x'}$.
+
+Let the unobserved count of people in strata $i$ who travel to $x'$ to receive ART be $y^{N^\text{ART}}_{i, x(i), x'}$, such that
+\begin{equation}
+y^{N^\text{ART}}_i = \sum_{x' \sim x, x' = x} y^{N^\text{ART}}_{i, x(i) = x', x}.
+\end{equation}
+Each of these unobserved counts can be considered as arising from a binomial distribution, with sample size given by the population in strata $i$ (with $x(i) = x'$)
+\begin{equation}
+y^{N^\text{ART}}_{i, x(i) = x', x} \sim \text{Bin}(N_{i, x(i) = x'}, \pi_{i, x(i) = x', x}) 
+\end{equation}
+
 Each aggregate attendance observation is modelled using a Gaussian approximation to a sum of binomials, given by
 \begin{equation}
-\text{To write}.
+y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, \sigma^\text{ART}_I).
 \end{equation}
 This sum is over both strata $i \in I$ and the number of ART clients travelling from district $x'(i)$ to $x(i)$.
 
