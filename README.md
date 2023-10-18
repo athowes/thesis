@@ -1,11 +1,11 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/83)<!-- -->
+![](https://geps.dev/progress/84)<!-- -->
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 166/~200 pages, and many/~tending to zero mistakes. The number 200 is
+> 167/~200 pages, and many/~tending to zero mistakes. The number 200 is
 > also mostly arbitraty.
 
 PhD in [Modern Statistics and Statistical Machine

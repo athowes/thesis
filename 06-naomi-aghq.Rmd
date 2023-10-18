@@ -251,7 +251,7 @@ H_3(z) = z^3 - 3z = 0 \implies \mathcal{Q}(1, 3) &= \{-1.225, 0, 1.225\}.
 The quadrature nodes are symmetric about zero, and include zero when $k$ is odd.
 The corresponding weighting function $\omega: \mathcal{Q}(1, k) \to \mathbb{R}$ chosen to satisfy Equation \@ref(eq:ghqexact) is given by
 \begin{equation}
-\omega(z) = \frac{k!}{\varphi(z) \cdot [H_{k + 1}(z)]^2}.
+\omega(z) = \frac{k!}{\varphi(z) [H_{k + 1}(z)]^2}.
 \end{equation}
 
 Multivariate GHQ rules are usually constructed using the product rule with identical univariate GHQ rules in each dimension.
@@ -288,7 +288,7 @@ Indeed, when $k = 1$ then AGHQ corresponds to the Laplace approximation.
 To see this, we have $H_1(z)$ with univariate zero $z = 0$ such that the adapted node is given by the mode $\boldsymbol{\mathbf{\phi}}(\mathbf{z} = \mathbf{0} = 0 \times \cdots \times 0) = \hat{\boldsymbol{\mathbf{\phi}}}$.
 The weighting function is given by 
 \begin{equation}
-\omega(0)^d = \left( \frac{1!}{\varphi(0) \cdot H_{2}(0)^2} \right)^d = \left( \frac{1}{\varphi(0)} \right)^d = \left(2 \pi\right)^{d / 2}.
+\omega(0)^d = \left( \frac{1!}{\varphi(0) H_{2}(0)^2} \right)^d = \left( \frac{1}{\varphi(0)} \right)^d = \left(2 \pi\right)^{d / 2}.
 \end{equation}
 The AGHQ estimate of the normalising constant for $k = 1$ is then given by
 \begin{equation}
@@ -700,7 +700,7 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
 This section begins (Section \@ref(naomi-model)) by providing a description of a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
-However, these time points play a limited role in inference as they are not associated to data.
+However, these time points play a limited role in inference as they are correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
 Only the most relevant features of the simplified model are included here, with a more complete description is left to Appendix \@ref(naomi-math).
 After outlining the model, Section \@ref(naomi-elgm) explains why it is not an ELGM [@stringer2022fast] rather than a LGM [@rue2009approximate].
@@ -769,7 +769,7 @@ Survey weights are supplied by the survey provider.
 Their aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
 The weighted aggregate number of outcomes are obtained by multiplying Equation \@ref(eq:survey-obs) by the Kish effective sample size [ESS; @kish1965survey]
 \begin{equation}
-y^{\theta}_{I} = m^{\theta}_{I} \cdot \hat \theta_{I}, (\#eq:weighted-aggregate)
+y^{\theta}_{I} = m^{\theta}_{I} \hat \theta_{I}, (\#eq:weighted-aggregate)
 \end{equation}
 where
 \begin{equation}
@@ -794,7 +794,7 @@ where the denominators of $\alpha_{I}$ and $\kappa_{I}$ reflect their restrictio
 
 #### ANC testing component {#anc}
 
-HIV data are routinely collected from ANC clinics, to help prevent mother-to-child transmission.
+HIV testing data are routinely collected from ANC clinics, to help prevent mother-to-child transmission.
 
 HIV prevalence $\rho^\text{ANC}_i \in [0, 1]$ and ART coverage $\alpha^\text{ANC}_i \in [0, 1]$ among pregnant women are modelled as offset from the general population indicators.
 (For $s(i)$ male, these quantities are not defined.)
@@ -845,34 +845,44 @@ As a result, it is assumed that travel to each neighbouring district, for all ag
 
 Let the number of people receiving ART in strata $i$ be $y^{N^\text{ART}}_i$ with corresponding aggregate
 \begin{equation}
-y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i.
+y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i. (\#eq:art-aggregate)
 \end{equation}
-Let the probability of a person in strata $i$ travelling from district $x(i) = x$ (when $x(i)$ is unspecified, assume $x(i) = x$) to $x'$ to receive ART be
+Let the probability of a person in strata $i$ travelling from district $x(i) = x$ to $x'$ to receive ART be
 \begin{equation}
-\pi_{i, x(i), x'} = \rho_{i, x(i)} \cdot \alpha_{i, x(i)} \times \gamma_{x(i), x'}.
+\pi_{i, x(i) = x, x'} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x'}. (\#eq:recieve-art)
 \end{equation}
-These probabilities are the product of three probabilities:
+These probabilities are the product of three probabilities, each for a person in strata $i$:
 
-1. the probability of having HIV $\rho_{i, x(i)}$,
-2. the probability of taking ART $\alpha_{i, x(i)}$,
-3. the probability of travelling to district $x'$ to receive ART $\gamma_{x(i), x'}$.
+1. the probability of a having HIV $\rho_{i}$,
+2. the probability of taking ART $\alpha_{i}$,
+3. the probability of travelling from district $x(i) = x$ to district $x'$ to receive ART $\gamma_{x(i) = x, x'}$.
 
-Let the unobserved count of people in strata $i$ who travel to $x'$ to receive ART be $y^{N^\text{ART}}_{i, x(i), x'}$, such that
+Let the unobserved count of people in strata $i$ who travel to $x'$ to receive ART be $y^{N^\text{ART}}_{i, x(i) = x, x'}$, such that
 \begin{equation}
 y^{N^\text{ART}}_i = \sum_{x' \sim x, x' = x} y^{N^\text{ART}}_{i, x(i) = x', x}.
 \end{equation}
-Each of these unobserved counts can be considered as arising from a binomial distribution, with sample size given by the population in strata $i$ (with $x(i) = x'$)
+Each unobserved count can be considered as arising from a binomial distribution, with sample size given by the population in strata $i$, here with $x(i) = x'$ such that
 \begin{equation}
-y^{N^\text{ART}}_{i, x(i) = x', x} \sim \text{Bin}(N_{i, x(i) = x'}, \pi_{i, x(i) = x', x}) 
+y^{N^\text{ART}}_{i, x(i) = x', x} \sim \text{Bin}(N_{i, x(i) = x'}, \pi_{i, x(i) = x', x}).
 \end{equation}
 
-Each aggregate attendance observation is modelled using a Gaussian approximation to a sum of binomials, given by
+Each aggregate attendance observation (Equation \@ref(eq:art-aggregate)) is then modelled using a Gaussian approximation to a sum of binomials.
+The sum is over both the strata $i \in I$ and the number of ART clients travelling from district $x(i) = x'$ to $x$ to receive treatment.
+The Gaussian approximation is
 \begin{equation}
-y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, \sigma^\text{ART}_I).
+y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, {\sigma^\text{ART}_I}^2),
 \end{equation}
-This sum is over both strata $i \in I$ and the number of ART clients travelling from district $x'(i)$ to $x(i)$.
+where the mean is
+\begin{equation}
+\mu^\text{ART}_I = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \pi_{i, x(i) = x', x}, (\#eq:art-aggregate-mean)
+\end{equation}
+and the standard deviation is
+\begin{equation}
+\sigma^\text{ART}_I = \left( \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \pi_{i, x(i) = x', x} (1 -  \pi_{i, x(i) = x', x}) \right)^{1/2}. (\#eq:art-aggregate-sd)
+\end{equation}
+Equations \@ref(eq:art-aggregate-mean) and \@ref(eq:art-aggregate-sd) are based on a Gaussian approximation to the binomial distribution $\text{Bin}(n, p)$ with mean $np$ and variance $np(1 - p)$, together with the equations for a linear combination of Gaussian random variables.
 
-### Connection to ELGMs {#naomi-elgm}
+### Naomi as an ELGM {#naomi-elgm}
 
 In all, Naomi is a joint model on the observations
 \begin{equation}
@@ -881,33 +891,44 @@ In all, Naomi is a joint model on the observations
 The structured additive predictor $\boldsymbol{\mathbf{\eta}}$ includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field $\mathbf{x}$.
 The latent field is controlled by hyperparameters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
 
-Like an LGM, Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters $m < N$.
-However, it has some deviations from the LGM framework, which rather make it an ELGM, and are enumerated below.
-Note that when dependence on a specific number of structured additive predictors is given, it is for that item in isolation, rather than when each item is considered together.
+Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters $m < N$.
+However, it has complexities which place it outside the class of LGMs (as defined in Section \@ref(lgm)).
+Instead, it is an ELGM (as defined in Section \@ref(elgm)).
+In an ELGM, each mean response is allowed to depend non-linearly upon more than one structured additive predictor.
+The departures of Naomi from the LGM framework are enumerated below.
+When dependence on a specific number of structured additive predictors is given, it is in isolation, rather than in conjunction.
 
-1. In the household survey component (Section \@ref(household)) HIV incidence depends on district-level adult HIV prevalence and ART coverage.
-This reflects basic HIV epidemiology: HIV incidence is proportional to unsuppressed viral load
-\begin{equation}
-\lambda \propto \rho (1 - \omega \cdot \alpha),
-\end{equation}
-with $\omega = 0.7$ a fixed constant.
-As a result, each $\log(\lambda_i)$ depends on 28 structured additive predictors where 28 arises by the product of 2 sexes (male and female), 7 age groups ($\{\text{15-19}, \ldots, \text{45-49}\}$), and 2 indicators, HIV prevalence and ART coverage.
-Though it is possible to use the `copy` feature in `R-INLA` to include one term in multiple structured additive predictors, this would not be sufficient to allow for this type of model structure.
-2. In the household survey component (Section \@ref(household)), HIV incidence and HIV prevalence are linked to the proportion recently infected via Equation \@ref(eq:kappa).
-3. In the ANC testing component (Section \@ref(anc)), HIV prevalence and ART coverage depend upon the respective indicators in the household survey component.
-Though $\text{logit}(\rho_i)$ and $\text{logit}(\alpha_i)$ are Gaussian, this nonetheless introduces dependence of each mean response on two structured additive predictors.
-4. Throughout the model components, processes are modelled at the finest district-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$. As such, all observations are related to $|I|$ structured additive predictors.
-5. Individuals taking ART, or who have been recently infected, must be HIV positive.
-6. The ART attendance component uses a multinomial model with softmax link function which takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district.
-7. Multiple link functions are used throughout the model, such that there is no one inverse link function $g$.
-It is possible to specify models with several likelihoods in `R-INLA` by setting `family` to be vector valued.
+1. Throughout Naomi, processes are modelled at the finest district-age-sex division $i$, but likelihoods are defined for observations aggregated over sets of indices $i \in I$.
+As such, these aggregate observations are related to $|I|$ structured additive predictors, rather than just one.
+
+2. Multiple link functions are used in Naomi, such that there is no one inverse link function $g$ as specified in definition of an LGM.
+This is a relatively minor point, and it is possible to specify models with several likelihoods in `R-INLA` by setting `family` to be vector valued [Section 6.4; @gomez2020bayesian].
+
+3. In the household survey component (Section \@ref(household)) HIV incidence depends on district-level adult HIV prevalence and ART coverage (Equation \@ref(eq:inc))).
+Each $\log(\lambda_i)$ therefore depends on 28 structured additive predictors, where 28 arises by the product of 2 sexes (male and female), 7 age groups ($\{\text{15-19}, \ldots, \text{45-49}\}$), and 2 indicators, HIV prevalence and ART coverage.
+This reflects basic HIV epidemiology: incidence of sexually transmitted HIV is proportional to unsuppressed viral load among an individual's potential sexual partners.
+The district-level adult averages are used as a proxy.
+
+4. In the household survey component (Section \@ref(household)), the proportion recently infected $\kappa_i$ is given by a non-linear function (Equation \@ref(eq:kappa)) of HIV incidence $\lambda_i$, HIV prevalence $\rho_i$, mean duration of recent infection $\Omega_T$ and proportion of long-term HIV infections misclassified as recent $\beta_T$.
+Though arguably a contorting of the ELGM framework, by considering $\Omega_T$ and $\beta_T$ as (Gaussian) linear predictors, then each $\kappa_i$ depends on four structured additive predictors.
+
+5. In the ANC testing component (Section \@ref(anc)), HIV prevalence and ART coverage among pregnant women are modelled as offset from their respective indicators in the general population.
+Thus each mean response depends on two structured additive predictors.
+The `copy` feature in `R-INLA` [Section 6.5; @gomez2020bayesian] allows for this type of model structure.
+
+6. In the ANC testing component (Section \@ref(anc)), nested binomial likelihoods are used. 
+
+7. In the ART attendence component (Section \@ref(art)) a multinomial model with softmax link function is used.
+The multinomial likelihood takes as input $|\{x': x' \sim x\}| + 1$ structured additive predictors, one for each neighbouring district plus one for remaining in the home district.
+
+8. In the ART attendence component (Section \@ref(art)) the probability of an individual receiving ART in a given district is the product of three probabilities.
 
 For the most part, this exercise is academic rather than practical.
-Naomi being an ELGM is not the reason that it can't be fit using `R-INLA`, and there is no fundamental reason why the `R-INLA` can not be used to fit ELGMs.
-Indeed, some ELGMs may be specified using the advanced features of `R-INLA` [Chapter 6; @gomez2020bayesian], as described above.
-Rather, the fundamental reason why Naomi cannot be fit using `R-INLA` is that it is not possible to specify such a complex model using a formula interface.
-This fact is not unique to `R-INLA`: any statistical software which does not grant full control over the model's specification will have users requesting additional features to satisfy their use-cases.
-This strongly motivates the value of a more univeral INLA implementation (Section \@ref(universal)).
+Though intended for use with LGMs, the advanced features [Chapter 6; @gomez2020bayesian] of `R-INLA` allow for fitting of some ELGMs, as described above.
+The fundamental reason why Naomi cannot be fit using `R-INLA` is that it is not possible to specify such a complex model using a formula interface.
+This fact is not unique to `R-INLA`.
+Any statistical software designed using a formula interface will have users which request additional features.
+The practical impossibility of meeting all feature requests motivates a more universal INLA implementation (Section \@ref(universal)) for advanced users.
 
 ## AGHQ in moderate dimensions {#pca-aghq}
 
@@ -959,7 +980,7 @@ where $\hat{\mathbf{E}}_{\texttt{LA}, s}$ is an $m \times s$ matrix containing t
 \omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^d \omega_1(z_j).
 \end{equation}
 
-(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo).
+(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo).
 
 ```{r pca-demo, fig.cap="(ref:pca-demo)"}
 knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
