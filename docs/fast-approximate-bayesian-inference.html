@@ -419,9 +419,9 @@ div.csl-indent {
 The more concise <span class="math inline">\(i\)</span> indexing used in Section <a href="naomi-aghq.html#naomi">6.3</a> is replaced by more complete <span class="math inline">\(x, s, a\)</span> indexing.
 There are four sections:</p>
 <ol style="list-style-type: decimal">
-<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-process">C.2.1</a> describes the process specification, giving the terms in each structured additive predictor, along with their distributions.</li>
-<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-likelihood">C.2.2</a></li>
-<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-identifiability">C.2.3</a></li>
+<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-process">C.2.1</a> gives the process specifications, giving the terms in each structured additive predictor, along with their distributions.</li>
+<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-likelihood">C.2.2</a> gives additional details about the likelihood terms not provided in Section <a href="naomi-aghq.html#naomi">6.3</a>.</li>
+<li>Section <a href="fast-approximate-bayesian-inference.html#naomi-identifiability">C.2.3</a> gives</li>
 <li>Section <a href="fast-approximate-bayesian-inference.html#naomi-implementation">C.2.4</a></li>
 </ol>
 <div id="naomi-process" class="section level3 hasAnchor" number="10.2.1">
@@ -711,8 +711,7 @@ and the total attending ART facilities in district <span class="math inline">\(x
 </div>
 <div id="naomi-likelihood" class="section level3 hasAnchor" number="10.2.2">
 <h3><span class="header-section-number">C.2.2</span> Additional likelihood specification<a href="fast-approximate-bayesian-inference.html#naomi-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Section <a href="naomi-aghq.html#naomi">6.3</a> provides a complete description of the likelihood specification of the model.
-Any additional useful details are provided here.</p>
+<p>Though Section <a href="naomi-aghq.html#naomi">6.3</a> provides a complete description of Naomi’s likelihood specification, additional useful details are provided here.</p>
 <div id="household-survey-data-1" class="section level4 hasAnchor" number="10.2.2.1">
 <h4><span class="header-section-number">C.2.2.1</span> Household survey data<a href="fast-approximate-bayesian-inference.html#household-survey-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The generalised binomial <span class="math inline">\(y \sim \text{xBin}(m, p)\)</span> is defined for <span class="math inline">\(y, m \in \mathbb{R}^+\)</span> with <span class="math inline">\(y \leq m\)</span> such that
@@ -723,11 +722,11 @@ where the gamma function <span class="math inline">\(\Gamma\)</span> is such tha
 </div>
 <div id="anc-testing-data" class="section level4 hasAnchor" number="10.2.2.2">
 <h4><span class="header-section-number">C.2.2.2</span> ANC testing data<a href="fast-approximate-bayesian-inference.html#anc-testing-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Additional details here.</p>
+<p>Put any additional details here.</p>
 </div>
 <div id="art-attendence-data" class="section level4 hasAnchor" number="10.2.2.3">
 <h4><span class="header-section-number">C.2.2.3</span> ART attendence data<a href="fast-approximate-bayesian-inference.html#art-attendence-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Additional details here.</p>
+<p>Put any additional details here.</p>
 </div>
 </div>
 <div id="naomi-identifiability" class="section level3 hasAnchor" number="10.2.3">
@@ -736,13 +735,16 @@ where the gamma function <span class="math inline">\(\Gamma\)</span> is such tha
 In particular:</p>
 <ol style="list-style-type: decimal">
 <li>If survey data on HIV prevalence or ART coverage by age and sex are not available then <span class="math inline">\(\mathbf{u}_a^\theta = 0\)</span> and <span class="math inline">\(\mathbf{u}_{a, s = \text{M}}^\theta = 0\)</span>.
-In this case, the average age-sex pattern from the Spectrum offset <span class="math inline">\(\boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\theta\)</span> is used.
-For the Malawi example considered in the main text, HIV prevalence and ART coverage data are not available for those aged 65+.
+In this case, the average age-sex pattern from the Spectrum is used.
+For the Malawi case-study (Section <a href="naomi-aghq.html#malawi">6.5</a>), HIV prevalence and ART coverage data are not available for those aged 65+.
 As a result, there are <span class="math inline">\(|\{\text{0-4}, \ldots, \text{50-54}\}| = 13\)</span> age groups included for the age random effects.</li>
 <li>If no ART data, either survey or ART programme, are available but data on ART coverage among ANC clients are available, the level of ART coverage is not identifiable, but spatial variation is identifiable.
-In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that <span class="math inline">\(\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha\)</span>.</li>
+In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that
+<span class="math display">\[\begin{equation}
+\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha.
+\end{equation}\]</span></li>
 <li>If survey data on recent HIV infection are not included in the model, then <span class="math inline">\(\beta_0^\lambda = \beta_S^{\lambda, s = \text{M}} = 0\)</span> and <span class="math inline">\(\mathbf{u}_x^\lambda = \mathbf{0}\)</span>.
-The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum in the same years and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district estimates of HIV prevalence and ART coverage.</li>
+The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum, and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district-level estimates of HIV prevalence and ART coverage.</li>
 </ol>
 </div>
 <div id="naomi-implementation" class="section level3 hasAnchor" number="10.2.4">

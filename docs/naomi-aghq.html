@@ -1066,7 +1066,7 @@ where the denominators of <span class="math inline">\(\alpha_{I}\)</span> and <s
 </div>
 <div id="anc" class="section level4 hasAnchor" number="6.3.1.3">
 <h4><span class="header-section-number">6.3.1.3</span> ANC testing component<a href="naomi-aghq.html#anc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>HIV testing data are routinely collected from ANC clinics, to help prevent mother-to-child transmission.</p>
+<p>Women attending ANC clinics are routined tested for HIV, to help prevent mother-to-child transmission.</p>
 <p>HIV prevalence <span class="math inline">\(\rho^\text{ANC}_i \in [0, 1]\)</span> and ART coverage <span class="math inline">\(\alpha^\text{ANC}_i \in [0, 1]\)</span> among pregnant women are modelled as offset from the general population indicators.
 (For <span class="math inline">\(s(i)\)</span> male, these quantities are not defined.)
 Again not detailing the linear predictors, the model is of the form
@@ -1143,24 +1143,25 @@ where the mean is
 <span class="math display" id="eq:art-aggregate-mean">\[\begin{equation}
 \mu^\text{ART}_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \pi_{i, x(i) = x&#39;, x}, \tag{6.25}
 \end{equation}\]</span>
-and the standard deviation is
-<span class="math display" id="eq:art-aggregate-sd">\[\begin{equation}
-\sigma^\text{ART}_I = \left( \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \pi_{i, x(i) = x&#39;, x} (1 -  \pi_{i, x(i) = x&#39;, x}) \right)^{1/2}. \tag{6.26}
+and the variance is
+<span class="math display" id="eq:art-aggregate-var">\[\begin{equation}
+{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \pi_{i, x(i) = x&#39;, x} (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.26}
 \end{equation}\]</span>
-Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.25)</a> and <a href="naomi-aghq.html#eq:art-aggregate-sd">(6.26)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
+Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.25)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.26)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
 </div>
 </div>
 <div id="naomi-elgm" class="section level3 hasAnchor" number="6.3.2">
 <h3><span class="header-section-number">6.3.2</span> Naomi as an ELGM<a href="naomi-aghq.html#naomi-elgm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In all, Naomi is a joint model on the observations
 <span class="math display">\[\begin{equation}
-\mathbf{y} = (y^{\theta}_I) \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, I \in \mathcal{I}.
+\mathbf{y} = (y^{\theta}_I), \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, \quad I \in \mathcal{I}.
 \end{equation}\]</span>
-The structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span> includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field <span class="math inline">\(\mathbf{x}\)</span>.
-The latent field is controlled by hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span>] proportion parameters.</p>
+The observations are modelled using the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>, which includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field <span class="math inline">\(\mathbf{x}\)</span>.
+The latent field is controlled by hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span>] proportion parameters.
+These features are described in more detail in Appendix @</p>
 <p>Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters <span class="math inline">\(m &lt; N\)</span>.
-However, it has complexities which place it outside the class of LGMs (as defined in Section <a href="bayes-st.html#lgm">3.3.5</a>).
-Instead, it is an ELGM (as defined in Section <a href="bayes-st.html#elgm">3.3.6</a>).
+However, it has complexities which place it outside the class of latent Gaussian models (LGMs, as defined in Section <a href="bayes-st.html#lgm">3.3.5</a>).
+Instead, it is an extended latent Gaussian models (ELGMs, as defined in Section <a href="bayes-st.html#elgm">3.3.6</a>).
 In an ELGM, each mean response is allowed to depend non-linearly upon more than one structured additive predictor.
 The departures of Naomi from the LGM framework are enumerated below.
 When dependence on a specific number of structured additive predictors is given, it is in isolation, rather than in conjunction.</p>
@@ -1169,36 +1170,38 @@ When dependence on a specific number of structured additive predictors is given,
 As such, these aggregate observations are related to <span class="math inline">\(|I|\)</span> structured additive predictors, rather than just one.</p></li>
 <li><p>Multiple link functions are used in Naomi, such that there is no one inverse link function <span class="math inline">\(g\)</span> as specified in definition of an LGM.
 This is a relatively minor point, and it is possible to specify models with several likelihoods in <code>R-INLA</code> by setting <code>family</code> to be vector valued [Section 6.4; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>].</p></li>
-<li><p>In the household survey component (Section <a href="naomi-aghq.html#household">6.3.1.2</a>) HIV incidence depends on district-level adult HIV prevalence and ART coverage (Equation <a href="fast-approximate-bayesian-inference.html#eq:inc">(C.2)</a>)).
+<li><p>In Section <a href="naomi-aghq.html#household">6.3.1.2</a>, HIV incidence depends on district-level adult HIV prevalence and ART coverage (Equation <a href="fast-approximate-bayesian-inference.html#eq:inc">(C.2)</a>)).
 Each <span class="math inline">\(\log(\lambda_i)\)</span> therefore depends on 28 structured additive predictors, where 28 arises by the product of 2 sexes (male and female), 7 age groups (<span class="math inline">\(\{\text{15-19}, \ldots, \text{45-49}\}\)</span>), and 2 indicators, HIV prevalence and ART coverage.
 This reflects basic HIV epidemiology: incidence of sexually transmitted HIV is proportional to unsuppressed viral load among an individual’s potential sexual partners.
 The district-level adult averages are used as a proxy.</p></li>
-<li><p>In the household survey component (Section <a href="naomi-aghq.html#household">6.3.1.2</a>), the proportion recently infected <span class="math inline">\(\kappa_i\)</span> is given by a non-linear function (Equation <a href="naomi-aghq.html#eq:kappa">(6.18)</a>) of HIV incidence <span class="math inline">\(\lambda_i\)</span>, HIV prevalence <span class="math inline">\(\rho_i\)</span>, mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span>.
+<li><p>In Section <a href="naomi-aghq.html#household">6.3.1.2</a>, the proportion recently infected <span class="math inline">\(\kappa_i\)</span> is given by a non-linear function (Equation <a href="naomi-aghq.html#eq:kappa">(6.18)</a>) of HIV incidence <span class="math inline">\(\lambda_i\)</span>, HIV prevalence <span class="math inline">\(\rho_i\)</span>, mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span>.
 Though arguably a contorting of the ELGM framework, by considering <span class="math inline">\(\Omega_T\)</span> and <span class="math inline">\(\beta_T\)</span> as (Gaussian) linear predictors, then each <span class="math inline">\(\kappa_i\)</span> depends on four structured additive predictors.</p></li>
-<li><p>In the ANC testing component (Section <a href="naomi-aghq.html#anc">6.3.1.3</a>), HIV prevalence and ART coverage among pregnant women are modelled as offset from their respective indicators in the general population.
+<li><p>In Section <a href="naomi-aghq.html#anc">6.3.1.3</a>, HIV prevalence and ART coverage among pregnant women are modelled as offset from their respective indicators in the general population.
 Thus each mean response depends on two structured additive predictors.
 The <code>copy</code> feature in <code>R-INLA</code> [Section 6.5; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>] allows for this type of model structure.</p></li>
-<li><p>In the ANC testing component (Section <a href="naomi-aghq.html#anc">6.3.1.3</a>), nested binomial likelihoods are used.</p></li>
-<li><p>In the ART attendence component (Section <a href="naomi-aghq.html#art">6.3.1.4</a>) a multinomial model with softmax link function is used.
+<li><p>In Section <a href="naomi-aghq.html#anc">6.3.1.3</a>, nested binomial likelihoods are used.</p></li>
+<li><p>In Section <a href="naomi-aghq.html#art">6.3.1.4</a> a multinomial model with softmax link function is used.
 The multinomial likelihood takes as input <span class="math inline">\(|\{x&#39;: x&#39; \sim x\}| + 1\)</span> structured additive predictors, one for each neighbouring district plus one for remaining in the home district.</p></li>
-<li><p>In the ART attendence component (Section <a href="naomi-aghq.html#art">6.3.1.4</a>) the probability of an individual receiving ART in a given district is the product of three probabilities.</p></li>
+<li><p>In Section <a href="naomi-aghq.html#art">6.3.1.4</a> the probability of an individual receiving ART in a given district is the product of three probabilities.</p></li>
 </ol>
-<p>For the most part, this exercise is academic rather than practical.
-Though intended for use with LGMs, the advanced features [Chapter 6; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>] of <code>R-INLA</code> allow for fitting of some ELGMs, as described above.
-The fundamental reason why Naomi cannot be fit using <code>R-INLA</code> is that it is not possible to specify such a complex model using a formula interface.
-This fact is not unique to <code>R-INLA</code>.
-Any statistical software designed using a formula interface will have users which request additional features.
+<p>Though intended for use with LGMs, the advanced features of <code>R-INLA</code> [Chapter 6; <span class="citation">Gómez-Rubio (<a href="#ref-gomez2020bayesian">2020</a>)</span>] allow for fitting of some ELGMs as described above.
+In some sense then, the above exercise is mostly academic rather than practical.
+The crux is that Naomi cannot be fit using <code>R-INLA</code> because it is not possible to specify such a complex model using a formula interface.
+The limitations of modelling with formula interfaces are not unique to <code>R-INLA</code>.
+Indeed, any such statistical software will see requests for users for additional features.
 The practical impossibility of meeting all feature requests motivates a more universal INLA implementation (Section <a href="naomi-aghq.html#universal">6.2</a>) for advanced users.</p>
 </div>
 </div>
 <div id="pca-aghq" class="section level2 hasAnchor" number="6.4">
 <h2><span class="header-section-number">6.4</span> AGHQ in moderate dimensions<a href="naomi-aghq.html#pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Inference for the Naomi model has previously been conducted using a marginal Laplace approximation, and optimisation over the hyperparameters.
-This approach is illustrated for the epilepsy example in Section <a href="#gauss-eb-tmb"><strong>??</strong></a>.
+<p>Inference for the Naomi model has previously been conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using <code>TMB</code>.
+This approach is illustrated for the epilepsy example in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>.
 It would be more desirable to integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section <a href="naomi-aghq.html#inla">6.1.3</a>.</p>
-<p>Section <a href="naomi-aghq.html#universal">6.2</a> attends to the first part of the challenge, by developing methods which are compatible with the Naomi model as implemented in <code>TMB</code>.
-However, the Naomi model has <span class="math inline">\(m = 24\)</span> hyperparameters, making use of many quadrature rules infeasible.
-For example, naive use of AGHQ with the product rule requires evaluation of <span class="math inline">\(|\mathcal{Q}(m, k)| = k^m\)</span> quadrature points.
+<p>Section <a href="naomi-aghq.html#universal">6.2</a> attends to this challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in <code>TMB</code>.
+However, the Naomi model has <span class="math inline">\(m = 24\)</span> hyperparameters.
+Although <span class="math inline">\(m = 24\)</span> cannot be described as high-dimensional, it is certainly more than the <span class="math inline">\(m &lt; 4\)</span> or so (low dimensional) parameters which are typical for use of INLA.
+Hence, this situation is referred to here as being moderate-dimensional.
+Naive use of AGHQ with the product rule requires evaluation of <span class="math inline">\(|\mathcal{Q}(m, k)| = k^m\)</span> quadrature points.
 This would be intractable for <span class="math inline">\(m = 24\)</span> and any <span class="math inline">\(k &gt; 1\)</span>.
 As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.</p>
 <p>This section focuses on the development of an AGHQ rule for moderate dimension, for use within an inference procedure for the Naomi model.
@@ -1224,7 +1227,7 @@ The corresponding weighting function is given by
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
-Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.6</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1237,9 +1240,9 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 \end{equation}\]</span></p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
-<img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3." width="95%" />
+<img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.6: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>.
+Figure 6.6: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>

@@ -17,9 +17,9 @@ This section describes the simplified version of the Naomi model [@eaton2021naom
 The more concise $i$ indexing used in Section \@ref(naomi) is replaced by more complete $x, s, a$ indexing.
 There are four sections:
 
-1. Section \@ref(naomi-process) describes the process specification, giving the terms in each structured additive predictor, along with their distributions.
-2. Section \@ref(naomi-likelihood)
-3. Section \@ref(naomi-identifiability)
+1. Section \@ref(naomi-process) gives the process specifications, giving the terms in each structured additive predictor, along with their distributions.
+2. Section \@ref(naomi-likelihood) gives additional details about the likelihood terms not provided in Section \@ref(naomi).
+3. Section \@ref(naomi-identifiability) gives 
 4. Section \@ref(naomi-implementation)
 
 ### Process specification {#naomi-process}
@@ -164,8 +164,7 @@ and the total attending ART facilities in district $x'$ are
 
 ### Additional likelihood specification {#naomi-likelihood}
 
-Section \@ref(naomi) provides a complete description of the likelihood specification of the model.
-Any additional useful details are provided here.
+Though Section \@ref(naomi) provides a complete description of Naomi's likelihood specification, additional useful details are provided here.
 
 #### Household survey data
 
@@ -177,11 +176,11 @@ where the gamma function $\Gamma$ is such that $\forall n \in \mathbb{N}$, $\Gam
 
 #### ANC testing data
 
-Additional details here.
+Put any additional details here.
 
 #### ART attendence data
 
-Additional details here.
+Put any additional details here.
 
 ### Identifiability constraints {#naomi-identifiability}
 
@@ -189,13 +188,16 @@ If data are missing, some parameters are fixed to default values to help with id
 In particular:
 
 1. If survey data on HIV prevalence or ART coverage by age and sex are not available then $\mathbf{u}_a^\theta = 0$ and $\mathbf{u}_{a, s = \text{M}}^\theta = 0$.
-In this case, the average age-sex pattern from the Spectrum offset $\boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\theta$ is used.
-For the Malawi example considered in the main text, HIV prevalence and ART coverage data are not available for those aged 65+.
+In this case, the average age-sex pattern from the Spectrum is used.
+For the Malawi case-study (Section \@ref(malawi)), HIV prevalence and ART coverage data are not available for those aged 65+.
 As a result, there are $|\{\text{0-4}, \ldots, \text{50-54}\}| = 13$ age groups included for the age random effects.
 2. If no ART data, either survey or ART programme, are available but data on ART coverage among ANC clients are available, the level of ART coverage is not identifiable, but spatial variation is identifiable.
-In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that $\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha$.
+In this instance, overall ART coverage is determined by the Spectrum offset, and only area random effects are estimated such that
+\begin{equation}
+\text{logit} \left(\alpha_{x, s, a} \right) = \mathbf{u}_x^\alpha + \boldsymbol{\mathbf{\eta}}_{R_x, s, a}^\alpha.
+\end{equation}
 3. If survey data on recent HIV infection are not included in the model, then $\beta_0^\lambda = \beta_S^{\lambda, s = \text{M}} = 0$ and $\mathbf{u}_x^\lambda = \mathbf{0}$.
-The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum in the same years and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district estimates of HIV prevalence and ART coverage.
+The sex ratio for HIV incidence is determined by the sex incidence rate ratio from Spectrum, and the incidence rate in all districts is modelled assuming the same average HIV transmission rate for untreated adults, but varies according to district-level estimates of HIV prevalence and ART coverage.
 
 ### Implementation {#naomi-implementation}
 
