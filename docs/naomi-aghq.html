@@ -976,15 +976,15 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 <p>The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
 This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by providing a description of a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
-However, these time points play a limited role in inference as they are correspond to a small proportion of the total data.
+However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
-Only the most relevant features of the simplified model are included here, with a more complete description is left to Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.
-After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is not an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span> rather than a LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>.</p>
+Only the most relevant features of the simplified model are included here, with a more exhaustive description left to Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.
+After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is not an extended latent Gaussian model [ELGM; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>] rather than a latent Gaussian model [LGM; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>].</p>
 <div id="naomi-model" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-It may be described as having three components, corresponding to the three data sources used.
-These model components are:</p>
+<p>Naomi synthesises data from three different sources to estimate HIV indicators at a district-level, by age and sex.
+It may be described as having three components, corresponding to these three data sources.
+The model components are:</p>
 <ul>
 <li>the household survey component (Section <a href="naomi-aghq.html#household">6.3.1.2</a>);</li>
 <li>the antenatal care (ANC) clinic testing component (Section <a href="naomi-aghq.html#art">6.3.1.4</a>);</li>
@@ -1160,8 +1160,8 @@ The observations are modelled using the structured additive predictor <span clas
 The latent field is controlled by hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span>] proportion parameters.
 These features are described in more detail in Appendix @</p>
 <p>Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters <span class="math inline">\(m &lt; N\)</span>.
-However, it has complexities which place it outside the class of latent Gaussian models (LGMs, as defined in Section <a href="bayes-st.html#lgm">3.3.5</a>).
-Instead, it is an extended latent Gaussian models (ELGMs, as defined in Section <a href="bayes-st.html#elgm">3.3.6</a>).
+However, it has complexities which place it outside the class of LGMs, as defined in Section <a href="bayes-st.html#lgm">3.3.5</a>.
+Instead, it is an ELGM, as defined in Section <a href="bayes-st.html#elgm">3.3.6</a>.
 In an ELGM, each mean response is allowed to depend non-linearly upon more than one structured additive predictor.
 The departures of Naomi from the LGM framework are enumerated below.
 When dependence on a specific number of structured additive predictors is given, it is in isolation, rather than in conjunction.</p>

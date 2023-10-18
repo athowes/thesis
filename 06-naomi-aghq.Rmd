@@ -700,16 +700,16 @@ Demonstrate Laplace marginals making a difference to accuracy as compared with G
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
 This section begins (Section \@ref(naomi-model)) by providing a description of a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
-However, these time points play a limited role in inference as they are correspond to a small proportion of the total data.
+However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
-Only the most relevant features of the simplified model are included here, with a more complete description is left to Appendix \@ref(naomi-math).
-After outlining the model, Section \@ref(naomi-elgm) explains why it is not an ELGM [@stringer2022fast] rather than a LGM [@rue2009approximate].
+Only the most relevant features of the simplified model are included here, with a more exhaustive description left to Appendix \@ref(naomi-math).
+After outlining the model, Section \@ref(naomi-elgm) explains why it is not an extended latent Gaussian model [ELGM; @stringer2022fast] rather than a latent Gaussian model [LGM; @rue2009approximate].
 
 ### Model structure {#naomi-model}
 
-Naomi synthesises data from multiple sources to estimate HIV indicators at a district-level, by age and sex.
-It may be described as having three components, corresponding to the three data sources used.
-These model components are:
+Naomi synthesises data from three different sources to estimate HIV indicators at a district-level, by age and sex.
+It may be described as having three components, corresponding to these three data sources.
+The model components are:
 
 * the household survey component (Section \@ref(household));
 * the antenatal care (ANC) clinic testing component (Section \@ref(art));
@@ -893,8 +893,8 @@ The latent field is controlled by hyperparameters $\boldsymbol{\mathbf{\theta}}$
 These features are described in more detail in Appendix \@ 
 
 Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters $m < N$.
-However, it has complexities which place it outside the class of latent Gaussian models (LGMs, as defined in Section \@ref(lgm)).
-Instead, it is an extended latent Gaussian models (ELGMs, as defined in Section \@ref(elgm)).
+However, it has complexities which place it outside the class of LGMs, as defined in Section \@ref(lgm).
+Instead, it is an ELGM, as defined in Section \@ref(elgm).
 In an ELGM, each mean response is allowed to depend non-linearly upon more than one structured additive predictor.
 The departures of Naomi from the LGM framework are enumerated below.
 When dependence on a specific number of structured additive predictors is given, it is in isolation, rather than in conjunction.
