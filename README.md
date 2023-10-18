@@ -5,7 +5,7 @@
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 167/~200 pages, and many/~tending to zero mistakes. The number 200 is
+> 168/~200 pages, and many/~tending to zero mistakes. The number 200 is
 > also mostly arbitraty.
 
 PhD in [Modern Statistics and Statistical Machine

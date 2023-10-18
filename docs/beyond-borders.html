@@ -458,7 +458,7 @@ To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håva
 <p>The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
 Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
 As such, I have a number of concerns about the model’s applicability to this broader setting.
-This discussion is closely linked to the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Wakefield and Lyons 2010</a>)</span>.</p>
+This discussion is closely linked to the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Jonathan Wakefield and Lyons 2010</a>)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup1"></span>
 <embed src="resources/beyond-borders/temp/depends/maup1.pdf" title="Figure caption." width="95%" type="application/pdf" />
@@ -531,7 +531,7 @@ This results in the centroid kernel
 <span class="math display">\[\begin{equation}
     K(A_i, A_j) = k(c_i, c_j).
 \end{equation}\]</span>
-The centroid kernel has been used in environmental epidemiology <span class="citation">(<a href="#ref-wakefield1999spatial"><strong>wakefield1999spatial?</strong></a>)</span> and to model the reproduction number of COVID-19 <span class="citation">(<a href="#ref-teh2021efficient"><strong>teh2021efficient?</strong></a>)</span>.
+The centroid kernel has been used in environmental epidemiology <span class="citation">(<a href="#ref-wakefield1999spatial">J. Wakefield and Morris 1999</a>)</span> and to model the reproduction number of COVID-19 <span class="citation">(<a href="#ref-teh2021efficient">Teh et al. 2021</a>)</span>.
 A model comparison study [Section 3; <span class="citation">Best, Richardson, and Thomson (<a href="#ref-best2005comparison">2005</a>)</span>] simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
 That said, it is unsuprising that a stationary covariance would struggle to recover non-stationary structure.</p>
 </div>
@@ -542,7 +542,7 @@ This results in the integrated kernel
 <span class="math display">\[\begin{equation}
 K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s&#39;) \text{d} s \text{d} s&#39;. \label{eq:ik1}
 \end{equation}\]</span>
-This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel <span class="math inline">\(k\)</span> over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-law2018variational"><strong>law2018variational?</strong></a>; <a href="#ref-tanaka2019spatially"><strong>tanaka2019spatially?</strong></a>; <a href="#ref-yousefi2019multi"><strong>yousefi2019multi?</strong></a>; <a href="#ref-hamelijnck2019multi"><strong>hamelijnck2019multi?</strong></a>)</span>.
+This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel <span class="math inline">\(k\)</span> over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-law2018variational">Law et al. 2018</a>; <a href="#ref-tanaka2019spatially">Tanaka et al. 2019</a>; <a href="#ref-yousefi2019multi">Yousefi, Smith, and Alvarez 2019</a>; <a href="#ref-hamelijnck2019multi">Hamelijnck et al. 2019</a>)</span>.
 Unlike for the centroid kernel where <span class="math inline">\(K_{ii} = 1\)</span> for all <span class="math inline">\(i\)</span>, the marginal variance of the <span class="math inline">\(i\)</span>th spatial random effect <span class="math inline">\(K_{ii} = K(A_i, A_i)\)</span> varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.</p>
 <div id="accounting-for-heterogeneity" class="section level4 hasAnchor" number="4.3.2.1">
 <h4><span class="header-section-number">4.3.2.1</span> Accounting for heterogeneity<a href="beyond-borders.html#accounting-for-heterogeneity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -566,7 +566,7 @@ Equivalently, samples drawn from <span class="math inline">\(W_i\)</span> may be
 Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
 These approaches require <span class="math inline">\(\mathcal{O}(\sum_{i = 1}^n \sum_{j = 1}^n L_i L_j)\)</span> evaluations of the kernel <span class="math inline">\(k\)</span> to compute the <span class="math inline">\(n \times n\)</span> Gram matrix <span class="math inline">\(K\)</span>.
 This imposes a significant computational cost if the Gram matrix is often recomputed during inference, as is the case in MCMC when any of the kernel hyperparameters are learnt, placing a limit on the number of samples or nodes it is feasible to use.
-<span class="citation">(<a href="#ref-kelsall2002modeling"><strong>kelsall2002modeling?</strong></a>)</span> make inference more feasible by using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.</p>
+<span class="citation">Kelsall and Wakefield (<a href="#ref-kelsall2002modeling">2002</a>)</span> make inference more feasible by using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.</p>
 </div>
 <div id="mismatch-to-data-generating-process" class="section level4 hasAnchor" number="4.3.2.3">
 <h4><span class="header-section-number">4.3.2.3</span> Mismatch to data generating process<a href="beyond-borders.html#mismatch-to-data-generating-process" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -599,7 +599,7 @@ corresponding to an areal integrated kernel with a logarithmic link function and
 <div id="disaggregation-regression" class="section level4 hasAnchor" number="4.3.2.5">
 <h4><span class="header-section-number">4.3.2.5</span> Disaggregation regression<a href="beyond-borders.html#disaggregation-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as primarily a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial"><strong>utazi2019spatial?</strong></a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>.
+Rather than focusing on the aggregate nature of areal observations as primarily a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>.
 <!-- Accurate point-level estimates are close to being a necessary intermediate goal towards obtaining accurate area-level estimates. -->
 <!-- Disaggregation is challenging without auxiliary information. -->
 <!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. --></p>
@@ -640,11 +640,20 @@ Follestad, Turid, and Håvard Rue. 2003. <span>“Modelling Spatial Variation in
 <div id="ref-freni2018note" class="csl-entry">
 Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue. 2018. <span>“A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 26: 25–34.
 </div>
+<div id="ref-hamelijnck2019multi" class="csl-entry">
+Hamelijnck, O, T Damoulas, K Wang, and MA Girolami. 2019. <span>“Multi-Resolution Multi-Task Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 32.
+</div>
 <div id="ref-howes2023beyond" class="csl-entry">
 Howes, Adam, Jeffrey W. Eaton, and Seth R. Flaxman. 2023+. <span>“<span class="nocase">Beyond borders: evaluating the suitability of spatial adjacency for small-area estimation</span>,”</span> 2023+.
 </div>
 <div id="ref-johnson2019spatially" class="csl-entry">
 Johnson, Olatunji, Peter Diggle, and Emanuele Giorgi. 2019. <span>“<span class="nocase">A spatially discrete approximation to log-Gaussian Cox processes for modelling aggregated disease count data</span>.”</span> <em>Statistics in Medicine</em> 38 (24): 4871–87.
+</div>
+<div id="ref-kelsall2002modeling" class="csl-entry">
+Kelsall, Julia, and Jonathan Wakefield. 2002. <span>“Modeling Spatial Variation in Disease Risk: A Geostatistical Approach.”</span> <em>Journal of the American Statistical Association</em> 97 (459): 692–701.
+</div>
+<div id="ref-law2018variational" class="csl-entry">
+Law, Ho Chung, Dino Sejdinovic, Ewan Cameron, Tim Lucas, Seth Flaxman, Katherine Battle, and Kenji Fukumizu. 2018. <span>“Variational Learning on Aggregate Outputs with Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 31.
 </div>
 <div id="ref-leroux2000estimation" class="csl-entry">
 Leroux, Brian G, Xingye Lei, and Norman Breslow. 2000. <span>“Estimation of Disease Rates in Small Areas: A New Mixed Model for Spatial Dependence.”</span> In <em>Statistical Models in Epidemiology, the Environment, and Clinical Trials</em>, 179–91. Springer.
@@ -670,8 +679,23 @@ Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørby
 <div id="ref-sorbye2014scaling" class="csl-entry">
 Sørbye, Sigrunn Holbek, and Håvard Rue. 2014. <span>“<span class="nocase">Scaling intrinsic Gaussian Markov random field priors in spatial modelling</span>.”</span> <em>Spatial Statistics</em> 8: 39–51.
 </div>
+<div id="ref-tanaka2019spatially" class="csl-entry">
+Tanaka, Yusuke, Toshiyuki Tanaka, Tomoharu Iwata, Takeshi Kurashima, Maya Okawa, Yasunori Akagi, and Hiroyuki Toda. 2019. <span>“<span class="nocase">Spatially aggregated Gaussian processes with multivariate areal outputs</span>.”</span> In <em>Advances in Neural Information Processing Systems</em>, 3005–15.
+</div>
+<div id="ref-teh2021efficient" class="csl-entry">
+Teh, Yee Whye, Avishkar Bhoopchand, Peter Diggle, Bryn Elesedy, Bobby He, Michael Hutchinson, Ulrich Paquet, Jonathan Read, Nenad Tomasev, and Sheheryar Zaidi. 2021. <span>“Efficient Bayesian Inference of Instantaneous Re-Production Numbers at Fine Spatial Scales, with an Application to Mapping and Nowcasting the Covid-19 Epidemic in British Local Authorities.”</span> <em>URL Https://Rss. Org. Uk/RSS/Media/File-Library/News/2021/WhyeBhoopchand. Pdfhttps://Localcovid. Info/2</em>.
+</div>
+<div id="ref-utazi2019spatial" class="csl-entry">
+Utazi, C Edson, Julia Thorley, VA Alegana, MJ Ferrari, Kristine Nilsen, Saki Takahashi, CJE Metcalf, Justin Lessler, and AJ Tatem. 2019. <span>“A Spatial Regression Model for the Disaggregation of Areal Unit Based Data to High-Resolution Grids with Application to Vaccination Coverage Mapping.”</span> <em>Statistical Methods in Medical Research</em> 28 (10-11): 3226–41.
+</div>
+<div id="ref-wakefield1999spatial" class="csl-entry">
+Wakefield, J, and S Morris. 1999. <span>“Spatial Dependence and Errors-in-Variables in Environmental Epidemiology.”</span> <em>Bayesian Statistics</em> 6: 657–84.
+</div>
 <div id="ref-wakefield2010aggregation" class="csl-entry">
 Wakefield, Jonathan, and Hilary Lyons. 2010. <span>“Spatial Aggregation and the Ecological Fallacy.”</span> In <em>Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods</em>, 2010:541–58. <a href="https://doi.org/10.1201/9781420072884-c30">https://doi.org/10.1201/9781420072884-c30</a>.
+</div>
+<div id="ref-yousefi2019multi" class="csl-entry">
+Yousefi, Fariba, Michael T Smith, and Mauricio Alvarez. 2019. <span>“Multi-Task Learning for Aggregated Data Using Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 32.
 </div>
 </div>
 <div class="footnotes">
