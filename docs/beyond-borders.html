@@ -221,7 +221,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.2.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.2.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.2.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.2.2</b> Best practises for the Besag model</a></li>
 <li class="chapter" data-level="4.2.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.2.3</b> The reparameterised Besag-York-Mollié model</a></li>
-<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s representation of space</a></li>
+<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-spatial-representation"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s spatial representation</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a>
 <ul>
@@ -369,10 +369,13 @@ div.csl-indent {
 <h1><span class="header-section-number">4</span> Models for spatial structure<a href="beyond-borders.html#beyond-borders" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <p>This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a genre of question often encountered during model construction.
-Namely, should the model be expanded to capture a sensible, but hypothetical, feature of the data?
-The hypothesised feature was that some areas are more related to each other than other areas, extending upon a base model which uses a binary relation.
-As well as having practical origins, given that modelling of this relationship is particularly important in HIV mapping, the inquiry also stemmed from confusion in seeing widespread use of the base model in situations which would seem to violate its assumptions.
+It was motivated by a question that often occurs during model construction.
+Should a model be expanded to capture a sensible, albeit hypothetical, feature of the data?
+The hypothesised data feature in this case pertains to the correlation structure between areas.
+A widely used base model uses a binary relationship between areas.
+One way to extend this model is to consider varying strengths of relationship between areas.
+This investigation has practical significance because modelling spatial structure is of particular importance to small-area estimation of HIV.
+It was prompted by confusion in seeing the base model be used in situations that appear to violate its assumptions.
 The results are presented in <span class="citation">Howes, Eaton, and Flaxman (<a href="#ref-howes2023beyond">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/beyond-borders"><code>https://github.com/athowes/beyond-borders</code></a>.</p>
 <div id="background-1" class="section level2 hasAnchor" number="4.1">
@@ -392,7 +395,7 @@ The Besag model is attractive as it requires minimal additional modelling choice
 As such, it has seen widespread use, including in agriculture <span class="citation">(<a href="#ref-oliver2015soil">Oliver and Gregory 2015</a>)</span>, ecology <span class="citation">(<a href="#ref-saracco2010modeling">Saracco et al. 2010</a>)</span>, epidemiology <span class="citation">(<a href="#ref-lawson2013statistical">Lawson 2013</a>)</span>, image analysis <span class="citation">(<a href="#ref-schmid2006bayesian">Schmid et al. 2006</a>)</span>, neuroscience <span class="citation">(<a href="#ref-gossl2001bayesian">Gössl, Auer, and Fahrmeir 2001</a>)</span> and public health <span class="citation">(<a href="#ref-dwyer2015drinking">Dwyer-Lindgren et al. 2015</a>)</span>.
 However, for irregular geometries like the administrative divisions of a country, the assumptions made by the Besag model about space are unrealistic.
 This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
-In doing so, it provides practical recommendations for using models for areal spatial structure.</p>
+In doing so, it offers practical recommendations for modelling areal spatial structure.</p>
 </div>
 <div id="adjacency" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Models based on adjacency<a href="beyond-borders.html#adjacency" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -476,31 +479,31 @@ where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <
 When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
 To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue 2020</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
 </div>
-<div id="concerns-about-the-besag-models-representation-of-space" class="section level3 hasAnchor" number="4.2.4">
-<h3><span class="header-section-number">4.2.4</span> Concerns about the Besag model’s representation of space<a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="concerns-about-the-besag-models-spatial-representation" class="section level3 hasAnchor" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Concerns about the Besag model’s spatial representation<a href="beyond-borders.html#concerns-about-the-besag-models-spatial-representation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
 Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
 As such, I have a number of concerns about the model’s applicability to this broader setting.
 This discussion is closely linked to the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Jonathan Wakefield and Lyons 2010</a>)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup1"></span>
-<embed src="resources/beyond-borders/temp/depends/maup1.pdf" title="Figure caption." width="95%" type="application/pdf" />
+<img src="figures/beyond-borders/maup1.png" alt="Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph." width="95%" />
 <p class="caption">
-Figure 4.1: Figure caption.
+Figure 4.1: Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup2"></span>
-<embed src="resources/beyond-borders/temp/depends/maup2.pdf" title="Figure caption." width="95%" type="application/pdf" />
+<img src="figures/beyond-borders/maup2.png" alt="A sequence of geometries where the number of neighbours of area one grows by one at each iteration." width="95%" />
 <p class="caption">
-Figure 4.2: Figure caption.
+Figure 4.2: A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup3"></span>
-<embed src="resources/beyond-borders/temp/depends/maup3.pdf" title="Figure caption." width="95%" type="application/pdf" />
+<img src="figures/beyond-borders/maup3.png" alt="Each of the shaded areas are split into two moving from Panel A to Panel B." width="95%" />
 <p class="caption">
-Figure 4.3: Figure caption.
+Figure 4.3: Each of the shaded areas are split into two moving from Panel A to Panel B.
 </p>
 </div>
 <div id="adjacency-compression" class="section level4 hasAnchor" number="4.2.4.1">

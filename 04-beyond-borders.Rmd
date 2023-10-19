@@ -22,10 +22,13 @@ resource_version <- "temp"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a genre of question often encountered during model construction.
-Namely, should the model be expanded to capture a sensible, but hypothetical, feature of the data?
-The hypothesised feature was that some areas are more related to each other than other areas, extending upon a base model which uses a binary relation.
-As well as having practical origins, given that modelling of this relationship is particularly important in HIV mapping, the inquiry also stemmed from confusion in seeing widespread use of the base model in situations which would seem to violate its assumptions.
+It was motivated by a question that often occurs during model construction.
+Should a model be expanded to capture a sensible, albeit hypothetical, feature of the data?
+The hypothesised data feature in this case pertains to the correlation structure between areas.
+A widely used base model uses a binary relationship between areas.
+One way to extend this model is to consider varying strengths of relationship between areas.
+This investigation has practical significance because modelling spatial structure is of particular importance to small-area estimation of HIV.
+It was prompted by confusion in seeing the base model be used in situations that appear to violate its assumptions.
 The results are presented in @howes2023beyond.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
 
@@ -47,7 +50,7 @@ The Besag model is attractive as it requires minimal additional modelling choice
 As such, it has seen widespread use, including in agriculture [@oliver2015soil], ecology [@saracco2010modeling], epidemiology [@lawson2013statistical], image analysis [@schmid2006bayesian], neuroscience [@gossl2001bayesian] and public health [@dwyer2015drinking].
 However, for irregular geometries like the administrative divisions of a country, the assumptions made by the Besag model about space are unrealistic.
 This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
-In doing so, it provides practical recommendations for using models for areal spatial structure.
+In doing so, it offers practical recommendations for modelling areal spatial structure.
 
 ## Models based on adjacency {#adjacency}
 
@@ -132,29 +135,29 @@ where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ give
 When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
-### Concerns about the Besag model's representation of space
+### Concerns about the Besag model's spatial representation
 
 The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
 Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
 As such, I have a number of concerns about the model's applicability to this broader setting.
 This discussion is closely linked to the modifiable areal unit problem [@openshow1979million], whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy [@wakefield2010aggregation].
 
-(ref:maup1) Figure caption.
+(ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph.
 
 ```{r maup1, fig.cap="(ref:maup1)"}
-knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/maup1.pdf"))
+knitr::include_graphics("figures/beyond-borders/maup1.png")
 ```
 
-(ref:maup2) Figure caption.
+(ref:maup2) A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
 
 ```{r maup2, fig.cap="(ref:maup2)"}
-knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/maup2.pdf"))
+knitr::include_graphics("figures/beyond-borders/maup2.png")
 ```
 
-(ref:maup3) Figure caption.
+(ref:maup3) Each of the shaded areas are split into two moving from Panel A to Panel B.
 
 ```{r maup3, fig.cap="(ref:maup3)"}
-knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/maup3.pdf"))
+knitr::include_graphics("figures/beyond-borders/maup3.png")
 ```
 
 #### Adjacency compression

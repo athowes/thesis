@@ -221,7 +221,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.2.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.2.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.2.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.2.2</b> Best practises for the Besag model</a></li>
 <li class="chapter" data-level="4.2.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.2.3</b> The reparameterised Besag-York-Mollié model</a></li>
-<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-representation-of-space"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s representation of space</a></li>
+<li class="chapter" data-level="4.2.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-spatial-representation"><i class="fa fa-check"></i><b>4.2.4</b> Concerns about the Besag model’s spatial representation</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#models-using-kernels"><i class="fa fa-check"></i><b>4.3</b> Models using kernels</a>
 <ul>
@@ -370,7 +370,7 @@ div.csl-indent {
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <p>This thesis is about applied and methodological Bayesian statistics.
 It is applied and methodological in that I am concerned with real world questions and the means to answer them.
-The statistical approach is Bayesian because I used probability theory to arrive at conclusions based on models for observed data.</p>
+The statistical approach is Bayesian because I use probability theory to arrive at conclusions based on models for observed data.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:gbd"></span>
 <img src="figures/introduction/gbd.png" alt="HIV/AIDS is the largest cause of annual DALYs among individuals aged &gt;1 year in SSA (Global Burden of Disease Collaborative Network 2019). One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights vary between 0 (full health) and 1 (death) depending on severity of the condition." width="95%" />
@@ -378,15 +378,16 @@ The statistical approach is Bayesian because I used probability theory to arrive
 Figure 1.1: HIV/AIDS is the largest cause of annual DALYs among individuals aged &gt;1 year in SSA <span class="citation">(<a href="#ref-ihme2019">Global Burden of Disease Collaborative Network 2019</a>)</span>. One DALY represents the loss of the equivalent of one year of full health, and is calculated by the sum of years of life lost and years lost due to disability. The disability weights vary between 0 (full health) and 1 (death) depending on severity of the condition.
 </p>
 </div>
-<p>The real world questions are related to strategic information for planning the human immunodeficiency virus (HIV) epidemic response in sub-Saharan Africa (SSA).
+<p>The questions in this thesis relate to strategic information for planning the human immunodeficiency virus (HIV) epidemic response in sub-Saharan Africa (SSA).
 Over 40 years since the beginning of the epidemic, HIV is the largest annual cause of disability adjusted life years (DALYs) in SSA among non-infants [<span class="citation">Global Burden of Disease Collaborative Network (<a href="#ref-ihme2019">2019</a>)</span>; Figure <a href="introduction.html#fig:gbd">1.1</a>].
 Quantification of the epidemic using statistics is an important part of the public health response.
-Effective implementation of both HIV prevention and treatment requires strategic information.
-However, producing suitable estimates of relevant indicators is challenging.</p>
+Effective implementation of HIV prevention and treatment requires strategic information.
+However, producing suitable estimates of relevant indicators is made difficult by a range of statistical challenges.</p>
 <p>The data I use were recorded from national household surveys or routinely collected from healthcare facilities providing HIV services.
-An important feature of these data are the location and time at which each observation was recorded
-While diverse, spatio-temporal data have distinctive recurring commonalities across application settings.
-As a result, the work in this thesis both makes use of, and aspires to contribute to, modelling techniques from spatio-temporal statistics.</p>
+An important feature of these data are the location and time at which each observation was recorded.
+Spatio-temporal data occur across a range of application settings.
+As well as being diverse, they do have distinctive recurring commonalities which make their collective study worthwhile.
+The work conducted in this thesis makes use of, and aspires to contribute to, techniques from spatio-temporal statistics.</p>
 <p>Computation is an essential part of modern statistical practice.
 Each project in this thesis, and the thesis itself, is accompanied by R <span class="citation">(<a href="#ref-r">R Core Team 2022</a>)</span> code, hosted on GitHub at <a href="https://github.com/athowes"><code>https://github.com/athowes</code></a>.</p>
 <div id="chapter-overview" class="section level2 hasAnchor" number="1.1">
@@ -403,9 +404,9 @@ The Global AIDS Strategy recommends prioritising interventions on the basis of b
 I estimated the size of behavioural risk groups across priority countries to enable implementation of this strategy, and assessed the potential benefits in terms of numbers of new infections prevented <span class="citation">(<a href="#ref-howes2023spatio">Howes et al. 2023</a>)</span>.
 This work was included in the UNAIDS Global AIDS Update 2022 and 2023.</li>
 <li>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>: The Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span> is used by countries to estimate district-level HIV indicators.
-With this model in mind, I developed an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis <span class="citation">(<a href="#ref-howes2023fast">Howes et al. 2023+</a>)</span>.
-I applied the method to data from Malawi, and analysed the consequences of inference method choice for policy relevant outcomes.
-Further, I open the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.</li>
+First, I implemented the integrated nested Laplace approximations using automatic differentiation, such that the method is compatible with Naomi, opening the door to a new class of fast, flexible, and accurate Bayesian inference algorithms.
+Second, I developed an approximate Bayesian inference method combining adaptive Gauss-Hermite quadrature with principal components analysis <span class="citation">(<a href="#ref-howes2023fast">Howes et al. 2023+</a>)</span>.
+I applied these method to data from Malawi, and analysed the consequences of inference method choice for policy relevant outcomes.</li>
 <li>Chapter <a href="conclusions.html#conclusions">7</a>: Finally, I discuss avenues for future work, and my conclusions regarding the research, as well as its strengths and weaknesses.</li>
 </ul>
 <p>Though chronological order is recommended, Chapters <a href="beyond-borders.html#beyond-borders">4</a>, <a href="multi-agyw.html#multi-agyw">5</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> may be read in any order.</p>
