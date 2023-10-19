@@ -315,7 +315,12 @@ div.csl-indent {
 <li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.3</b> Conclusions</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
-<li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a></li>
+<li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#comparison-of-aghq-to-nuts"><i class="fa fa-check"></i><b>A.1</b> Comparison of AGHQ to NUTS</a></li>
+<li class="chapter" data-level="A.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#additional-simulation-study-results"><i class="fa fa-check"></i><b>A.2</b> Additional simulation study results</a></li>
+<li class="chapter" data-level="A.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#additional-hiv-study-results"><i class="fa fa-check"></i><b>A.3</b> Additional HIV study results</a></li>
+</ul></li>
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
@@ -377,13 +382,13 @@ In the EB approximation hyperparameters are fixed by optimisation of the margina
 This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.</p>
 <p>Most methodological work on INLA has taken place using the <code>R-INLA</code> software package.
 There are two notable exceptions.
-First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposed an fast Laplace approximation appoach which does not rely on Markov structure of the latent field.
+First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposed an fast Laplace approximation approach which does not rely on Markov structure of the latent field.
 Second, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive linear predictors, enabling application of INLA to a wider class of extended latent Gaussian models (ELGMs), which includes Naomi.
 This approach is referred to by <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> as the “modern” formulation of the INLA method, as opposed to the “classic” formulation of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, and is included in <code>R-INLA</code> using <code>inla.mode = "experimental"</code>.
 Along with removing the noisy structured additive predictor, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> propose use of the adaptive Gauss-Hermite quadrature [AGHQ; <span class="citation">Naylor and Smith (<a href="#ref-naylor1982applications">1982</a>)</span>] rule to integrate with respect to the hyperparameters.
 The methodological contributions of this chapter extend <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> in two directions:</p>
 <ol style="list-style-type: decimal">
-<li>The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via <code>TMB</code> is is used to obtain the derivatives required for the Laplace approximation.
+<li>The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via <code>TMB</code> is used to obtain the derivatives required for the Laplace approximation.
 Section <a href="naomi-aghq.html#universal">6.2</a> demonstrates the implementation using two examples, one compatible with <code>R-INLA</code> and one incompatible.</li>
 <li>The second direction is a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section <a href="naomi-aghq.html#pca-aghq">6.4</a>.
 This quadrature rule is used to perform inference for the Naomi model by integrating the marginal Laplace approximation with respect to the moderate-dimensional hyperparameters within an INLA algorithm implemented in <code>TMB</code> in Section <a href="naomi-aghq.html#malawi">6.5</a>.</li>
@@ -485,7 +490,7 @@ and <span class="math inline">\(N \times N\)</span>-dimensional Hessian matrix e
 <span class="math display" id="eq:marginal-hessian">\[\begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. \tag{6.8}
 \end{equation}\]</span>
-Dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit in both Equation <a href="naomi-aghq.html#eq:marginal-posterior-mode">(6.7)</a> and <a href="naomi-aghq.html#eq:marginal-hessian">(6.8)</a> such that there is a a Gaussian approximation to the marginal posterior of the latent field <span class="math inline">\(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\)</span> at each value <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> in the space <span class="math inline">\(\mathbb{R}^m\)</span>.
+Dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit in both Equation <a href="naomi-aghq.html#eq:marginal-posterior-mode">(6.7)</a> and <a href="naomi-aghq.html#eq:marginal-hessian">(6.8)</a> such that there is a Gaussian approximation to the marginal posterior of the latent field <span class="math inline">\(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\)</span> at each value <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> in the space <span class="math inline">\(\mathbb{R}^m\)</span>.
 The resulting marginal Laplace approximation, for a particular value of the hyperparameters, is then
 <span class="math display" id="eq:marginalla">\[\begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \tag{6.9} \\
@@ -724,7 +729,7 @@ In the denominator, the previously obtained estimate of the evidence in Equation
 Alternatively, a new estimate may be computed.
 Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> is a mixture of the Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample each Laplace approximation.
-As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> may be represented by its evaluation at a number of nodes, such as those from a AGHQ rule.</p>
+As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> may be represented by its evaluation at a number of nodes, such as those from an AGHQ rule.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -832,12 +837,12 @@ The prior distribution on each of the regression parameters, including the inter
 The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and patient-visit <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> random effects were IID with gamma precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil"></span>
-<img src="figures/naomi-aghq/epil.png" alt="The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect." width="95%" />
+<img src="figures/naomi-aghq/epil.png" alt="The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect." width="95%" />
 <p class="caption">
-Figure 6.5: The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect.
+Figure 6.5: The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect.
 </p>
 </div>
-<p>I consider inference for the epilespy GLMM using a range of approaches:</p>
+<p>I consider inference for the epilepsy GLMM using a range of approaches:</p>
 <ol style="list-style-type: decimal">
 <li>INLA with <code>R-INLA</code> (Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a>).</li>
 <li>Gaussian marginals and EB with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>).</li>
@@ -853,14 +858,14 @@ In this section, though not in future sections, I use illustrative code.</p>
 <h4><span class="header-section-number">6.2.1.1</span> INLA with <code>R-INLA</code><a href="naomi-aghq.html#epil-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The epilepsy data are available from the <code>R-INLA</code> package.
 The covariates may be obtained by:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="naomi-aghq.html#cb1-1" tabindex="-1"></a>center <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x))</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="naomi-aghq.html#cb1-1" tabindex="-1"></a>centre <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x))</span>
 <span id="cb1-2"><a href="naomi-aghq.html#cb1-2" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="naomi-aghq.html#cb1-3" tabindex="-1"></a>Epil <span class="ot">&lt;-</span> Epil <span class="sc">%&gt;%</span></span>
-<span id="cb1-4"><a href="naomi-aghq.html#cb1-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CTrt    =</span> <span class="fu">center</span>(Trt),</span>
-<span id="cb1-5"><a href="naomi-aghq.html#cb1-5" tabindex="-1"></a>         <span class="at">ClBase4 =</span> <span class="fu">center</span>(<span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)),</span>
-<span id="cb1-6"><a href="naomi-aghq.html#cb1-6" tabindex="-1"></a>         <span class="at">CV4     =</span> <span class="fu">center</span>(V4),</span>
-<span id="cb1-7"><a href="naomi-aghq.html#cb1-7" tabindex="-1"></a>         <span class="at">ClAge   =</span> <span class="fu">center</span>(<span class="fu">log</span>(Age)),</span>
-<span id="cb1-8"><a href="naomi-aghq.html#cb1-8" tabindex="-1"></a>         <span class="at">CBT     =</span> <span class="fu">center</span>(Trt <span class="sc">*</span> <span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)))</span></code></pre></div>
+<span id="cb1-4"><a href="naomi-aghq.html#cb1-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CTrt    =</span> <span class="fu">centre</span>(Trt),</span>
+<span id="cb1-5"><a href="naomi-aghq.html#cb1-5" tabindex="-1"></a>         <span class="at">ClBase4 =</span> <span class="fu">centre</span>(<span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)),</span>
+<span id="cb1-6"><a href="naomi-aghq.html#cb1-6" tabindex="-1"></a>         <span class="at">CV4     =</span> <span class="fu">centre</span>(V4),</span>
+<span id="cb1-7"><a href="naomi-aghq.html#cb1-7" tabindex="-1"></a>         <span class="at">ClAge   =</span> <span class="fu">centre</span>(<span class="fu">log</span>(Age)),</span>
+<span id="cb1-8"><a href="naomi-aghq.html#cb1-8" tabindex="-1"></a>         <span class="at">CBT     =</span> <span class="fu">centre</span>(Trt <span class="sc">*</span> <span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)))</span></code></pre></div>
 <p>The structured additive predictor (Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a>) is then specified by:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="naomi-aghq.html#cb2-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span></span>
 <span id="cb2-2"><a href="naomi-aghq.html#cb2-2" tabindex="-1"></a>  <span class="fu">f</span>(rand, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior) <span class="sc">+</span>  </span>
@@ -1066,7 +1071,7 @@ where the denominators of <span class="math inline">\(\alpha_{I}\)</span> and <s
 </div>
 <div id="anc" class="section level4 hasAnchor" number="6.3.1.3">
 <h4><span class="header-section-number">6.3.1.3</span> ANC testing component<a href="naomi-aghq.html#anc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Women attending ANC clinics are routined tested for HIV, to help prevent mother-to-child transmission.</p>
+<p>Women attending ANC clinics are routinely tested for HIV, to help prevent mother-to-child transmission.</p>
 <p>HIV prevalence <span class="math inline">\(\rho^\text{ANC}_i \in [0, 1]\)</span> and ART coverage <span class="math inline">\(\alpha^\text{ANC}_i \in [0, 1]\)</span> among pregnant women are modelled as offset from the general population indicators.
 (For <span class="math inline">\(s(i)\)</span> male, these quantities are not defined.)
 Again not detailing the linear predictors, the model is of the form
@@ -1338,7 +1343,7 @@ It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other 
 Other MCMC algorithms, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>, could be considered.
 Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the <code>NIMBLE</code> probabilistic programming language <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span>.</li>
 <li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in <code>tmbstan</code> by setting <code>laplace = TRUE</code>, is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">Margossian et al. 2020</a>)</span>.
-Wen run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.</li>
+When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.</li>
 </ol>
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
 <!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->

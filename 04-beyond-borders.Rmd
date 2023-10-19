@@ -21,13 +21,33 @@ resource_version <- "temp"
 \markboth{Models for spatial structure}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter presents an investigation of spatial random effects specifications.
-This investigation was motivated by a fundamental question encountered during model construction.
-Namely, should the model be augmented to capture a conjectured feature of the data?
+This chapter presents an investigation of spatial random effects specifications for areal data.
+The investigation was motivated by a genre of question often encountered during model construction.
+Namely, should the model be expanded to capture a sensible, but hypothetical, feature of the data?
+The hypothesised feature was that some areas are more related to each other than other areas, extending upon a base model which uses a binary relation.
+As well as having practical origins, given that modelling of this relationship is particularly important in HIV mapping, the inquiry also stemmed from confusion in seeing widespread use of the base model in situations which would seem to violate its assumptions.
 The results are presented in @howes2023beyond.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
 
 ## Background
+
+Modelling of spatial variation is especially important for the small-area estimation of HIV.
+This is because it is difficult to measure the covariates which are most strongly associated with HIV.
+Examples include sexual risk behaviour.
+As a result, in previous small-area models of HIV including covariates only resulted in a modest improvement in predictions [Supplementary Figure 20, @dwyer2019mapping].
+This lack of predictive covariates foregrounds the role of modelling spatial variation.
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less important [@weiss2015re].
+
+Spatial variation in areal data are often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
+The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; @rue2005gaussian].
+These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
+Observations made in areas close together are assumed to be correlated, and more distant relationships are ignored.
+Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area.
+The Besag model is attractive as it requires minimal additional modelling choices and is widely implemented.
+As such, it has seen widespread use, including in agriculture [@oliver2015soil], ecology [@saracco2010modeling], epidemiology [@lawson2013statistical], image analysis [@schmid2006bayesian], neuroscience [@gossl2001bayesian] and public health [@dwyer2015drinking].
+However, for irregular geometries like the administrative divisions of a country, the assumptions made by the Besag model about space are unrealistic.
+This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
+In doing so, it provides practical recommendations for using models for areal spatial structure.
 
 ## Models based on adjacency {#adjacency}
 

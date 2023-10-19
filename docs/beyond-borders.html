@@ -315,7 +315,12 @@ div.csl-indent {
 <li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.3</b> Conclusions</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
-<li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a></li>
+<li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#comparison-of-aghq-to-nuts"><i class="fa fa-check"></i><b>A.1</b> Comparison of AGHQ to NUTS</a></li>
+<li class="chapter" data-level="A.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#additional-simulation-study-results"><i class="fa fa-check"></i><b>A.2</b> Additional simulation study results</a></li>
+<li class="chapter" data-level="A.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#additional-hiv-study-results"><i class="fa fa-check"></i><b>A.3</b> Additional HIV study results</a></li>
+</ul></li>
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
@@ -363,13 +368,31 @@ div.csl-indent {
 <div id="beyond-borders" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">4</span> Models for spatial structure<a href="beyond-borders.html#beyond-borders" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-<p>This chapter presents an investigation of spatial random effects specifications.
-This investigation was motivated by a fundamental question encountered during model construction.
-Namely, should the model be augmented to capture a conjectured feature of the data?
+<p>This chapter presents an investigation of spatial random effects specifications for areal data.
+The investigation was motivated by a genre of question often encountered during model construction.
+Namely, should the model be expanded to capture a sensible, but hypothetical, feature of the data?
+The hypothesised feature was that some areas are more related to each other than other areas, extending upon a base model which uses a binary relation.
+As well as having practical origins, given that modelling of this relationship is particularly important in HIV mapping, the inquiry also stemmed from confusion in seeing widespread use of the base model in situations which would seem to violate its assumptions.
 The results are presented in <span class="citation">Howes, Eaton, and Flaxman (<a href="#ref-howes2023beyond">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/beyond-borders"><code>https://github.com/athowes/beyond-borders</code></a>.</p>
 <div id="background-1" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Background<a href="beyond-borders.html#background-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Modelling of spatial variation is especially important for the small-area estimation of HIV.
+This is because it is difficult to measure the covariates which are most strongly associated with HIV.
+Examples include sexual risk behaviour.
+As a result, in previous small-area models of HIV including covariates only resulted in a modest improvement in predictions <span class="citation">(Supplementary Figure 20, <a href="#ref-dwyer2019mapping">Dwyer-Lindgren et al. 2019</a>)</span>.
+This lack of predictive covariates foregrounds the role of modelling spatial variation.
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less important <span class="citation">(<a href="#ref-weiss2015re">Weiss et al. 2015</a>)</span>.</p>
+<p>Spatial variation in areal data are often modelled using spatial random effects <span class="citation">(<a href="#ref-haining2003spatial">Haining 2003</a>; <a href="#ref-cramb2018investigation">Cramb et al. 2018</a>)</span>.
+The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; <span class="citation">Havard Rue and Held (<a href="#ref-rue2005gaussian">2005</a>)</span>].
+These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
+Observations made in areas close together are assumed to be correlated, and more distant relationships are ignored.
+Perhaps the simplest GMRF model is that of <span class="citation">Besag, York, and Mollié (<a href="#ref-besag1991bayesian">1991</a>)</span> in which information is borrowed equally from each adjacent area.
+The Besag model is attractive as it requires minimal additional modelling choices and is widely implemented.
+As such, it has seen widespread use, including in agriculture <span class="citation">(<a href="#ref-oliver2015soil">Oliver and Gregory 2015</a>)</span>, ecology <span class="citation">(<a href="#ref-saracco2010modeling">Saracco et al. 2010</a>)</span>, epidemiology <span class="citation">(<a href="#ref-lawson2013statistical">Lawson 2013</a>)</span>, image analysis <span class="citation">(<a href="#ref-schmid2006bayesian">Schmid et al. 2006</a>)</span>, neuroscience <span class="citation">(<a href="#ref-gossl2001bayesian">Gössl, Auer, and Fahrmeir 2001</a>)</span> and public health <span class="citation">(<a href="#ref-dwyer2015drinking">Dwyer-Lindgren et al. 2015</a>)</span>.
+However, for irregular geometries like the administrative divisions of a country, the assumptions made by the Besag model about space are unrealistic.
+This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
+In doing so, it provides practical recommendations for using models for areal spatial structure.</p>
 </div>
 <div id="adjacency" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Models based on adjacency<a href="beyond-borders.html#adjacency" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -579,7 +602,7 @@ On the other hand, for non-linear link functions <span class="math inline">\(g\)
 </div>
 <div id="log-gaussian-cox-processes" class="section level4 hasAnchor" number="4.3.2.4">
 <h4><span class="header-section-number">4.3.2.4</span> Log-Gaussian Cox processes<a href="beyond-borders.html#log-gaussian-cox-processes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The log-Gaussian Cox Process framework <span class="citation">(<a href="#ref-diggle2013spatial"><strong>diggle2013spatial?</strong></a>)</span> arrives naturally at the integrated kernel formulation.
+<p>The log-Gaussian Cox Process framework <span class="citation">(<a href="#ref-diggle2013spatial">Diggle et al. 2013</a>)</span> arrives naturally at the integrated kernel formulation.
 A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function <span class="math inline">\(\{ x(s), s \in \Sc \}\)</span> such that conditional on the realisation of <span class="math inline">\(x(s)\)</span> the number of points in any area <span class="math inline">\(A_i\)</span> follows a Poisson distribution.
 The rate parameter of this Poisson distribution is explicitly aggregated as follows
 <span class="math display">\[\begin{equation}
@@ -631,14 +654,32 @@ Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocas
 <div id="ref-best2005comparison" class="csl-entry">
 Best, Nicky, Sylvia Richardson, and Andrew Thomson. 2005. <span>“<span class="nocase">A comparison of Bayesian spatial models for disease mapping</span>.”</span> <em>Statistical Methods in Medical Research</em> 14 (1): 35–59.
 </div>
+<div id="ref-cramb2018investigation" class="csl-entry">
+Cramb, SM, EW Duncan, PD Baade, and KL Mengersen. 2018. <span>“Investigation of Bayesian Spatial Models.”</span>
+</div>
 <div id="ref-dean2001detecting" class="csl-entry">
 Dean, CB, MD Ugarte, and AF Militino. 2001. <span>“Detecting Interaction Between Random Region and Fixed Age Effects in Disease Mapping.”</span> <em>Biometrics</em> 57 (1): 197–202.
+</div>
+<div id="ref-diggle2013spatial" class="csl-entry">
+Diggle, Peter J, Paula Moraga, Barry Rowlingson, Benjamin M Taylor, et al. 2013. <span>“Spatial and Spatio-Temporal Log-Gaussian Cox Processes: Extending the Geostatistical Paradigm.”</span> <em>Statistical Science</em> 28 (4): 542–63.
+</div>
+<div id="ref-dwyer2019mapping" class="csl-entry">
+Dwyer-Lindgren, Laura, Michael A Cork, Amber Sligar, Krista M Steuben, Kate F Wilson, Naomi R Provost, Benjamin K Mayala, et al. 2019. <span>“<span class="nocase">Mapping HIV prevalence in sub-Saharan Africa between 2000 and 2017</span>.”</span> <em>Nature</em> 570 (7760): 189–93.
+</div>
+<div id="ref-dwyer2015drinking" class="csl-entry">
+Dwyer-Lindgren, Laura, Abraham D Flaxman, Marie Ng, Gillian M Hansen, Christopher JL Murray, and Ali H Mokdad. 2015. <span>“<span class="nocase">Drinking patterns in US counties from 2002 to 2012</span>.”</span> <em>American Journal of Public Health</em> 105 (6): 1120–27.
 </div>
 <div id="ref-follestad2003modelling" class="csl-entry">
 Follestad, Turid, and Håvard Rue. 2003. <span>“Modelling Spatial Variation in Disease Risk Using Gaussian Markov Random Field Proxies for Gaussian Random Fields.”</span> SIS-2003-305.
 </div>
 <div id="ref-freni2018note" class="csl-entry">
 Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue. 2018. <span>“A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 26: 25–34.
+</div>
+<div id="ref-gossl2001bayesian" class="csl-entry">
+Gössl, Christoff, Dorothee P Auer, and Ludwig Fahrmeir. 2001. <span>“Bayesian Spatiotemporal Inference in Functional Magnetic Resonance Imaging.”</span> <em>Biometrics</em> 57 (2): 554–62.
+</div>
+<div id="ref-haining2003spatial" class="csl-entry">
+Haining, Robert P. 2003. <em>Spatial Data Analysis: Theory and Practice</em>. Cambridge university press.
 </div>
 <div id="ref-hamelijnck2019multi" class="csl-entry">
 Hamelijnck, O, T Damoulas, K Wang, and MA Girolami. 2019. <span>“Multi-Resolution Multi-Task Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 32.
@@ -655,11 +696,17 @@ Kelsall, Julia, and Jonathan Wakefield. 2002. <span>“Modeling Spatial Variatio
 <div id="ref-law2018variational" class="csl-entry">
 Law, Ho Chung, Dino Sejdinovic, Ewan Cameron, Tim Lucas, Seth Flaxman, Katherine Battle, and Kenji Fukumizu. 2018. <span>“Variational Learning on Aggregate Outputs with Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 31.
 </div>
+<div id="ref-lawson2013statistical" class="csl-entry">
+Lawson, Andrew B. 2013. <em>Statistical Methods in Spatial Epidemiology</em>. John Wiley &amp; Sons.
+</div>
 <div id="ref-leroux2000estimation" class="csl-entry">
 Leroux, Brian G, Xingye Lei, and Norman Breslow. 2000. <span>“Estimation of Disease Rates in Small Areas: A New Mixed Model for Spatial Dependence.”</span> In <em>Statistical Models in Epidemiology, the Environment, and Clinical Trials</em>, 179–91. Springer.
 </div>
 <div id="ref-nandi2023disaggregation" class="csl-entry">
 Nandi, Anita K, Tim CD Lucas, Rohan Arambepola, Peter Gething, and Daniel J Weiss. 2023. <span>“Disaggregation: An r Package for Bayesian Spatial Disaggregation Modeling.”</span> <em>Journal of Statistical Software</em> 106: 1–19.
+</div>
+<div id="ref-oliver2015soil" class="csl-entry">
+Oliver, Margaret A, and PJ Gregory. 2015. <span>“Soil, Food Security and Human Health: A Review.”</span> <em>European Journal of Soil Science</em> 66 (2): 257–76.
 </div>
 <div id="ref-openshow1979million" class="csl-entry">
 Openshaw, S, and P. J. Taylor. 1979. <span>“A Million or so Correlation Coefficients, Three Experiments on the Modifiable Areal Unit Problem.”</span> <em>Statistical Applications in the Spatial Science</em>, 127–44.
@@ -672,6 +719,12 @@ Paciorek, Christopher J et al. 2013. <span>“Spatial Models for Point and Areal
 </div>
 <div id="ref-rue2005gaussian" class="csl-entry">
 Rue, Havard, and Leonhard Held. 2005. <em><span class="nocase">Gaussian Markov random fields: theory and applications</span></em>. CRC press.
+</div>
+<div id="ref-saracco2010modeling" class="csl-entry">
+Saracco, James F, J Andrew Royle, David F DeSante, and Beth Gardner. 2010. <span>“Modeling Spatial Variation in Avian Survival and Residency Probabilities.”</span> <em>Ecology</em> 91 (7): 1885–91.
+</div>
+<div id="ref-schmid2006bayesian" class="csl-entry">
+Schmid, Volker J, Brandon Whitcher, Anwar R Padhani, N Jane Taylor, and Guang-Zhong Yang. 2006. <span>“Bayesian Methods for Pharmacokinetic Models in Dynamic Contrast-Enhanced Magnetic Resonance Imaging.”</span> <em>IEEE Transactions on Medical Imaging</em> 25 (12): 1627–36.
 </div>
 <div id="ref-simpson2017penalising" class="csl-entry">
 Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørbye, et al. 2017. <span>“<span class="nocase">Penalising model component complexity: A principled, practical approach to constructing priors</span>.”</span> <em>Statistical Science</em> 32 (1): 1–28.
@@ -693,6 +746,9 @@ Wakefield, J, and S Morris. 1999. <span>“Spatial Dependence and Errors-in-Vari
 </div>
 <div id="ref-wakefield2010aggregation" class="csl-entry">
 Wakefield, Jonathan, and Hilary Lyons. 2010. <span>“Spatial Aggregation and the Ecological Fallacy.”</span> In <em>Chapman &amp; Hall/CRC Handbooks of Modern Statistical Methods</em>, 2010:541–58. <a href="https://doi.org/10.1201/9781420072884-c30">https://doi.org/10.1201/9781420072884-c30</a>.
+</div>
+<div id="ref-weiss2015re" class="csl-entry">
+Weiss, Daniel J, Bonnie Mappin, Ursula Dalrymple, Samir Bhatt, Ewan Cameron, Simon I Hay, and Peter W Gething. 2015. <span>“Re-Examining Environmental Correlates of Plasmodium Falciparum Malaria Endemicity: A Data-Intensive Variable Selection Approach.”</span> <em>Malaria Journal</em> 14 (1): 1–18.
 </div>
 <div id="ref-yousefi2019multi" class="csl-entry">
 Yousefi, Fariba, Michael T Smith, and Mauricio Alvarez. 2019. <span>“Multi-Task Learning for Aggregated Data Using Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 32.

@@ -38,13 +38,13 @@ This is undesirable as it results in underestimation of uncertainty, which may u
 
 Most methodological work on INLA has taken place using the `R-INLA` software package.
 There are two notable exceptions.
-First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed an fast Laplace approximation appoach which does not rely on Markov structure of the latent field.
+First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed an fast Laplace approximation approach which does not rely on Markov structure of the latent field.
 Second, @stringer2022fast extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive linear predictors, enabling application of INLA to a wider class of extended latent Gaussian models (ELGMs), which includes Naomi.
 This approach is referred to by @van2023new as the "modern" formulation of the INLA method, as opposed to the "classic" formulation of @rue2009approximate, and is included in `R-INLA` using `inla.mode = "experimental"`.
 Along with removing the noisy structured additive predictor, @stringer2022fast propose use of the adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule to integrate with respect to the hyperparameters.
 The methodological contributions of this chapter extend @stringer2022fast in two directions:
 
-1. The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is is used to obtain the derivatives required for the Laplace approximation.
+1. The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
 Section \@ref(universal) demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible.
 2. The second direction is a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section \@ref(pca-aghq).
 This quadrature rule is used to perform inference for the Naomi model by integrating the marginal Laplace approximation with respect to the moderate-dimensional hyperparameters within an INLA algorithm implemented in `TMB` in Section \@ref(malawi).
@@ -153,7 +153,7 @@ and $N \times N$-dimensional Hessian matrix evaluated at the posterior mode
 \begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. (\#eq:marginal-hessian)
 \end{equation}
-Dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit in both Equation \@ref(eq:marginal-posterior-mode) and \@ref(eq:marginal-hessian) such that there is a a Gaussian approximation to the marginal posterior of the latent field $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ at each value $\boldsymbol{\mathbf{\theta}}$ in the space $\mathbb{R}^m$.
+Dependence on the hyperparameters $\boldsymbol{\mathbf{\theta}}$ is made explicit in both Equation \@ref(eq:marginal-posterior-mode) and \@ref(eq:marginal-hessian) such that there is a Gaussian approximation to the marginal posterior of the latent field $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ at each value $\boldsymbol{\mathbf{\theta}}$ in the space $\mathbb{R}^m$.
 The resulting marginal Laplace approximation, for a particular value of the hyperparameters, is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} (\#eq:marginalla) \\
@@ -401,7 +401,7 @@ In the denominator, the previously obtained estimate of the evidence in Equation
 Alternatively, a new estimate may be computed.
 Equation \@ref(eq:lamarginal) is a mixture of the Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
-As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from a AGHQ rule. 
+As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from an AGHQ rule. 
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
@@ -510,13 +510,13 @@ with structured additive predictor
 The prior distribution on each of the regression parameters, including the intercept $\beta_0$, was $\mathcal{N}(0, 100^2)$.
 The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit $\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)$ random effects were IID with gamma precision prior distributions $\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)$.
 
-(ref:epil) The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect.
+(ref:epil) The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect.
 
 ```{r epil, fig.cap="(ref:epil)"}
 knitr::include_graphics("figures/naomi-aghq/epil.png")
 ```
 
-I consider inference for the epilespy GLMM using a range of approaches:
+I consider inference for the epilepsy GLMM using a range of approaches:
 
 1. INLA with `R-INLA` (Section \@ref(epil-inla)).
 2. Gaussian marginals and EB with `TMB` (Section \@ref(epil-gauss-eb-tmb)).
@@ -535,14 +535,14 @@ The epilepsy data are available from the `R-INLA` package.
 The covariates may be obtained by:
 
 ```r
-center <- function(x) (x - mean(x))
+centre <- function(x) (x - mean(x))
 
 Epil <- Epil %>%
-  mutate(CTrt    = center(Trt),
-         ClBase4 = center(log(Base/4)),
-         CV4     = center(V4),
-         ClAge   = center(log(Age)),
-         CBT     = center(Trt * log(Base/4)))
+  mutate(CTrt    = centre(Trt),
+         ClBase4 = centre(log(Base/4)),
+         CV4     = centre(V4),
+         ClAge   = centre(log(Age)),
+         CBT     = centre(Trt * log(Base/4)))
 ```
 
 The structured additive predictor (Equation \@ref(eq:epil)) is then specified by:
@@ -794,7 +794,7 @@ where the denominators of $\alpha_{I}$ and $\kappa_{I}$ reflect their restrictio
 
 #### ANC testing component {#anc}
 
-Women attending ANC clinics are routined tested for HIV, to help prevent mother-to-child transmission.
+Women attending ANC clinics are routinely tested for HIV, to help prevent mother-to-child transmission.
 
 HIV prevalence $\rho^\text{ANC}_i \in [0, 1]$ and ART coverage $\alpha^\text{ANC}_i \in [0, 1]$ among pregnant women are modelled as offset from the general population indicators.
 (For $s(i)$ male, these quantities are not defined.)
@@ -1080,7 +1080,7 @@ It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other 
 Other MCMC algorithms, such as blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice], could be considered.
 Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the `NIMBLE` probabilistic programming language [@de2017programming].
 3. Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in `tmbstan` by setting `laplace = TRUE`, is to run HMC [@monnahan2018no; @margossian2020hamiltonian].
-Wen run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.
+When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.
 
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
 <!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
