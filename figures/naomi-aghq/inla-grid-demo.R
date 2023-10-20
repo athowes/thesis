@@ -138,15 +138,30 @@ fig1 <- fig0 +
     plot.caption = element_text(hjust = 0.5, vjust = 1)
   )
 
-fig1 + fig0 + labs(tag = "B")
+ccd <- rsm::ccd(basis = 2, n0 = 1)
+ccd <- as.data.frame(ccd)
+
+z_to_theta <- function(z1, z2) {
+  as.vector(opt$par + E %*% sqrt(Lambda) %*% c(z1, z2))
+}
+
+ccd <- t(mapply(z_to_theta, z1 = ccd$x1, z2 = ccd$x2)) %>%
+  as.data.frame()
+  
+fig2 <- fig0 +
+  geom_point(
+    data = ccd,
+    aes(x = V1, y = V2, size = 1),
+    alpha = 0.8,
+    col = "#009E73",
+    inherit.aes = FALSE
+  ) +
+  scale_size_continuous(range = c(1, 2)) +
+  labs(tag = "B") +
+  theme(
+    plot.caption = element_text(hjust = 0.5, vjust = 1)
+  )
+
+fig1 + fig2
 
 ggsave("figures/naomi-aghq/inla-grid-demo.png", h = 3.5, w = 6.25)
-
-install.packages("rsm")
-factor1 <- c(-1, -0.5, 0, 0.5, 1)  # Levels for Factor 1
-factor2 <- c(-1, -0.5, 0, 0.5, 1)  # Levels for Factor 2
-
-ccd_design <- rsm::ccd(factors = list(Factor1 = factor1, Factor2 = factor2))
-
-rsm::ccd(basis = 2, n0 = 1)
-
