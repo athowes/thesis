@@ -332,7 +332,8 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#epilepsy-example"><i class="fa fa-check"></i><b>C.1</b> Epilepsy example</a>
 <ul>
-<li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-epil"><i class="fa fa-check"></i><b>C.1.1</b> TMB C++ template</a></li>
+<li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-epil"><i class="fa fa-check"></i><b>C.1.1</b> <code>TMB</code> C++ template</a></li>
+<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#stan-epil"><i class="fa fa-check"></i><b>C.1.2</b> <code>Stan</code> C++ template</a></li>
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.2</b> Simplified Naomi model description</a>
 <ul>
@@ -688,7 +689,8 @@ This estimate can be used to normalise the marginal Laplace approximation as fol
 <span class="math display">\[\begin{align}
 \tilde p(\theta_j \, | \, \mathbf{y}) = \int \tilde p(\theta_j \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}}_{-j}.
 \end{align}\]</span>
-These integrals may be computed by reusing the AGHQ rule.</p>
+These integrals may be computed by reusing the AGHQ rule.
+More recent methods are discussed in Section 3.2 of <span class="citation">Martins et al. (<a href="#ref-martins2013bayesian">2013</a>)</span>.</p>
 <p>Multiple methods have been proposed for obtaining the <span class="math inline">\(\tilde p(\mathbf{x} \, | \, \mathbf{y})\)</span> or individual marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span>
 Four methods are presented below, trading-off accuracy with computational expense.</p>
 <div id="gaussian-marginals" class="section level4 hasAnchor" number="6.1.3.1">
@@ -782,6 +784,7 @@ Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new
 <h4><span class="header-section-number">6.1.4.1</span> <code>R-INLA</code><a href="naomi-aghq.html#r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The <code>R-INLA</code> software <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span> implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span>.
 <code>R-INLA</code> is the R interface to the core <code>inla</code> program, which is written in C <span class="citation">(<a href="#ref-martino2009implementing">Martino and Rue 2009</a>)</span> and uses algorithms from the <code>GMRFLib</code> C library <span class="citation">(<a href="#ref-rue2001gmrflib">Håvard Rue and Follestad 2001</a>)</span>.
+Derivatives are calculated in <code>R-INLA</code> numerically using central finite differences.
 For a review recent computational features of <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>, see <span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span>.
 Further information about <code>R-INLA</code>, including recent developments, can be found at <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.</p>
 <p>A formula interface of the form <code>y ~ ...</code>, similar to that used in the <code>lm</code> function in the core <code>stats</code> R package, is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
@@ -807,30 +810,35 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <p>Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an R package which implements the Laplace approximation.
 In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
-These derivates may then be composed by repeat use of the chain rule to obtain the function’s derivative.
-<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD, and <code>Eigen</code> for linear algebra.</p>
-<p>Models can be specified in <code>TMB</code> using a C++ template file.
-<code>TMB</code> C++ templates are compatible with other software.
+These derivatives may then be composed by repeat use of the chain rule to obtain the function’s derivative.
+<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD.
+Details are provided in Section 3 of <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>.</p>
+<p>Whereas <code>R-INLA</code> requires to sparsity structure to be known in advance, <code>TMB</code> uses an algorithm to automatically determine the sparsity structure [Section 4.2; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>]
+The R package <code>Matrix</code> and C++ package <code>Eigen</code> are then used for sparse and dense matrix calculations.</p>
+<p>Models are specified in <code>TMB</code> using a C++ template file which evaluates <span class="math inline">\(\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.
+Other software packages have been developed which also use <code>TMB</code> C++ templates.
 The <code>tmbstan</code> R package <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span> allows running the Hamiltonian Monte Carlo (HMC) algorithm via <code>Stan</code>.
 The <code>aghq</code> R package <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the <code>mvQuad</code> R package <span class="citation">(<a href="#ref-weiser2016mvquad">Weiser 2016</a>)</span>.
 The <code>glmmTMB</code> R package <span class="citation">(<a href="#ref-brooks2017glmmtmb">Brooks et al. 2017</a>)</span> allows specification of common GLMM models via a formula interface.
-It is possible to extract the <code>TMB</code> objective function used by <code>glmmTMB</code>, which may then be passed into <code>aghq</code> or <code>tmbstan</code>.</p>
+It is also possible to extract the <code>TMB</code> objective function used by <code>glmmTMB</code>, which may then be passed into <code>aghq</code> or <code>tmbstan</code>.</p>
+<!-- Could cite @bolker2013strategies. -->
+<!-- An important design feature of `TMB` is its modularity. -->
 </div>
 <div id="other-software" class="section level4 hasAnchor" number="6.1.4.3">
 <h4><span class="header-section-number">6.1.4.3</span> Other software<a href="naomi-aghq.html#other-software" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The <code>mgcv</code> [Mixed GAM computation vehicle; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>] R package estimates generalised additive models (GAMs) specified using a formula interface.
-This package is briefly mentioned here because the function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> as described in Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>.</p>
+This package is briefly mentioned so as to note that the function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> as described in Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>.</p>
 </div>
 </div>
 </div>
 <div id="universal" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#universal" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals.
-The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a formula interface like <code>R-INLA</code> <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
+The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a more restrictive formula interface <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. --></p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
 A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>, including Naomi as one among many examples.
-The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of TMB) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, who noted that such a system would be “fast, flexible, and easy-to-use”, as well as “automatic from a user’s perspective”.
+The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of <code>TMB</code>) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, who noted that such a system would be “fast, flexible, and easy-to-use”, as well as “automatic from a user’s perspective”.
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.</p>
 <p>I demonstrate the universal implementation with two examples:</p>
 <ol style="list-style-type: decimal">
@@ -879,7 +887,7 @@ Figure 6.5: The number of seizures in the treatment group was fewer, on average,
 <li>Laplace marginals and AGHQ with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-laplace-aghq-tmb">6.2.1.5</a>).</li>
 <li>NUTS with <code>tmbstan</code> (Section <a href="naomi-aghq.html#epil-nuts">6.2.1.6</a>).</li>
 </ol>
-<p>These approaches are compared in Section <a href="naomi-aghq.html#epil-comparison">6.2.1.7</a>.
+<p>These approaches are compared in Section <a href="naomi-aghq.html#epil-comparison">6.2.1.8</a>.
 The foremost objective is to demonstrate correspondence between inferences obtained from <code>R-INLA</code> and those from <code>TMB</code>.
 In this section, though not in future sections, I use illustrative code.</p>
 <div id="epil-inla" class="section level4 hasAnchor" number="6.2.1.1">
@@ -940,18 +948,22 @@ Finally, an object <code>nlp</code> is created representing the negative log-pos
 <p>First, the <code>TMB</code> template is compiled:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="naomi-aghq.html#cb6-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil.cpp&quot;</span>)</span>
 <span id="cb6-2"><a href="naomi-aghq.html#cb6-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil&quot;</span>))</span></code></pre></div>
-<p>The objective function <code>obj</code> may then be created:</p>
+<p>The objective function <code>obj</code>, implementing <span class="math inline">\(\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> and its first and second derivative, may then be created:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="naomi-aghq.html#cb7-1" tabindex="-1"></a>obj <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">MakeADFun</span>(</span>
 <span id="cb7-2"><a href="naomi-aghq.html#cb7-2" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
 <span id="cb7-3"><a href="naomi-aghq.html#cb7-3" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
 <span id="cb7-4"><a href="naomi-aghq.html#cb7-4" tabindex="-1"></a>  <span class="at">random =</span> <span class="fu">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;epsilon&quot;</span>, <span class="st">&quot;nu&quot;</span>),</span>
-<span id="cb7-5"><a href="naomi-aghq.html#cb7-5" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil&quot;</span>,</span>
-<span id="cb7-6"><a href="naomi-aghq.html#cb7-6" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span></span>
-<span id="cb7-7"><a href="naomi-aghq.html#cb7-7" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb7-5"><a href="naomi-aghq.html#cb7-5" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil&quot;</span></span>
+<span id="cb7-6"><a href="naomi-aghq.html#cb7-6" tabindex="-1"></a>)</span></code></pre></div>
 <p>The object <code>dat</code> is a list of data inputs passed to <code>TMB</code>.
 The object <code>param</code> is a list of parameter starting values passed to <code>TMB</code>.
 The argument <code>random</code> determines which parameters are integrated out with a Laplace approximation.
-Here, the parameters <span class="math inline">\((\beta, \epsilon, \nu) = \mathbf{x}\)</span> are selected.</p>
+Here, the parameters
+<span class="math display">\[\begin{equation}
+(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}
+\end{equation}\]</span>
+were selected as the latent field.</p>
+<p>The objective function <code>obj</code> may then be optimised using any gradient based optimiser in R, to obtain <span class="math inline">\(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}\)</span>:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="naomi-aghq.html#cb8-1" tabindex="-1"></a>its <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb8-2"><a href="naomi-aghq.html#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="naomi-aghq.html#cb8-3" tabindex="-1"></a>opt <span class="ot">&lt;-</span> <span class="fu">nlminb</span>(</span>
@@ -959,43 +971,51 @@ Here, the parameters <span class="math inline">\((\beta, \epsilon, \nu) = \mathb
 <span id="cb8-5"><a href="naomi-aghq.html#cb8-5" tabindex="-1"></a>  <span class="at">objective =</span> obj<span class="sc">$</span>fn,</span>
 <span id="cb8-6"><a href="naomi-aghq.html#cb8-6" tabindex="-1"></a>  <span class="at">gradient =</span> obj<span class="sc">$</span>gr,</span>
 <span id="cb8-7"><a href="naomi-aghq.html#cb8-7" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">iter.max =</span> its, <span class="at">trace =</span> <span class="dv">0</span>)</span>
-<span id="cb8-8"><a href="naomi-aghq.html#cb8-8" tabindex="-1"></a>)</span>
-<span id="cb8-9"><a href="naomi-aghq.html#cb8-9" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="naomi-aghq.html#cb8-10" tabindex="-1"></a>sd_out <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">sdreport</span>(</span>
-<span id="cb8-11"><a href="naomi-aghq.html#cb8-11" tabindex="-1"></a>  obj,</span>
-<span id="cb8-12"><a href="naomi-aghq.html#cb8-12" tabindex="-1"></a>  <span class="at">par.fixed =</span> opt<span class="sc">$</span>par,</span>
-<span id="cb8-13"><a href="naomi-aghq.html#cb8-13" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
-<span id="cb8-14"><a href="naomi-aghq.html#cb8-14" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb8-8"><a href="naomi-aghq.html#cb8-8" tabindex="-1"></a>)</span></code></pre></div>
+<p>The <code>sdreport</code> function is used to evaluate the Hessian at a particular value given by <code>par.fixed</code>, which here I use to obtain <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}\)</span>:</p>
+<pre><code>sd_out &lt;- TMB::sdreport(
+  obj,
+  par.fixed = opt$par,
+  getJointPrecision = TRUE
+)</code></pre>
 <p>A similar model, with different priors, can more sufficiently be fit using a formula interface in <code>glmmTMB</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="naomi-aghq.html#cb9-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand)</span>
-<span id="cb9-2"><a href="naomi-aghq.html#cb9-2" tabindex="-1"></a>                 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
-<span id="cb9-3"><a href="naomi-aghq.html#cb9-3" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula, <span class="at">data =</span> Epil, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand)</span>
+<span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>                 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
+<span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula, <span class="at">data =</span> Epil, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
 </div>
 <div id="epil-gauss-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.3">
 <h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>aghq</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(</span>
-<span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>  obj,</span>
-<span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">3</span>, </span>
-<span id="cb10-4"><a href="naomi-aghq.html#cb10-4" tabindex="-1"></a>  <span class="at">startingvalue =</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
-<span id="cb10-5"><a href="naomi-aghq.html#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(</span>
+<span id="cb11-2"><a href="naomi-aghq.html#cb11-2" tabindex="-1"></a>  obj,</span>
+<span id="cb11-3"><a href="naomi-aghq.html#cb11-3" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">3</span>, </span>
+<span id="cb11-4"><a href="naomi-aghq.html#cb11-4" tabindex="-1"></a>  <span class="at">startingvalue =</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
+<span id="cb11-5"><a href="naomi-aghq.html#cb11-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>The argument <code>k</code> specifies the number of quadrature nodes to be used per dimension.
 For more information about the <code>aghq</code> R package see the software paper.</p>
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
 <h4><span class="header-section-number">6.2.1.4</span> Laplace marginals and EB with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-eb-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Running NUTS with <code>tmbstan</code> using the objective function <code>obj</code> is also easy to do:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
 </div>
-<div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.7">
-<h4><span class="header-section-number">6.2.1.7</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="epil-nuts-rstan" class="section level4 hasAnchor" number="6.2.1.7">
+<h4><span class="header-section-number">6.2.1.7</span> NUTS with <code>rstan</code><a href="naomi-aghq.html#epil-nuts-rstan" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For interest in the efficiency of <code>tmbstan</code>, the epilepsy model was also implemented in <code>Stan</code>.
+The <code>Stan</code> C++ template <code>epil.stan</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#stan-epil">C.1.2</a>.
+This may be of interest to users familiar with <code>Stan</code> syntax, to help provide context for <code>TMB</code>.
+The <code>Stan</code> template was validated as be equivalent to the <code>TMB</code> template up to a constant of proportionality.</p>
+</div>
+<div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
+<h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><code>tmbstan</code> and <code>rstan</code> were comparable.</p>
 </div>
 </div>
 <div id="unknown" class="section level3 hasAnchor" number="6.2.2">
@@ -1405,6 +1425,7 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 <h4><span class="header-section-number">6.6.3.4</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
+This point is discussed by <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span> who highlight that <code>TMB</code> could applied to perform function evaluations in parallel, for example using the <code>parallel</code> R package.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</p>
 </div>
 <div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.5">

@@ -363,6 +363,7 @@ The posterior marginals $\tilde p(\theta_j \, | \, \mathbf{y})$ may be obtained 
 \tilde p(\theta_j \, | \, \mathbf{y}) = \int \tilde p(\theta_j \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}}_{-j}.
 \end{align}
 These integrals may be computed by reusing the AGHQ rule.
+More recent methods are discussed in Section 3.2 of @martins2013bayesian.
 
 Multiple methods have been proposed for obtaining the $\tilde p(\mathbf{x} \, | \, \mathbf{y})$ or individual marginals $\tilde p(x_i \, | \, \mathbf{y})$
 Four methods are presented below, trading-off accuracy with computational expense.
@@ -458,6 +459,7 @@ Discussed in @van2023new.
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
 `R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing] and uses algorithms from the `GMRFLib` C library [@rue2001gmrflib].
+Derivatives are calculated in `R-INLA` numerically using central finite differences.
 For a review recent computational features of `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state], see @gaedke2023parallelized.
 Further information about `R-INLA`, including recent developments, can be found at [`https://r-inla.org`](https://r-inla.org).
 
@@ -486,30 +488,37 @@ knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
 Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
 In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
-These derivates may then be composed by repeat use of the chain rule to obtain the function's derivative.
-`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD, and `Eigen` for linear algebra.
+These derivatives may then be composed by repeat use of the chain rule to obtain the function's derivative.
+`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD.
+Details are provided in Section 3 of @kristensen2016tmb.
 
-Models can be specified in `TMB` using a C++ template file.
-`TMB` C++ templates are compatible with other software.
+Whereas `R-INLA` requires to sparsity structure to be known in advance, `TMB` uses an algorithm to automatically determine the sparsity structure [Section 4.2; @kristensen2016tmb]
+The R package `Matrix` and C++ package `Eigen` are then used for sparse and dense matrix calculations.
+
+Models are specified in `TMB` using a C++ template file which evaluates $\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
+Other software packages have been developed which also use `TMB` C++ templates.
 The `tmbstan` R package [@monnahan2018no] allows running the Hamiltonian Monte Carlo (HMC) algorithm via `Stan`.
 The `aghq` R package [@stringer2021implementing] allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the `mvQuad` R package [@weiser2016mvquad].
 The `glmmTMB` R package [@brooks2017glmmtmb] allows specification of common GLMM models via a formula interface.
-It is possible to extract the `TMB` objective function used by `glmmTMB`, which may then be passed into `aghq` or `tmbstan`.
+It is also possible to extract the `TMB` objective function used by `glmmTMB`, which may then be passed into `aghq` or `tmbstan`.
+
+<!-- Could cite @bolker2013strategies. -->
+<!-- An important design feature of `TMB` is its modularity. -->
 
 #### Other software
 
 The `mgcv` [Mixed GAM computation vehicle; @wood2017generalized] R package estimates generalised additive models (GAMs) specified using a formula interface.
-This package is briefly mentioned here because the function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified as described in Section \@ref(simplified-inla).
+This package is briefly mentioned so as to note that the function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified as described in Section \@ref(simplified-inla).
 
 ## A universal INLA implementation {#universal}
 
 This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals.
-The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a formula interface like `R-INLA` [@vstrumbelj2023past].
+The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a more restrictive formula interface [@vstrumbelj2023past].
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. -->
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`, including Naomi as one among many examples.
-The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of TMB) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
+The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of `TMB`) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.
 
 I demonstrate the universal implementation with two examples:
@@ -647,22 +656,27 @@ compile("epil.cpp")
 dyn.load(dynlib("epil"))
 ```
 
-The objective function `obj` may then be created:
+The objective function `obj`, implementing $\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})$ and its first and second derivative, may then be created:
 
 ```r
 obj <- TMB::MakeADFun(
   data = dat,
   parameters = param,
   random = c("beta", "epsilon", "nu"),
-  DLL = "epil",
-  silent = TRUE
+  DLL = "epil"
 )
 ```
 
 The object `dat` is a list of data inputs passed to `TMB`.
 The object `param` is a list of parameter starting values passed to `TMB`.
 The argument `random` determines which parameters are integrated out with a Laplace approximation.
-Here, the parameters $(\beta, \epsilon, \nu) = \mathbf{x}$ are selected.
+Here, the parameters
+\begin{equation}
+(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}
+\end{equation}
+were selected as the latent field.
+
+The objective function `obj` may then be optimised using any gradient based optimiser in R, to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$:
 
 ```r
 its <- 1000
@@ -673,7 +687,11 @@ opt <- nlminb(
   gradient = obj$gr,
   control = list(iter.max = its, trace = 0)
 )
+```
 
+The `sdreport` function is used to evaluate the Hessian at a particular value given by `par.fixed`, which here I use to obtain $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$:
+
+```
 sd_out <- TMB::sdreport(
   obj,
   par.fixed = opt$par,
@@ -722,7 +740,16 @@ Running NUTS with `tmbstan` using the objective function `obj` is also easy to d
 fit <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 ```
 
+#### NUTS with `rstan` {#epil-nuts-rstan}
+
+For interest in the efficiency of `tmbstan`, the epilepsy model was also implemented in `Stan`.
+The `Stan` C++ template `epil.stan` for the epilepsy GLMM is in Appendix \@ref(stan-epil).
+This may be of interest to users familiar with `Stan` syntax, to help provide context for `TMB`.
+The `Stan` template was validated as be equivalent to the `TMB` template up to a constant of proportionality.
+
 #### Comparison {#epil-comparison}
+
+`tmbstan` and `rstan` were comparable.
 
 ### An example that `R-INLA` doesn't work for {#unknown}
 
@@ -1147,6 +1174,7 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 
 Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
+This point is discussed by @kristensen2016tmb who highlight that `TMB` could applied to perform function evaluations in parallel, for example using the `parallel` R package.
 Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
 
 #### Statistical theory
