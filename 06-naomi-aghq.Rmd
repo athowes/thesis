@@ -22,7 +22,7 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter describes development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi].
+This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi], tackling both implementation and methodology challenges.
 Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org) to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
@@ -30,62 +30,66 @@ The complexity and size of the model makes obtaining fast and accurate Bayesian 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
 The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
-Use of the INLA method and `R-INLA` software are close to ubiquitous in applied settings.
-However, the Naomi model is not compatible with `R-INLA`, largely because it is too complex to be expressed using a formula interface.
-As a result, inference for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, with the Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
+Use of the INLA method and the `R-INLA` software are close to ubiquitous in applied settings.
+However, the Naomi model is not compatible with `R-INLA`, foremost because it is too complex to be expressed using a formula interface.
+As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, using a Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
 In the EB approximation hyperparameters are fixed by optimisation of the marginal posterior.
 This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.
 
-Most methodological work on INLA has taken place using the `R-INLA` software package.
+Most methodological work relating to INLA has taken place using the `R-INLA` software package.
 There are two notable exceptions.
 First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed an fast Laplace approximation approach which does not rely on Markov structure of the latent field.
-Second, @stringer2022fast extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy additive linear predictors, enabling application of INLA to a wider class of extended latent Gaussian models (ELGMs), which includes Naomi.
-This approach is referred to by @van2023new as the "modern" formulation of the INLA method, as opposed to the "classic" formulation of @rue2009approximate, and is included in `R-INLA` using `inla.mode = "experimental"`.
-Along with removing the noisy structured additive predictor, @stringer2022fast propose use of the adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule to integrate with respect to the hyperparameters.
+Second, @stringer2022fast extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy structured additive predictors.
+This enables the application of INLA to a wider class of extended latent Gaussian models, which includes Naomi.
+@van2023new refer to this as the "modern" formulation of the INLA method, as opposed to the "classic" formulation of @rue2009approximate, and it is now included in `R-INLA` using `inla.mode = "experimental"`.
+@stringer2022fast also propose use of the adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule to perform integration with respect to the hyperparameters.
+
 The methodological contributions of this chapter extend @stringer2022fast in two directions:
 
-1. The first direction is a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
+1. First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
 Section \@ref(universal) demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible.
-2. The second direction is a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section \@ref(pca-aghq).
+2. Second, a quadrature rule which combines AGHQ with principal components analysis to enable integration over moderate-dimensional spaces, described in Section \@ref(pca-aghq).
 This quadrature rule is used to perform inference for the Naomi model by integrating the marginal Laplace approximation with respect to the moderate-dimensional hyperparameters within an INLA algorithm implemented in `TMB` in Section \@ref(malawi).
 
-This work was conducted in collaboration with Prof. Alex Stringer, who I visited at the University of Waterloo in the fall term of 2022.
+This work was conducted in collaboration with Prof. Alex Stringer, whom I visited at the University of Waterloo during the fall term of 2022.
 The results are presented in @howes2023fast.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
 
 ## Inference methods and software
 
-This section reviews existing deterministic Bayesian inference methods (Sections \@ref(la), \@ref(quadrature), \@ref(inla)) and software (Section \@ref(software)).
+This section reviews existing deterministic Bayesian inference methods (Sections \@ref(la), \@ref(quadrature), \@ref(inla)) and the software implementing them (Section \@ref(software)).
 Inference comprises obtaining the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, (\#eq:bayes)
 \end{equation}
 or some way to compute relevant functions of it.
-The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$, which here I assume to be expressible as vectors.
+The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$.
+Here I assume these quantities are expressible as vectors.
 
-Inference is a sensible goal because the posterior distribution is sufficient for use in decision making.
-That is, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
+Inference is a sensible goal because in Bayesian decision theory, the posterior distribution is sufficient for use in decision making.
+More specifically, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
 \begin{equation}
 \mathbb{E}(l(a, \boldsymbol{\mathbf{\phi}}) \, | \, \mathbf{y}) = \int_{\mathbb{R}^d} l(a, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d}\boldsymbol{\mathbf{\phi}}.
 \end{equation}
-For example, given the posterior distribution of the current demand for HIV treatment at a particular facility, historic data about treatment demand are not required for planning of service provision.
-As such, the information provided for strategic response to the HIV epidemic can be thought of as functions of the posterior distribution.
+For example, historic data about treatment demand are only required for planning of HIV treatment service provision in so far as they alter the posterior distribution of current demand.
+The information provided for strategic response to the HIV epidemic may therefore be thought of as functions of some posterior distribution.
 
 It is usually intractable to obtain the posterior distribution.
 This is because the denominator in Equation \@ref(eq:bayes) contains a potentially high-dimensional integral over the $d \in \mathbb{Z}^+$ -dimensional parameters
 \begin{equation}
-p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}, (\#eq:evidence)
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}. (\#eq:evidence)
 \end{equation}
-sometimes called the evidence or posterior normalising constant.
-For this reason, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
+This quantity is sometimes called the evidence or posterior normalising constant.
+As a result, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
 
-Some approximate Bayesian inference methods, like Markov chain Monte Carlo (MCMC), avoid directly calculating the posterior normalising constant, instead finding ways to work with the unnormalised posterior distribution
+Some approximate Bayesian inference methods, like Markov chain Monte Carlo (MCMC), avoid directly calculating the posterior normalising constant.
+Instead they find ways to work with the unnormalised posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}),
 \end{equation}
 where $p(\mathbf{y})$ is not a function of $\boldsymbol{\mathbf{\phi}}$ and so can be removed as a constant.
-Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant.
-The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods.
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant (Equation \@ref(eq:evidence)).
+The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods because they do not make fundamental use of randomness.
 
 ### The Laplace approximation {#la}
 
@@ -110,7 +114,7 @@ be the posterior mode, and
 \hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}} (\#eq:hessian)
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
-The Laplace approximation is then
+The Laplace approximation to the posterior normalising constant (Equation \@ref(eq:evidence)) is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:la) \\
 &= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}. (\#eq:la2)
@@ -168,12 +172,13 @@ For the class of latent Gaussian models [@rue2009approximate] the prior distribu
 \mathbf{x} \sim \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) = \mathcal{N}(\mathbf{x} \, | \, \mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}})),
 \end{equation}
 with assumed zero mean $\mathbf{0}$, and precision matrix $\mathbf{Q}(\boldsymbol{\mathbf{\theta}})$.
-Although the marginal posterior distribution
+The resulting marginal posterior distribution
 \begin{align}
 p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) &\propto \mathcal{N}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\mathbf{y}  \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \\
 &\propto \exp \left( - \frac{1}{2} \mathbf{x}^\top \mathbf{Q}(\boldsymbol{\mathbf{\theta}}) \mathbf{x} + \log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \right)
 \end{align}
-is not Gaussian, its deviation from Gaussianity can be expected to be small if $\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ is small.
+is not exactly Gaussian.
+However, its deviation can be expected to be small if $\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ is small.
 
 ### Quadrature {#quadrature}
 
@@ -297,7 +302,8 @@ The AGHQ estimate of the normalising constant for $k = 1$ is then given by
 which corresponds to the Laplace approximation $\tilde p_{\texttt{LA}}(\mathbf{y})$ given in Equation \@ref(eq:la2).
 This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than $k = 1$ is required.
 
-(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$. For each quadrature rule, the estimate of the integral is given by...
+(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$.
+<!-- For each quadrature rule, the estimate of the integral is given by... -->
 
 ```{r aghq-demo, fig.cap="(ref:aghq-demo)"}
 knitr::include_graphics("figures/naomi-aghq/aghq-demo.png")
@@ -320,18 +326,21 @@ Figure \@ref(fig:aghq-demo) demonstrates GHQ and AGHQ for a two-dimensional exam
 Using the Cholesky decomposition results in adapted quadrature nodes which collapse along one of the dimensions, as a result of the matrix $\hat{\mathbf{L}}$ being lower triangular.
 On the other hand, using the spectral decomposition results in adapted quadrature nodes which lie along the orthogonal eigenvectors of $\hat{\mathbf{H}}^{-1}$.
 
+Using AGHQ, @bilodeau2022stochastic provide the first stochastic convergence rate for adaptive quadrature applied to Bayesian inference.
+
 ### Integrated nested Laplace approximation {#inla}
 
 The integrated nested Laplace approximation (INLA) method [@rue2009approximate] combines marginal Laplace approximations with quadrature to enable approximation of posterior marginal distributions.
-Consider the marginal Laplace approximation of Section \@ref(marginal-la) for a three-stage hierarchical model given by
+
+Consider the marginal Laplace approximation (Section \@ref(marginal-la)) for a three-stage hierarchical model given by
 \begin{equation}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-To complete approximation of the posterior normalising constant, the marginal Laplace approximation can be integrated over the hyperparameters using a quadrature rule
+To complete approximation of the posterior normalising constant, the marginal Laplace approximation can be integrated over the hyperparameters using a quadrature rule (Section \@ref(quadrature))
 \begin{equation}
 \tilde p(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} \tilde p_\texttt{LA}(\mathbf{z}, \mathbf{y}) \omega(\mathbf{z}). (\#eq:inlanormconst)
 \end{equation}
-Following @stringer2022fast I consider use of AGHQ as the particular quadrature rule.
+Though any choice of quadrature rule is possible, following @stringer2022fast here I consider use of AGHQ.
 Let $\mathbf{z} \in \mathcal{Q}(m, k)$ be the $m$-dimensional GHQ nodes constructed using the product rule with $k$ nodes per dimension, and $\omega: \mathbb{R}^m \to \mathbb{R}$ the corresponding weighting function.
 These nodes are adapted by $\boldsymbol{\mathbf{\theta}}(\mathbf{z}) = \hat{\mathbf{P}}_\texttt{LA} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$ where
 \begin{align}
@@ -347,35 +356,44 @@ This estimate can be used to normalise the marginal Laplace approximation as fol
 \begin{equation}
 \tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_{\texttt{AQ}}(\mathbf{y})}.
 \end{equation}
-The posterior marginals $\tilde p(\theta_j \, | \, \mathbf{y})$ may be obtained by...
+
+The posterior marginals $\tilde p(\theta_j \, | \, \mathbf{y})$ may be obtained by
+\begin{align}
+\tilde p(\theta_j \, | \, \mathbf{y}) = \int \tilde p(\theta_j \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}}_{-j}.
+\end{align}
+These integrals may be computed by reusing the AGHQ rule.
 
 Multiple methods have been proposed for obtaining the $\tilde p(\mathbf{x} \, | \, \mathbf{y})$ or individual marginals $\tilde p(x_i \, | \, \mathbf{y})$
-The methods trade-off vary accuracy with computational expense.
+Four methods are presented below, trading-off accuracy with computational expense.
 
 #### Gaussian marginals {#gaussian-marginals}
 
-Inferences for the latent field can be obtained by approximation of $p(\mathbf{x} \, | \, \mathbf{y})$ using another application of the quadrature rule [@rue2007approximate]
+Most easily, inferences for the latent field can be obtained by approximation of $p(\mathbf{x} \, | \, \mathbf{y})$ using another application of the quadrature rule [@rue2007approximate]
 \begin{align}
 p(\mathbf{x} \, | \, \mathbf{y}) &= \int p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
 &\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:mixgaussian)
 \end{align}
 The quadrature rule $\mathbf{z} \in \mathcal{Q}(m, k)$ is used both internally to normalise the marginal Laplace approximation, and externally to perform integration with respect to the hyperparameters.
-Equation \@ref(eq:mixgaussian) is a mixture of Gaussian distributions $p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})$ with multinomial probabilities 
+Equation \@ref(eq:mixgaussian) is a mixture of Gaussian distributions
+\begin{equation}
+p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}), (\#eq:mixgaussian-individual)
+\end{equation}
+each with multinomial probabilities 
 \begin{equation}
 \lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}),
 \end{equation}
 where $\sum \lambda(\mathbf{z}) = 1$ and $\lambda(\mathbf{z}) > 0$.
-Samples may therefore be obtained for the complete vector $\mathbf{x}$ jointly by first drawing a node $\mathbf{z} \in \mathcal{Q}(m, k)$ with multinomial probabilities $\lambda(\mathbf{z})$ then drawing a sample from the corresponding Gaussian distribution.
-Algorithms for fast and exact simulation from a Gaussian distribution have been developed by @rue2001fast.
-The posterior marginals for any subset of the complete vector can be obtained by keeping the relevant entries of $\mathbf{x}$.
+Samples may therefore be naturally obtained for the complete vector $\mathbf{x}$ jointly by first drawing a node $\mathbf{z} \in \mathcal{Q}(m, k)$ with multinomial probabilities $\lambda(\mathbf{z})$ then drawing a sample from the corresponding Gaussian distribution in Equation \@ref(eq:mixgaussian-individual).
+Algorithms for fast and exact simulation from a Gaussian distribution have been developed, including by @rue2001fast.
+The posterior marginals for any subset of the complete vector can simply be obtained by keeping the relevant entries of $\mathbf{x}$.
 
 #### Laplace marginals {#laplace-marginals}
 
-An alternative more accurate, but more computationally expensive, approach is to calculate a Laplace approximation to the marginal posterior
+An alternative higher accuracy, but more computationally expensive, approach is to calculate a Laplace approximation to the marginal posterior
 \begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}. (\#eq:lamarginaljoint)
 \end{equation}
-The variable $x_i$ is excluded from the Gaussian approximation such that
+Here, the variable $x_i$ is excluded from the Gaussian approximation such that
 \begin{equation}
 p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x}_{-i} \, | \, \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}})),
 \end{equation}
@@ -387,37 +405,50 @@ and $(N - 1) \times (N - 1)$-dimensional Hessian matrix evaluated at the posteri
 \begin{equation}
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ can be obtained by normalisation of the marginal Laplace approximation, and integration with respect to the hyperparameters, similarly to Equation \@ref(eq:mixgaussian)
-\begin{align}
-p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
-&\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:lamarginal)
-\end{align}
-
-The term $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ is obtained by normalising Equation \@ref(eq:lamarginaljoint)
+The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ can be obtained by first normalsiing the marginal Laplace approximation in Equation \@ref(eq:lamarginaljoint)
 \begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}
 \end{equation}
 In the denominator, the previously obtained estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused.
 Alternatively, a new estimate may be computed.
-Equation \@ref(eq:lamarginal) is a mixture of the Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
+Then, integration with respect to the hyperparameters may be performed, similarly to Equation \@ref(eq:mixgaussian)
+\begin{align}
+p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
+&\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:lamarginal)
+\end{align}
+
+Equation \@ref(eq:lamarginal) is a mixture of the normalised Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
 As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from an AGHQ rule. 
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
 When the latent field $\mathbf{x}$ is a Gauss-Markov random fields [GMRF; @rue2005gaussian] it is possible to efficiently approximate the Laplace marginals in Section \@ref(laplace-marginals).
-The simplified approximation [@rue2009approximate] is achieved by a Taylor expansion on the numerator and denominator of Equation \@ref(eq:lamarginaljoint) up to third order.
+The simplified approximation is achieved by a Taylor expansion on the numerator and denominator of Equation \@ref(eq:lamarginaljoint) up to third order.
 The approach is analogous to correcting the Gaussian approximation in Section \@ref(gaussian-marginals) for location and skewness.
+Details are left to Section 3.2.3 of @rue2009approximate.
 
 #### Simplified INLA {#simplified-inla}
 
-@wood2020simplified approximates the Laplace marginals without relying so heavily on sparsity via GMRFs and still achieves good performance.
-For splines, as with extended latent Gaussian models [ELGMs; @stringer2022fast], the precision matrix is not as sparse.
+@wood2020simplified describe a method for approximating the Laplace marginals without depending on the Markov structure, while still achieving equivalent efficiency.
+This work was motivated by the spline setting, which similar to the extended latent Gaussian models [ELGMs; @stringer2022fast] setting, results in precision matrices which are not as sparse.
+Details are left to @wood2020simplified.
 
 #### Inclusion of the structured additive predictor in the latent field
 
-In @rue2009approximate...
-In @stringer2022fast...
+This section is concluded by briefly discussing inclusion or exclusion of the structured additive predictor within the latent field.
+The issue relates to the sparsity structure of
+\begin{align}
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) &= \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
+\end{align}
+The modified model used by @rue2009approximate is
+\begin{align}
+\boldsymbol{\mathbf{\eta}}^\star &= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
+\boldsymbol{\mathbf{\epsilon}} &\sim \mathcal{N}(\mathbf{0}, \tau^{-1} \mathbf{I}_n), \\
+\mathbf{x}^\star = (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\cdots).
+\end{align}
+@stringer2022fast note that this doesn't work as well for ELGMs.
 Discussed in @van2023new.
 
 ### Software {#software}
