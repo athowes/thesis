@@ -18,7 +18,16 @@ PhD in [Modern Statistics and Statistical Machine Learning](https://statml.io/) 
 Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff Eaton](https://www.imperial.ac.uk/people/jeffrey.eaton).
 
 ```{r echo=FALSE}
-knitr::asis_output(paste(readLines("front-and-back-matter/_abstract.Rmd"), collapse = '\n  '))
+abstract <- paste(readLines("front-and-back-matter/_abstract.Rmd"), collapse = '\n  ')
+
+words <- function(text){
+  words <- strsplit(text, " ")[[1]]
+  length(words)
+}
+
+stopifnot(words(abstract) < 300)
+
+knitr::asis_output(abstract)
 ```
 
 ![](figures/hiv-aids/naomi-continent.png)
