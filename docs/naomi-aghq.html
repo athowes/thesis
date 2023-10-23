@@ -227,6 +227,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="4.3.1" data-path="beyond-borders.html"><a href="beyond-borders.html#centroid-kernel"><i class="fa fa-check"></i><b>4.3.1</b> Centroid kernel</a></li>
 <li class="chapter" data-level="4.3.2" data-path="beyond-borders.html"><a href="beyond-borders.html#integrated-kernel"><i class="fa fa-check"></i><b>4.3.2</b> Integrated kernel</a></li>
+<li class="chapter" data-level="4.3.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-stochastic-partial-differential-equation-approximation"><i class="fa fa-check"></i><b>4.3.3</b> The stochastic partial differential equation approximation</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.4</b> Simulation study</a>
 <ul>
@@ -333,8 +334,9 @@ div.csl-indent {
 <li class="chapter" data-level="C.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#epilepsy-example"><i class="fa fa-check"></i><b>C.1</b> Epilepsy example</a>
 <ul>
 <li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-epil"><i class="fa fa-check"></i><b>C.1.1</b> <code>TMB</code> C++ template</a></li>
-<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#stan-epil"><i class="fa fa-check"></i><b>C.1.2</b> <code>Stan</code> C++ template</a></li>
-<li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-diagnostics"><i class="fa fa-check"></i><b>C.1.3</b> NUTS convergence diagnostics</a></li>
+<li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-modified-epil"><i class="fa fa-check"></i><b>C.1.2</b> Modified <code>TMB</code> C++ template</a></li>
+<li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#stan-epil"><i class="fa fa-check"></i><b>C.1.3</b> <code>Stan</code> C++ template</a></li>
+<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-diagnostics"><i class="fa fa-check"></i><b>C.1.4</b> NUTS convergence diagnostics</a></li>
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.2</b> Simplified Naomi model description</a>
 <ul>
@@ -370,7 +372,7 @@ div.csl-indent {
 <div id="naomi-aghq" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">6</span> Fast approximate Bayesian inference<a href="naomi-aghq.html#naomi-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-<p>This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>, tackling both implementation and methodology challenges.
+<p>This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>, tackling both implementation and methological challenges.
 Over 35 countries <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span> have used the Naomi model web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a> to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.</p>
@@ -409,7 +411,7 @@ p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\
 or some way to compute relevant functions of it.
 The posterior distribution encapsulates beliefs about the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\)</span> having observed data <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)\)</span>.
 Here I assume these quantities are expressible as vectors.</p>
-<p>Inference is a sensible goal because in Bayesian decision theory, the posterior distribution is sufficient for use in decision making.
+<p>Inference is a sensible goal because (under Bayesian decision theory) the posterior distribution is sufficient for use in decision making.
 More specifically, given a loss function <span class="math inline">\(l(a, \boldsymbol{\mathbf{\phi}})\)</span>, the expected posterior loss of a decision <span class="math inline">\(a\)</span> depends on the data only via the posterior distribution
 <span class="math display">\[\begin{equation}
 \mathbb{E}(l(a, \boldsymbol{\mathbf{\phi}}) \, | \, \mathbf{y}) = \int_{\mathbb{R}^d} l(a, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d}\boldsymbol{\mathbf{\phi}}.
@@ -977,7 +979,7 @@ Setting <code>par.fixed</code> to the previously obtained <code>opt$par</code> r
 <span id="cb9-3"><a href="naomi-aghq.html#cb9-3" tabindex="-1"></a>  <span class="at">par.fixed =</span> opt<span class="sc">$</span>par,</span>
 <span id="cb9-4"><a href="naomi-aghq.html#cb9-4" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
 <span id="cb9-5"><a href="naomi-aghq.html#cb9-5" tabindex="-1"></a>)</span></code></pre></div>
-<p>It is possible to succinctly fit the epilepsy GLMM in a frequentist setting (that is using improper hyperparameter priors <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}}) \propto 1\)</span>) using a formula interface in <code>glmmTMB</code></p>
+<p>It also is possible to succinctly fit the epilepsy GLMM in a frequentist setting (that is, using improper hyperparameter priors <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}}) \propto 1\)</span>) using a formula interface in <code>glmmTMB</code></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT</span>
 <span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>                 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
 <span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>                 </span>
@@ -993,7 +995,27 @@ A more complete <code>aghq</code> vignette is provided by <span class="citation"
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
 <h4><span class="header-section-number">6.2.1.4</span> Laplace marginals and EB with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-eb-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<p>The Laplace latent field marginal <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> may be obtained by setting <code>random</code> to <span class="math inline">\(\mathbf{x}_{-i}\)</span> in the <code>MakeADFun</code> function call.
+This is not directly possible, as the <code>random</code> argument takes a vector of strings as input, and has no native method for indexing.
+Instead, the following steps must be taken to modify the <code>TMB</code> C++ template:</p>
+<ol style="list-style-type: decimal">
+<li>Include <code>DATA_INTEGER(i)</code> to pass the index <span class="math inline">\(i\)</span> to <code>TMB</code>.</li>
+<li>Concatenate the latent field to <code>PARAMETER_VECTOR(x_minus_i)</code> and <code>PARAMETER(x_i)</code>.</li>
+<li>Include <code>DATA_IVECTOR(x_lengths)</code> and <code>DATA_IVECTOR(x_starts)</code> to pass the start point and lengths of each subvector of <span class="math inline">\(\mathbf{x}\)</span>.
+The <span class="math inline">\(j\)</span>th subvector may then be obtained using <code>x.segment(x_starts(j), x_lengths(j))</code>.</li>
+</ol>
+<p>The modified <code>TMB</code> C++ template for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>.</p>
+<p>Now it is possible (after suitably altering <code>dat</code> and <code>param</code>) to obtain the correct objective function via:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>)</span>
+<span id="cb12-2"><a href="naomi-aghq.html#cb12-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>))</span>
+<span id="cb12-3"><a href="naomi-aghq.html#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="naomi-aghq.html#cb12-4" tabindex="-1"></a>obj_fixed_theta <span class="ot">&lt;-</span> <span class="fu">MakeADFun</span>(</span>
+<span id="cb12-5"><a href="naomi-aghq.html#cb12-5" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
+<span id="cb12-6"><a href="naomi-aghq.html#cb12-6" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
+<span id="cb12-7"><a href="naomi-aghq.html#cb12-7" tabindex="-1"></a>  <span class="at">random =</span> <span class="st">&quot;x_minus_i&quot;</span>,</span>
+<span id="cb12-8"><a href="naomi-aghq.html#cb12-8" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil_modified&quot;</span>,</span>
+<span id="cb12-9"><a href="naomi-aghq.html#cb12-9" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-10"><a href="naomi-aghq.html#cb12-10" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1003,490 +1025,273 @@ A more complete <code>aghq</code> vignette is provided by <span class="citation"
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Running NUTS with <code>tmbstan</code> using the objective function <code>obj</code> is easy to do:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
-<p>Convergence diagnostics for NUTS with <code>tmbstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#tmbstan-epil">C.1.3.1</a>.</p>
+<p>Convergence diagnostics for NUTS with <code>tmbstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#tmbstan-epil">C.1.4.1</a>.</p>
 </div>
 <div id="epil-nuts-rstan" class="section level4 hasAnchor" number="6.2.1.7">
 <h4><span class="header-section-number">6.2.1.7</span> NUTS with <code>rstan</code><a href="naomi-aghq.html#epil-nuts-rstan" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>For interest in the relative inefficiency of <code>tmbstan</code>, the epilepsy model was also implemented in <code>Stan</code>.
-The <code>Stan</code> C++ template <code>epil.stan</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#stan-epil">C.1.2</a>.
+The <code>Stan</code> C++ template <code>epil.stan</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#stan-epil">C.1.3</a>.
 This may be of interest to users familiar with <code>Stan</code> syntax, to help provide context for <code>TMB</code>.
 The <code>Stan</code> template was validated as be equivalent to the <code>TMB</code> template up to a constant of proportionality.
 Inferences from <code>Stan</code> may be obtained by</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="naomi-aghq.html#cb15-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(<span class="at">file =</span> <span class="st">&quot;epil.stan&quot;</span>, <span class="at">data =</span> dat, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
-<p>Convergence diagnostics for NUTS with <code>rstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#rstan-epil">C.1.3.2</a>.</p>
+<p>Convergence diagnostics for NUTS with <code>rstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#rstan-epil">C.1.4.2</a>.</p>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
 <h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> were near identical using <code>R-INLA</code> and <code>TMB</code>.</p>
-<div id="eycrsefwbm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
-}
-
-#eycrsefwbm .gt_table {
-  display: table;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#eycrsefwbm .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#eycrsefwbm .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#eycrsefwbm .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#eycrsefwbm .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#eycrsefwbm .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#eycrsefwbm .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#eycrsefwbm .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#eycrsefwbm .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#eycrsefwbm .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#eycrsefwbm .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#eycrsefwbm .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#eycrsefwbm .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#eycrsefwbm .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#eycrsefwbm .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#eycrsefwbm .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#eycrsefwbm .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#eycrsefwbm .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#eycrsefwbm .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#eycrsefwbm .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#eycrsefwbm .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#eycrsefwbm .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#eycrsefwbm .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#eycrsefwbm .gt_left {
-  text-align: left;
-}
-
-#eycrsefwbm .gt_center {
-  text-align: center;
-}
-
-#eycrsefwbm .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#eycrsefwbm .gt_font_normal {
-  font-weight: normal;
-}
-
-#eycrsefwbm .gt_font_bold {
-  font-weight: bold;
-}
-
-#eycrsefwbm .gt_font_italic {
-  font-style: italic;
-}
-
-#eycrsefwbm .gt_super {
-  font-size: 65%;
-}
-
-#eycrsefwbm .gt_footnote_marks {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 75%;
-  vertical-align: 0.4em;
-}
-
-#eycrsefwbm .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#eycrsefwbm .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#eycrsefwbm .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#eycrsefwbm .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#eycrsefwbm .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#eycrsefwbm .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="R-INLA">R-INLA</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="TMB">TMB</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="NUTS">NUTS</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td headers="R-INLA" class="gt_row gt_right">1.627</td>
-<td headers="TMB" class="gt_row gt_right">1.627</td>
-<td headers="NUTS" class="gt_row gt_right">1.574</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.075</td>
-<td headers="TMB" class="gt_row gt_right">0.076</td>
-<td headers="NUTS" class="gt_row gt_right">0.078</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">−0.926</td>
-<td headers="TMB" class="gt_row gt_right">−0.926</td>
-<td headers="NUTS" class="gt_row gt_right">−0.953</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.409</td>
-<td headers="TMB" class="gt_row gt_right">0.414</td>
-<td headers="NUTS" class="gt_row gt_right">0.412</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.858</td>
-<td headers="TMB" class="gt_row gt_right">0.858</td>
-<td headers="NUTS" class="gt_row gt_right">0.887</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.134</td>
-<td headers="TMB" class="gt_row gt_right">0.136</td>
-<td headers="NUTS" class="gt_row gt_right">0.135</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">−0.100</td>
-<td headers="TMB" class="gt_row gt_right">−0.101</td>
-<td headers="NUTS" class="gt_row gt_right">−0.104</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.086</td>
-<td headers="TMB" class="gt_row gt_right">0.086</td>
-<td headers="NUTS" class="gt_row gt_right">0.087</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.472</td>
-<td headers="TMB" class="gt_row gt_right">0.470</td>
-<td headers="NUTS" class="gt_row gt_right">0.494</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.355</td>
-<td headers="TMB" class="gt_row gt_right">0.360</td>
-<td headers="NUTS" class="gt_row gt_right">0.363</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.340</td>
-<td headers="TMB" class="gt_row gt_right">0.340</td>
-<td headers="NUTS" class="gt_row gt_right">0.351</td></tr>
-    <tr><td headers="R-INLA" class="gt_row gt_right">0.208</td>
-<td headers="TMB" class="gt_row gt_right">0.210</td>
-<td headers="NUTS" class="gt_row gt_right">0.206</td></tr>
-  </tbody>
-  
-  
+<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> were near identical using <code>R-INLA</code> and <code>TMB</code> (Table <a href="naomi-aghq.html#tab:epil-results">6.1</a>).</p>
+<table>
+<caption>
+<span id="tab:epil-results">Table 6.1: </span>Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+R-INLA
+</th>
+<th style="text-align:right;">
+TMB
+</th>
+<th style="text-align:right;">
+AGHQ
+</th>
+<th style="text-align:right;">
+NUTS
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+beta[0]
+</td>
+<td style="text-align:right;">
+1.6272418
+</td>
+<td style="text-align:right;">
+1.6266589
+</td>
+<td style="text-align:right;">
+1.6252194
+</td>
+<td style="text-align:right;">
+1.5736379
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[0])
+</td>
+<td style="text-align:right;">
+0.0750768
+</td>
+<td style="text-align:right;">
+0.0764481
+</td>
+<td style="text-align:right;">
+0.0766634
+</td>
+<td style="text-align:right;">
+0.0782053
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta[1]
+</td>
+<td style="text-align:right;">
+-0.9256949
+</td>
+<td style="text-align:right;">
+-0.9262305
+</td>
+<td style="text-align:right;">
+-0.9351916
+</td>
+<td style="text-align:right;">
+-0.9526077
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[1])
+</td>
+<td style="text-align:right;">
+0.4085444
+</td>
+<td style="text-align:right;">
+0.4135053
+</td>
+<td style="text-align:right;">
+0.4192253
+</td>
+<td style="text-align:right;">
+0.4115089
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta[2]
+</td>
+<td style="text-align:right;">
+0.8582943
+</td>
+<td style="text-align:right;">
+0.8581393
+</td>
+<td style="text-align:right;">
+0.8643509
+</td>
+<td style="text-align:right;">
+0.8869287
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[2])
+</td>
+<td style="text-align:right;">
+0.1343051
+</td>
+<td style="text-align:right;">
+0.1361203
+</td>
+<td style="text-align:right;">
+0.1335267
+</td>
+<td style="text-align:right;">
+0.1345200
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta[3]
+</td>
+<td style="text-align:right;">
+-0.1002819
+</td>
+<td style="text-align:right;">
+-0.1005232
+</td>
+<td style="text-align:right;">
+-0.1022552
+</td>
+<td style="text-align:right;">
+-0.1040067
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[3])
+</td>
+<td style="text-align:right;">
+0.0859909
+</td>
+<td style="text-align:right;">
+0.0858690
+</td>
+<td style="text-align:right;">
+0.0845704
+</td>
+<td style="text-align:right;">
+0.0871546
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta[4]
+</td>
+<td style="text-align:right;">
+0.4722568
+</td>
+<td style="text-align:right;">
+0.4704351
+</td>
+<td style="text-align:right;">
+0.4852713
+</td>
+<td style="text-align:right;">
+0.4935811
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[4])
+</td>
+<td style="text-align:right;">
+0.3547226
+</td>
+<td style="text-align:right;">
+0.3595652
+</td>
+<td style="text-align:right;">
+0.3545031
+</td>
+<td style="text-align:right;">
+0.3628812
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta[5]
+</td>
+<td style="text-align:right;">
+0.3400574
+</td>
+<td style="text-align:right;">
+0.3399361
+</td>
+<td style="text-align:right;">
+0.3413073
+</td>
+<td style="text-align:right;">
+0.3507211
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd(beta[5])
+</td>
+<td style="text-align:right;">
+0.2077633
+</td>
+<td style="text-align:right;">
+0.2104471
+</td>
+<td style="text-align:right;">
+0.2126778
+</td>
+<td style="text-align:right;">
+0.2063390
+</td>
+</tr>
+</tbody>
 </table>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
+<img src="figures/naomi-aghq/epil-time.png" alt="Time taken." width="95%" />
+<p class="caption">
+Figure 6.6: Time taken.
+</p>
 </div>
-<p>Table: (#tab:epil) Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.</p>
 </div>
 </div>
 <div id="unknown" class="section level3 hasAnchor" number="6.2.2">
 <h3><span class="header-section-number">6.2.2</span> An example that <code>R-INLA</code> doesn’t work for<a href="naomi-aghq.html#unknown" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>An example of a model that <code>R-INLA</code> can’t fit but INLA with <code>TMB</code> can.
-Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.</p>
+Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
+The model structure was as follows.Y
+Inference was performed using:</p>
+<ol style="list-style-type: decimal">
+<li>Gaussian marginals and EB with <code>TMB</code></li>
+<li>Gaussian marginals and AGHQ with <code>aghq</code></li>
+<li>Laplace marginals and EB with <code>TMB</code></li>
+<li>Laplace marginals and AGHQ with <code>TMB</code></li>
+<li>NUTS with <code>tmbstan</code></li>
+</ol>
+<p>The results were as follows.</p>
 </div>
 </div>
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
@@ -1659,11 +1464,11 @@ y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, {\sigma^\text{ART}_I}^2),
 \end{equation}\]</span>
 where the mean is
 <span class="math display" id="eq:art-aggregate-mean">\[\begin{equation}
-\mu^\text{ART}_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \pi_{i, x(i) = x&#39;, x}, \tag{6.26}
+\mu^\text{ART}_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x}, \tag{6.26}
 \end{equation}\]</span>
 and the variance is
 <span class="math display" id="eq:art-aggregate-var">\[\begin{equation}
-{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \pi_{i, x(i) = x&#39;, x} (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.27}
+{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x} \cdot (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.27}
 \end{equation}\]</span>
 Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.26)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.27)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
 </div>
@@ -1676,7 +1481,7 @@ Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.26)</a> and <a href
 \end{equation}\]</span>
 The observations are modelled using the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>, which includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field <span class="math inline">\(\mathbf{x}\)</span>.
 The latent field is controlled by hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span>] proportion parameters.
-These features are described in more detail in Appendix @</p>
+These features are described in more detail in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.</p>
 <p>Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters <span class="math inline">\(m &lt; N\)</span>.
 However, it has complexities which place it outside the class of LGMs, as defined in Section <a href="bayes-st.html#lgm">3.3.5</a>.
 Instead, it is an ELGM, as defined in Section <a href="bayes-st.html#elgm">3.3.6</a>.
@@ -1745,7 +1550,7 @@ The corresponding weighting function is given by
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.6</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.7</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1760,7 +1565,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.6: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
+Figure 6.7: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1771,7 +1576,7 @@ Figure 6.6: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using TMB." width="95%" />
 <p class="caption">
-Figure 6.7: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using <code>TMB</code>.
+Figure 6.8: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1792,7 +1597,7 @@ This represents a gold-standard.</li>
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For EB and PCA-AGHQ, following inference hyperparameter and latent field samples were simulated.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posteriors.
-These model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.7</a>.</p>
+These model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.8</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The effective sample size ratios generated sampling from the Naomi model with NUTS were low.
@@ -1844,11 +1649,13 @@ Further strategies, such as gradually lowering <span class="math inline">\(k\)</
 </div>
 <div id="suggestions-for-future-work" class="section level3 hasAnchor" number="6.6.3">
 <h3><span class="header-section-number">6.6.3</span> Suggestions for future work<a href="naomi-aghq.html#suggestions-for-future-work" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Though some relate more to one contribution than the other, suggestions for future work relating to this chapter are presented here together.</p>
+<p>Finally, suggestions for future work based on this chapter are presented.
+Some suggestions relate more to specific individual contributions of the chapter.
+Others take a broader view, or relate to multiple contributions.</p>
 <div id="further-comparisons" class="section level4 hasAnchor" number="6.6.3.1">
 <h4><span class="header-section-number">6.6.3.1</span> Further comparisons<a href="naomi-aghq.html#further-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Comparison to additional Bayesian inference methods could be included in Section <a href="naomi-aghq.html#malawi">6.5</a>.
-Three further comparisons might be particularly valuable:</p>
+Three further comparisons stand out as being particularly valuable:</p>
 <ol style="list-style-type: decimal">
 <li>There exist other quadrature rules for moderate dimension, such as the CCD.
 It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.</li>
@@ -1886,12 +1693,15 @@ Another approach would be to measure the fit of marginal samples from a cheap ap
 The measures of fit would have to be for marginals, ruling out approaches like PSIS <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span> which operate on joint distributions.</li>
 </ol>
 </div>
-<div id="computational-speed-ups" class="section level4 hasAnchor" number="6.6.3.4">
-<h4><span class="header-section-number">6.6.3.4</span> Computational speed-ups<a href="naomi-aghq.html#computational-speed-ups" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
+<div id="computational-improvements" class="section level4 hasAnchor" number="6.6.3.4">
+<h4><span class="header-section-number">6.6.3.4</span> Computational improvements<a href="naomi-aghq.html#computational-improvements" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<ol style="list-style-type: decimal">
+<li>Approximation: Implement the simplified Laplace marginals of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> (Section <a href="#simplified-laplace"><strong>??</strong></a>).</li>
+<li>Parallelisation: Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
-This point is discussed by <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span> who highlight that <code>TMB</code> could applied to perform function evaluations in parallel, for example using the <code>parallel</code> R package.
-Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</p>
+This point is discussed by <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span> who highlight that <code>TMB</code> could applied to perform function evaluations in parallel, for example using the <code>parallel</code> R package.</li>
+<li>Hardware: Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.</li>
+</ol>
 </div>
 <div id="statistical-theory" class="section level4 hasAnchor" number="6.6.3.5">
 <h4><span class="header-section-number">6.6.3.5</span> Statistical theory<a href="naomi-aghq.html#statistical-theory" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1903,21 +1713,26 @@ The challenge of connecting this theory to nested use of any quadrature rule, li
 </div>
 <div id="exploration-of-the-accuracy-of-inla-for-complex-models" class="section level4 hasAnchor" number="6.6.3.6">
 <h4><span class="header-section-number">6.6.3.6</span> Exploration of the accuracy of INLA for complex models<a href="naomi-aghq.html#exploration-of-the-accuracy-of-inla-for-complex-models" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The universal INLA implementation could be used to assess the accuracy of INLA for as of yet untested models.
+<p>A universal INLA implementation could be used to assess the accuracy of INLA for a wider range of models.
 Among the ELGM-type structures of particular interest are aggregated Gaussian process models <span class="citation">(<a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span> and evidence synthesis models <span class="citation">(<a href="#ref-amoah2020geostatistical">Amoah, Diggle, and Giorgi 2020</a>)</span>.</p>
 </div>
 <div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.7">
 <h4><span class="header-section-number">6.6.3.7</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The approach used to implement Laplace marginals with <code>TMB</code> was relatively ad-hoc, and involved modification of the <code>TMB</code> C++ template (Section <a href="naomi-aghq.html#epil-laplace-eb-tmb">6.2.1.4</a>).
+For wider dissemination of this method, it is important that the user is not burdened with making these modifications themself.
+One possibility would be to change the <code>random</code> argument in <code>TMB::MakeADFun</code> to allow for indexing.
+Another (less desirable) option would be to algorithimically generate the modified <code>TMB</code> C++ template based on the original template.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
 <p class="caption">
-Figure 6.8: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
+Figure 6.9: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and driven in large part by use of the more easy-to-use <code>glmmTMB</code> (Figure <a href="naomi-aghq.html#fig:package-downloads">6.8</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.9</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
-Rather than disseminating methods via <code>glmmTMB</code>, methods could be implemented in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
+One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
+Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
 Implementation in <code>Stan</code> is made possible by the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a <code>Stan</code> model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in <code>Stan</code> by <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
 The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of <code>Stan</code> users are interested in specifying their own model.
 Implementation in <code>NIMBLE</code> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] built using <code>CppAD</code> like <code>TMB</code>, as of .

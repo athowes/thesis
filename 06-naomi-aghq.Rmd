@@ -22,7 +22,7 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi], tackling both implementation and methodology challenges.
+This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi], tackling both implementation and methological challenges.
 Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org) to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
@@ -66,7 +66,7 @@ or some way to compute relevant functions of it.
 The posterior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ having observed data $\mathbf{y} = (y_1, \ldots, y_n)$.
 Here I assume these quantities are expressible as vectors.
 
-Inference is a sensible goal because in Bayesian decision theory, the posterior distribution is sufficient for use in decision making.
+Inference is a sensible goal because (under Bayesian decision theory) the posterior distribution is sufficient for use in decision making.
 More specifically, given a loss function $l(a, \boldsymbol{\mathbf{\phi}})$, the expected posterior loss of a decision $a$ depends on the data only via the posterior distribution
 \begin{equation}
 \mathbb{E}(l(a, \boldsymbol{\mathbf{\phi}}) \, | \, \mathbf{y}) = \int_{\mathbb{R}^d} l(a, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d}\boldsymbol{\mathbf{\phi}}.
@@ -719,8 +719,30 @@ A more complete `aghq` vignette is provided by @stringer2021implementing.
 
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
 
+The Laplace latent field marginal $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ may be obtained by setting `random` to $\mathbf{x}_{-i}$ in the `MakeADFun` function call.
+This is not directly possible, as the `random` argument takes a vector of strings as input, and has no native method for indexing.
+Instead, the following steps must be taken to modify the `TMB` C++ template:
+
+1. Include `DATA_INTEGER(i)` to pass the index $i$ to `TMB`.
+2. Concatenate the latent field to `PARAMETER_VECTOR(x_minus_i)` and `PARAMETER(x_i)`.
+3. Include `DATA_IVECTOR(x_lengths)` and `DATA_IVECTOR(x_starts)` to pass the start point and lengths of each subvector of $\mathbf{x}$.
+The $j$th subvector may then be obtained using `x.segment(x_starts(j), x_lengths(j))`.
+
+The modified `TMB` C++ template for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil).
+
+Now it is possible (after suitably altering `dat` and `param`) to obtain the correct objective function via:
+
 ```r
-# code here
+compile("epil_modified.cpp")
+dyn.load(dynlib("epil_modified.cpp"))
+
+obj_fixed_theta <- MakeADFun(
+  data = dat,
+  parameters = param,
+  random = "x_minus_i",
+  DLL = "epil_modified",
+  silent = TRUE,
+)
 ```
 
 #### Laplace marginals and AGHQ with `TMB` {#epil-laplace-aghq-tmb}
@@ -755,20 +777,19 @@ Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
-Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ were near identical using `R-INLA` and `TMB`.
+Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ were near identical using `R-INLA` and `TMB` (Table \@ref(tab:epil-results)).
 
-```{r}
+```{r epil-results}
 epil <- readRDS("resources/naomi-aghq/epil.rds")
 
-gt::gt(epil) %>%
-  gt::fmt_number(
-    columns = everything(),
-    decimals = 3,
-    use_seps = FALSE
-  )
+knitr::kable(epil, caption = "Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.")
 ```
 
-Table: (\#tab:epil) Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.
+(ref:epil-time) Time taken.
+
+```{r epil-time, fig.cap="(ref:epil-time)"}
+knitr::include_graphics("figures/naomi-aghq/epil-time.png")
+```
 
 ### An example that `R-INLA` doesn't work for {#unknown}
 
@@ -964,11 +985,11 @@ y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, {\sigma^\text{ART}_I}^2),
 \end{equation}
 where the mean is
 \begin{equation}
-\mu^\text{ART}_I = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \pi_{i, x(i) = x', x}, (\#eq:art-aggregate-mean)
+\mu^\text{ART}_I = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x}, (\#eq:art-aggregate-mean)
 \end{equation}
 and the variance is
 \begin{equation}
-{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \pi_{i, x(i) = x', x} (1 -  \pi_{i, x(i) = x', x}). (\#eq:art-aggregate-var)
+{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x} \cdot (1 -  \pi_{i, x(i) = x', x}). (\#eq:art-aggregate-var)
 \end{equation}
 Equations \@ref(eq:art-aggregate-mean) and \@ref(eq:art-aggregate-var) are based on a Gaussian approximation to the binomial distribution $\text{Bin}(n, p)$ with mean $np$ and variance $np(1 - p)$, together with the equations for a linear combination of Gaussian random variables.
 
@@ -980,7 +1001,7 @@ In all, Naomi is a joint model on the observations
 \end{equation}
 The observations are modelled using the structured additive predictor $\boldsymbol{\mathbf{\eta}}$, which includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field $\mathbf{x}$.
 The latent field is controlled by hyperparameters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
-These features are described in more detail in Appendix \@ 
+These features are described in more detail in Appendix \@ref(naomi-math).
 
 Naomi has a large Gaussian latent field, governed by a smaller number of hyperparameters $m < N$.
 However, it has complexities which place it outside the class of LGMs, as defined in Section \@ref(lgm).
@@ -1157,12 +1178,14 @@ Further strategies, such as gradually lowering $k$ over the principal components
 
 ### Suggestions for future work
 
-Though some relate more to one contribution than the other, suggestions for future work relating to this chapter are presented here together.
+Finally, suggestions for future work based on this chapter are presented.
+Some suggestions relate more to specific individual contributions of the chapter.
+Others take a broader view, or relate to multiple contributions.
 
 #### Further comparisons
 
 Comparison to additional Bayesian inference methods could be included in Section \@ref(malawi). 
-Three further comparisons might be particularly valuable:
+Three further comparisons stand out as being particularly valuable:
 
 1. There exist other quadrature rules for moderate dimension, such as the CCD.
 It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.
@@ -1199,12 +1222,13 @@ This could be done if there were a cheap way to obtain posterior means, which co
 Another approach would be to measure the fit of marginal samples from a cheap approximation, like EB.
 The measures of fit would have to be for marginals, ruling out approaches like PSIS [@yao2018yes] which operate on joint distributions.
 
-#### Computational speed-ups
+#### Computational improvements
 
-Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
+1. Approximation: Implement the simplified Laplace marginals of @wood2020simplified (Section \@ref(simplified-laplace)).
+2. Parallelisation: Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 This point is discussed by @kristensen2016tmb who highlight that `TMB` could applied to perform function evaluations in parallel, for example using the `parallel` R package.
-Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
+3. Hardware: Further computational speed-ups might be obtained using graphics processing units (GPUs) specialised for the relevant matrix operations.
 
 #### Statistical theory
 
@@ -1216,10 +1240,15 @@ The challenge of connecting this theory to nested use of any quadrature rule, li
 
 #### Exploration of the accuracy of INLA for complex models
 
-The universal INLA implementation could be used to assess the accuracy of INLA for as of yet untested models.
+A universal INLA implementation could be used to assess the accuracy of INLA for a wider range of models.
 Among the ELGM-type structures of particular interest are aggregated Gaussian process models [@nandi2023disaggregation] and evidence synthesis models [@amoah2020geostatistical].
 
 #### Methods dissemination
+
+The approach used to implement Laplace marginals with `TMB` was relatively ad-hoc, and involved modification of the `TMB` C++ template (Section \@ref(epil-laplace-eb-tmb)).
+For wider dissemination of this method, it is important that the user is not burdened with making these modifications themself.
+One possibility would be to change the `random` argument in `TMB::MakeADFun` to allow for indexing.
+Another (less desirable) option would be to algorithimically generate the modified `TMB` C++ template based on the original template.
 
 (ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the @cranlogs R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure.
 
@@ -1227,9 +1256,10 @@ Among the ELGM-type structures of particular interest are aggregated Gaussian pr
 knitr::include_graphics("figures/naomi-aghq/package-downloads.png")
 ```
 
-Though gaining in popularity, the user-base of `TMB` is relatively small, and driven in large part by use of the more easy-to-use `glmmTMB` (Figure \@ref(fig:package-downloads)).
+Though gaining in popularity, the user-base of `TMB` is relatively small, and package downloads are in large part driven by use of the more easy-to-use `glmmTMB` package (Figure \@ref(fig:package-downloads)).
 For users unfamiliar with C++, it can be challenging to use `TMB` directly.
-Rather than disseminating methods via `glmmTMB`, methods could be implemented in other probabilistic programming languages, such as `Stan` or `NIMBLE`.
+One possibility is to look to disseminate methods via the users of `glmmTMB`.
+Another approach would be to implement methods in other probabilistic programming languages, such as `Stan` or `NIMBLE`.
 Implementation in `Stan` is made possible by the `bridgestan` package [@bridgestan], which provides access to the methods of a `Stan` model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in `Stan` by @margossian2020hamiltonian.
 The ratio of downloads of `rstan` as compared with `brms` suggests a larger proportion of `Stan` users are interested in specifying their own model.
 Implementation in `NIMBLE` is also possible as of version >1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; @nimblemanual] built using `CppAD` like `TMB`, as of  .

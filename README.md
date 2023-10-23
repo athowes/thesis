@@ -1,11 +1,11 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/86)<!-- -->
+![](https://geps.dev/progress/88)<!-- -->
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 173/~200 pages, and many/~tending to zero mistakes. The number 200 is
+> 177/~200 pages, and many/~tending to zero mistakes. The number 200 is
 > also mostly arbitraty.
 
 PhD in [Modern Statistics and Statistical Machine
@@ -74,7 +74,8 @@ love non-sequiturs.
 I used the R package
 [`thesisdown`](https://github.com/ismayc/thesisdown), inspired by
 [`bookdown`](https://github.com/rstudio/bookdown). So far it has been
-working relatively seamlessly, so I’d recommend it!
+working relatively seamlessly, so I’d recommend it! The difficulties
+I’ve encountered have mostly been related to 1) generating tables.
 
 > Are there any resources you’d recommend for an introduction to this
 > area of research?
