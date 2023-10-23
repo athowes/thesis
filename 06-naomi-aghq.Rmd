@@ -459,7 +459,7 @@ Discussed in @van2023new.
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
 `R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing] and uses algorithms from the `GMRFLib` C library [@rue2001gmrflib].
-Derivatives are calculated in `R-INLA` numerically using central finite differences.
+First and second derivatives are obtained in `R-INLA` numerically using central finite differences [@fattah2021smart].
 For a review recent computational features of `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state], see @gaedke2023parallelized.
 Further information about `R-INLA`, including recent developments, can be found at [`https://r-inla.org`](https://r-inla.org).
 
@@ -570,7 +570,7 @@ I consider inference for the epilepsy GLMM using a range of approaches:
 
 These approaches are compared in Section \@ref(epil-comparison).
 The foremost objective is to demonstrate correspondence between inferences obtained from `R-INLA` and those from `TMB`.
-In this section, though not in future sections, I use illustrative code.
+Illustrative code is used throughout this section, and will not be used in future sections.
 
 #### INLA with `R-INLA` {#epil-inla}
 
@@ -637,26 +637,24 @@ As described in Section \@ref(r-inla), `strat` may be set to one of `"gaussian"`
 #### Gaussian marginals and EB with `TMB` {#epil-gauss-eb-tmb}
 
 A C++ template for the log-posterior of the model is required to obtain inferences with `TMB`.
-Writing this template is usually a more involved task then specifying a formula in `R-INLA`.
+For simple models, writing this template is usually a more involved task then specifying the formula object required for `R-INLA`.
 The `TMB` C++ template `epil.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-epil).
-This template has been written to specify exactly the same model as `R-INLA` in Section \@ref(epil-inla).
-
-Lines of code in a `TMB` template are divided as follows.
+This template specifies exactly the same model as `R-INLA` in Section \@ref(epil-inla).
 The lines with a `DATA_` prefix specify the fixed data inputs to be passed to `TMB`.
 Examples of data inputs include the data $\mathbf{y}$ and the covariate design matrix.
 The lines with a `PARAMETER_` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
 More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER_` section.
-Finally, an object `nlp` is created representing the negative log-posterior, which is then incremented using statements of the form `nlp -= ddist(...)` where `dist` is the name of a distribution.
+Lines of the form `nlp -= ddist(...)` increment the negative log-posterior, where `dist` is the name of a distribution.
 
-First, the `TMB` template is compiled:
+The `TMB` template may now first be compiled:
 
 ```r
 compile("epil.cpp")
 dyn.load(dynlib("epil"))
 ```
 
-The objective function `obj`, implementing $\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})$ and its first and second derivative, may then be created:
+The objective function `obj` may then be created, implementing $\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})$ and its first and second derivatives:
 
 ```r
 obj <- TMB::MakeADFun(
@@ -669,29 +667,28 @@ obj <- TMB::MakeADFun(
 
 The object `dat` is a list of data inputs passed to `TMB`.
 The object `param` is a list of parameter starting values passed to `TMB`.
-The argument `random` determines which parameters are integrated out with a Laplace approximation.
-Here, the parameters
+The argument `random` determines which parameters are to be integrated out with a Gaussian approximation.
+Here, the parameters `c("beta", "epsilon", "nu")`, or mathematically
 \begin{equation}
 (\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}
 \end{equation}
 were selected as the latent field.
 
-The objective function `obj` may then be optimised using any gradient based optimiser in R, to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$:
+The objective function `obj` may then be optimised using any gradient based optimiser, to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$:
 
 ```r
-its <- 1000
-
 opt <- nlminb(
   start = obj$par,
   objective = obj$fn,
   gradient = obj$gr,
-  control = list(iter.max = its, trace = 0)
+  control = list(iter.max = 1000, trace = 0)
 )
 ```
 
-The `sdreport` function is used to evaluate the Hessian at a particular value given by `par.fixed`, which here I use to obtain $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$:
+The `sdreport` function is used to evaluate the Hessian at a particular value.
+Setting `par.fixed` to the previously obtained `opt$par` returns $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$:
 
-```
+```r
 sd_out <- TMB::sdreport(
   obj,
   par.fixed = opt$par,
@@ -699,26 +696,26 @@ sd_out <- TMB::sdreport(
 )
 ```
 
-A similar model, with different priors, can more sufficiently be fit using a formula interface in `glmmTMB`:
+It also is possible to succinctly fit the epilepsy GLMM in a frequentist setting (that is, using improper hyperparameter priors $p(\boldsymbol{\mathbf{\theta}}) \propto 1$) using a formula interface in `glmmTMB`
 
 ```r
-formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT + (1 | rand)
-                 + (1 | Ind)
+formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT
+                 + (1 | rand) + (1 | Ind)
+                 
 fit <- glmmTMB(formula, data = Epil, family = poisson(link = "log"))
 ```
 
 #### Gaussian marginals and AGHQ with `aghq` {#epil-gauss-aghq-tmb}
 
+The objective function `obj` created in Section \@ref(epil-gauss-eb-tmb) may be directly passed to `aghq` to perform inference using AGHQ:
+
 ```r
-fit <- aghq::marginal_laplace_tmb(
-  obj,
-  k = 3, 
-  startingvalue = c(param$l_tau_epsilon, param$l_tau_nu)
-)
+start <- c(param$l_tau_epsilon, param$l_tau_nu)
+fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = start)
 ```
 
-The argument `k` specifies the number of quadrature nodes to be used per dimension.
-For more information about the `aghq` R package see the software paper.
+The argument `k` specifies the number of quadrature nodes to be used per dimension, here set to three.
+A more complete `aghq` vignette is provided by @stringer2021implementing.
 
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
 
@@ -734,27 +731,59 @@ For more information about the `aghq` R package see the software paper.
 
 #### NUTS with `tmbstan` {#epil-nuts}
 
-Running NUTS with `tmbstan` using the objective function `obj` is also easy to do:
+Running NUTS with `tmbstan` using the objective function `obj` is easy to do:
 
 ```r
 fit <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 ```
 
+Convergence diagnostics for NUTS with `tmbstan` are in Appendix \@ref(tmbstan-epil).
+
 #### NUTS with `rstan` {#epil-nuts-rstan}
 
-For interest in the efficiency of `tmbstan`, the epilepsy model was also implemented in `Stan`.
+For interest in the relative inefficiency of `tmbstan`, the epilepsy model was also implemented in `Stan`.
 The `Stan` C++ template `epil.stan` for the epilepsy GLMM is in Appendix \@ref(stan-epil).
 This may be of interest to users familiar with `Stan` syntax, to help provide context for `TMB`.
 The `Stan` template was validated as be equivalent to the `TMB` template up to a constant of proportionality.
+Inferences from `Stan` may be obtained by
+
+```r
+fit <- rstan::stan(file = "epil.stan", data = dat, chains = 4, refresh = 0)
+```
+
+Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
-`tmbstan` and `rstan` were comparable.
+Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ were near identical using `R-INLA` and `TMB`.
+
+```{r}
+epil <- readRDS("resources/naomi-aghq/epil.rds")
+
+gt::gt(epil) %>%
+  gt::fmt_number(
+    columns = everything(),
+    decimals = 3,
+    use_seps = FALSE
+  )
+```
+
+Table: (\#tab:epil) Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.
 
 ### An example that `R-INLA` doesn't work for {#unknown}
 
 An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
+The model structure was as follows.Y
+Inference was performed using:
+
+1. Gaussian marginals and EB with `TMB`
+2. Gaussian marginals and AGHQ with `aghq`
+3. Laplace marginals and EB with `TMB`
+4. Laplace marginals and AGHQ with `TMB`
+5. NUTS with `tmbstan`
+
+The results were as follows.
 
 ## The Naomi model {#naomi}
 
