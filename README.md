@@ -1,11 +1,11 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/88)<!-- -->
+![](https://geps.dev/progress/89)<!-- -->
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 177/~200 pages, and many/~tending to zero mistakes. The number 200 is
+> 178/~200 pages, and many/~tending to zero mistakes. The number 200 is
 > also mostly arbitraty.
 
 PhD in [Modern Statistics and Statistical Machine
@@ -47,6 +47,11 @@ Bayesian methods for spatio-temporal data.
 | 5   | [A model for risk group proportions](https://athowes.github.io/thesis/multi-agyw.html)  | [`multi-agyw`](https://github.com/athowes/multi-agyw)         | [PLOS Global Public Health](https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731) |
 | 6   | [Fast approximate Bayesian inference](https://athowes.github.io/thesis/naomi-aghq.html) | [`naomi-aghq`](https://github.com/athowes/naomi-aghq)         | In preparation!                                                                                                   |
 | 7   | [Future work and conclusions](https://athowes.github.io/thesis/conclusions.html)        |                                                               |                                                                                                                   |
+
+## Slides
+
+Slides for my thesis defense are available
+[here](https://athowes.github.io/thesis/slides.pdf).
 
 ## Citation
 
