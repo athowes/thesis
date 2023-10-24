@@ -730,13 +730,13 @@ The $j$th subvector may then be obtained using `x.segment(x_starts(j), x_lengths
 
 The modified `TMB` C++ template for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil).
 
-Now it is possible (after suitably altering `dat` and `param`) to obtain the correct objective function via:
+Now it is possible (after suitably alterations are made to `dat` and `param`) to obtain the desired objective function via:
 
 ```r
 compile("epil_modified.cpp")
 dyn.load(dynlib("epil_modified.cpp"))
 
-obj_fixed_theta <- MakeADFun(
+obj_i <- MakeADFun(
   data = dat,
   parameters = param,
   random = "x_minus_i",
@@ -795,7 +795,7 @@ knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 
 An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
 Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
-The model structure was as follows.Y
+The model structure was as follows.
 Inference was performed using:
 
 1. Gaussian marginals and EB with `TMB`
@@ -809,11 +809,12 @@ The results were as follows.
 ## The Naomi model {#naomi}
 
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
-This section begins (Section \@ref(naomi-model)) by providing a description of a simplified version of Naomi.
-The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered, omitting the nowcasting and temporal projection components of the complete model.
+This section begins in Section \@ref(naomi-model) by providing a description of the simplified version of Naomi considered in this chapter.
+The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
+The nowcasting and temporal projection components of the complete model are omitted.
 However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
-Only the most relevant features of the simplified model are included here, with a more exhaustive description left to Appendix \@ref(naomi-math).
+Some features of the simplified model are left to more exhaustive description in Appendix \@ref(naomi-math).
 After outlining the model, Section \@ref(naomi-elgm) explains why it is not an extended latent Gaussian model [ELGM; @stringer2022fast] rather than a latent Gaussian model [LGM; @rue2009approximate].
 
 ### Model structure {#naomi-model}
@@ -954,9 +955,9 @@ The log-odds are modelled using a structured additive predictor which only depen
 \end{equation}
 As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.
 
-Let the number of people receiving ART in strata $i$ be $y^{N^\text{ART}}_i$ with corresponding aggregate
+Let the number of people observed receiving ART in strata $i$ be $y^{A}_i$ with corresponding aggregate
 \begin{equation}
-y^{N^\text{ART}}_I = \sum_{i \in I} y^{N^\text{ART}}_i. (\#eq:art-aggregate)
+y^{A}_I = \sum_{i \in I} y^{A}_i. (\#eq:art-aggregate)
 \end{equation}
 Let the probability of a person in strata $i$ travelling from district $x(i) = x$ to $x'$ to receive ART be
 \begin{equation}
@@ -968,28 +969,28 @@ These probabilities are the product of three probabilities, each for a person in
 2. the probability of taking ART $\alpha_{i}$,
 3. the probability of travelling from district $x(i) = x$ to district $x'$ to receive ART $\gamma_{x(i) = x, x'}$.
 
-Let the unobserved count of people in strata $i$ who travel to $x'$ to receive ART be $y^{N^\text{ART}}_{i, x(i) = x, x'}$, such that
+Let the unobserved count of people in strata $i$ who travel to $x'$ to receive ART be $A_{i, x(i) = x, x'}$, such that
 \begin{equation}
-y^{N^\text{ART}}_i = \sum_{x' \sim x, x' = x} y^{N^\text{ART}}_{i, x(i) = x', x}.
+A_i = \sum_{x' \sim x, x' = x} A_{i, x(i) = x', x}.
 \end{equation}
 Each unobserved count can be considered as arising from a binomial distribution, with sample size given by the population in strata $i$, here with $x(i) = x'$ such that
 \begin{equation}
-y^{N^\text{ART}}_{i, x(i) = x', x} \sim \text{Bin}(N_{i, x(i) = x'}, \pi_{i, x(i) = x', x}).
+A_{i, x(i) = x', x} \sim \text{Bin}(N_{i, x(i) = x'}, \pi_{i, x(i) = x', x}).
 \end{equation}
 
-Each aggregate attendance observation (Equation \@ref(eq:art-aggregate)) is then modelled using a Gaussian approximation to a sum of binomials.
-The sum is over both the strata $i \in I$ and the number of ART clients travelling from district $x(i) = x'$ to $x$ to receive treatment.
+Each aggregate attendance observation (Equation \@ref(eq:art-aggregate)) is modelled using a Gaussian approximation to a sum of binomials.
+This sum is over both the strata $i \in I$ and the number of ART clients travelling from district $x(i) = x'$ to $x$ to receive treatment.
 The Gaussian approximation is
 \begin{equation}
-y^{N^\text{ART}}_I \sim \mathcal{N}(\mu^\text{ART}_I, {\sigma^\text{ART}_I}^2),
+y^{A}_I \sim \mathcal{N}(\mu^A_I, {\sigma^A_I}^2),
 \end{equation}
 where the mean is
 \begin{equation}
-\mu^\text{ART}_I = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x}, (\#eq:art-aggregate-mean)
+\mu^A_I = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x}, (\#eq:art-aggregate-mean)
 \end{equation}
 and the variance is
 \begin{equation}
-{\sigma^\text{ART}_I}^2 = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x} \cdot (1 -  \pi_{i, x(i) = x', x}). (\#eq:art-aggregate-var)
+{\sigma^A_I}^2 = \sum_{i \in I} \sum_{x' \sim x, x' = x} N_{i, x(i) = x'} \cdot \pi_{i, x(i) = x', x} \cdot (1 -  \pi_{i, x(i) = x', x}). (\#eq:art-aggregate-var)
 \end{equation}
 Equations \@ref(eq:art-aggregate-mean) and \@ref(eq:art-aggregate-var) are based on a Gaussian approximation to the binomial distribution $\text{Bin}(n, p)$ with mean $np$ and variance $np(1 - p)$, together with the equations for a linear combination of Gaussian random variables.
 
@@ -997,7 +998,7 @@ Equations \@ref(eq:art-aggregate-mean) and \@ref(eq:art-aggregate-var) are based
 
 In all, Naomi is a joint model on the observations
 \begin{equation}
-\mathbf{y} = (y^{\theta}_I), \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, N^\text{ART}\}, \quad I \in \mathcal{I}.
+\mathbf{y} = (y^{\theta}_I), \quad \theta \in \{\rho, \alpha, \kappa, \rho^\text{ANC}, \alpha^\text{ANC}, A\}, \quad I \in \mathcal{I}.
 \end{equation}
 The observations are modelled using the structured additive predictor $\boldsymbol{\mathbf{\eta}}$, which includes intercept effects, age random effects, and spatial random effects which may be concatenated into the latent field $\mathbf{x}$.
 The latent field is controlled by hyperparameters $\boldsymbol{\mathbf{\theta}}$ which include standard deviations, first-order autoregressive model correlation parameters, and reparameterised Besag-York-Mollie model [BYM2; @simpson2017penalising] proportion parameters.
@@ -1102,7 +1103,7 @@ knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
 
 ## Malawi case-study {#malawi}
 
-(ref:naomi-output) District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using `TMB`.
+(ref:naomi-output) District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via `TMB`.
 
 ```{r naomi-output, fig.cap="(ref:naomi-output)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/figB.png"))
@@ -1110,40 +1111,53 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the `naomi` R package vignette available from [`https://github.com/mrc-ide/naomi`](https://github.com/mrc-ide/naomi).
-Malawi was chosen in part because it has a small number of districts, reducing the computational demand of the model.
+Malawi was chosen in part because it has a small number of districts, $n = 30$, limiting the computational demand of the model.
 
 Three Bayesian inference approaches were considered:
 
 1. Gaussian marginals and EB with `TMB`.
 This is the method that has previously been used for Naomi.
-As short-hand, I will refer to it as EB.
+As short-hand, this method is referred to as EB.
 2. Gaussian marginals and PCA-AGHQ with `aghq` and `TMB`.
 This is a novel method.
-As short-hand, I will refer to it as PCA-AGHQ.
+As short-hand, this method is referred to as PCA-AGHQ.
 3. NUTS with `tmbstan`.
 This represents a gold-standard.
 
-The `TMB` C++ user-template used to specify the log-posterior was the same for each approach.
+The `TMB` C++ user-template used to specify the log-posterior was the same for each approach, and described in Appendix \@ref(naomi-implementation).
 The dimension of the latent field was $N = 467$ and the dimension of the hyperparameters was $m = 24$.
-For EB and PCA-AGHQ, following inference hyperparameter and latent field samples were simulated.
-For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posteriors.
-These model outputs are illustrated in Figure \@ref(fig:naomi-output).
+For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
+For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
+Model outputs are illustrated in Figure \@ref(fig:naomi-output).
 
 ### NUTS convergence
 
-The effective sample size ratios generated sampling from the Naomi model with NUTS were low.
-Obtaining acceptable NUTS diagnostics required four chains run in parallel for 100000 iterations.
+The effective sample size ratios generated sampling with NUTS were low.
+Four chains run in parallel for 100000 iterations were required to obtain acceptable NUTS diagnostics.
 For ease-of-storage, these samples were thinned by a factor of 20 .
-There were no divergent transitions, and the largest potential scale reduction factor [@gelman1992inference; @vehtari2021rank] was $\hat R = 1.021$.
-Though inaccuracies remain possible, these diagnostics are sufficient to treat results from NUTS as a gold-standard.
+There were no divergent transitions, and the largest potential scale reduction factor [@gelman1992inference; @vehtari2021rank] was $\hat R = 1.02$.
+These diagnostics were sufficient to treat results from NUTS as a gold-standard, though inaccuracies remain possible.
 
 ### Use of PCA-AGHQ
+
+A Scree plot based on the spectral decomposition of $\hat{\Hb}_\texttt{LA}(\hat{\btheta}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep.
+Keeping $s = 8$ principal components was sufficient to explain some proportion of total variation.
+The reduced rank approximation to the inverse curvature with this choice of $s$ was visually similar to the full rank matrix.
 
 ### Model assessment
 
 ### Inference comparison
 
 ### Exceedance probabilities
+
+#### Meeting the second 90
+
+Ambitious fast-track targets for scaling up ART treatment have been developed by UNAIDS, with the goal of "ending the AIDS epidemic by 2030".
+ 
+#### Finding strata with high incidence
+
+Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
+The Naomi model can be used to assess the probability of a strata having high incidence by evaluating $\mathbb{P}(\lambda_i > 0.01)$.
 
 ## Discussion
 
@@ -1154,10 +1168,12 @@ This section discusses these contributions in turn, before outlining suggestions
 
 ### A universal INLA implementation
 
+
+
 ### PCA-AGHQ with application to INLA for Naomi
 
-For the simplified Naomi model in Malawi INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
-However, model output posterior marginals were not improved in the same way.
+For the simplified Naomi model applied to data from Malawi, INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
+However, model output posterior marginals did not see the same improvements.
 The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.
 EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
 
@@ -1178,9 +1194,8 @@ Further strategies, such as gradually lowering $k$ over the principal components
 
 ### Suggestions for future work
 
-Finally, suggestions for future work based on this chapter are presented.
-Some suggestions relate more to specific individual contributions of the chapter.
-Others take a broader view, or relate to multiple contributions.
+Finally, this section presents suggestions for future work based on this chapter.
+Some suggestions relate more to individual contributions, others take a broader view, or relate to multiple contributions.
 
 #### Further comparisons
 
@@ -1224,7 +1239,7 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 
 #### Computational improvements
 
-1. Approximation: Implement the simplified Laplace marginals of @wood2020simplified (Section \@ref(simplified-laplace)).
+1. Approximation: Implement the simplified Laplace marginals of @wood2020simplified (Section \@ref(simplified-inla)).
 2. Parallelisation: Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 This point is discussed by @kristensen2016tmb who highlight that `TMB` could applied to perform function evaluations in parallel, for example using the `parallel` R package.

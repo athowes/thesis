@@ -1,0 +1,160 @@
+\renewcommand*\ttdefault{cmvtt}
+%\renewcommand*\familydefault{\ttdefault} %% Only if the base font of the document is to be typewriter style
+\usepackage[T1]{fontenc}
+
+%\usepackage{tikz}
+%\usetikzlibrary{shapes, decorations, arrows ,calc, arrows.meta,
+%                fit, positioning, automata, shapes.geometric, patterns}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{tcolorbox}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{bm}
+\RequirePackage{tabularx}
+\RequirePackage{bbm}
+\RequirePackage{fontawesome}
+
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+\RequirePackage{caption}
+
+\newcommand{\Sc}{\mathcal{S}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\m}{\mathbf{m}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\brho}{\bm{\rho}}
+\newcommand{\bphi}{\bm{\phi}}
+\newcommand{\btheta}{\bm{\theta}}
+\newcommand{\bpsi}{\bm{\psi}}
+
+% owes a lot to:
+% https://kbroman.org/blog/2013/10/07/better-looking-latexbeamer-slides/
+
+% make aspect ratio 16 x 9
+\usepackage[orientation=landscape,size=custom,width=16,height=9,scale=0.5,debug]{beamerposter}
+
+% theme
+%\usetheme{Goettingen}
+\usetheme{default}
+
+%\usecolortheme{dove}
+\usecolortheme{default}
+
+% animation from:
+% https://stackoverflow.com/questions/9009771/is-it-possible-to-embed-animated-gifs-in-pdfs
+% \usepackage{animate}
+
+% page numbers
+\setbeamertemplate{footline}
+{
+  \raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[20pt]{\color{gray}\small\insertframenumber}}}\hspace*{5pt}
+}
+
+%%https://tex.stackexchange.com/questions/333587/beamer-frame-number-without-total
+%\setbeamertemplate{footline}{
+%  \hfill%
+%  \usebeamercolor[fg]{page number in head/foot}%
+%  \usebeamerfont{page number in head/foot}%
+%  \setbeamertemplate{page number in head/foot}[framenumber]%
+%  % modified spacing, but hard to turn off for title page
+%  \usebeamertemplate*{page number in head/foot}\kern2em\vskip10pt%
+%}
+
+%\usefonttheme{professionalfonts} % using non standard fonts for beamer
+%\usefonttheme{serif} % default family is serif
+%\usepackage{fontspec}
+%\setmainfont{Liberation Serif}
+
+%    theme: "default"
+%    colortheme: "lily"
+%    fonttheme: "professionalfonts"
+
+% Resource
+% https://kbroman.org/Tools4RR/assets/lectures/12_talks_posters_withnotes.pdf
+
+%\definecolor{title}{RGB}{107,174,214}
+%\setbeamercolor{titlelike}{fg=title}
+%
+%\definecolor{subtitle}{RGB}{102,255,204}
+%\setbeamercolor{subtitle}{fg=subtitle}
+%
+%\definecolor{foreground}{RGB}{255,255,255}
+%\definecolor{background}{RGB}{24,24,24}
+
+% white
+% #FFFFFF
+\definecolor{foreground}{HTML}{181818}
+
+% sort of black
+% #181818
+\definecolor{background}{HTML}{FFFFFF}
+
+\definecolor{title}{HTML}{38761C} % green
+\definecolor{subtitle}{HTML}{181818}
+\definecolor{hilit}{HTML}{3B77D8} % blue
+\definecolor{lolit}{HTML}{999999}
+
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{subtitle}{fg=subtitle}
+\setbeamercolor{institute}{fg=lolit}
+\setbeamercolor{date}{fg=lolit}
+\setbeamercolor{item}{fg=foreground} % color of bullets
+%\setbeamercolor{subitem}{fg=lolit}
+%\setbeamercolor{itemize/enumerate subbody}{fg=lolit}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+%\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+%\setbeamerfont{itemize/enumerate subitem}{size=\footnotesize}
+\newcommand{\hilit}{\color{hilit}}
+\newcommand{\lolit}{\color{lolit}}
+
+% to make background white with black writing
+\setbeamercolor{normal text}{fg=foreground, bg=background}
+\setbeamercolor{item}{fg=foreground} % color of bullets
+
+%\setbeamerfont{section in head/foot}{size=\Huge}
+
+% make frametitles larger
+\setbeamerfont{frametitle}{size=\Large}
+
+% maker sections larger
+%\setbeamerfont{section title}{size=\huge,series=\bfseries}
+\setbeamerfont{section title}{size=\Large}
+\setbeamerfont{title}{size=\Large}
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{date}{size=\large}
+\setbeamerfont{institute}{size=\large}
+
+%centre the frametitle
+%\setbeamertemplate{frametitle}[default][center]
+%also with vskip
+\setbeamertemplate{frametitle}{ \vskip10pt \centerline{\insertframetitle} }
+
+\setbeamertemplate{normal text}{centered frame}
+
+% seperation between bullet points
+%\renewcommand{\tightlist}{\setlength{\itemsep}{1ex}\setlength{\parskip}{0pt}}
+
+% for graphical model picture
+\usepackage{tikz}
+\usetikzlibrary{shapes, decorations, arrows ,calc, arrows.meta,
+                fit, positioning, automata, shapes.geometric, patterns}
+% \tikzset{
+%     -Latex,auto,node distance =1 cm and 1 cm, semithick,
+%     state/.style ={circle, draw, minimum width = 1 cm},
+%     point/.style = {circle, draw, inner sep=0.04cm, fill, node contents={}},
+%     constant/.style ={rectangle, draw},
+%     el/.style = {inner sep=2pt, align=left, sloped}
+%     }

@@ -92,6 +92,7 @@ inla_l_grid <- epil_inla(strat = "laplace", int_strat = "grid")
 end <- Sys.time()
 inla_l_grid_time <- end - start
 
+start <- Sys.time() 
 compile("resources/naomi-aghq/epil.cpp")
 dyn.load(dynlib("resources/naomi-aghq/epil"))
 
@@ -125,6 +126,8 @@ sd_out <- sdreport(
   par.fixed = opt$par,
   getJointPrecision = TRUE
 )
+end <- Sys.time()
+tmb_g_eb_time <- end - start
 
 start <- c(param$l_tau_epsilon, param$l_tau_nu)
 aghq <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = start)
@@ -134,14 +137,25 @@ aghq_samples <- aghq::sample_marginal(aghq, M = 1000)$samps %>%
   as.data.frame() %>%
   inf.utils::replace_duplicate_colnames()
 
-stan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
+start <- Sys.time() 
+tmbstan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
+end <- Sys.time()
+tmbstan_time <- end - start
 
 df <- cbind(
-  "R-INLA" = as.vector(t(fit$summary.fixed[1:6, 1:2])),
-  "TMB" = as.vector(t(data.frame(sd_out$par.random[1:6], sqrt(sd_out$diag.cov.random[1:6])))),
-  "AGHQ" = as.vector(t(data.frame(mean = apply(aghq_samples[, 1:6], 2, mean), sd = apply(aghq_samples[, 1:6], 2, sd)))),
-  "NUTS" = as.vector(t(summary(stan)$summary[1:6, c(1, 3)]))
-) %>% as.data.frame()
+  "Gaussian, EB (TMB)" = as.vector(t(data.frame(sd_out$par.random[1:6], sqrt(sd_out$diag.cov.random[1:6])))),
+  "Gaussian, EB (R-INLA)" = as.vector(t(inla_g_eb$summary.fixed[1:6, 1:2])),
+  "SL, EB (R-INLA)" = as.vector(t(inla_sl_eb$summary.fixed[1:6, 1:2])),
+  "Laplace, EB (R-INLA)" = as.vector(t(inla_l_eb$summary.fixed[1:6, 1:2])),
+  "Gaussian, grid (R-INLA)" = as.vector(t(inla_g_grid$summary.fixed[1:6, 1:2])),
+  "SL, grid (R-INLA)" = as.vector(t(inla_sl_grid$summary.fixed[1:6, 1:2])),
+  "Laplace, grid (R-INLA)" = as.vector(t(inla_l_grid$summary.fixed[1:6, 1:2])),
+  "Gaussian, EB (TMB)" = as.vector(t(data.frame(sd_out$par.random[1:6], sqrt(sd_out$diag.cov.random[1:6])))),
+  "Gaussian, AGHQ (TMB)" = as.vector(t(data.frame(mean = apply(aghq_samples[, 1:6], 2, mean), sd = apply(aghq_samples[, 1:6], 2, sd)))),
+  "NUTS (tmbstan)" = as.vector(t(summary(tmbstan)$summary[1:6, c(1, 3)]))
+) %>%
+  as.data.frame() %>%
+  round(digits = 3)
 
 beta_i <- function(i) { c(paste0("beta[", i, "]"), paste0("sd(beta[", i, "])")) }
 rownames(df) <- c(sapply(0:5, beta_i))
@@ -149,16 +163,16 @@ rownames(df) <- c(sapply(0:5, beta_i))
 saveRDS(df, "resources/naomi-aghq/epil.rds")
 
 time_df <- data.frame(
-  time = c(inla_g_eb_time, inla_sl_eb_time, inla_l_eb_time, inla_g_grid_time, inla_sl_grid_time, inla_l_grid_time),
-  method = c("Gaussian, EB", "Simplified Laplace, EB", "Laplace, EB", "Gaussian, grid", "Simplified Laplace, grid", "Laplace, grid"),
-  software = rep("R-INLA", times = 6)
+  time = c(tmb_g_eb_time, inla_g_eb_time, inla_sl_eb_time, inla_l_eb_time, inla_g_grid_time, inla_sl_grid_time, inla_l_grid_time, tmbstan_time),
+  method = c(" Gaussian, EB", "Gaussian, EB", "SL, EB", "Laplace, EB", "Gaussian, grid", "SL, grid", "Laplace, grid", "NUTS"),
+  software = c("TMB", rep("R-INLA", times = 6), "tmbstan")
 )
 
-time_df %>% ggplot(aes(x = forcats::fct_reorder(method, time), y = time, fill = software)) +
-  geom_col() +
+ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = software)) +
+  geom_col(width = 0.7) +
   theme_minimal() +
   scale_fill_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
-  labs(x = "Method", y = "Time taken (s)", fill = "Software") +
+  labs(x = "", y = "Time taken (s)", fill = "Software") +
   coord_flip()
 
 ggsave("figures/naomi-aghq/epil-time.png", h = 3.5, w = 6.25)

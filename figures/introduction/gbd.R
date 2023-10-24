@@ -4,7 +4,7 @@ library(tidyverse)
 library(patchwork)
 
 #' Obtained from https://www.healthdata.org/data-tools-practices/interactive-visuals/gbd-results
-ihme <- readr::read_csv("resources/background/IHME-GBD_2019_DATA-a295712c-1.csv")
+ihme <- readr::read_csv("resources/hiv-aids/IHME-GBD_2019_DATA-a295712c-1.csv")
 
 unique(ihme$age_name)
 
@@ -29,7 +29,7 @@ ihme %>%
     scale_fill_manual(values = c("grey75", "#CC79A7")) +
     coord_flip() +
     guides(fill = "none") +
-    labs(x = "Cause", y = "Disability-adjusted life years (ages >1)", caption = "Source: Global Burden of Disease Study, 2019") +
+    labs(x = "", y = "Disability-adjusted life years (ages >1)", caption = "Source: Global Burden of Disease Study, 2019") +
     theme_minimal()
 
-ggsave("figures/gbd.png", h = 3, w = 6.25)
+ggsave("figures/introduction/gbd.png", h = 3, w = 6.25)
