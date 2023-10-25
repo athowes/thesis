@@ -407,13 +407,13 @@ and $(N - 1) \times (N - 1)$-dimensional Hessian matrix evaluated at the posteri
 \begin{equation}
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ can be obtained by first normalsiing the marginal Laplace approximation in Equation \@ref(eq:lamarginaljoint)
+The approximate posterior marginal $\tilde p(x_i \, | \, \mathbf{y})$ may be obtained by normalising the marginal Laplace approximation (Equation \@ref(eq:lamarginaljoint)) before performing integration with respect to the hyperparameters (as in Equation \@ref(eq:mixgaussian)).
+The normalised Laplace approximation is
 \begin{equation}
-\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}.
 \end{equation}
-In the denominator, the previously obtained estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused.
-Alternatively, a new estimate may be computed.
-Then, integration with respect to the hyperparameters may be performed, similarly to Equation \@ref(eq:mixgaussian)
+where either the estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused or a new estimate can be computed.
+Integration with respect to the hyperparameters is performed via
 \begin{align}
 p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
 &\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:lamarginal)
@@ -421,7 +421,9 @@ p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \m
 
 Equation \@ref(eq:lamarginal) is a mixture of the normalised Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
-As such, Equation \@ref(eq:lamarginal) may be represented by its evaluation at a number of nodes, such as those from an AGHQ rule. 
+As such, Equation \@ref(eq:lamarginal) may instead be represented by its evaluation at a number of nodes.
+The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid computation of the Laplace marginal mode and standard deviation.
+The probability density function of the marginal posterior may be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
