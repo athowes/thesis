@@ -494,7 +494,7 @@ knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
 Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
 In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
-These derivatives may then be composed by repeat use of the chain rule to obtain the function's derivative.
+The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function's derivative.
 `TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD.
 Details are provided in Section 3 of @kristensen2016tmb.
 
@@ -518,12 +518,13 @@ This package is briefly mentioned so as to note that the function `mgcv::ginla` 
 
 ## A universal INLA implementation {#universal}
 
-This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals.
+This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals, using AD.
 The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a more restrictive formula interface [@vstrumbelj2023past].
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. -->
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
-A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`, including Naomi as one among many examples.
+A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
+The Naomi model is one among many examples.
 The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of `TMB`) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.
 
@@ -645,22 +646,22 @@ As described in Section \@ref(r-inla), `strat` may be set to one of `"gaussian"`
 A C++ template for the log-posterior of the model is required to obtain inferences with `TMB`.
 For simple models, writing this template is usually a more involved task then specifying the formula object required for `R-INLA`.
 The `TMB` C++ template `epil.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-epil).
-This template specifies exactly the same model as `R-INLA` in Section \@ref(epil-inla).
-The lines with a `DATA_` prefix specify the fixed data inputs to be passed to `TMB`.
+This template specifies exactly the same model as `R-INLA` in Section \@ref(epil-inla): in itself a non-trivial task.
+The lines with a `DATA` prefix specify the fixed data inputs to be passed to `TMB`.
 Examples of data inputs include the data $\mathbf{y}$ and the covariate design matrix.
-The lines with a `PARAMETER_` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
+The lines with a `PARAMETER` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
-More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER_` section.
+More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER` section.
 Lines of the form `nlp -= ddist(...)` increment the negative log-posterior, where `dist` is the name of a distribution.
 
-The `TMB` template may now first be compiled:
+The `TMB` template must first be compiled:
 
 ```r
 compile("epil.cpp")
 dyn.load(dynlib("epil"))
 ```
 
-The objective function `obj` may then be created, implementing $\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})$ and its first and second derivatives:
+An objective function `obj` implementing $\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})$ and its first and second derivatives may then be created:
 
 ```r
 obj <- TMB::MakeADFun(
@@ -673,14 +674,14 @@ obj <- TMB::MakeADFun(
 
 The object `dat` is a list of data inputs passed to `TMB`.
 The object `param` is a list of parameter starting values passed to `TMB`.
-The argument `random` determines which parameters are to be integrated out with a Gaussian approximation.
-Here, the parameters `c("beta", "epsilon", "nu")`, or mathematically
+The argument `random` determines which parameters are to be integrated out with a Gaussian approximation, here set to `c("beta", "epsilon", "nu")`.
+Mathematically, these parameters correspond to the latent field
 \begin{equation}
-(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}
+(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}.
 \end{equation}
-were selected as the latent field.
 
-The objective function `obj` may then be optimised using any gradient based optimiser, to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$:
+The objective function `obj` may then be optimised using a gradient based optimiser to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$.
+Here I use a quasi-Newton method [@dennis1981adaptive] as implemented by `nlminb` from the `stats` R package:
 
 ```r
 opt <- nlminb(
