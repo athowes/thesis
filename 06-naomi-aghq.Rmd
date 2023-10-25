@@ -460,13 +460,15 @@ Discussed in @van2023new.
 #### `R-INLA` {#r-inla}
 
 The `R-INLA` software [@martins2013bayesian] implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of @lindgren2011explicit.
-`R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing] and uses algorithms from the `GMRFLib` C library [@rue2001gmrflib].
-First and second derivatives are obtained in `R-INLA` numerically using central finite differences [@fattah2021smart].
+`R-INLA` is the R interface to the core `inla` program, which is written in C [@martino2009implementing].
+Algorithms for sampling from GMRFs are used from the `GMRFLib` C library [@rue2001gmrflib].
+First and second derivatives are either hard coded, or computed numerically using central finite differences [@fattah2021smart].
 For a review recent computational features of `R-INLA`, including parallelism via `OpenMP` [@diaz2018openmp] and use of the PARDISO sparse linear equation solver [@bollhofer2020state], see @gaedke2023parallelized.
 Further information about `R-INLA`, including recent developments, can be found at [`https://r-inla.org`](https://r-inla.org).
 
-A formula interface of the form `y ~ ...`, similar to that used in the `lm` function in the core `stats` R package, is used to specify the connection between the latent field $\mathbf{x}$ and the structured additive predictor $\boldsymbol{\mathbf{\eta}}$.
-For a model with one fixed effect `a` and one IID random effect `b`, the formula would be written as `y ~ a + f(b, model = "iid")`.
+The connection between the latent field $\mathbf{x}$ and structured additive predictor $\boldsymbol{\mathbf{\eta}}$ is specified in `R-INLA` using a formula interface of the form `y ~ ...`.
+The interface is similar to that used in the `lm` function in the core `stats` R package.
+For example, a model with one fixed effect `a` and one IID random effect `b`, has the formula `y ~ a + f(b, model = "iid")`.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.
 
 The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `"gaussian"` (Section \@ref(gaussian-marginals)), `"laplace"` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
@@ -475,7 +477,9 @@ Figure \@ref(fig:inla-grid-demo) demonstrates the latter two integration strateg
 By default, the `"grid"` strategy is used for $m \leq 2$ and the `"ccd"` strategy is used for $m > 2$.
 
 Various software packages have been built using `R-INLA`.
-Perhaps the most substantial of which is the `inlabru` R package [@bachl2019inlabru], which provides a simplified syntax, and capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
+Perhaps the most substantial of which is the `inlabru` R package [@bachl2019inlabru].
+As well as a simplified syntax, `inlabru` provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
+These complex model components are specified in `inlabru` using the `bru_mapper` system.
 
 <!-- Note: does the CCD need to have weights added? -->
 
