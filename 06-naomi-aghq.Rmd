@@ -55,7 +55,7 @@ This work was conducted in collaboration with Prof. Alex Stringer, whom I visite
 The results are presented in @howes2023fast.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
 
-## Inference methods and software
+## Inference methods and software {#naomi-inference}
 
 This section reviews existing deterministic Bayesian inference methods (Sections \@ref(la), \@ref(quadrature), \@ref(inla)) and the software implementing them (Section \@ref(software)).
 Inference comprises obtaining the posterior distribution
@@ -894,7 +894,7 @@ The denominator for HIV prevalence $\rho$ includes all individuals.
 
 The weighted aggregate number of outcomes are modelled using a binomial working likelihood [@chen2014use] defined to operate on the reals
 \begin{equation}
-y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}).
+y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}). (\#eq:xbin)
 \end{equation}
 The terms $\theta_{I}$ are the following weighted aggregates
 \begin{equation}
@@ -1140,7 +1140,7 @@ These diagnostics were sufficient to treat results from NUTS as a gold-standard,
 
 ### Use of PCA-AGHQ
 
-A Scree plot based on the spectral decomposition of $\hat{\Hb}_\texttt{LA}(\hat{\btheta}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep.
+A Scree plot based on the spectral decomposition of $\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep.
 Keeping $s = 8$ principal components was sufficient to explain some proportion of total variation.
 The reduced rank approximation to the inverse curvature with this choice of $s$ was visually similar to the full rank matrix.
 
@@ -1168,7 +1168,8 @@ This section discusses these contributions in turn, before outlining suggestions
 
 ### A universal INLA implementation
 
-
+After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly available.
+More sustainable to help users to implement their own distributions and models.
 
 ### PCA-AGHQ with application to INLA for Naomi
 
@@ -1277,5 +1278,5 @@ One possibility is to look to disseminate methods via the users of `glmmTMB`.
 Another approach would be to implement methods in other probabilistic programming languages, such as `Stan` or `NIMBLE`.
 Implementation in `Stan` is made possible by the `bridgestan` package [@bridgestan], which provides access to the methods of a `Stan` model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in `Stan` by @margossian2020hamiltonian.
 The ratio of downloads of `rstan` as compared with `brms` suggests a larger proportion of `Stan` users are interested in specifying their own model.
-Implementation in `NIMBLE` is also possible as of version >1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; @nimblemanual] built using `CppAD` like `TMB`, as of  .
-Both the `NIMBLE` and `Stan` developers are actively looking into implementation algorithms combining the Laplace approximation and quadrature.
+Implementation in `NIMBLE` is also possible as of version >1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; @nimblemanual] like `TMB` built using `CppAD`.
+Both `NIMBLE` and `Stan` developers are actively looking into implementation of algorithms combining the Laplace approximation and quadrature.

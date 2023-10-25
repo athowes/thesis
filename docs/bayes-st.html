@@ -266,7 +266,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6" data-path="naomi-aghq.html"><a href="naomi-aghq.html"><i class="fa fa-check"></i><b>6</b> Fast approximate Bayesian inference</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-methods-and-software"><i class="fa fa-check"></i><b>6.1</b> Inference methods and software</a>
+<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi-inference"><i class="fa fa-check"></i><b>6.1</b> Inference methods and software</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#la"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
 <li class="chapter" data-level="6.1.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#quadrature"><i class="fa fa-check"></i><b>6.1.2</b> Quadrature</a></li>
@@ -370,42 +370,47 @@ div.csl-indent {
 <div id="bayesian-statistics" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Bayesian statistics<a href="bayes-st.html#bayesian-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Bayesian statistics is a mathematical paradigm for learning information from data.
-It is especially well suited to facing the challenges posed by Section <a href="hiv-aids.html#surveillance">2.2</a> because it allows for principled and flexible integration of prior domain knowledge.
-Additionally, uncertainty over all unknown quantities is handled as an integral part of the Bayesian paradigm.
-This section provides a brief and opinionated overview.
+It is especially well suited to facing the challenges posed by Section <a href="hiv-aids.html#surveillance">2.2</a>.
+One foremost reason is that it allows for principled and flexible integration of prior domain knowledge.
+Furthermore, uncertainty over all unknown quantities is handled as an integral part of the Bayesian paradigm.
+This section provides a brief and at times opinionated overview.
 For a more complete introduction, I recommend <span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>, <span class="citation">McElreath (<a href="#ref-mcelreath2020statistical">2020</a>)</span> or <span class="citation">Gelman et al. (<a href="#ref-gelman2020bayesian">2020</a>)</span>.</p>
 <div id="bayesian-modelling" class="section level3 hasAnchor" number="3.1.1">
 <h3><span class="header-section-number">3.1.1</span> Bayesian modelling<a href="bayes-st.html#bayesian-modelling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The Bayesian approach to data analysis is based on construction of a probability model for the observed data <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)\)</span> together with parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\)</span>.
-Choice of the particular parameters used depends upon the requirements of the analysis.
-All quantities are assumed to be random variables, and the model is written as <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span>, where <span class="math inline">\(p(\cdot)\)</span> denotes a probability distribution.
-Subsequent calculations are based on manipulation of this model using probability theory.</p>
-<p>Models can be most naturally constructed from two parts, known respectively as the likelihood <span class="math inline">\(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})\)</span> and the prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}})\)</span>.
-The joint distribution is obtained by the product <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})\)</span>.
+<p>The Bayesian approach to data analysis is based on construction of a probability model for the observed data <span class="math inline">\(\mathbf{y} = (y_1, \ldots, y_n)\)</span> joint with parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)\)</span>.
+Choice of the parameters used in the model depends upon the requirements of the analysis.
+All quantities are assumed to be random variables, and the model is written as <span class="math inline">\(p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span> where <span class="math inline">\(p(\cdot)\)</span> denotes a probability distribution.
+Subsequent calculations, and the conclusions to follow, are made by manipulating the model using probability theory.</p>
+<p>Models are most naturally constructed from two parts, known respectively as the likelihood <span class="math inline">\(p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})\)</span> and the prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}})\)</span>.
+The joint distribution is obtained by the product of these two parts
+<span class="math display">\[\begin{equation}
+p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}).
+\end{equation}\]</span>
 The likelihood, as a function of <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> with <span class="math inline">\(\mathbf{y}\)</span> fixed, reflects the probability of observing the data when the value of the parameters is <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.
 The prior distribution encapsulates beliefs about the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> before the data are observed.</p>
 <p>Recommendations for specifying prior distributions vary.
-The extent to which subjective information should be incorporated into the prior distribution, and in doing so influence the posterior distribution, is a central topic of discussion.
+The extent to which subjective information should be incorporated into the prior distribution, and in doing so influence the posterior distribution, is a central issue.
 Proponents of the objective Bayesian paradigm <span class="citation">(<a href="#ref-berger2006case">Berger 2006</a>)</span> put forward that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
-That said, we shall see in Section <a href="bayes-st.html#hierarchical-lgm-elgm">3.3</a> that the distinction between likelihood and prior distribution can be unclear.
-As such, it may be argued that issues of subjectivity are not unique to the prior distribution, and ultimately the challenge of specifying the data generating process is better thought of more holistically.</p>
-<!-- Could cite @gelman2017prior here. -->
+Others see subjectivity as fundamental to scientific inquiry, with no viable alternative <span class="citation">(<a href="#ref-goldstein2006subjective">Goldstein 2006</a>)</span>.
+Though subjectivity is most often discussed in the context of the prior distribution specification, we shall see in Section <a href="bayes-st.html#hierarchical-lgm-elgm">3.3</a> that the distinction between prior distribution and likelihood is not always clear.
+As such, it may be argued that issues of subjectivity are not unique to prior distribution specification, and ultimately the challenge of specifying the data generating process is better thought of more holistically <span class="citation">(<a href="#ref-gelman2017prior">Gelman, Simpson, and Betancourt 2017</a>)</span>.</p>
 <p>The probability model can be simulated from to obtain samples <span class="math inline">\((\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})\)</span>.
 If the samples of <span class="math inline">\(\mathbf{y}\)</span> differ too greatly from what the analyst would expect, then the model does not capture their prior scientific understanding of the data.
 Models which do not produce plausible samples can be refined.
-Checks of this kind [<span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>; Chapter 6] can be used to help iteratively build models, adding complexity gradually as required.</p>
+Checks of this kind [<span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian">2013</a>)</span>; Chapter 6] can be used to help iteratively build models, gradually adding complexity as required.</p>
 </div>
 <div id="bayesian-computation" class="section level3 hasAnchor" number="3.1.2">
 <h3><span class="header-section-number">3.1.2</span> Bayesian computation<a href="bayes-st.html#bayesian-computation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conjugate"></span>
-<img src="figures/bayesian/conjugate.png" alt="An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter is \(\phi \sim \text{Gamma}(3, 1)\). I simulated observed data \(\mathbf{y} = (1, 2, 3)\) from the distribution \(\text{Poisson}(2.5)\). As such, the true data generating process is within the space of models being considered (This situation is sometimes known (Bernardo and Smith 2001) as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution." width="95%" />
+<img src="figures/bayesian/conjugate.png" alt="An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is \(y_i \sim \text{Poisson}(\phi)\) for \(i = 1, 2, 3\) and prior distribution on the rate parameter \(\phi &gt; 0\) is \(\phi \sim \text{Gamma}(3, 1)\). Observed data \(\mathbf{y} = (1, 2, 3)\) was simulated from the distribution \(\text{Poisson}(2.5)\). The true data generating process is within the space of models being considered. (This situation is sometimes known (Bernardo and Smith 2001) as the \(\mathcal{M}\)-closed world, in contrast to the \(\mathcal{M}\)-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as \(\text{Gamma}(9, 4)\). This is because the posterior distribution is in the same family of probability distributions as the prior distribution. Models of this kind are described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. The posterior distribution here is more tightly peaked than the prior distribution. This contraction is typically, but not always, the case." width="95%" />
 <p class="caption">
-Figure 3.1: An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution on the rate parameter is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>. I simulated observed data <span class="math inline">\(\mathbf{y} = (1, 2, 3)\)</span> from the distribution <span class="math inline">\(\text{Poisson}(2.5)\)</span>. As such, the true data generating process is within the space of models being considered (This situation is sometimes known <span class="citation">(<a href="#ref-bernardo2001bayesian">Bernardo and Smith 2001</a>)</span> as the <span class="math inline">\(\mathcal{M}\)</span>-closed world, in contrast to the <span class="math inline">\(\mathcal{M}\)</span>-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. This is because the posterior distribution is in the same family of probability distributions as the prior distribution, and the model is described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. In this situation, which is typical, the posterior distribution is more tightly peaked than the prior distribution.
+Figure 3.1: An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is <span class="math inline">\(y_i \sim \text{Poisson}(\phi)\)</span> for <span class="math inline">\(i = 1, 2, 3\)</span> and prior distribution on the rate parameter <span class="math inline">\(\phi &gt; 0\)</span> is <span class="math inline">\(\phi \sim \text{Gamma}(3, 1)\)</span>. Observed data <span class="math inline">\(\mathbf{y} = (1, 2, 3)\)</span> was simulated from the distribution <span class="math inline">\(\text{Poisson}(2.5)\)</span>. The true data generating process is within the space of models being considered. (This situation is sometimes known <span class="citation">(<a href="#ref-bernardo2001bayesian">Bernardo and Smith 2001</a>)</span> as the <span class="math inline">\(\mathcal{M}\)</span>-closed world, in contrast to the <span class="math inline">\(\mathcal{M}\)</span>-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. This is because the posterior distribution is in the same family of probability distributions as the prior distribution. Models of this kind are described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. The posterior distribution here is more tightly peaked than the prior distribution. This contraction is typically, but not always, the case.
 </p>
 </div>
 <p>The primary goal in a Bayesian analysis is to obtain the posterior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span>.
-This distribution encapsulates probabilistic beliefs about the parameters given the observed data, and has a central role in use of the analysis for decision making.
+This distribution encapsulates probabilistic beliefs about the parameters given the observed data.
+As such, the posterior distribution has a central role in use of the statistical analysis for decision making.
 Using the eponymous Bayes’ theorem, the posterior distribution is obtained by
 <span class="math display" id="eq:posterior">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = = \frac{p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})} = \frac{p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}})}{p(\mathbf{y})}. \tag{3.1}
@@ -416,8 +421,8 @@ This is because of the potentially high-dimensional integral
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 \end{equation}\]</span>
 in the denominator of Equation <a href="bayes-st.html#eq:posterior">(3.1)</a>.
-The evidence <span class="math inline">\(p(\mathbf{y})\)</span> quantifies the probability of obtaining the data under the model, and… TODO.
-As such, although it is easy to evaluate a quantity proportional to the posterior distribution
+The evidence <span class="math inline">\(p(\mathbf{y})\)</span> quantifies the probability of obtaining the data under the model.
+Although it is easy to evaluate a quantity proportional to the posterior distribution
 <span class="math display">\[\begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
 \end{equation}\]</span>
@@ -445,17 +450,17 @@ The Metropolis-Hastings [MH; <span class="citation">Metropolis et al. (<a href="
 Many MCMC algorithms, including the Gibbs sampler, are special cases of MH.</p>
 <p>Other notable classes of sampling algorithms include importance sampling (IS) methods, in which the samples are weighted, and sequential Monte Carlo [SMC; <span class="citation">Chopin, Papaspiliopoulos, et al. (<a href="#ref-chopin2020introduction">2020</a>)</span>] methods based on sampling from a sequence of distributions.
 Though these methods have found applications in specific domains, MCMC is more widely used because of its generality and theoretical reliability.</p>
-<p>In this thesis, I use the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, as implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
+<p>This thesis makes use of the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, as implemented in the Stan <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
 HMC uses derivatives of the posterior distribution to generate efficient Metropolis-Hastings proposal distributions based on Hamiltonian dynamics.
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.</p>
-<p>After running an MCMC sampler, it is important to check diagnostics to assess accuracy and evaluate convergence.
+<p>After running an MCMC sampler, it is important to check diagnostics to evaluate convergence and assess whether the results of the Markov chain can be used to accurately compute posterior quantities.
 Panel B of Figure <a href="bayes-st.html#fig:stan">3.2</a> shows a traceplot for a Markov chain which has converged.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:stan"></span>
-<img src="figures/bayesian/stan.png" alt="NUTS can be used to sample from the posterior distribution in the example of Figure 3.1. Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value." width="95%" />
+<img src="figures/bayesian/stan.png" alt="NUTS can be used to sample from the posterior distribution in the example of Figure 3.1. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain \(\{\phi_i\}_{i = 1}^{1000}\) as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean \(\frac{1}{i} \sum_{j \leq i} \phi_j\) to the true value of \(\mathbb{E}(\phi)\) as more iterations of the Markov chain are included in the calculation." width="95%" />
 <p class="caption">
-Figure 3.2: NUTS can be used to sample from the posterior distribution in the example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. Panel A shows a histogram of the NUTS samples as compared to the true posterior. Panel B shows a traceplot. Panel C shows the convergence of the empirical posterior mean to the true value.
+Figure 3.2: NUTS can be used to sample from the posterior distribution in the example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain <span class="math inline">\(\{\phi_i\}_{i = 1}^{1000}\)</span> as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean <span class="math inline">\(\frac{1}{i} \sum_{j \leq i} \phi_j\)</span> to the true value of <span class="math inline">\(\mathbb{E}(\phi)\)</span> as more iterations of the Markov chain are included in the calculation.
 </p>
 </div>
 </div>
@@ -466,12 +471,11 @@ Optimisation algorithms are used to choose the best member of that family, typic
 VI is typically faster than Monte Carlo methods, especially for large datasets or models.
 However, it lacks theoretical guarantees and is known to often inaccurately estimate posterior variances <span class="citation">(<a href="#ref-giordano2018covariances">Giordano, Broderick, and Jordan 2018</a>)</span>.
 Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span>.
-The expectation maximisation [EM; <span class="citation">Dempster, Laird, and Rubin (<a href="#ref-dempster1977maximum">1977</a>)</span>] and expectation propagation [EP; <span class="citation">Minka (<a href="#ref-minka2001expectation">2001</a>)</span>] algorithms are closely related to VI.</p>
-<p>Need to talk about:
-Laplace approximation.
-Quadrature.
-Integrated nested Laplace approximation.
-Unsure how much detail to go into here given that these approximations are the subject of Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p>
+The well-known expectation maximisation [EM; <span class="citation">Dempster, Laird, and Rubin (<a href="#ref-dempster1977maximum">1977</a>)</span>] and expectation propagation [EP; <span class="citation">Minka (<a href="#ref-minka2001expectation">2001</a>)</span>] algorithms are closely related to VI.</p>
+<p>The Laplace approximation involves approximating the posterior distribution by a Gaussian distribution.
+The integrated nested Laplace approximation [INLA; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] combines quadrature with the Laplace approximation.
+The Laplace approximation and INLA are used extensively throughout this thesis.
+A complete introduction is provided in Section <a href="naomi-aghq.html#naomi-inference">6.1</a>.</p>
 </div>
 </div>
 <div id="interplay-between-modelling-and-computation" class="section level3 hasAnchor" number="3.1.3">
@@ -681,8 +685,7 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 </div>
 <div id="model-comparison" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Model comparison<a href="bayes-st.html#model-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Should this section be here?
-Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections, things used later in the thesis.</p>
+<p>Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections.</p>
 </div>
 <div id="survey" class="section level2 hasAnchor" number="3.5">
 <h2><span class="header-section-number">3.5</span> Survey methods<a href="bayes-st.html#survey" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -827,11 +830,17 @@ Gelman, Andrew. 2005. <span>“Analysis of Variance—Why It Is More Important T
 <div id="ref-gelman2013bayesian" class="csl-entry">
 Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B Rubin. 2013. <em>Bayesian Data Analysis</em>. CRC press.
 </div>
+<div id="ref-gelman2017prior" class="csl-entry">
+Gelman, Andrew, Daniel Simpson, and Michael Betancourt. 2017. <span>“The Prior Can Often Only Be Understood in the Context of the Likelihood.”</span> <em>Entropy</em> 19 (10): 555.
+</div>
 <div id="ref-gelman2020bayesian" class="csl-entry">
 Gelman, Andrew, Aki Vehtari, Daniel Simpson, Charles C Margossian, Bob Carpenter, Yuling Yao, Lauren Kennedy, Jonah Gabry, Paul-Christian Bürkner, and Martin Modrák. 2020. <span>“Bayesian Workflow.”</span> <em>arXiv Preprint arXiv:2011.01808</em>.
 </div>
 <div id="ref-giordano2018covariances" class="csl-entry">
 Giordano, Ryan, Tamara Broderick, and Michael I. Jordan. 2018. <span>“Covariances, Robustness, and Variational Bayes.”</span> <em>Journal of Machine Learning Research</em> 19 (51): 1–49. <a href="http://jmlr.org/papers/v19/17-670.html">http://jmlr.org/papers/v19/17-670.html</a>.
+</div>
+<div id="ref-goldstein2006subjective" class="csl-entry">
+Goldstein, Michael. 2006. <span>“Subjective Bayesian Analysis: Principles and Practice.”</span>
 </div>
 <div id="ref-hajek1971discussion" class="csl-entry">
 Hájek, Jaroslav. 1971. <span>“Discussion of <span>‘an Essay on the Logical Foundations of Survey Sampling, Part i’</span>.”</span> <em>Foundations of Statistical Inference (Proc. Sympos., Univ. Waterloo, Ontario, 1970)</em>, 236.

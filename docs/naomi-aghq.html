@@ -266,7 +266,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6" data-path="naomi-aghq.html"><a href="naomi-aghq.html"><i class="fa fa-check"></i><b>6</b> Fast approximate Bayesian inference</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-methods-and-software"><i class="fa fa-check"></i><b>6.1</b> Inference methods and software</a>
+<li class="chapter" data-level="6.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi-inference"><i class="fa fa-check"></i><b>6.1</b> Inference methods and software</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#la"><i class="fa fa-check"></i><b>6.1.1</b> The Laplace approximation</a></li>
 <li class="chapter" data-level="6.1.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#quadrature"><i class="fa fa-check"></i><b>6.1.2</b> Quadrature</a></li>
@@ -396,8 +396,8 @@ This quadrature rule is used to perform inference for the Naomi model by integra
 <p>This work was conducted in collaboration with Prof. Alex Stringer, whom I visited at the University of Waterloo during the fall term of 2022.
 The results are presented in <span class="citation">Howes et al. (<a href="#ref-howes2023fast">2023+</a>)</span>.
 Code for the analysis in this chapter is available from <a href="https://github.com/athowes/naomi-aghq"><code>https://github.com/athowes/naomi-aghq</code></a>.</p>
-<div id="inference-methods-and-software" class="section level2 hasAnchor" number="6.1">
-<h2><span class="header-section-number">6.1</span> Inference methods and software<a href="naomi-aghq.html#inference-methods-and-software" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="naomi-inference" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Inference methods and software<a href="naomi-aghq.html#naomi-inference" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section reviews existing deterministic Bayesian inference methods (Sections <a href="naomi-aghq.html#la">6.1.1</a>, <a href="naomi-aghq.html#quadrature">6.1.2</a>, <a href="naomi-aghq.html#inla">6.1.3</a>) and the software implementing them (Section <a href="naomi-aghq.html#software">6.1.4</a>).
 Inference comprises obtaining the posterior distribution
 <span class="math display" id="eq:bayes">\[\begin{equation}
@@ -1372,14 +1372,14 @@ Equations <a href="naomi-aghq.html#eq:survey-obs">(6.20)</a>, <a href="naomi-agh
 In particular, for ART coverage <span class="math inline">\(\alpha\)</span> and the proportion recently infected among HIV positive persons <span class="math inline">\(\kappa\)</span>, only those individuals who are HIV positive are included in the set.
 The denominator for HIV prevalence <span class="math inline">\(\rho\)</span> includes all individuals.</p>
 <p>The weighted aggregate number of outcomes are modelled using a binomial working likelihood <span class="citation">(<a href="#ref-chen2014use">Chen, Wakefield, and Lumely 2014</a>)</span> defined to operate on the reals
-<span class="math display">\[\begin{equation}
-y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}).
+<span class="math display" id="eq:xbin">\[\begin{equation}
+y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}). \tag{6.23}
 \end{equation}\]</span>
 The terms <span class="math inline">\(\theta_{I}\)</span> are the following weighted aggregates
 <span class="math display" id="eq:weighted-aggregates">\[\begin{equation}
 \rho_{I} = \frac{\sum_{i \in I} N_i \rho_i}{\sum_{i \in I} N_i}, \quad
 \alpha_{I} = \frac{\sum_{i \in I} N_i \rho_i \alpha_i}{\sum_{i \in I} N_i \rho_i}, \quad
-\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}, \tag{6.23}
+\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}, \tag{6.24}
 \end{equation}\]</span>
 where the denominators of <span class="math inline">\(\alpha_{I}\)</span> and <span class="math inline">\(\kappa_{I}\)</span> reflect their restriction to HIV positive persons.</p>
 </div>
@@ -1408,7 +1408,7 @@ y^{\rho^\text{ANC}}_I &amp;\sim \text{Bin}(m^{\rho^\text{ANC}}_I, \rho^\text{ANC
 y^{\alpha^\text{ANC}}_I &amp;\sim \text{Bin}(y^{\rho^\text{ANC}}_I, \alpha^\text{ANC}_{I}).
 \end{align*}\]</span>
 It is not necessary to use an extended binomial working likelihood, as in Section <a href="bayes-st.html#survey">3.5</a>, because the ANC data are not survey weighted and therefore are integer valued.
-Analogous to Equation <a href="naomi-aghq.html#eq:weighted-aggregates">(6.23)</a> in the household survey component, the weighted aggregates used here are
+Analogous to Equation <a href="naomi-aghq.html#eq:weighted-aggregates">(6.24)</a> in the household survey component, the weighted aggregates used here are
 <span class="math display">\[\begin{equation*}
 \rho^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}}{\sum_{i \in I} \Psi_i}, \quad
 \alpha^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC} \alpha^\text{ANC}_i}{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}},
@@ -1432,11 +1432,11 @@ The log-odds are modelled using a structured additive predictor which only depen
 As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.</p>
 <p>Let the number of people observed receiving ART in strata <span class="math inline">\(i\)</span> be <span class="math inline">\(y^{A}_i\)</span> with corresponding aggregate
 <span class="math display" id="eq:art-aggregate">\[\begin{equation}
-y^{A}_I = \sum_{i \in I} y^{A}_i. \tag{6.24}
+y^{A}_I = \sum_{i \in I} y^{A}_i. \tag{6.25}
 \end{equation}\]</span>
 Let the probability of a person in strata <span class="math inline">\(i\)</span> travelling from district <span class="math inline">\(x(i) = x\)</span> to <span class="math inline">\(x&#39;\)</span> to receive ART be
 <span class="math display" id="eq:recieve-art">\[\begin{equation}
-\pi_{i, x(i) = x, x&#39;} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x&#39;}. \tag{6.25}
+\pi_{i, x(i) = x, x&#39;} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x&#39;}. \tag{6.26}
 \end{equation}\]</span>
 These probabilities are the product of three probabilities, each for a person in strata <span class="math inline">\(i\)</span>:</p>
 <ol style="list-style-type: decimal">
@@ -1452,7 +1452,7 @@ Each unobserved count can be considered as arising from a binomial distribution,
 <span class="math display">\[\begin{equation}
 A_{i, x(i) = x&#39;, x} \sim \text{Bin}(N_{i, x(i) = x&#39;}, \pi_{i, x(i) = x&#39;, x}).
 \end{equation}\]</span></p>
-<p>Each aggregate attendance observation (Equation <a href="naomi-aghq.html#eq:art-aggregate">(6.24)</a>) is modelled using a Gaussian approximation to a sum of binomials.
+<p>Each aggregate attendance observation (Equation <a href="naomi-aghq.html#eq:art-aggregate">(6.25)</a>) is modelled using a Gaussian approximation to a sum of binomials.
 This sum is over both the strata <span class="math inline">\(i \in I\)</span> and the number of ART clients travelling from district <span class="math inline">\(x(i) = x&#39;\)</span> to <span class="math inline">\(x\)</span> to receive treatment.
 The Gaussian approximation is
 <span class="math display">\[\begin{equation}
@@ -1460,13 +1460,13 @@ y^{A}_I \sim \mathcal{N}(\mu^A_I, {\sigma^A_I}^2),
 \end{equation}\]</span>
 where the mean is
 <span class="math display" id="eq:art-aggregate-mean">\[\begin{equation}
-\mu^A_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x}, \tag{6.26}
+\mu^A_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x}, \tag{6.27}
 \end{equation}\]</span>
 and the variance is
 <span class="math display" id="eq:art-aggregate-var">\[\begin{equation}
-{\sigma^A_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x} \cdot (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.27}
+{\sigma^A_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x} \cdot (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.28}
 \end{equation}\]</span>
-Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.26)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.27)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
+Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.27)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.28)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
 </div>
 </div>
 <div id="naomi-elgm" class="section level3 hasAnchor" number="6.3.2">
@@ -1604,7 +1604,7 @@ These diagnostics were sufficient to treat results from NUTS as a gold-standard,
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>A Scree plot based on the spectral decomposition of <span class="math inline">\(\hat{\Hb}_\texttt{LA}(\hat{\btheta}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep.
+<p>A Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep.
 Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain some proportion of total variation.
 The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix.</p>
 </div>
@@ -1635,6 +1635,8 @@ Second, the PCA-AGHQ rule (Sections <a href="naomi-aghq.html#pca-aghq">6.4</a>) 
 This section discusses these contributions in turn, before outlining suggestions for future related work.</p>
 <div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
 <h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>After requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.23)</a> to be included in <code>R-INLA</code> a prototype version was shortly available.
+More sustainable to help users to implement their own distributions and models.</p>
 </div>
 <div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
 <h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to INLA for Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1742,8 +1744,8 @@ One possibility is to look to disseminate methods via the users of <code>glmmTMB
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
 Implementation in <code>Stan</code> is made possible by the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a <code>Stan</code> model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in <code>Stan</code> by <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
 The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of <code>Stan</code> users are interested in specifying their own model.
-Implementation in <code>NIMBLE</code> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] built using <code>CppAD</code> like <code>TMB</code>, as of .
-Both the <code>NIMBLE</code> and <code>Stan</code> developers are actively looking into implementation algorithms combining the Laplace approximation and quadrature.</p>
+Implementation in <code>NIMBLE</code> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] like <code>TMB</code> built using <code>CppAD</code>.
+Both <code>NIMBLE</code> and <code>Stan</code> developers are actively looking into implementation of algorithms combining the Laplace approximation and quadrature.</p>
 
 </div>
 </div>
@@ -1860,7 +1862,7 @@ Meng, Xiao-Li. 2018. <span>“Statistical Paradises and Paradoxes in Big Data (i
 Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“No-u-Turn Sampling for Fast Bayesian Inference in ADMB and TMB: Introducing the Adnuts and Tmbstan r Packages.”</span> <em>PloS One</em> 13 (5): e0197954.
 </div>
 <div id="ref-nandi2023disaggregation" class="csl-entry">
-Nandi, Anita K, Tim CD Lucas, Rohan Arambepola, Peter Gething, and Daniel J Weiss. 2023. <span>“Disaggregation: An r Package for Bayesian Spatial Disaggregation Modeling.”</span> <em>Journal of Statistical Software</em> 106: 1–19.
+Nandi, Anita K, Tim CD Lucas, Rohan Arambepola, Peter Gething, and Daniel J Weiss. 2023. <span>“<span class="nocase">disaggregation: An R Package for Bayesian Spatial Disaggregation Modeling</span>.”</span> <em>Journal of Statistical Software</em> 106: 1–19.
 </div>
 <div id="ref-naylor1982applications" class="csl-entry">
 Naylor, John C, and Adrian FM Smith. 1982. <span>“Applications of a Method for the Efficient Computation of Posterior Distributions.”</span> <em>Journal of the Royal Statistical Society Series C: Applied Statistics</em> 31 (3): 214–25.
