@@ -167,6 +167,40 @@ aghq_samples <- aghq::sample_marginal(aghq, M = 1000)$samps %>%
   as.data.frame() %>%
   inf.utils::replace_duplicate_colnames()
 
+random <- obj$env$random
+x_names <- names(obj$env$par[random])
+x_lengths <- lengths(param[unique(x_names)])
+x_starts <- cumsum(x_lengths) - x_lengths
+
+dat$x_starts <- as.numeric(x_starts)
+dat$x_lengths <- as.numeric(x_lengths)
+dat$i <- 1
+
+param[unique(x_names)] <- NULL
+param$x_minus_i <- rep(0, sum(x_lengths) - 1)
+param$x_i <- 0
+
+compile("resources/naomi-aghq/epil_modified.cpp")
+dyn.load(dynlib("resources/naomi-aghq/epil_modified"))
+
+# obj_i <- TMB::MakeADFun(
+#   data = dat,
+#   parameters = param,
+#   random = "x_minus_i",
+#   DLL = "epil_modified",
+#   silent = TRUE,
+# )
+# 
+# quad <- aghq::aghq(
+#   ff = obj_i,
+#   k = 3,
+#   startingvalue = 0,
+#   control = aghq::default_control_tmb()
+# )
+# 
+# fine_grid <- seq(-5, 5, length.out = 500)
+# pdf_and_cdf <- aghq::compute_pdf_and_cdf(quad, finegrid = fine_grid)[[1]]
+
 start <- Sys.time() 
 tmbstan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 end <- Sys.time()
@@ -206,3 +240,25 @@ ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = sof
   coord_flip()
 
 ggsave("figures/naomi-aghq/epil-time.png", h = 3.5, w = 6.25)
+
+beta0_inla_marginals <- bind_rows(
+  data.frame(inla_g_grid$marginals.fixed$`(Intercept)`) %>%
+    mutate(method = "Gaussian"),
+  data.frame(inla_l_grid$marginals.fixed$`(Intercept)`) %>%
+    mutate(method = "Laplace")
+)
+
+plot0 <- ggplot(data.frame(x = rstan::extract(tmbstan, pars = "beta[1]")[[1]]), aes(x = x)) +
+  geom_histogram(aes(y = ..density..), alpha = 0.6, fill = "#E69F00", bins = 40) +
+  theme_minimal() +
+  labs(x = "beta[1]", y = "Posterior marginal PDF")
+
+plot0 +
+  geom_line(data = beta0_inla_marginals, aes(x = x, y = y, col = method)) +
+  scale_color_manual(values = c("#56B4E9","#009E73")) +
+  geom_col(data = data.frame(x = rep(inla_g_grid$summary.fixed["(Intercept)", ]$mean, 3), y = c(0, 0, 0), type = c("Gaussian", "Laplace", "NUTS")), aes(x = x, y = y, fill = type)) +
+  scale_fill_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
+  labs(col = "", title = "", fill = "") +
+  guides(col = "none", fill = guide_legend(override.aes = list(alpha = 1, shape = 15)))
+
+ggsave("figures/naomi-aghq/intercept-comparison.png", h = 3.5, w = 6.25)

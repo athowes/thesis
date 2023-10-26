@@ -1288,6 +1288,13 @@ sd(beta[5])
 Figure 6.7: Time taken.
 </p>
 </div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:intercept-comparison"></span>
+<img src="figures/naomi-aghq/intercept-comparison.png" alt="Intercept comparison." width="95%" />
+<p class="caption">
+Figure 6.8: Intercept comparison.
+</p>
+</div>
 </div>
 </div>
 <div id="unknown" class="section level3 hasAnchor" number="6.2.2">
@@ -1563,7 +1570,7 @@ The corresponding weighting function is given by
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.8</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.9</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1578,7 +1585,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.8: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
+Figure 6.9: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1589,7 +1596,7 @@ Figure 6.8: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.9: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.10: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1610,7 +1617,7 @@ This represents a gold-standard.</li>
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.9</a>.</p>
+Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.10</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The effective sample size ratios generated sampling with NUTS were low.
@@ -1750,12 +1757,12 @@ One possibility would be to change the <code>random</code> argument in <code>TMB
 Another (less desirable) option would be to algorithimically generate the modified <code>TMB</code> C++ template based on the original template.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
-<img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
+<img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.10: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
+Figure 6.11: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.10</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.11</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
