@@ -730,20 +730,22 @@ and <span class="math inline">\((N - 1) \times (N - 1)\)</span>-dimensional Hess
 <span class="math display">\[\begin{equation}
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{equation}\]</span>
-The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can be obtained by first normalsiing the marginal Laplace approximation in Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.16)</a>
+The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> may be obtained by normalising the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.16)</a>) before performing integration with respect to the hyperparameters (as in Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a>).
+The normalised Laplace approximation is
 <span class="math display">\[\begin{equation}
-\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}.
 \end{equation}\]</span>
-In the denominator, the previously obtained estimate of the evidence in Equation <a href="naomi-aghq.html#eq:aghqnormconst">(6.13)</a> may be reused.
-Alternatively, a new estimate may be computed.
-Then, integration with respect to the hyperparameters may be performed, similarly to Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a>
+where either the estimate of the evidence in Equation <a href="naomi-aghq.html#eq:aghqnormconst">(6.13)</a> may be reused or a new estimate can be computed.
+Integration with respect to the hyperparameters is performed via
 <span class="math display" id="eq:lamarginal">\[\begin{align}
 p(x_i \, | \, \mathbf{y}) &amp;= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
 &amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). \tag{6.17}
 \end{align}\]</span></p>
 <p>Equation <a href="naomi-aghq.html#eq:lamarginal">(6.17)</a> is a mixture of the normalised Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample each Laplace approximation.
-As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.17)</a> may be represented by its evaluation at a number of nodes, such as those from an AGHQ rule.</p>
+As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.17)</a> may instead be represented by its evaluation at a number of nodes.
+The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid computation of the Laplace marginal mode and standard deviation.
+The probability density function of the marginal posterior may be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -781,19 +783,23 @@ Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new
 <div id="r-inla" class="section level4 hasAnchor" number="6.1.4.1">
 <h4><span class="header-section-number">6.1.4.1</span> <code>R-INLA</code><a href="naomi-aghq.html#r-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The <code>R-INLA</code> software <span class="citation">(<a href="#ref-martins2013bayesian">Martins et al. 2013</a>)</span> implements the INLA method, as well as the stochastic partial differential equation (SPDE) approach of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span>.
-<code>R-INLA</code> is the R interface to the core <code>inla</code> program, which is written in C <span class="citation">(<a href="#ref-martino2009implementing">Martino and Rue 2009</a>)</span> and uses algorithms from the <code>GMRFLib</code> C library <span class="citation">(<a href="#ref-rue2001gmrflib">Håvard Rue and Follestad 2001</a>)</span>.
-First and second derivatives are obtained in <code>R-INLA</code> numerically using central finite differences <span class="citation">(<a href="#ref-fattah2021smart">Fattah, Van Niekerk, and Rue 2021</a>)</span>.
+<code>R-INLA</code> is the R interface to the core <code>inla</code> program, which is written in C <span class="citation">(<a href="#ref-martino2009implementing">Martino and Rue 2009</a>)</span>.
+Algorithms for sampling from GMRFs are used from the <code>GMRFLib</code> C library <span class="citation">(<a href="#ref-rue2001gmrflib">Håvard Rue and Follestad 2001</a>)</span>.
+First and second derivatives are either hard coded, or computed numerically using central finite differences <span class="citation">(<a href="#ref-fattah2021smart">Fattah, Van Niekerk, and Rue 2021</a>)</span>.
 For a review recent computational features of <code>R-INLA</code>, including parallelism via <code>OpenMP</code> <span class="citation">(<a href="#ref-diaz2018openmp">Diaz et al. 2018</a>)</span> and use of the PARDISO sparse linear equation solver <span class="citation">(<a href="#ref-bollhofer2020state">Bollhöfer et al. 2020</a>)</span>, see <span class="citation">Gaedke-Merzhäuser et al. (<a href="#ref-gaedke2023parallelized">2023</a>)</span>.
 Further information about <code>R-INLA</code>, including recent developments, can be found at <a href="https://r-inla.org"><code>https://r-inla.org</code></a>.</p>
-<p>A formula interface of the form <code>y ~ ...</code>, similar to that used in the <code>lm</code> function in the core <code>stats</code> R package, is used to specify the connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and the structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span>.
-For a model with one fixed effect <code>a</code> and one IID random effect <code>b</code>, the formula would be written as <code>y ~ a + f(b, model = "iid")</code>.
+<p>The connection between the latent field <span class="math inline">\(\mathbf{x}\)</span> and structured additive predictor <span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span> is specified in <code>R-INLA</code> using a formula interface of the form <code>y ~ ...</code>.
+The interface is similar to that used in the <code>lm</code> function in the core <code>stats</code> R package.
+For example, a model with one fixed effect <code>a</code> and one IID random effect <code>b</code>, has the formula <code>y ~ a + f(b, model = "iid")</code>.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.</p>
 <p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to <code>"gaussian"</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>"laplace"</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
 The quadrature grid used can be chosen by setting <code>int.strategy</code> to <code>"eb"</code> (empirical Bayes, one quadrature node), <code>"grid"</code> (a dense grid), or <code>"ccd"</code> [Box-Wilson central composite design; <span class="citation">Box and Wilson (<a href="#ref-box1992experimental">1992</a>)</span>].
 Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the latter two integration strategies.
 By default, the <code>"grid"</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>"ccd"</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
 <p>Various software packages have been built using <code>R-INLA</code>.
-Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>, which provides a simplified syntax, and capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.</p>
+Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>.
+As well as a simplified syntax, <code>inlabru</code> provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.
+These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.</p>
 <!-- Note: does the CCD need to have weights added? -->
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
@@ -808,7 +814,7 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <p>Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an R package which implements the Laplace approximation.
 In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
-These derivatives may then be composed by repeat use of the chain rule to obtain the function’s derivative.
+The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function’s derivative.
 <code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD.
 Details are provided in Section 3 of <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>.</p>
 <p>Whereas <code>R-INLA</code> requires to sparsity structure to be known in advance, <code>TMB</code> uses an algorithm to automatically determine the sparsity structure [Section 4.2; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>]
@@ -831,11 +837,12 @@ This package is briefly mentioned so as to note that the function <code>mgcv::gi
 </div>
 <div id="universal" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#universal" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals.
+<p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals, using AD.
 The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a more restrictive formula interface <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. --></p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
-A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>, including Naomi as one among many examples.
+A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>.
+The Naomi model is one among many examples.
 The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of <code>TMB</code>) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, who noted that such a system would be “fast, flexible, and easy-to-use”, as well as “automatic from a user’s perspective”.
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.</p>
 <p>I demonstrate the universal implementation with two examples:</p>
@@ -935,17 +942,17 @@ Inferences may be then obtained via the <code>fit</code> object:</p>
 <p>A C++ template for the log-posterior of the model is required to obtain inferences with <code>TMB</code>.
 For simple models, writing this template is usually a more involved task then specifying the formula object required for <code>R-INLA</code>.
 The <code>TMB</code> C++ template <code>epil.cpp</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-epil">C.1.1</a>.
-This template specifies exactly the same model as <code>R-INLA</code> in Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a>.
-The lines with a <code>DATA_</code> prefix specify the fixed data inputs to be passed to <code>TMB</code>.
+This template specifies exactly the same model as <code>R-INLA</code> in Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a>: in itself a non-trivial task.
+The lines with a <code>DATA</code> prefix specify the fixed data inputs to be passed to <code>TMB</code>.
 Examples of data inputs include the data <span class="math inline">\(\mathbf{y}\)</span> and the covariate design matrix.
-The lines with a <code>PARAMETER_</code> prefix specify the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> to be estimated.
+The lines with a <code>PARAMETER</code> prefix specify the parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> to be estimated.
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
-More familiar versions of parameters, such as the precision rather than log precision, may be created outside the <code>PARAMETER_</code> section.
+More familiar versions of parameters, such as the precision rather than log precision, may be created outside the <code>PARAMETER</code> section.
 Lines of the form <code>nlp -= ddist(...)</code> increment the negative log-posterior, where <code>dist</code> is the name of a distribution.</p>
-<p>The <code>TMB</code> template may now first be compiled:</p>
+<p>The <code>TMB</code> template must first be compiled:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="naomi-aghq.html#cb6-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil.cpp&quot;</span>)</span>
 <span id="cb6-2"><a href="naomi-aghq.html#cb6-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil&quot;</span>))</span></code></pre></div>
-<p>The objective function <code>obj</code> may then be created, implementing <span class="math inline">\(\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> and its first and second derivatives:</p>
+<p>An objective function <code>obj</code> implementing <span class="math inline">\(\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> and its first and second derivatives may then be created:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="naomi-aghq.html#cb7-1" tabindex="-1"></a>obj <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">MakeADFun</span>(</span>
 <span id="cb7-2"><a href="naomi-aghq.html#cb7-2" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
 <span id="cb7-3"><a href="naomi-aghq.html#cb7-3" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
@@ -954,53 +961,63 @@ Lines of the form <code>nlp -= ddist(...)</code> increment the negative log-post
 <span id="cb7-6"><a href="naomi-aghq.html#cb7-6" tabindex="-1"></a>)</span></code></pre></div>
 <p>The object <code>dat</code> is a list of data inputs passed to <code>TMB</code>.
 The object <code>param</code> is a list of parameter starting values passed to <code>TMB</code>.
-The argument <code>random</code> determines which parameters are to be integrated out with a Gaussian approximation.
-Here, the parameters <code>c("beta", "epsilon", "nu")</code>, or mathematically
+The argument <code>random</code> determines which parameters are to be integrated out with a Gaussian approximation, here set to <code>c("beta", "epsilon", "nu")</code>.
+Mathematically, these parameters correspond to the latent field
 <span class="math display">\[\begin{equation}
-(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}
-\end{equation}\]</span>
-were selected as the latent field.</p>
-<p>The objective function <code>obj</code> may then be optimised using any gradient based optimiser, to obtain <span class="math inline">\(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}\)</span>:</p>
+(\beta_0, \beta_\texttt{Base}, \beta_\texttt{Trt}, \beta_{\texttt{Trt} \times \texttt{Base}}, \beta_\texttt{Age}, \beta_{\texttt{V}_4}, \epsilon_1, \ldots, \epsilon_{59}, \nu_{1,1}, \ldots, \nu_{59,4}) = (\boldsymbol{\mathbf{\beta}}, \boldsymbol{\mathbf{\epsilon}}, \boldsymbol{\mathbf{\nu}}) = \mathbf{x}.
+\end{equation}\]</span></p>
+<p>The objective function <code>obj</code> may then be optimised using a gradient based optimiser to obtain <span class="math inline">\(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}\)</span>.
+Here I use a quasi-Newton method <span class="citation">(<a href="#ref-dennis1981adaptive">Dennis Jr, Gay, and Walsh 1981</a>)</span> as implemented by <code>nlminb</code> from the <code>stats</code> R package:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="naomi-aghq.html#cb8-1" tabindex="-1"></a>opt <span class="ot">&lt;-</span> <span class="fu">nlminb</span>(</span>
 <span id="cb8-2"><a href="naomi-aghq.html#cb8-2" tabindex="-1"></a>  <span class="at">start =</span> obj<span class="sc">$</span>par,</span>
 <span id="cb8-3"><a href="naomi-aghq.html#cb8-3" tabindex="-1"></a>  <span class="at">objective =</span> obj<span class="sc">$</span>fn,</span>
 <span id="cb8-4"><a href="naomi-aghq.html#cb8-4" tabindex="-1"></a>  <span class="at">gradient =</span> obj<span class="sc">$</span>gr,</span>
 <span id="cb8-5"><a href="naomi-aghq.html#cb8-5" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">iter.max =</span> <span class="dv">1000</span>, <span class="at">trace =</span> <span class="dv">0</span>)</span>
 <span id="cb8-6"><a href="naomi-aghq.html#cb8-6" tabindex="-1"></a>)</span></code></pre></div>
-<p>The <code>sdreport</code> function is used to evaluate the Hessian at a particular value.
-Setting <code>par.fixed</code> to the previously obtained <code>opt$par</code> returns <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}\)</span>:</p>
+<p>The <code>sdreport</code> function is used to evaluate the Hessian matrices at a particular value.
+Typically, these Hessian matrices are for the hyperparameters, and setting <code>par.fixed</code> to the previously obtained <code>opt$par</code> returns <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}\)</span>.
+However, by setting <code>getJointPrecision = TRUE</code> the the full Hessian matrix for the hyperparameters and latent field together is returned:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="naomi-aghq.html#cb9-1" tabindex="-1"></a>sd_out <span class="ot">&lt;-</span> TMB<span class="sc">::</span><span class="fu">sdreport</span>(</span>
 <span id="cb9-2"><a href="naomi-aghq.html#cb9-2" tabindex="-1"></a>  obj,</span>
 <span id="cb9-3"><a href="naomi-aghq.html#cb9-3" tabindex="-1"></a>  <span class="at">par.fixed =</span> opt<span class="sc">$</span>par,</span>
 <span id="cb9-4"><a href="naomi-aghq.html#cb9-4" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
 <span id="cb9-5"><a href="naomi-aghq.html#cb9-5" tabindex="-1"></a>)</span></code></pre></div>
-<p>It also is possible to succinctly fit the epilepsy GLMM in a frequentist setting (that is, using improper hyperparameter priors <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}}) \propto 1\)</span>) using a formula interface in <code>glmmTMB</code></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT</span>
-<span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>                 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind)</span>
-<span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>                 </span>
-<span id="cb10-4"><a href="naomi-aghq.html#cb10-4" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula, <span class="at">data =</span> Epil, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:hessian-matrix"></span>
+<img src="figures/naomi-aghq/hessian-matrix.png" alt="A submatrix of the full parameter Hessian obtained from TMB::sdreport with getJointPrecision on the log scale. Entries for the latent field parameters \(\boldsymbol{\mathbf{\epsilon}}\) of length 56 and \(\boldsymbol{\mathbf{\nu}}\) of length 236 are omitted. Light grey entries correspond to zeros on the real scale." width="95%" />
+<p class="caption">
+Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::sdreport</code> with <code>getJointPrecision</code> on the log scale. Entries for the latent field parameters <span class="math inline">\(\boldsymbol{\mathbf{\epsilon}}\)</span> of length 56 and <span class="math inline">\(\boldsymbol{\mathbf{\nu}}\)</span> of length 236 are omitted. Light grey entries correspond to zeros on the real scale.
+</p>
+</div>
+<p>The epilepsy GLMM may also be succinctly fit in a frequentist setting (that is, using improper hyperparameter priors <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}}) \propto 1\)</span>) using the formula interface provided by <code>glmmTMB</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="naomi-aghq.html#cb10-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(</span>
+<span id="cb10-2"><a href="naomi-aghq.html#cb10-2" tabindex="-1"></a>  y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rand) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Ind),</span>
+<span id="cb10-3"><a href="naomi-aghq.html#cb10-3" tabindex="-1"></a>  <span class="at">data =</span> Epil,</span>
+<span id="cb10-4"><a href="naomi-aghq.html#cb10-4" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>)</span>
+<span id="cb10-5"><a href="naomi-aghq.html#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="epil-gauss-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.3">
 <h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>aghq</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The objective function <code>obj</code> created in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> may be directly passed to <code>aghq</code> to perform inference using AGHQ:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
-<span id="cb11-2"><a href="naomi-aghq.html#cb11-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> start)</span></code></pre></div>
-<p>The argument <code>k</code> specifies the number of quadrature nodes to be used per dimension, here set to three.
-A more complete <code>aghq</code> vignette is provided by <span class="citation">Stringer (<a href="#ref-stringer2021implementing">2021b</a>)</span>.</p>
+<p>The objective function <code>obj</code> created in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> may be directly passed to <code>aghq</code> to perform inference integrating over the hyperparameters using AGHQ.
+The argument <code>k</code> specifies the number of quadrature nodes to be used per dimension of the hyperparameters.
+Here there are two hyperparameters, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>init <span class="ot">&lt;-</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
+<span id="cb11-2"><a href="naomi-aghq.html#cb11-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> init)</span></code></pre></div>
+<p>For a more complete <code>aghq</code> vignette, see <span class="citation">Stringer (<a href="#ref-stringer2021implementing">2021b</a>)</span>.</p>
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
 <h4><span class="header-section-number">6.2.1.4</span> Laplace marginals and EB with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-eb-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The Laplace latent field marginal <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> may be obtained by setting <code>random</code> to <span class="math inline">\(\mathbf{x}_{-i}\)</span> in the <code>MakeADFun</code> function call.
-This is not directly possible, as the <code>random</code> argument takes a vector of strings as input, and has no native method for indexing.
-Instead, the following steps must be taken to modify the <code>TMB</code> C++ template:</p>
+This is not directly possible, as the <code>random</code> argument takes a vector of strings as input (e.g. <code>c("beta", "epsilon", "nu")</code>) and has no native method for indexing.
+Instead, the following steps can be taken to modify the <code>TMB</code> C++ template to enable the desired indexing:</p>
 <ol style="list-style-type: decimal">
 <li>Include <code>DATA_INTEGER(i)</code> to pass the index <span class="math inline">\(i\)</span> to <code>TMB</code>.</li>
 <li>Concatenate the latent field to <code>PARAMETER_VECTOR(x_minus_i)</code> and <code>PARAMETER(x_i)</code>.</li>
 <li>Include <code>DATA_IVECTOR(x_lengths)</code> and <code>DATA_IVECTOR(x_starts)</code> to pass the start point and lengths of each subvector of <span class="math inline">\(\mathbf{x}\)</span>.
 The <span class="math inline">\(j\)</span>th subvector may then be obtained using <code>x.segment(x_starts(j), x_lengths(j))</code>.</li>
 </ol>
-<p>The modified <code>TMB</code> C++ template for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>.</p>
-<p>Now it is possible (after suitably alterations are made to <code>dat</code> and <code>param</code>) to obtain the desired objective function via:</p>
+<p>As an example, the modified <code>TMB</code> C++ template <code>epil_modified.cpp</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>.</p>
+<p>It is then possible (after suitably alterations are made to <code>dat</code> and <code>param</code>) to obtain the desired objective function via:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>)</span>
 <span id="cb12-2"><a href="naomi-aghq.html#cb12-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>))</span>
 <span id="cb12-3"><a href="naomi-aghq.html#cb12-3" tabindex="-1"></a></span>
@@ -1268,7 +1285,7 @@ sd(beta[5])
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
 <img src="figures/naomi-aghq/epil-time.png" alt="Time taken." width="95%" />
 <p class="caption">
-Figure 6.6: Time taken.
+Figure 6.7: Time taken.
 </p>
 </div>
 </div>
@@ -1546,7 +1563,7 @@ The corresponding weighting function is given by
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.7</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.8</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1561,7 +1578,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.7: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
+Figure 6.8: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1572,7 +1589,7 @@ Figure 6.7: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.8: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.9: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1593,7 +1610,7 @@ This represents a gold-standard.</li>
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.8</a>.</p>
+Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.9</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The effective sample size ratios generated sampling with NUTS were low.
@@ -1735,10 +1752,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure." width="95%" />
 <p class="caption">
-Figure 6.9: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
+Figure 6.10: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.9</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.10</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
@@ -1794,6 +1811,9 @@ Davis, Philip J, and Philip Rabinowitz. 1975. <em>Methods of Numerical Integrati
 </div>
 <div id="ref-nimblemanual" class="csl-entry">
 de Valpine, Perry, Christopher Paciorek, Daniel Turek, Nick Michaud, Cliff Anderson-Bergman, Fritz Obermeyer, Claudia Wehrhahn Cortes, Abel Rodrìguez, Duncan Temple Lang, and Sally Paganin. 2023. <em><span>NIMBLE</span> User Manual</em> (version 1.0.1). <a href="https://doi.org/10.5281/zenodo.1211190">https://doi.org/10.5281/zenodo.1211190</a>.
+</div>
+<div id="ref-dennis1981adaptive" class="csl-entry">
+Dennis Jr, John E, David M Gay, and Roy E Walsh. 1981. <span>“An Adaptive Nonlinear Least-Squares Algorithm.”</span> <em>ACM Transactions on Mathematical Software (TOMS)</em> 7 (3): 348–68.
 </div>
 <div id="ref-diaz2018openmp" class="csl-entry">
 Diaz, Jose Monsalve, Swaroop Pophale, Oscar Hernandez, David E Bernholdt, and Sunita Chandrasekaran. 2018. <span>“Openmp 4.5 Validation and Verification Suite for Device Offload.”</span> In <em>Evolving OpenMP for Evolving Architectures: 14th International Workshop on OpenMP, IWOMP 2018, Barcelona, Spain, September 26–28, 2018, Proceedings 14</em>, 82–95. Springer.

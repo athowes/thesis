@@ -692,8 +692,9 @@ opt <- nlminb(
 )
 ```
 
-The `sdreport` function is used to evaluate the Hessian at a particular value.
-Setting `par.fixed` to the previously obtained `opt$par` returns $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$:
+The `sdreport` function is used to evaluate the Hessian matrices at a particular value.
+Typically, these Hessian matrices are for the hyperparameters, and setting `par.fixed` to the previously obtained `opt$par` returns $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$.
+However, by setting `getJointPrecision = TRUE` the the full Hessian matrix for the hyperparameters and latent field together is returned:
 
 ```r
 sd_out <- TMB::sdreport(
@@ -703,41 +704,49 @@ sd_out <- TMB::sdreport(
 )
 ```
 
-It also is possible to succinctly fit the epilepsy GLMM in a frequentist setting (that is, using improper hyperparameter priors $p(\boldsymbol{\mathbf{\theta}}) \propto 1$) using a formula interface in `glmmTMB`
+(ref:hessian-matrix) A submatrix of the full parameter Hessian obtained from `TMB::sdreport` with `getJointPrecision` on the log scale. Entries for the latent field parameters $\boldsymbol{\mathbf{\epsilon}}$ of length 56 and $\boldsymbol{\mathbf{\nu}}$ of length 236 are omitted. Light grey entries correspond to zeros on the real scale.
+
+```{r hessian-matrix, fig.cap="(ref:hessian-matrix)"}
+knitr::include_graphics("figures/naomi-aghq/hessian-matrix.png")
+```
+
+The epilepsy GLMM may also be succinctly fit in a frequentist setting (that is, using improper hyperparameter priors $p(\boldsymbol{\mathbf{\theta}}) \propto 1$) using the formula interface provided by `glmmTMB`:
 
 ```r
-formula <- y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT
-                 + (1 | rand) + (1 | Ind)
-                 
-fit <- glmmTMB(formula, data = Epil, family = poisson(link = "log"))
+fit <- glmmTMB(
+  y ~ 1 + CTrt + ClBase4 + CV4 + ClAge + CBT + (1 | rand) + (1 | Ind),
+  data = Epil,
+  family = poisson(link = "log")
+)
 ```
 
 #### Gaussian marginals and AGHQ with `aghq` {#epil-gauss-aghq-tmb}
 
-The objective function `obj` created in Section \@ref(epil-gauss-eb-tmb) may be directly passed to `aghq` to perform inference using AGHQ:
+The objective function `obj` created in Section \@ref(epil-gauss-eb-tmb) may be directly passed to `aghq` to perform inference integrating over the hyperparameters using AGHQ.
+The argument `k` specifies the number of quadrature nodes to be used per dimension of the hyperparameters.
+Here there are two hyperparameters, and `k` is set to three, such that in total there are $3^2 = 9$ quadrature nodes:
 
 ```r
-start <- c(param$l_tau_epsilon, param$l_tau_nu)
-fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = start)
+init <- c(param$l_tau_epsilon, param$l_tau_nu)
+fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
 ```
 
-The argument `k` specifies the number of quadrature nodes to be used per dimension, here set to three.
-A more complete `aghq` vignette is provided by @stringer2021implementing.
+For a more complete `aghq` vignette, see @stringer2021implementing.
 
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
 
 The Laplace latent field marginal $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ may be obtained by setting `random` to $\mathbf{x}_{-i}$ in the `MakeADFun` function call.
-This is not directly possible, as the `random` argument takes a vector of strings as input, and has no native method for indexing.
-Instead, the following steps must be taken to modify the `TMB` C++ template:
+This is not directly possible, as the `random` argument takes a vector of strings as input (e.g. `c("beta", "epsilon", "nu")`) and has no native method for indexing.
+Instead, the following steps can be taken to modify the `TMB` C++ template to enable the desired indexing:
 
 1. Include `DATA_INTEGER(i)` to pass the index $i$ to `TMB`.
 2. Concatenate the latent field to `PARAMETER_VECTOR(x_minus_i)` and `PARAMETER(x_i)`.
 3. Include `DATA_IVECTOR(x_lengths)` and `DATA_IVECTOR(x_starts)` to pass the start point and lengths of each subvector of $\mathbf{x}$.
 The $j$th subvector may then be obtained using `x.segment(x_starts(j), x_lengths(j))`.
 
-The modified `TMB` C++ template for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil).
+As an example, the modified `TMB` C++ template `epil_modified.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil).
 
-Now it is possible (after suitably alterations are made to `dat` and `param`) to obtain the desired objective function via:
+It is then possible (after suitably alterations are made to `dat` and `param`) to obtain the desired objective function via:
 
 ```r
 compile("epil_modified.cpp")

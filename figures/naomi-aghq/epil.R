@@ -129,8 +129,38 @@ sd_out <- sdreport(
 end <- Sys.time()
 tmb_g_eb_time <- end - start
 
-start <- c(param$l_tau_epsilon, param$l_tau_nu)
-aghq <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = start)
+sd_summary <- summary(sd_out)
+tab <- table(rownames(sd_summary))
+
+tmb_parameter_names <- sapply(split(tab, names(tab)), function(x) {
+  if(x > 1) paste0(names(x), "[", 1:x, "]")
+  else(names(x))
+}) %>%
+  unlist() %>%
+  as.vector()
+
+H <- as.matrix(sd_out$jointPrecision)
+rownames(H) <- tmb_parameter_names[1:nrow(H)]
+colnames(H) <- tmb_parameter_names[1:ncol(H)]
+
+indices_small <- which(startsWith(tmb_parameter_names, "beta") | startsWith(tmb_parameter_names, "l_"))
+H_small <- H[indices_small, indices_small]
+
+reshape2::melt(H_small) %>%
+  ggplot(aes(x = Var1, y = Var2, fill = log(value))) +
+    geom_tile() +
+    coord_fixed(ratio = 1) +
+    scale_fill_viridis_c(na.value = "grey90") +
+    theme_void() +
+    labs(x = "", y = "", fill = "") +
+    theme(
+      axis.text.y = element_text(color = "grey30", hjust = 1, vjust = 0.5, angle = 0, lineheight = 0.9, size = 8.8),
+    )
+
+ggsave("figures/naomi-aghq/hessian-matrix.png", h = 2.5, w = 6.25)
+
+init <- c(param$l_tau_epsilon, param$l_tau_nu)
+aghq <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
 
 aghq_samples <- aghq::sample_marginal(aghq, M = 1000)$samps %>%
   t() %>%
