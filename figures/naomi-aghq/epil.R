@@ -183,13 +183,17 @@ param$x_i <- 0
 compile("resources/naomi-aghq/epil_modified.cpp")
 dyn.load(dynlib("resources/naomi-aghq/epil_modified"))
 
-# obj_i <- TMB::MakeADFun(
-#   data = dat,
-#   parameters = param,
-#   random = "x_minus_i",
-#   DLL = "epil_modified",
-#   silent = TRUE,
-# )
+obj_i <- TMB::MakeADFun(
+  data = dat,
+  parameters = param,
+  random = "x_minus_i",
+  DLL = "epil_modified",
+  silent = TRUE,
+)
+
+obj_i$par
+
+
 # 
 # quad <- aghq::aghq(
 #   ff = obj_i,
