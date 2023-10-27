@@ -731,6 +731,12 @@ init <- c(param$l_tau_epsilon, param$l_tau_nu)
 fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
 ```
 
+Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation \@ref(eq:)) can be obtained by:
+
+```r
+samples <- aghq::sample_marginal(aghq, M = 4000)$samps
+```
+
 For a more complete `aghq` vignette, see @stringer2021implementing.
 
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
@@ -746,7 +752,7 @@ The $j$th subvector may then be obtained using `x.segment(x_starts(j), x_lengths
 
 As an example, the modified `TMB` C++ template `epil_modified.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil).
 
-It is then possible (after suitably alterations are made to `dat` and `param`) to obtain the desired objective function via:
+It is then possible (after suitable alterations have been made to `dat` and `param`) to obtain the desired objective function via:
 
 ```r
 compile("epil_modified.cpp")
@@ -760,6 +766,8 @@ obj_i <- MakeADFun(
   silent = TRUE,
 )
 ```
+
+This section takes an EB approach, such that it remains to evaluate $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$
 
 #### Laplace marginals and AGHQ with `TMB` {#epil-laplace-aghq-tmb}
 

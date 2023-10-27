@@ -1003,6 +1003,8 @@ The argument <code>k</code> specifies the number of quadrature nodes to be used 
 Here there are two hyperparameters, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>init <span class="ot">&lt;-</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
 <span id="cb11-2"><a href="naomi-aghq.html#cb11-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> init)</span></code></pre></div>
+<p>Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation <a href="#eq:">(<strong>??</strong>)</a>) can be obtained by:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a>samples <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">sample_marginal</span>(aghq, <span class="at">M =</span> <span class="dv">4000</span>)<span class="sc">$</span>samps</span></code></pre></div>
 <p>For a more complete <code>aghq</code> vignette, see <span class="citation">Stringer (<a href="#ref-stringer2021implementing">2021b</a>)</span>.</p>
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
@@ -1017,26 +1019,27 @@ Instead, the following steps can be taken to modify the <code>TMB</code> C++ tem
 The <span class="math inline">\(j\)</span>th subvector may then be obtained using <code>x.segment(x_starts(j), x_lengths(j))</code>.</li>
 </ol>
 <p>As an example, the modified <code>TMB</code> C++ template <code>epil_modified.cpp</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>.</p>
-<p>It is then possible (after suitably alterations are made to <code>dat</code> and <code>param</code>) to obtain the desired objective function via:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>)</span>
-<span id="cb12-2"><a href="naomi-aghq.html#cb12-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>))</span>
-<span id="cb12-3"><a href="naomi-aghq.html#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="naomi-aghq.html#cb12-4" tabindex="-1"></a>obj_i <span class="ot">&lt;-</span> <span class="fu">MakeADFun</span>(</span>
-<span id="cb12-5"><a href="naomi-aghq.html#cb12-5" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
-<span id="cb12-6"><a href="naomi-aghq.html#cb12-6" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
-<span id="cb12-7"><a href="naomi-aghq.html#cb12-7" tabindex="-1"></a>  <span class="at">random =</span> <span class="st">&quot;x_minus_i&quot;</span>,</span>
-<span id="cb12-8"><a href="naomi-aghq.html#cb12-8" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil_modified&quot;</span>,</span>
-<span id="cb12-9"><a href="naomi-aghq.html#cb12-9" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-10"><a href="naomi-aghq.html#cb12-10" tabindex="-1"></a>)</span></code></pre></div>
+<p>It is then possible (after suitable alterations have been made to <code>dat</code> and <code>param</code>) to obtain the desired objective function via:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>)</span>
+<span id="cb13-2"><a href="naomi-aghq.html#cb13-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>))</span>
+<span id="cb13-3"><a href="naomi-aghq.html#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="naomi-aghq.html#cb13-4" tabindex="-1"></a>obj_i <span class="ot">&lt;-</span> <span class="fu">MakeADFun</span>(</span>
+<span id="cb13-5"><a href="naomi-aghq.html#cb13-5" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
+<span id="cb13-6"><a href="naomi-aghq.html#cb13-6" tabindex="-1"></a>  <span class="at">parameters =</span> param,</span>
+<span id="cb13-7"><a href="naomi-aghq.html#cb13-7" tabindex="-1"></a>  <span class="at">random =</span> <span class="st">&quot;x_minus_i&quot;</span>,</span>
+<span id="cb13-8"><a href="naomi-aghq.html#cb13-8" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil_modified&quot;</span>,</span>
+<span id="cb13-9"><a href="naomi-aghq.html#cb13-9" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-10"><a href="naomi-aghq.html#cb13-10" tabindex="-1"></a>)</span></code></pre></div>
+<p>This section takes an EB approach, such that it remains to evaluate <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span></p>
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Running NUTS with <code>tmbstan</code> using the objective function <code>obj</code> is easy to do:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="naomi-aghq.html#cb15-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
 <p>Convergence diagnostics for NUTS with <code>tmbstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#tmbstan-epil">C.1.4.1</a>.</p>
 </div>
 <div id="epil-nuts-rstan" class="section level4 hasAnchor" number="6.2.1.7">
@@ -1046,7 +1049,7 @@ The <code>Stan</code> C++ template <code>epil.stan</code> for the epilepsy GLMM 
 This may be of interest to users familiar with <code>Stan</code> syntax, to help provide context for <code>TMB</code>.
 The <code>Stan</code> template was validated as be equivalent to the <code>TMB</code> template up to a constant of proportionality.
 Inferences from <code>Stan</code> may be obtained by</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="naomi-aghq.html#cb15-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(<span class="at">file =</span> <span class="st">&quot;epil.stan&quot;</span>, <span class="at">data =</span> dat, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="naomi-aghq.html#cb16-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(<span class="at">file =</span> <span class="st">&quot;epil.stan&quot;</span>, <span class="at">data =</span> dat, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
 <p>Convergence diagnostics for NUTS with <code>rstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#rstan-epil">C.1.4.2</a>.</p>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
