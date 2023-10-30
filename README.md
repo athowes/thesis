@@ -1,11 +1,11 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/91)<!-- -->
+![](https://geps.dev/progress/92)<!-- -->
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a few months. Currently
-> 182/~200 pages, and many/~tending to zero mistakes. The number 200 is
+> 184/~200 pages, and many/~tending to zero mistakes. The number 200 is
 > also mostly arbitraty.
 
 PhD in [Modern Statistics and Statistical Machine
@@ -15,24 +15,28 @@ London](https://www.imperial.ac.uk/).
 Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff
 Eaton](https://www.imperial.ac.uk/people/jeffrey.eaton).
 
+    ## Warning in readLines("front-and-back-matter/_abstract.Rmd"): incomplete final
+    ## line found on 'front-and-back-matter/_abstract.Rmd'
+
 Progress towards ending AIDS as a public health threat by 2030 is not
 being made fast enough. Effective public health response requires
 accurate, timely, high-resolution estimates of epidemic and demographic
 indicators. Limitations of available data and statistical methodology
 make obtaining these estimates difficult. I developed and applied
 Bayesian spatio-temporal methods to meet this challenge. First, I
-examined models for area-level spatial structure.
-<!-- , finding that... --> Second, I estimated district-level HIV risk
-group proportions, enabling behavioural prioritisation of prevention
-services, as put forward in the Global AIDS Strategy. Third, I developed
-a novel deterministic Bayesian inference method, combining adaptive
-Gauss-Hermite quadrature with principal component analysis, motivated by
-the Naomi district-level model of HIV indicators. In developing this
-method, I implemented integrated nested Laplace approximations using
-automatic differentiation, enabling inference for a wider class of
-models. Together, the contributions in this thesis help to guide
-precision HIV policy in sub-Saharan Africa, as well as advancing
-Bayesian methods for spatio-temporal data.
+examined models for area-level spatial structure. Second, I estimated
+district-level HIV risk group proportions, enabling behavioural
+prioritisation of prevention services, as put forward in the Global AIDS
+Strategy. Third, I developed a novel deterministic Bayesian inference
+method, combining adaptive Gauss-Hermite quadrature with principal
+component analysis, motivated by the Naomi district-level model of HIV
+indicators. In developing this method, I implemented integrated nested
+Laplace approximations using automatic differentiation, enabling
+inference for a wider class of models. Together, the contributions in
+this thesis help to guide precision HIV policy in sub-Saharan Africa, as
+well as advancing Bayesian methods for spatio-temporal data.
+
+<!-- , finding that... -->
 
 ![](figures/hiv-aids/naomi-continent.png)
 

@@ -984,9 +984,9 @@ However, by setting <code>getJointPrecision = TRUE</code> the the full Hessian m
 <span id="cb9-5"><a href="naomi-aghq.html#cb9-5" tabindex="-1"></a>)</span></code></pre></div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:hessian-matrix"></span>
-<img src="figures/naomi-aghq/hessian-matrix.png" alt="A submatrix of the full parameter Hessian obtained from TMB::sdreport with getJointPrecision on the log scale. Entries for the latent field parameters \(\boldsymbol{\mathbf{\epsilon}}\) of length 56 and \(\boldsymbol{\mathbf{\nu}}\) of length 236 are omitted. Light grey entries correspond to zeros on the real scale." width="95%" />
+<img src="figures/naomi-aghq/hessian-matrix.png" alt="A submatrix of the full parameter Hessian obtained from TMB::sdreport with getJointPrecision = TRUE on the log scale. Entries for the latent field parameters \(\boldsymbol{\mathbf{\epsilon}}\) and \(\boldsymbol{\mathbf{\nu}}\) are omitted due to their respective lengths of 56 and 236. Light grey entries correspond to zeros on the real scale, which cannot be log transformed." width="95%" />
 <p class="caption">
-Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::sdreport</code> with <code>getJointPrecision</code> on the log scale. Entries for the latent field parameters <span class="math inline">\(\boldsymbol{\mathbf{\epsilon}}\)</span> of length 56 and <span class="math inline">\(\boldsymbol{\mathbf{\nu}}\)</span> of length 236 are omitted. Light grey entries correspond to zeros on the real scale.
+Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::sdreport</code> with <code>getJointPrecision = TRUE</code> on the log scale. Entries for the latent field parameters <span class="math inline">\(\boldsymbol{\mathbf{\epsilon}}\)</span> and <span class="math inline">\(\boldsymbol{\mathbf{\nu}}\)</span> are omitted due to their respective lengths of 56 and 236. Light grey entries correspond to zeros on the real scale, which cannot be log transformed.
 </p>
 </div>
 <p>The epilepsy GLMM may also be succinctly fit in a frequentist setting (that is, using improper hyperparameter priors <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}}) \propto 1\)</span>) using the formula interface provided by <code>glmmTMB</code>:</p>
@@ -998,28 +998,28 @@ Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::s
 </div>
 <div id="epil-gauss-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.3">
 <h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>aghq</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The objective function <code>obj</code> created in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> may be directly passed to <code>aghq</code> to perform inference integrating over the hyperparameters using AGHQ.
-The argument <code>k</code> specifies the number of quadrature nodes to be used per dimension of the hyperparameters.
-Here there are two hyperparameters, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
+<p>The objective function <code>obj</code> created in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> may be directly passed to <code>aghq</code> to perform inference by integrating over the hyperparameters using AGHQ.
+The argument <code>k</code> specifies the number of quadrature nodes to be used per hyperparameters dimension.
+Here there are two hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\tau_\epsilon, \tau_\nu)\)</span>, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="naomi-aghq.html#cb11-1" tabindex="-1"></a>init <span class="ot">&lt;-</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
 <span id="cb11-2"><a href="naomi-aghq.html#cb11-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> init)</span></code></pre></div>
-<p>Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation <a href="#eq:">(<strong>??</strong>)</a>) can be obtained by:</p>
+<p>Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a>) can be obtained by:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="naomi-aghq.html#cb12-1" tabindex="-1"></a>samples <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">sample_marginal</span>(aghq, <span class="at">M =</span> <span class="dv">4000</span>)<span class="sc">$</span>samps</span></code></pre></div>
 <p>For a more complete <code>aghq</code> vignette, see <span class="citation">Stringer (<a href="#ref-stringer2021implementing">2021b</a>)</span>.</p>
 </div>
 <div id="epil-laplace-eb-tmb" class="section level4 hasAnchor" number="6.2.1.4">
 <h4><span class="header-section-number">6.2.1.4</span> Laplace marginals and EB with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-eb-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The Laplace latent field marginal <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> may be obtained by setting <code>random</code> to <span class="math inline">\(\mathbf{x}_{-i}\)</span> in the <code>MakeADFun</code> function call.
-This is not directly possible, as the <code>random</code> argument takes a vector of strings as input (e.g. <code>c("beta", "epsilon", "nu")</code>) and has no native method for indexing.
+<p>The Laplace latent field marginal <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> may be obtained using <code>TMB</code> by setting <code>random</code> to <span class="math inline">\(\mathbf{x}_{-i}\)</span> in the <code>MakeADFun</code> function call.
+However, doing so is not directly possible, as the <code>random</code> argument takes a vector of strings as input (e.g. <code>c("beta", "epsilon", "nu")</code>) and does not have a native method for indexing.
 Instead, the following steps can be taken to modify the <code>TMB</code> C++ template to enable the desired indexing:</p>
 <ol style="list-style-type: decimal">
-<li>Include <code>DATA_INTEGER(i)</code> to pass the index <span class="math inline">\(i\)</span> to <code>TMB</code>.</li>
-<li>Concatenate the latent field to <code>PARAMETER_VECTOR(x_minus_i)</code> and <code>PARAMETER(x_i)</code>.</li>
-<li>Include <code>DATA_IVECTOR(x_lengths)</code> and <code>DATA_IVECTOR(x_starts)</code> to pass the start point and lengths of each subvector of <span class="math inline">\(\mathbf{x}\)</span>.
-The <span class="math inline">\(j\)</span>th subvector may then be obtained using <code>x.segment(x_starts(j), x_lengths(j))</code>.</li>
+<li>Include <code>DATA_INTEGER(i)</code> to pass the index <span class="math inline">\(i\)</span> to <code>TMB</code> via the <code>data</code> argument.</li>
+<li>Concatenate the latent field to <code>PARAMETER_VECTOR(x_minus_i)</code> and <code>PARAMETER(x_i)</code> such that <code>random</code> can be set to <code>x_minus_i</code>.</li>
+<li>Include <code>DATA_IVECTOR(x_lengths)</code> and <code>DATA_IVECTOR(x_starts)</code> to pass the start point and lengths of each subvector of <span class="math inline">\(\mathbf{x}\)</span> via the <code>data</code> argument.
+The <span class="math inline">\(j\)</span>th subvector may then be obtained within the template via <code>x.segment(x_starts(j), x_lengths(j))</code>.</li>
 </ol>
-<p>As an example, the modified <code>TMB</code> C++ template <code>epil_modified.cpp</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>.</p>
-<p>It is then possible (after suitable alterations have been made to <code>dat</code> and <code>param</code>) to obtain the desired objective function via:</p>
+<p>As an example of these steps, the modified <code>TMB</code> C++ template <code>epil_modified.cpp</code> for the epilepsy GLMM is in Appendix <a href="fast-approximate-bayesian-inference.html#tmb-modified-epil">C.1.2</a>, and may be compared to the unmodified version.
+After suitable alterations are made to <code>dat</code> and <code>param</code>, it is then possible to obtain the desired objective function via:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="naomi-aghq.html#cb13-1" tabindex="-1"></a><span class="fu">compile</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>)</span>
 <span id="cb13-2"><a href="naomi-aghq.html#cb13-2" tabindex="-1"></a><span class="fu">dyn.load</span>(<span class="fu">dynlib</span>(<span class="st">&quot;epil_modified.cpp&quot;</span>))</span>
 <span id="cb13-3"><a href="naomi-aghq.html#cb13-3" tabindex="-1"></a></span>
@@ -1030,11 +1030,33 @@ The <span class="math inline">\(j\)</span>th subvector may then be obtained usin
 <span id="cb13-8"><a href="naomi-aghq.html#cb13-8" tabindex="-1"></a>  <span class="at">DLL =</span> <span class="st">&quot;epil_modified&quot;</span>,</span>
 <span id="cb13-9"><a href="naomi-aghq.html#cb13-9" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb13-10"><a href="naomi-aghq.html#cb13-10" tabindex="-1"></a>)</span></code></pre></div>
-<p>This section takes an EB approach, such that it remains to evaluate <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span></p>
+<p>This section takes an EB approach, fixing the hyperparameters to their modal value
+<span class="math display">\[\begin{align}
+\tilde p(x_i \, | \, \mathbf{y}) &amp;\approx \tilde p_\texttt{LA}(x_i \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}) \tilde p_\texttt{LA}(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \\
+&amp;\propto \tilde p_\texttt{LA}(x_i, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}).
+\end{align}\]</span>
+The unnormalised posterior marginal <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})\)</span> (implemented by <code>obj_i</code>) may be evaluated at a set of GHQ nodes <span class="math inline">\(z \in \mathcal{Q}(1, l)\)</span> adapted <span class="math inline">\(z \mapsto x_i(z)\)</span> based on the mode and standard deviation of the Gaussian marginal.
+Here, <span class="math inline">\(l = 5\)</span> was chosen.
+Each evaluation of <code>obj_i</code> can be initialised by <span class="math inline">\(\mathbf{x}_{-i}\)</span> set to the mode of the full <span class="math inline">\(N\)</span>-dimensional Gaussian approximation <span class="math inline">\(p_\texttt{G}(\mathbf{x} \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y})\)</span> with the <span class="math inline">\(i\)</span>th entry removed <span class="math inline">\(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})_{-i}\)</span>.
+This is an efficient approach because the <span class="math inline">\((N - 1)\)</span>-dimensional posterior mode, with <span class="math inline">\(x_i\)</span> fixed, is likely to be similar to the <span class="math inline">\(N\)</span>-dimensional posterior mode with the <span class="math inline">\(i\)</span>th entry removed.
+A normalised posterior can be obtained by computing a de novo posterior normalising constant based on the set of evaluated AGHQ nodes.</p>
+<p>This approach requires creation of the objective function <code>obj_i</code> for <span class="math inline">\(i = 1, \ldots, N\)</span>.
+Each of these functions are then evaluated at a set of <span class="math inline">\(l\)</span> quadrature nodes.
+It is inefficient to run <code>MakeADFun</code> from scratch for each <span class="math inline">\(i\)</span>, when only one data input <code>i</code> is changing.
+<code>TMB</code> does have a <code>DATA_UPDATE</code> macro, which would allow changing of data “on the R side” without retaping via:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a>obj_i<span class="sc">$</span>env<span class="sc">$</span>data<span class="sc">$</span>i <span class="ot">&lt;-</span> i</span></code></pre></div>
+<p>This would be a more efficient approach.
+However, if else statements on updateable data items (as used in <code>epil_modified.cpp</code>) are not supported, so this is not yet possible.</p>
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="naomi-aghq.html#cb14-1" tabindex="-1"></a><span class="co"># code here</span></span></code></pre></div>
+<p>The approach taken in Section <a href="#sec:epil-laplace-eb-tmb"><strong>??</strong></a> may be extended by integrating with respect to the hyperparameters.
+To do so, the quadrature nodes used to integrate <span class="math inline">\(p_\texttt{LA}({\boldsymbol{\mathbf{\theta}}}, \mathbf{y})\)</span> can be reused.
+<span class="math display">\[\begin{align}
+\tilde p(x_i \, | \, \mathbf{y}) &amp;= |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}) \\
+&amp;\propto \cdots.
+\end{align}\]</span>
+Each of the <span class="math inline">\(N\)</span> objective functions is evaluated at <span class="math inline">\(k \times l\)</span> points, rather than the <span class="math inline">\(1 \times l\)</span> points required in the EB approach.</p>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
