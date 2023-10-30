@@ -35,7 +35,7 @@ logSumExpWeights <- function(lp, w) {
 #' @param lps Log-posterior function evaluations
 #' @param method Not in use currently
 #' @param normalise Use the trapezoid rule to normalise the posterior at the finegrid stage?
-compute_pdf_and_cdf <- function(nodes, lps, method = "auto", normalise = FALSE) {
+compute_pdf_and_cdf <- function(nodes, lps, method = "auto", normalise = FALSE, finegrid = NULL) {
   k <- length(nodes)
   if(k >= 4) method <- "spline"
   if(k < 4) method <- "polynomial"
@@ -54,7 +54,10 @@ compute_pdf_and_cdf <- function(nodes, lps, method = "auto", normalise = FALSE) 
     interpolant <- as.function(polynom::poly.calc(x = nodes, y = lps))
   }
   
-  finegrid <- seq(min, max, length.out = 1000)
+  if(is.null(finegrid)) {
+    finegrid <- seq(min, max, length.out = 1000)
+  }
+  
   lps <- interpolant(finegrid)
   
   if(normalise) {

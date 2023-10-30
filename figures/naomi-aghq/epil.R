@@ -60,7 +60,8 @@ epil_inla <- function(strat, int_strat) {
     family = "poisson",
     data = Epil,
     control.inla = list(strategy = strat, int.strategy = int_strat),
-    control.predictor = list(compute = TRUE)
+    control.predictor = list(compute = TRUE),
+    control.compute = list(config = TRUE)
   )
 }
 
@@ -241,25 +242,41 @@ tmbstan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 end <- Sys.time()
 tmbstan_time <- end - start
 
-df <- cbind(
-  "Gaussian, EB (TMB)" = as.vector(t(data.frame(sd_out$par.random[1:6], sqrt(sd_out$diag.cov.random[1:6])))),
-  "Gaussian, EB (R-INLA)" = as.vector(t(inla_g_eb$summary.fixed[1:6, 1:2])),
-  "SL, EB (R-INLA)" = as.vector(t(inla_sl_eb$summary.fixed[1:6, 1:2])),
-  "Laplace, EB (R-INLA)" = as.vector(t(inla_l_eb$summary.fixed[1:6, 1:2])),
-  "Gaussian, grid (R-INLA)" = as.vector(t(inla_g_grid$summary.fixed[1:6, 1:2])),
-  "SL, grid (R-INLA)" = as.vector(t(inla_sl_grid$summary.fixed[1:6, 1:2])),
-  "Laplace, grid (R-INLA)" = as.vector(t(inla_l_grid$summary.fixed[1:6, 1:2])),
-  "Gaussian, EB (TMB)" = as.vector(t(data.frame(sd_out$par.random[1:6], sqrt(sd_out$diag.cov.random[1:6])))),
-  "Gaussian, AGHQ (TMB)" = as.vector(t(data.frame(mean = apply(aghq_samples[, 1:6], 2, mean), sd = apply(aghq_samples[, 1:6], 2, sd)))),
-  "NUTS (tmbstan)" = as.vector(t(summary(tmbstan)$summary[1:6, c(1, 3)]))
+# Means and SD
+
+beta_df <- function(value, method, software) {
+  data.frame(
+    index = rep(0:5, each = 2),
+    type = rep(c("Mean", "SD"), 6),
+    value = value,
+    method = method,
+    software = software
+  )
+}
+
+df <- bind_rows(
+  beta_df(as.vector(t(data.frame(mean = apply(aghq_samples[, 1:6], 2, mean), sd = apply(aghq_samples[, 1:6], 2, sd)))), "Gaussian", "TMB"),
+  beta_df(as.vector(t(inla_g_grid$summary.fixed[1:6, 1:2])), "Gaussian", "R-INLA"),
+  beta_df(as.vector(t(inla_l_grid$summary.fixed[1:6, 1:2])), "Laplace", "R-INLA")
 ) %>%
-  as.data.frame() %>%
-  round(digits = 3)
+  left_join(
+    data.frame(
+      index = rep(0:5, each = 2),
+      type = rep(c("Mean", "SD"), 6),
+      gold = as.vector(t(summary(tmbstan)$summary[1:6, c(1, 3)]))
+    ),
+    by = c("index", "type")
+  )
+  
+ggplot(df, aes(x = value, y = gold - value, color = method)) +
+  geom_point(shape = 1) +
+  facet_grid(type ~ software) +
+  scale_color_manual(values = c("#56B4E9","#009E73")) +
+  geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
+  labs(x = "", y = "Difference", col = "Method") +
+  theme_minimal()
 
-beta_i <- function(i) { c(paste0("beta[", i, "]"), paste0("sd(beta[", i, "])")) }
-rownames(df) <- c(sapply(0:5, beta_i))
-
-saveRDS(df, "resources/naomi-aghq/epil.rds")
+ggsave("figures/naomi-aghq/beta-mean-sd.png", h = 3.5, w = 6.25)
 
 time_df <- data.frame(
   time = c(tmb_g_eb_time, inla_g_eb_time, inla_sl_eb_time, inla_l_eb_time, inla_g_grid_time, inla_sl_grid_time, inla_l_grid_time, tmbstan_time),
@@ -268,46 +285,56 @@ time_df <- data.frame(
 )
 
 ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = software)) +
-  geom_col(width = 0.7) +
+  geom_col(shape = 1) +
   theme_minimal() +
-  scale_fill_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
+  scale_fill_manual(values = c("#0072B2", "#D55E00", "#E69F00")) +
   labs(x = "", y = "Time taken (s)", fill = "Software") +
   coord_flip()
 
 ggsave("figures/naomi-aghq/epil-time.png", h = 3.5, w = 6.25)
 
-beta0_inla_marginals <- bind_rows(
-  data.frame(inla_g_grid$marginals.fixed$`(Intercept)`) %>%
-    mutate(method = "Gaussian"),
-  data.frame(inla_l_grid$marginals.fixed$`(Intercept)`) %>%
-    mutate(method = "Laplace")
-)
+intercept_samples_inla <- function(fit) {
+  samples <- INLA::inla.posterior.sample(n = 1000, result = fit)
+  intercepts <- INLA::inla.posterior.sample.eval("Intercept", samples)
+  as.numeric(intercepts)
+}
 
-plot0 <- ggplot(data.frame(x = rstan::extract(tmbstan, pars = "beta[1]")[[1]]), aes(x = x)) +
-  geom_histogram(aes(y = ..density..), alpha = 0.6, fill = "#E69F00", bins = 40) +
-  theme_minimal() +
-  lims(x = c(1.2, 2), y = c(0, 5.5)) +
-  labs(x = "", y = "PDF")
+grid <- seq(from = min(aghq_samples$`beta[1]`), to = max(aghq_samples$`beta[1]`), length.out = 1000)
 
-inla_comparison <- plot0 +
-  geom_line(data = beta0_inla_marginals, aes(x = x, y = y, col = method)) +
-  scale_color_manual(values = c("#56B4E9", "#009E73")) +
-  geom_col(data = data.frame(x = rep(inla_g_grid$summary.fixed["(Intercept)", ]$mean, 3), y = c(0, 0, 0), type = c("Gaussian (R-INLA)", "Laplace (R-INLA)", "NUTS")), aes(x = x, y = y, fill = type)) +
-  scale_fill_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
-  labs(col = "", title = "", fill = "", tag = "A") +
-  guides(col = "none", fill = guide_legend(override.aes = list(alpha = 1, shape = 15)))
+inla_g_grid_ecdf <- stats::ecdf(intercept_samples_inla(inla_g_grid))
+inla_g_grid_ecdf_df <- data.frame(x = grid, ecdf = inla_g_grid_ecdf(grid), method = "Gaussian", software = "R-INLA")
 
-beta0_quad_laplace_marginal <- filter(quad_laplace_marginals, index == 1)
-beta0_quad_laplace_marginal <- compute_pdf_and_cdf(nodes = beta0_quad_laplace_marginal$x, lps = beta0_quad_laplace_marginal$lp_normalised)
+inla_l_grid_ecdf <- stats::ecdf(intercept_samples_inla(inla_l_grid))
+inla_l_grid_ecdf_df <- data.frame(x = grid, ecdf = inla_l_grid_ecdf(grid), method = "Laplace", software = "R-INLA")
 
-tmb_comparison <- plot0 +
-  geom_histogram(data = data.frame(x = aghq_samples$`beta[1]`), aes(y = ..density..), alpha = 0.6, fill = "#56B4E9", bins = 30) +
-  geom_line(data = beta0_quad_laplace_marginal, aes(x = x, y = pdf), col = "#009E73") +
-  geom_col(data = data.frame(x = rep(inla_g_grid$summary.fixed["(Intercept)", ]$mean, 3), y = c(0, 0, 0), type = c("Gaussian (TMB)", "Laplace (TMB)", "NUTS")), aes(x = x, y = y, fill = type)) +
-  scale_fill_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
-  labs(col = "", title = "", fill = "", tag = "B") +
-  guides(col = "none", fill = guide_legend(override.aes = list(alpha = 1, shape = 15)))
+aghq_ecdf <- stats::ecdf(aghq_samples$`beta[1]`)
+aghq_ecdf_df <- data.frame(x = grid, ecdf = aghq_ecdf(grid), method = "Gaussian", software = "TMB")
 
-inla_comparison / tmb_comparison
+intercept_marginal_adam <- filter(quad_laplace_marginals, index == 1)
+adam_ecdf_df <- compute_pdf_and_cdf(nodes = intercept_marginal_adam$x, lps = intercept_marginal_adam$lp_normalised, finegrid = grid) %>%
+  select(x = x, ecdf = cdf) %>%
+  mutate(
+    method = "Laplace",
+    software = "TMB"
+  )
+
+tmbstan_ecdf <- stats::ecdf(rstan::extract(tmbstan, pars = "beta[1]")[[1]])
+tmbstan_ecdf_df <- data.frame(x = grid, ecdf = tmbstan_ecdf(grid), method = "NUTS", software = "tmbstan")
+
+inla_g_grid_ecdf_df$ecdf_diff <- tmbstan_ecdf_df$ecdf - inla_g_grid_ecdf_df$ecdf
+inla_l_grid_ecdf_df$ecdf_diff <- tmbstan_ecdf_df$ecdf - inla_l_grid_ecdf_df$ecdf
+aghq_ecdf_df$ecdf_diff <- tmbstan_ecdf_df$ecdf - aghq_ecdf_df$ecdf
+adam_ecdf_df$ecdf_diff <- tmbstan_ecdf_df$ecdf - adam_ecdf_df$ecdf
+tmbstan_ecdf_df$ecdf_diff <- 0
+
+ecdf_df <- bind_rows(inla_g_grid_ecdf_df, inla_l_grid_ecdf_df, aghq_ecdf_df, adam_ecdf_df)
+
+ggplot(ecdf_df, aes(x = x, y = ecdf_diff, col = method)) +
+  geom_line() +
+  facet_grid(~ software) +
+  labs(x = "", y = "ECDF difference", col = "Method") +
+  geom_abline(intercept = 0, slope = 0, col = "#E69F00") +
+  scale_color_manual(values = c("#56B4E9","#009E73")) +
+  theme_minimal()
 
 ggsave("figures/naomi-aghq/intercept-comparison.png", h = 4, w = 6.25)

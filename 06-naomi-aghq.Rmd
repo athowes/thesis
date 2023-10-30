@@ -626,7 +626,8 @@ epil_inla <- function(strat, int_strat) {
     family = "poisson",
     data = Epil,
     control.inla = list(strategy = strat, int.strategy = int_strat),
-    control.predictor = list(compute = TRUE)
+    control.predictor = list(compute = TRUE),
+    control.compute = list(config = TRUE)
   )
 }
 ```
@@ -791,13 +792,13 @@ However, if else statements on updateable data items (as used in `epil_modified.
 
 #### Laplace marginals and AGHQ with `TMB` {#epil-laplace-aghq-tmb}
 
-The approach taken in Section \@ref(sec:epil-laplace-eb-tmb) may be extended by integrating with respect to the hyperparameters.
+The approach taken in Section \@ref(epil-laplace-eb-tmb) may be extended by integrating with respect to the hyperparameters.
 To do so, the quadrature nodes used to integrate $p_\texttt{LA}({\boldsymbol{\mathbf{\theta}}}, \mathbf{y})$ can be reused.
 \begin{align}
 \tilde p(x_i \, | \, \mathbf{y}) &= |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}) \\
 &\propto \cdots.
 \end{align}
-Each of the $N$ objective functions is evaluated at $k \times l$ points, rather than the $1 \times l$ points required in the EB approach.
+Now, each of the $N$ objective functions is evaluated at $k \times l$ points, rather than the $1 \times l$ points required in the EB approach.
 
 #### NUTS with `tmbstan` {#epil-nuts}
 
@@ -825,25 +826,29 @@ Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
-Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ were near identical using `R-INLA` and `TMB` (Table \@ref(tab:epil-results)).
+##### Inference
 
-```{r epil-results}
-epil <- readRDS("resources/naomi-aghq/epil.rds")
+Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from `TMB` were closely aligned to their `R-INLA` analogs (Figure \@ref(fig:beta-mean-sd)).
 
-knitr::kable(epil, caption = "Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.")
+(ref:beta-mean-sd) The difference between the posterior summary estimate obtained from NUTS (implemented with `tmbstan`) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with `R-INLA` or `TMB`).
+
+```{r beta-mean-sd, fig.cap="(ref:beta-mean-sd)"}
+knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 ```
 
-(ref:epil-time) Time taken.
+(ref:intercept-comparison) The ECDF difference for the $\beta_0$ latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using `R-INLA` and `TMB` are similar.
+
+```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
+knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
+```
+
+##### Runtime
 
 ```{r epil-time, fig.cap="(ref:epil-time)"}
 knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 ```
 
-(ref:intercept-comparison) Intercept comparison.
-
-```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
-knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
-```
+(ref:epil-time) The amount of time taken (in seconds) to perform inference with each method and software implementation.
 
 ### An example that `R-INLA` doesn't work for {#unknown}
 

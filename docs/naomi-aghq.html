@@ -928,9 +928,10 @@ The covariates may be obtained by:</p>
 <span id="cb4-7"><a href="naomi-aghq.html#cb4-7" tabindex="-1"></a>    <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>,</span>
 <span id="cb4-8"><a href="naomi-aghq.html#cb4-8" tabindex="-1"></a>    <span class="at">data =</span> Epil,</span>
 <span id="cb4-9"><a href="naomi-aghq.html#cb4-9" tabindex="-1"></a>    <span class="at">control.inla =</span> <span class="fu">list</span>(<span class="at">strategy =</span> strat, <span class="at">int.strategy =</span> int_strat),</span>
-<span id="cb4-10"><a href="naomi-aghq.html#cb4-10" tabindex="-1"></a>    <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-11"><a href="naomi-aghq.html#cb4-11" tabindex="-1"></a>  )</span>
-<span id="cb4-12"><a href="naomi-aghq.html#cb4-12" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb4-10"><a href="naomi-aghq.html#cb4-10" tabindex="-1"></a>    <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-11"><a href="naomi-aghq.html#cb4-11" tabindex="-1"></a>    <span class="at">control.compute =</span> <span class="fu">list</span>(<span class="at">config =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-12"><a href="naomi-aghq.html#cb4-12" tabindex="-1"></a>  )</span>
+<span id="cb4-13"><a href="naomi-aghq.html#cb4-13" tabindex="-1"></a>}</span></code></pre></div>
 <p>The object <code>beta_prior</code> specifies the <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span> regression coefficient prior.
 The Poisson likelihood is specified via the <code>family</code> argument.
 Inferences may be then obtained via the <code>fit</code> object:</p>
@@ -1050,13 +1051,13 @@ However, if else statements on updateable data items (as used in <code>epil_modi
 </div>
 <div id="epil-laplace-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.5">
 <h4><span class="header-section-number">6.2.1.5</span> Laplace marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-laplace-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The approach taken in Section <a href="#sec:epil-laplace-eb-tmb"><strong>??</strong></a> may be extended by integrating with respect to the hyperparameters.
+<p>The approach taken in Section <a href="naomi-aghq.html#epil-laplace-eb-tmb">6.2.1.4</a> may be extended by integrating with respect to the hyperparameters.
 To do so, the quadrature nodes used to integrate <span class="math inline">\(p_\texttt{LA}({\boldsymbol{\mathbf{\theta}}}, \mathbf{y})\)</span> can be reused.
 <span class="math display">\[\begin{align}
 \tilde p(x_i \, | \, \mathbf{y}) &amp;= |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}) \\
 &amp;\propto \cdots.
 \end{align}\]</span>
-Each of the <span class="math inline">\(N\)</span> objective functions is evaluated at <span class="math inline">\(k \times l\)</span> points, rather than the <span class="math inline">\(1 \times l\)</span> points required in the EB approach.</p>
+Now, each of the <span class="math inline">\(N\)</span> objective functions is evaluated at <span class="math inline">\(k \times l\)</span> points, rather than the <span class="math inline">\(1 \times l\)</span> points required in the EB approach.</p>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1076,249 +1077,33 @@ Inferences from <code>Stan</code> may be obtained by</p>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
 <h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> were near identical using <code>R-INLA</code> and <code>TMB</code> (Table <a href="naomi-aghq.html#tab:epil-results">6.1</a>).</p>
-<table>
-<caption>
-<span id="tab:epil-results">Table 6.1: </span>Posterior mean and standard deviation results for the six regression parameters in the epilepsy GLMM.
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:right;">
-R-INLA
-</th>
-<th style="text-align:right;">
-TMB
-</th>
-<th style="text-align:right;">
-AGHQ
-</th>
-<th style="text-align:right;">
-NUTS
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-beta[0]
-</td>
-<td style="text-align:right;">
-1.6272418
-</td>
-<td style="text-align:right;">
-1.6266589
-</td>
-<td style="text-align:right;">
-1.6252194
-</td>
-<td style="text-align:right;">
-1.5736379
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[0])
-</td>
-<td style="text-align:right;">
-0.0750768
-</td>
-<td style="text-align:right;">
-0.0764481
-</td>
-<td style="text-align:right;">
-0.0766634
-</td>
-<td style="text-align:right;">
-0.0782053
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta[1]
-</td>
-<td style="text-align:right;">
--0.9256949
-</td>
-<td style="text-align:right;">
--0.9262305
-</td>
-<td style="text-align:right;">
--0.9351916
-</td>
-<td style="text-align:right;">
--0.9526077
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[1])
-</td>
-<td style="text-align:right;">
-0.4085444
-</td>
-<td style="text-align:right;">
-0.4135053
-</td>
-<td style="text-align:right;">
-0.4192253
-</td>
-<td style="text-align:right;">
-0.4115089
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta[2]
-</td>
-<td style="text-align:right;">
-0.8582943
-</td>
-<td style="text-align:right;">
-0.8581393
-</td>
-<td style="text-align:right;">
-0.8643509
-</td>
-<td style="text-align:right;">
-0.8869287
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[2])
-</td>
-<td style="text-align:right;">
-0.1343051
-</td>
-<td style="text-align:right;">
-0.1361203
-</td>
-<td style="text-align:right;">
-0.1335267
-</td>
-<td style="text-align:right;">
-0.1345200
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta[3]
-</td>
-<td style="text-align:right;">
--0.1002819
-</td>
-<td style="text-align:right;">
--0.1005232
-</td>
-<td style="text-align:right;">
--0.1022552
-</td>
-<td style="text-align:right;">
--0.1040067
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[3])
-</td>
-<td style="text-align:right;">
-0.0859909
-</td>
-<td style="text-align:right;">
-0.0858690
-</td>
-<td style="text-align:right;">
-0.0845704
-</td>
-<td style="text-align:right;">
-0.0871546
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta[4]
-</td>
-<td style="text-align:right;">
-0.4722568
-</td>
-<td style="text-align:right;">
-0.4704351
-</td>
-<td style="text-align:right;">
-0.4852713
-</td>
-<td style="text-align:right;">
-0.4935811
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[4])
-</td>
-<td style="text-align:right;">
-0.3547226
-</td>
-<td style="text-align:right;">
-0.3595652
-</td>
-<td style="text-align:right;">
-0.3545031
-</td>
-<td style="text-align:right;">
-0.3628812
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-beta[5]
-</td>
-<td style="text-align:right;">
-0.3400574
-</td>
-<td style="text-align:right;">
-0.3399361
-</td>
-<td style="text-align:right;">
-0.3413073
-</td>
-<td style="text-align:right;">
-0.3507211
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd(beta[5])
-</td>
-<td style="text-align:right;">
-0.2077633
-</td>
-<td style="text-align:right;">
-0.2104471
-</td>
-<td style="text-align:right;">
-0.2126778
-</td>
-<td style="text-align:right;">
-0.2063390
-</td>
-</tr>
-</tbody>
-</table>
+<div id="inference" class="section level5 hasAnchor" number="6.2.1.8.1">
+<h5><span class="header-section-number">6.2.1.8.1</span> Inference<a href="naomi-aghq.html#inference" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> from <code>TMB</code> were closely aligned to their <code>R-INLA</code> analogs (Figure <a href="naomi-aghq.html#fig:beta-mean-sd">6.7</a>).</p>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
-<img src="figures/naomi-aghq/epil-time.png" alt="Time taken." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:beta-mean-sd"></span>
+<img src="figures/naomi-aghq/beta-mean-sd.png" alt="The difference between the posterior summary estimate obtained from NUTS (implemented with tmbstan) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with R-INLA or TMB)." width="95%" />
 <p class="caption">
-Figure 6.7: Time taken.
+Figure 6.7: The difference between the posterior summary estimate obtained from NUTS (implemented with <code>tmbstan</code>) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with <code>R-INLA</code> or <code>TMB</code>).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:intercept-comparison"></span>
-<img src="figures/naomi-aghq/intercept-comparison.png" alt="Intercept comparison." width="95%" />
+<img src="figures/naomi-aghq/intercept-comparison.png" alt="The ECDF difference for the \(\beta_0\) latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using R-INLA and TMB are similar." width="95%" />
 <p class="caption">
-Figure 6.8: Intercept comparison.
+Figure 6.8: The ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using <code>R-INLA</code> and <code>TMB</code> are similar.
 </p>
+</div>
+</div>
+<div id="runtime" class="section level5 hasAnchor" number="6.2.1.8.2">
+<h5><span class="header-section-number">6.2.1.8.2</span> Runtime<a href="naomi-aghq.html#runtime" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
+<img src="figures/naomi-aghq/epil-time.png" alt="The amount of time taken (in seconds) to perform inference with each method and software implementation." width="95%" />
+<p class="caption">
+Figure 6.9: The amount of time taken (in seconds) to perform inference with each method and software implementation.
+</p>
+</div>
+
 </div>
 </div>
 </div>
@@ -1595,7 +1380,7 @@ The corresponding weighting function is given by
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.9</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.10</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1610,7 +1395,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.9: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
+Figure 6.10: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1621,7 +1406,7 @@ Figure 6.9: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.10: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.11: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1642,7 +1427,7 @@ This represents a gold-standard.</li>
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.10</a>.</p>
+Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.11</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The effective sample size ratios generated sampling with NUTS were low.
@@ -1784,10 +1569,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.11: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.12: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.11</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.12</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.

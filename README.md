@@ -36,8 +36,6 @@ inference for a wider class of models. Together, the contributions in
 this thesis help to guide precision HIV policy in sub-Saharan Africa, as
 well as advancing Bayesian methods for spatio-temporal data.
 
-<!-- , finding that... -->
-
 ![](figures/hiv-aids/naomi-continent.png)
 
 ## Chapters
