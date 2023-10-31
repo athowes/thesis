@@ -153,7 +153,7 @@ Applying a Gaussian approximation to the latent field, we have $h(\mathbf{x}, \b
 \begin{equation}
 \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) (\#eq:marginal-posterior-mode)
 \end{equation}
-and $N \times N$-dimensional Hessian matrix evaluated at the posterior mode
+and $(N \times N)$-dimensional Hessian matrix evaluated at the posterior mode
 \begin{equation}
 \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. (\#eq:marginal-hessian)
 \end{equation}
@@ -304,7 +304,7 @@ This connection supports AGHQ being a natural extension of the Laplace approxima
 
 <!-- For each quadrature rule, the estimate of the integral is given by... -->
 
-(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$.
+(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$. The integral approximation $I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2$ obtained by the quadrature rule in each panel are given.
 
 ```{r aghq-demo, fig.cap="(ref:aghq-demo)"}
 knitr::include_graphics("figures/naomi-aghq/aghq-demo.png")
@@ -403,7 +403,7 @@ with $(N - 1)$-dimensional posterior mode
 \begin{equation}
 \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}),
 \end{equation}
-and $(N - 1) \times (N - 1)$-dimensional Hessian matrix evaluated at the posterior mode
+and $[(N - 1) \times (N - 1)]$-dimensional Hessian matrix evaluated at the posterior mode
 \begin{equation}
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{equation}
@@ -440,12 +440,12 @@ Details are left to @wood2020simplified.
 
 #### Inclusion of the structured additive predictor in the latent field
 
-This section is concluded by briefly discussing inclusion or exclusion of the structured additive predictor within the latent field.
-The issue relates to the sparsity structure of
-\begin{align}
-\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) &= \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
-\end{align}
+The discussion of INLA is concluded by briefly outlining the cause for and against inclusion of the structured additive predictor from the latent field.
+The issue relates to the sparsity structure of the Hessian matrix
+\begin{equation}
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
+\end{equation}
+where, as before, $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
 The modified model used by @rue2009approximate is
 \begin{align}
 \boldsymbol{\mathbf{\eta}}^\star &= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
@@ -524,7 +524,8 @@ The implementation can be described as "universal" in that it is compatible with
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
 The Naomi model is one among many examples.
-Section 5 of @osgood2023statistical notes that "`R-INLA` is capable of using higher-quality approximations than `TMB`" and "in return `TMB` is applicable to a wider class of models" yet there is no inherent reason for these capabilities to be in conflict.
+Section 5 of @osgood2023statistical notes that "`R-INLA` is capable of using higher-quality approximations than `TMB`" and "in return `TMB` is applicable to a wider class of models".
+Yet there is no inherent reason for these capabilities to be in conflict: it is possible to have both high-quality approximation and flexibility.
 The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of `TMB`) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised. 
 
@@ -568,12 +569,13 @@ knitr::include_graphics("figures/naomi-aghq/epil.png")
 
 I consider inference for the epilepsy GLMM using a range of approaches:
 
-1. INLA with `R-INLA` (Section \@ref(epil-inla)).
-2. Gaussian marginals and EB with `TMB` (Section \@ref(epil-gauss-eb-tmb)).
-3. Gaussian marginals and AGHQ with `TMB` (Section \@ref(epil-gauss-aghq-tmb)).
-4. Laplace marginals and EB with `TMB` (Section \@ref(epil-laplace-eb-tmb)).
-5. Laplace marginals and AGHQ with `TMB` (Section \@ref(epil-laplace-aghq-tmb)).
-6. NUTS with `tmbstan` (Section \@ref(epil-nuts)).
+1. INLA with `R-INLA` (Section \@ref(epil-inla));
+2. Gaussian marginals and EB with `TMB` (Section \@ref(epil-gauss-eb-tmb));
+3. Gaussian marginals and AGHQ with `TMB` (Section \@ref(epil-gauss-aghq-tmb));
+4. Laplace marginals and EB with `TMB` (Section \@ref(epil-laplace-eb-tmb));
+5. Laplace marginals and AGHQ with `TMB` (Section \@ref(epil-laplace-aghq-tmb));
+6. NUTS with `tmbstan` (Section \@ref(epil-nuts));
+7. NUTS with `rstan` (Section \@ref(epil-nuts-rstan)).
 
 These approaches are compared in Section \@ref(epil-comparison).
 The foremost objective is to demonstrate correspondence between inferences obtained from `R-INLA` and those from `TMB`.
@@ -886,14 +888,16 @@ The model components are:
 * the antenatal care (ANC) clinic testing component (Section \@ref(art));
 * the antiretroviral therapy (ART) attendance component (Section \@ref(art)).
 
-After specifying common notation used throughout the model, each of these components is described in turn.
+After specifying common notation used throughout the model (Section \@ref(notation)) each of these components is described in turn.
 
-#### Notation
+#### Notation {#notation}
 
 Consider a country in sub-Saharan Africa where a household survey with complex design has taken place.
 Let $x \in \mathcal{X}$ index district, $a \in \mathcal{A}$ index five-year age group, and $s \in \mathcal{S}$ index sex.
 For ease of notation, let $i$ index the finest district-age-sex division included in the model.
-(A district-age-sex specific quantity $z_{x,a,s}$ may then be written as $z_i$, and where required the district, age, and sex may be recovered by $x(i) = x$, $a(i) = a$, and $s(i) = s$.)
+(A district-age-sex specific quantity $z_{x,a,s}$ may then be written as $z_i$.
+When required the district, age, and sex corresponding to the index $i$ may be recovered by $x(i) = x$, $a(i) = a$, and $s(i) = s$.)
+
 Let:
 
 * $N_i \in \mathbb{N}$ be the known, fixed population size;
@@ -911,33 +915,31 @@ The set of all $I$ is denoted $\mathcal{I}$ such that $I \in \mathcal{I}$.
 Independent logistic regression models are specified for HIV prevalence and ART coverage in the general population.
 Without giving the linear predictors in detail, these models are specified by
 \begin{equation}
-\text{logit}(\rho_i) = \eta^\rho_i,
+\text{logit}(\rho_i) = \eta^\rho_i, (\#eq:rho)
 \end{equation}
 and
 \begin{equation}
-\text{logit}(\alpha_i) = \eta^\alpha_i.
+\text{logit}(\alpha_i) = \eta^\alpha_i. (\#eq:alpha)
 \end{equation}
 HIV incidence rate is modelled on the log scale as
 \begin{equation}
-\log(\lambda_i) = \eta^\lambda_i.
+\log(\lambda_i) = \eta^\lambda_i. (\#eq:lambda)
 \end{equation}
 The structured additive predictor $\eta^\lambda_i$ includes terms for adult HIV prevalence and adult ART coverage.
 The proportion recently infected among HIV positive persons is linked to HIV incidence via
 \begin{equation}
 \kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), (\#eq:kappa)
 \end{equation}
-where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are strongly informed by prior distributions for the particular survey.
+where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are set based on informative priors for the particular HIV test used.
 
-These processes are each primarily informed by household survey data.
+These three (Equations \@ref(eq:rho), \@ref(eq:alpha), \@ref(eq:lambda)) processes are each primarily informed by household survey data.
 Let $j$ denote a surveyed individual, in strata $i(j)$.
-Weighted aggregate survey observations are calculated as
+Weighted aggregate survey observations are calculated based on individual responses $\theta_j \in \{0, 1\}$ as
 \begin{equation}
 \hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, (\#eq:survey-obs)
 \end{equation}
-with individual responses $\theta_j \in \{0, 1\}$ and survey weights $w_j$ for each of $\theta \in \{\rho, \alpha, \kappa\}$.
-<!-- Are the survey weights the same for each observation type? -->
-Survey weights are supplied by the survey provider.
-Their aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
+Survey weights $w_j$ for each of $\theta \in \{\rho, \alpha, \kappa\}$ are supplied by the survey provider.
+These weights aim to reduce bias by decreasing possible correlation between response and recording mechanism [@meng2018statistical].
 The weighted aggregate number of outcomes are obtained by multiplying Equation \@ref(eq:survey-obs) by the Kish effective sample size [ESS; @kish1965survey]
 \begin{equation}
 y^{\theta}_{I} = m^{\theta}_{I} \hat \theta_{I}, (\#eq:weighted-aggregate)
@@ -947,7 +949,7 @@ where
 m^{\theta}_I = \frac{\left(\sum_{i(j) \in I} w_j\right)^2}{\sum_{i(j) \in I} w_j^2}. (\#eq:kish-ess)
 \end{equation}
 As the Kish ESS is maximised by constant survey weights, in exchange for reducing bias, survey weighting increases variance.
-Equations \@ref(eq:survey-obs), \@ref(eq:weighted-aggregate) and \@ref(eq:kish-ess) are imprecise in the notation used does not reflect the fact that $j$ only runs over individuals within the relevant denominator.
+Equations \@ref(eq:survey-obs) and \@ref(eq:kish-ess) are slightly imprecise in the notation used does not reflect the fact that $j$ only runs over individuals within the relevant denominator.
 In particular, for ART coverage $\alpha$ and the proportion recently infected among HIV positive persons $\kappa$, only those individuals who are HIV positive are included in the set.
 The denominator for HIV prevalence $\rho$ includes all individuals.
 
@@ -1105,19 +1107,19 @@ The practical impossibility of meeting all feature requests motivates a more uni
 ## AGHQ in moderate dimensions {#pca-aghq}
 
 Inference for the Naomi model has previously been conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using `TMB`.
-This approach is illustrated for the epilepsy example in Section \@ref(epil-gauss-eb-tmb).
-It would be more desirable to integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section \@ref(inla).
+This approach is illustrated for the epilepsy example in Section \@ref(epil-gauss-eb-tmb) and analogous for Naomi.
+It would be instead desirable to integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section \@ref(inla).
 
 Section \@ref(universal) attends to this challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in `TMB`.
-However, the Naomi model has $m = 24$ hyperparameters.
-Although $m = 24$ cannot be described as high-dimensional, it is certainly more than the $m < 4$ or so (low dimensional) parameters which are typical for use of INLA.
-Hence, this situation is referred to here as being moderate-dimensional.
+However, the quadrature methods previously used are not directly applicable to Naomi.
+The reason is that Naomi has $m = 24$ hyperparameters.
+Although $m = 24$ cannot be described as high-dimensional, it is certainly more than the $m < 4$ or so (low-dimensional) hyperparameters which are typical for use of INLA, and hence referred to here as moderate-dimensional.
 Naive use of AGHQ with the product rule requires evaluation of $|\mathcal{Q}(m, k)| = k^m$ quadrature points.
 This would be intractable for $m = 24$ and any $k > 1$.
 As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.
 
 This section focuses on the development of an AGHQ rule for moderate dimension, for use within an inference procedure for the Naomi model.
-Though the rule is to be applied within a nested Laplace approximation approach, it is not limited to this setting and could be applied as a general purpose quadrature rule.
+Though the rule is to be applied within a nested Laplace approximation approach, it is not limited to this setting.
 
 ### AGHQ with variable levels
 
@@ -1131,16 +1133,17 @@ A GHQ grid with (potentially) variable levels is then given by
 The size of this grid is given by the product of the levels $|\mathcal{Q}(m, \mathbf{k})| = \prod_{j = 1}^m k_j$.
 The corresponding weighting function is given by
 \begin{equation}
-\omega(\mathbf{z}) = \prod_{j = 1}^m \omega_k(z_j).
+\omega(\mathbf{z}) = \prod_{j = 1}^m \omega_{k_j}(z_j).
 \end{equation}
+This expression is a product of the univariate weighting functions for the relevant GHQ rule with $k_j$ nodes.
 
 ### Principal components analysis
 
-A special case of variable levels approach is to set the first $s \leq m$ levels to be $k$ and the remaining $m - s \geq 0$ levels to be one.
+A special case of the variable levels approach above is to set the first $s \leq m$ levels to be $k$ and the remaining $m - s \geq 0$ levels to be one.
 Denote $\mathcal{Q}(m, s, k)$ to be $\mathcal{Q}(m, \mathbf{k})$ with levels $k_j = k, j \leq s$ and $k_j = 1, j > s$ for some $s \leq m$.
 For example, for $m = 2$ and $s = 1$ then $\mathbf{k} = (k, 1)$.
 
-When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to a principal components analysis (PCA) approach.
+When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to principal components analysis (PCA).
 Figure \@ref(fig:pca-demo) illustrates PCA-AGHQ for a case when $m = 2$ and $s = 1$.
 Since AGHQ with $k = 1$ corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first $s$ principal components of the inverse curvature, and a Laplace approximation on the remaining $m - s$ principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.
@@ -1154,7 +1157,7 @@ where $\hat{\mathbf{E}}_{\texttt{LA}, s}$ is an $m \times s$ matrix containing t
 \omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^d \omega_1(z_j).
 \end{equation}
 
-(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes $\mathcal{Q}(2, 1, 3)$. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. 
+(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes $\mathcal{Q}(2, 1, 3)$. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral $I$.
 
 ```{r pca-demo, fig.cap="(ref:pca-demo)"}
 knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
@@ -1172,15 +1175,18 @@ This section presents a case study of Bayesian inference methods applied to the 
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the `naomi` R package vignette available from [`https://github.com/mrc-ide/naomi`](https://github.com/mrc-ide/naomi).
 Malawi was chosen in part because it has a small number of districts, $n = 30$, limiting the computational demand of the model.
 
-Three Bayesian inference approaches were considered:
+Four Bayesian inference approaches were considered:
 
 1. Gaussian marginals and EB with `TMB`.
 This is the method that has previously been used for Naomi.
-As short-hand, this method is referred to as EB.
-2. Gaussian marginals and PCA-AGHQ with `TMB`
+As short-hand, this method is referred to as GEB.
+2. Laplace marginals and EB with `TMB`.
+This is a novel method.
+As short-hand, this method is referred to as LEB.
+3. Gaussian marginals and PCA-AGHQ with `TMB`
 This is a novel method.
 As short-hand, this method is referred to as PCA-AGHQ.
-3. NUTS with `tmbstan`.
+4. NUTS with `tmbstan`.
 This represents a gold-standard.
 
 The `TMB` C++ user-template used to specify the log-posterior was the same for each approach, and described in Appendix \@ref(naomi-implementation).
@@ -1227,8 +1233,8 @@ This section discusses these contributions in turn, before outlining suggestions
 
 ### A universal INLA implementation
 
-After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly available.
-More sustainable to help users to implement their own distributions and models.
+After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly made available.
+However, it is more sustainable to enable users to implement their own distributions and models.
 
 ### PCA-AGHQ with application to INLA for Naomi
 

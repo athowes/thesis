@@ -126,3 +126,17 @@ fig4 <- fig4 +
 fig4 + fig5
 
 ggsave("figures/naomi-aghq/pca-demo.png", h = 4, w = 6.25)
+
+# Doing the quadrature
+source("figures/naomi-aghq/functions.R")
+
+run_quad <- function(x) {
+  logSumExpWeights(lp = apply(mvQuad::getNodes(x), 1, function(y) - obj$fn(y)), w = mvQuad::getWeights(x))
+}
+
+quad <- run_quad(gg)
+quad2 <- run_quad(gg2)
+quad3 <- run_quad(gg3)
+quad4 <- run_quad(gg4)
+
+c(quad, quad2, quad3, quad4)
