@@ -814,18 +814,18 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
 The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function’s derivative.
-<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD.
-Details are provided in Section 3 of <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>.</p>
-<p>Whereas <code>R-INLA</code> requires to sparsity structure to be known in advance, <code>TMB</code> uses an algorithm to automatically determine the sparsity structure [Section 4.2; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>]
-The R package <code>Matrix</code> and C++ package <code>Eigen</code> are then used for sparse and dense matrix calculations.</p>
-<p>Models are specified in <code>TMB</code> using a C++ template file which evaluates <span class="math inline">\(\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.
+<code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD [Section 3; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>].
+The development of <code>TMB</code> was strongly inspired by the Automatic Differentiation Model Builder [ADMB; <span class="citation">Fournier et al. (<a href="#ref-fournier2012ad">2012</a>)</span>; <span class="citation">Bolker et al. (<a href="#ref-bolker2013strategies">2013</a>)</span>] project.
+An algorithm is used in <code>TMB</code> to automatically determine matrix sparsity structure [Section 4.2; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>].
+The R package <code>Matrix</code> and C++ package <code>Eigen</code> are then used for sparse and dense matrix calculations.
+<span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span> highlight the modular design philosophy of <code>TMB</code>.</p>
+<p>Models are specified in <code>TMB</code> using a C++ template file which evaluates <span class="math inline">\(\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> in a Bayesian context or <span class="math inline">\(\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> in a frequentist setting.
 Other software packages have been developed which also use <code>TMB</code> C++ templates.
 The <code>tmbstan</code> R package <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span> allows running the Hamiltonian Monte Carlo (HMC) algorithm via <code>Stan</code>.
 The <code>aghq</code> R package <span class="citation">(<a href="#ref-stringer2021implementing">Stringer 2021b</a>)</span> allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the <code>mvQuad</code> R package <span class="citation">(<a href="#ref-weiser2016mvquad">Weiser 2016</a>)</span>.
 The <code>glmmTMB</code> R package <span class="citation">(<a href="#ref-brooks2017glmmtmb">Brooks et al. 2017</a>)</span> allows specification of common GLMM models via a formula interface.
 It is also possible to extract the <code>TMB</code> objective function used by <code>glmmTMB</code>, which may then be passed into <code>aghq</code> or <code>tmbstan</code>.</p>
-<!-- Could cite @bolker2013strategies. -->
-<!-- An important design feature of `TMB` is its modularity. -->
+<p>A review of the use of <code>TMB</code> for spatial modelling, including comparison to <code>R-INLA</code>, is provided by <span class="citation">Osgood-Zimmerman and Wakefield (<a href="#ref-osgood2023statistical">2023</a>)</span>.</p>
 </div>
 <div id="other-software" class="section level4 hasAnchor" number="6.1.4.3">
 <h4><span class="header-section-number">6.1.4.3</span> Other software<a href="naomi-aghq.html#other-software" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -837,11 +837,12 @@ This package is briefly mentioned so as to note that the function <code>mgcv::gi
 <div id="universal" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#universal" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section is about implementation of the INLA method using the <code>TMB</code> package, with both Gaussian and Laplace marginals, using AD.
-The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a more restrictive formula interface <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
+The implementation can be described as “universal” in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a restrictive formula interface <span class="citation">(<a href="#ref-vstrumbelj2023past">Štrumbelj et al. 2023</a>)</span>.
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. --></p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2019integrated">2019</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
 A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>.
 The Naomi model is one among many examples.
+Section 5 of <span class="citation">Osgood-Zimmerman and Wakefield (<a href="#ref-osgood2023statistical">2023</a>)</span> notes that “<code>R-INLA</code> is capable of using higher-quality approximations than <code>TMB</code>” and “in return <code>TMB</code> is applicable to a wider class of models” yet there is no inherent reason for these capabilities to be in conflict.
 The potential benefits of a more flexible INLA implementation based on AD were noted by <span class="citation">Skaug (<a href="#ref-skaug2009approximate">2009</a>)</span> (a coauthor of <code>TMB</code>) in discussion of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, who noted that such a system would be “fast, flexible, and easy-to-use”, as well as “automatic from a user’s perspective”.
 As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.</p>
 <p>I demonstrate the universal implementation with two examples:</p>
@@ -886,7 +887,7 @@ Figure 6.5: The number of seizures in the treatment group was fewer, on average,
 <ol style="list-style-type: decimal">
 <li>INLA with <code>R-INLA</code> (Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a>).</li>
 <li>Gaussian marginals and EB with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>).</li>
-<li>Gaussian marginals and AGHQ with <code>aghq</code> (Section <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>).</li>
+<li>Gaussian marginals and AGHQ with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>).</li>
 <li>Laplace marginals and EB with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-laplace-eb-tmb">6.2.1.4</a>).</li>
 <li>Laplace marginals and AGHQ with <code>TMB</code> (Section <a href="naomi-aghq.html#epil-laplace-aghq-tmb">6.2.1.5</a>).</li>
 <li>NUTS with <code>tmbstan</code> (Section <a href="naomi-aghq.html#epil-nuts">6.2.1.6</a>).</li>
@@ -997,7 +998,7 @@ Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::s
 <span id="cb10-5"><a href="naomi-aghq.html#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="epil-gauss-aghq-tmb" class="section level4 hasAnchor" number="6.2.1.3">
-<h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>aghq</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<h4><span class="header-section-number">6.2.1.3</span> Gaussian marginals and AGHQ with <code>TMB</code><a href="naomi-aghq.html#epil-gauss-aghq-tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The objective function <code>obj</code> created in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> may be directly passed to <code>aghq</code> to perform inference by integrating over the hyperparameters using AGHQ.
 The argument <code>k</code> specifies the number of quadrature nodes to be used per hyperparameters dimension.
 Here there are two hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\tau_\epsilon, \tau_\nu)\)</span>, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
@@ -1076,33 +1077,30 @@ Inferences from <code>Stan</code> may be obtained by</p>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
 <h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div id="inference" class="section level5 hasAnchor" number="6.2.1.8.1">
-<h5><span class="header-section-number">6.2.1.8.1</span> Inference<a href="naomi-aghq.html#inference" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> from <code>TMB</code> were closely aligned to their <code>R-INLA</code> analogs (Figure <a href="naomi-aghq.html#fig:beta-mean-sd">6.7</a>).</p>
+<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> from the inference methods implemented in <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-laplace-aghq-tmb">6.2.1.5</a>) were highly similar to their <code>R-INLA</code> analogs in Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a> (Figure <a href="naomi-aghq.html#fig:beta-mean-sd">6.7</a>).
+Furthermore, the posterior distributions, not only point estimates, were also highly similar.
+Figure <a href="naomi-aghq.html#fig:intercept-comparison">6.8</a> shows highly similar ECDF difference plots for Gaussian or Laplace marginals from <code>TMB</code> and <code>R-INLA</code> (as compared with results from NUTS implemented in <code>tmbstan</code>) for <span class="math inline">\(\beta_0\)</span>.
+These results provide strong evidence that the approaches developed above to implement INLA in <code>TMB</code> are sound.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:beta-mean-sd"></span>
-<img src="figures/naomi-aghq/beta-mean-sd.png" alt="The difference between the posterior summary estimate obtained from NUTS (implemented with tmbstan) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with R-INLA or TMB)." width="95%" />
+<img src="figures/naomi-aghq/beta-mean-sd.png" alt="Difference in the posterior summary estimate obtained from NUTS (implemented with tmbstan) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters Results from R-INLA and TMB are highly similar." width="95%" />
 <p class="caption">
-Figure 6.7: The difference between the posterior summary estimate obtained from NUTS (implemented with <code>tmbstan</code>) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with <code>R-INLA</code> or <code>TMB</code>).
+Figure 6.7: Difference in the posterior summary estimate obtained from NUTS (implemented with <code>tmbstan</code>) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters Results from <code>R-INLA</code> and <code>TMB</code> are highly similar.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:intercept-comparison"></span>
-<img src="figures/naomi-aghq/intercept-comparison.png" alt="The ECDF difference for the \(\beta_0\) latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using R-INLA and TMB are similar." width="95%" />
+<img src="figures/naomi-aghq/intercept-comparison.png" alt="The ECDF difference for the \(\beta_0\) latent field parameter. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. The change in ECDF difference is large as to whether Gaussian or Laplace marginals are used. Results obtained for both methods using the R-INLA and TMB implementations are highly similar." width="95%" />
 <p class="caption">
-Figure 6.8: The ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using <code>R-INLA</code> and <code>TMB</code> are similar.
+Figure 6.8: The ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. The change in ECDF difference is large as to whether Gaussian or Laplace marginals are used. Results obtained for both methods using the <code>R-INLA</code> and <code>TMB</code> implementations are highly similar.
 </p>
 </div>
-</div>
-<div id="runtime" class="section level5 hasAnchor" number="6.2.1.8.2">
-<h5><span class="header-section-number">6.2.1.8.2</span> Runtime<a href="naomi-aghq.html#runtime" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
 <img src="figures/naomi-aghq/epil-time.png" alt="The amount of time taken (in seconds) to perform inference with each method and software implementation." width="95%" />
 <p class="caption">
 Figure 6.9: The amount of time taken (in seconds) to perform inference with each method and software implementation.
 </p>
-</div>
-
 </div>
 </div>
 </div>
@@ -1114,18 +1112,19 @@ The model structure was as follows.
 Inference was performed using:</p>
 <ol style="list-style-type: decimal">
 <li>Gaussian marginals and EB with <code>TMB</code></li>
-<li>Gaussian marginals and AGHQ with <code>aghq</code></li>
+<li>Gaussian marginals and AGHQ with <code>TMB</code></li>
 <li>Laplace marginals and EB with <code>TMB</code></li>
 <li>Laplace marginals and AGHQ with <code>TMB</code></li>
 <li>NUTS with <code>tmbstan</code></li>
 </ol>
-<p>The results were as follows.</p>
+<p>These methods were implemented as in Section <a href="naomi-aghq.html#epil">6.2.1</a>.
+The results obtained were as follows.</p>
 </div>
 </div>
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> The Naomi model<a href="naomi-aghq.html#naomi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
-This section begins in Section <a href="naomi-aghq.html#naomi-model">6.3.1</a> by providing a description of the simplified version of Naomi considered in this chapter.
+This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing of the simplified version of Naomi considered in this chapter.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.
 However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
@@ -1416,7 +1415,7 @@ Malawi was chosen in part because it has a small number of districts, <span clas
 <li>Gaussian marginals and EB with <code>TMB</code>.
 This is the method that has previously been used for Naomi.
 As short-hand, this method is referred to as EB.</li>
-<li>Gaussian marginals and PCA-AGHQ with <code>aghq</code> and <code>TMB</code>.
+<li>Gaussian marginals and PCA-AGHQ with <code>TMB</code>
 This is a novel method.
 As short-hand, this method is referred to as PCA-AGHQ.</li>
 <li>NUTS with <code>tmbstan</code>.
@@ -1601,6 +1600,9 @@ Bell, Bradley. 2023. <span>“CppAD: A Package for c++ Algorithmic Differentiati
 <div id="ref-bilodeau2022stochastic" class="csl-entry">
 Bilodeau, Blair, Alex Stringer, and Yanbo Tang. 2022. <span>“Stochastic Convergence Rates and Applications of Adaptive Quadrature in Bayesian Inference.”</span> <em>Journal of the American Statistical Association</em>, 1–11.
 </div>
+<div id="ref-bolker2013strategies" class="csl-entry">
+Bolker, Benjamin M, Beth Gardner, Mark Maunder, Casper W Berg, Mollie Brooks, Liza Comita, Elizabeth Crone, et al. 2013. <span>“Strategies for Fitting Nonlinear Ecological Models in r, AD m Odel b Uilder, and BUGS.”</span> <em>Methods in Ecology and Evolution</em> 4 (6): 501–12.
+</div>
 <div id="ref-bollhofer2020state" class="csl-entry">
 Bollhöfer, Matthias, Olaf Schenk, Radim Janalik, Steve Hamm, and Kiran Gullapalli. 2020. <span>“State-of-the-Art Sparse Direct Solvers.”</span> <em>Parallel Algorithms in Computational Science and Engineering</em>, 3–33.
 </div>
@@ -1642,6 +1644,9 @@ Esra, Rachel. 2023. <span>“Improved Indicators for Subnational Unmet Antiretro
 </div>
 <div id="ref-fattah2021smart" class="csl-entry">
 Fattah, Esmail Abdul, Janet Van Niekerk, and Håvard Rue. 2021. <span>“Smart Gradient–an Adaptive Technique for Improving Gradient Estimation.”</span> <em>arXiv Preprint arXiv:2106.07313</em>.
+</div>
+<div id="ref-fournier2012ad" class="csl-entry">
+Fournier, David A, Hans J Skaug, Johnoel Ancheta, James Ianelli, Arni Magnusson, Mark N Maunder, Anders Nielsen, and John Sibert. 2012. <span>“AD Model Builder: Using Automatic Differentiation for Statistical Inference of Highly Parameterized Complex Nonlinear Models.”</span> <em>Optimization Methods and Software</em> 27 (2): 233–49.
 </div>
 <div id="ref-gaedke2023parallelized" class="csl-entry">
 Gaedke-Merzhäuser, Lisa, Janet van Niekerk, Olaf Schenk, and Håvard Rue. 2023. <span>“Parallelized Integrated Nested Laplace Approximations for Fast Bayesian Inference.”</span> <em>Statistics and Computing</em> 33 (1): 25.
@@ -1705,6 +1710,9 @@ Naylor, John C, and Adrian FM Smith. 1982. <span>“Applications of a Method for
 </div>
 <div id="ref-neal2003slice" class="csl-entry">
 Neal, Radford M. 2003. <span>“Slice Sampling.”</span> <em>The Annals of Statistics</em> 31 (3): 705–67.
+</div>
+<div id="ref-osgood2023statistical" class="csl-entry">
+Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“A Statistical Review of Template Model Builder: A Flexible Tool for Spatial Modelling.”</span> <em>International Statistical Review</em> 91 (2): 318–42.
 </div>
 <div id="ref-press2007numerical" class="csl-entry">
 Press, William H, Teukolsky Saul A, William T Vetterling, and Brian P Flannery. 2007. <em>Numerical Recipes 3rd Edition: The Art of Scientific Computing</em>. Cambridge university press.

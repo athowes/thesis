@@ -495,21 +495,20 @@ Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which impleme
 In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
 The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function's derivative.
-`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD.
-Details are provided in Section 3 of @kristensen2016tmb.
-
-Whereas `R-INLA` requires to sparsity structure to be known in advance, `TMB` uses an algorithm to automatically determine the sparsity structure [Section 4.2; @kristensen2016tmb]
+`TMB` uses the C++ package `CppAD` [@cppaddocumentation] for AD [Section 3; @kristensen2016tmb].
+The development of `TMB` was strongly inspired by the Automatic Differentiation Model Builder [ADMB; @fournier2012ad; @bolker2013strategies] project.
+An algorithm is used in `TMB` to automatically determine matrix sparsity structure [Section 4.2; @kristensen2016tmb].
 The R package `Matrix` and C++ package `Eigen` are then used for sparse and dense matrix calculations.
+@kristensen2016tmb highlight the modular design philosophy of `TMB`.
 
-Models are specified in `TMB` using a C++ template file which evaluates $\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
+Models are specified in `TMB` using a C++ template file which evaluates $\log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ in a Bayesian context or $\log p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}})$ in a frequentist setting.
 Other software packages have been developed which also use `TMB` C++ templates.
 The `tmbstan` R package [@monnahan2018no] allows running the Hamiltonian Monte Carlo (HMC) algorithm via `Stan`.
 The `aghq` R package [@stringer2021implementing] allows use of AGHQ, and AGHQ over the marginal Laplace approximation, via the `mvQuad` R package [@weiser2016mvquad].
 The `glmmTMB` R package [@brooks2017glmmtmb] allows specification of common GLMM models via a formula interface.
 It is also possible to extract the `TMB` objective function used by `glmmTMB`, which may then be passed into `aghq` or `tmbstan`.
 
-<!-- Could cite @bolker2013strategies. -->
-<!-- An important design feature of `TMB` is its modularity. -->
+A review of the use of `TMB` for spatial modelling, including comparison to `R-INLA`, is provided by @osgood2023statistical.
 
 #### Other software
 
@@ -519,14 +518,15 @@ This package is briefly mentioned so as to note that the function `mgcv::ginla` 
 ## A universal INLA implementation {#universal}
 
 This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals, using AD.
-The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a more restrictive formula interface [@vstrumbelj2023past].
+The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a restrictive formula interface [@vstrumbelj2023past].
 <!-- A probabilistic programming language can be said to be universal when it is Turing complete. -->
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
 The Naomi model is one among many examples.
+Section 5 of @osgood2023statistical notes that "`R-INLA` is capable of using higher-quality approximations than `TMB`" and "in return `TMB` is applicable to a wider class of models" yet there is no inherent reason for these capabilities to be in conflict.
 The potential benefits of a more flexible INLA implementation based on AD were noted by @skaug2009approximate (a coauthor of `TMB`) in discussion of @rue2009approximate, who noted that such a system would be "fast, flexible, and easy-to-use", as well as "automatic from a user's perspective".
-As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised.
+As this suggestion was made close to 15 years ago, it is surprising that its potential remains unrealised. 
 
 I demonstrate the universal implementation with two examples:
 
@@ -570,7 +570,7 @@ I consider inference for the epilepsy GLMM using a range of approaches:
 
 1. INLA with `R-INLA` (Section \@ref(epil-inla)).
 2. Gaussian marginals and EB with `TMB` (Section \@ref(epil-gauss-eb-tmb)).
-3. Gaussian marginals and AGHQ with `aghq` (Section \@ref(epil-gauss-aghq-tmb)).
+3. Gaussian marginals and AGHQ with `TMB` (Section \@ref(epil-gauss-aghq-tmb)).
 4. Laplace marginals and EB with `TMB` (Section \@ref(epil-laplace-eb-tmb)).
 5. Laplace marginals and AGHQ with `TMB` (Section \@ref(epil-laplace-aghq-tmb)).
 6. NUTS with `tmbstan` (Section \@ref(epil-nuts)).
@@ -721,7 +721,7 @@ fit <- glmmTMB(
 )
 ```
 
-#### Gaussian marginals and AGHQ with `aghq` {#epil-gauss-aghq-tmb}
+#### Gaussian marginals and AGHQ with `TMB` {#epil-gauss-aghq-tmb}
 
 The objective function `obj` created in Section \@ref(epil-gauss-eb-tmb) may be directly passed to `aghq` to perform inference by integrating over the hyperparameters using AGHQ.
 The argument `k` specifies the number of quadrature nodes to be used per hyperparameters dimension.
@@ -826,29 +826,28 @@ Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
-##### Inference
+Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from the inference methods implemented in `TMB` (Section \@ref(epil-gauss-eb-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-laplace-aghq-tmb)) were highly similar to their `R-INLA` analogs in Section \@ref(epil-inla) (Figure \@ref(fig:beta-mean-sd)).
+Furthermore, the posterior distributions, not only point estimates, were also highly similar.
+Figure \@ref(fig:intercept-comparison) shows highly similar ECDF difference plots for Gaussian or Laplace marginals from `TMB` and `R-INLA` (as compared with results from NUTS implemented in `tmbstan`) for $\beta_0$.
+These results provide strong evidence that the approaches developed above to implement INLA in `TMB` are sound.
 
-Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from `TMB` were closely aligned to their `R-INLA` analogs (Figure \@ref(fig:beta-mean-sd)).
-
-(ref:beta-mean-sd) The difference between the posterior summary estimate obtained from NUTS (implemented with `tmbstan`) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters (implemented with `R-INLA` or `TMB`).
+(ref:beta-mean-sd) Difference in the posterior summary estimate obtained from NUTS (implemented with `tmbstan`) as compared to obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters Results from `R-INLA` and `TMB` are highly similar.
 
 ```{r beta-mean-sd, fig.cap="(ref:beta-mean-sd)"}
 knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 ```
 
-(ref:intercept-comparison) The ECDF difference for the $\beta_0$ latent field parameter. The difference in error is large depending on use of either the Gaussian or Laplace marginals. Results obtained using `R-INLA` and `TMB` are similar.
+(ref:intercept-comparison) The ECDF difference for the $\beta_0$ latent field parameter. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. The change in ECDF difference is large as to whether Gaussian or Laplace marginals are used. Results obtained for both methods using the `R-INLA` and `TMB` implementations are highly similar.
 
 ```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
 knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
 ```
 
-##### Runtime
+(ref:epil-time) The amount of time taken (in seconds) to perform inference with each method and software implementation.
 
 ```{r epil-time, fig.cap="(ref:epil-time)"}
 knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 ```
-
-(ref:epil-time) The amount of time taken (in seconds) to perform inference with each method and software implementation.
 
 ### An example that `R-INLA` doesn't work for {#unknown}
 
@@ -858,17 +857,18 @@ The model structure was as follows.
 Inference was performed using:
 
 1. Gaussian marginals and EB with `TMB`
-2. Gaussian marginals and AGHQ with `aghq`
+2. Gaussian marginals and AGHQ with `TMB`
 3. Laplace marginals and EB with `TMB`
 4. Laplace marginals and AGHQ with `TMB`
 5. NUTS with `tmbstan`
 
-The results were as follows.
+These methods were implemented as in Section \@ref(epil).
+The results obtained were as follows.
 
 ## The Naomi model {#naomi}
 
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
-This section begins in Section \@ref(naomi-model) by providing a description of the simplified version of Naomi considered in this chapter.
+This section begins (Section \@ref(naomi-model)) by describing of the simplified version of Naomi considered in this chapter.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.
 However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
@@ -1177,7 +1177,7 @@ Three Bayesian inference approaches were considered:
 1. Gaussian marginals and EB with `TMB`.
 This is the method that has previously been used for Naomi.
 As short-hand, this method is referred to as EB.
-2. Gaussian marginals and PCA-AGHQ with `aghq` and `TMB`.
+2. Gaussian marginals and PCA-AGHQ with `TMB`
 This is a novel method.
 As short-hand, this method is referred to as PCA-AGHQ.
 3. NUTS with `tmbstan`.

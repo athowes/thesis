@@ -15,9 +15,6 @@ London](https://www.imperial.ac.uk/).
 Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff
 Eaton](https://www.imperial.ac.uk/people/jeffrey.eaton).
 
-    ## Warning in readLines("front-and-back-matter/_abstract.Rmd"): incomplete final
-    ## line found on 'front-and-back-matter/_abstract.Rmd'
-
 Progress towards ending AIDS as a public health threat by 2030 is not
 being made fast enough. Effective public health response requires
 accurate, timely, high-resolution estimates of epidemic and demographic
