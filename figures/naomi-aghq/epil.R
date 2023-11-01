@@ -237,10 +237,17 @@ eb_laplace_marginals <- dplyr::bind_rows(eb_laplace_marginals)
 quad_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = aghq, .progress = TRUE)
 quad_laplace_marginals <- dplyr::bind_rows(quad_laplace_marginals)
 
+# NUTS
+
 start <- Sys.time() 
 tmbstan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
 end <- Sys.time()
 tmbstan_time <- end - start
+
+start <- Sys.time() 
+stan <- rstan::stan(file = "resources/naomi-aghq/epil.stan", data = dat, chains = 4, refresh = 0)
+end <- Sys.time()
+stan_time <- end - start
 
 # Means and SD
 
@@ -338,3 +345,26 @@ ggplot(ecdf_df, aes(x = x, y = ecdf_diff, col = method)) +
   theme_minimal()
 
 ggsave("figures/naomi-aghq/intercept-comparison.png", h = 4, w = 6.25)
+
+cbpalette <- c("#56B4E9", "#009E73", "#E69F00", "#F0E442", "#E69F00", "#E69F00")
+bayesplot::color_scheme_set(rev(cbpalette))
+
+tmbstan_summary <- summary(tmbstan)$summary
+tmbstan_summary <- tmbstan_summary[1:(nrow(tmbstan_summary) - 1), ]
+tmbstan_rhats <- bayesplot::rhat(tmbstan)
+tmbstan_rhats <- tmbstan_rhats[1:(nrow(tmbstan_summary) - 1)]
+
+bayesplot::mcmc_trace(tmbstan, pars = c(names(which.min(tmbstan_summary[, "n_eff"])), names(which.max(tmbstan_rhats)))) +
+  theme_minimal()
+
+ggsave("figures/naomi-aghq/tmbstan-epil.png", h = 3, w = 6.25)
+
+stan_summary <- summary(stan)$summary
+stan_summary <- stan_summary[1:(nrow(stan_summary) - 1), ]
+stan_rhats <- bayesplot::rhat(stan)
+stan_rhats <- stan_rhats[1:(nrow(stan_summary) - 1)]
+
+bayesplot::mcmc_trace(stan, pars = c(names(which.min(stan_summary[, "n_eff"])), names(which.max(tmbstan_rhats)))) +
+  theme_minimal()
+
+ggsave("figures/naomi-aghq/stan-epil.png", h = 3, w = 6.25)

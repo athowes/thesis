@@ -412,11 +412,11 @@ The normalised Laplace approximation is
 \begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}.
 \end{equation}
-where either the estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused or a new estimate can be computed.
+where either the estimate of the evidence in Equation \@ref(eq:aghqnormconst) may be reused or a de novo estimate can be computed.
 Integration with respect to the hyperparameters is performed via
 \begin{align}
-p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(x_i \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
-&\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). (\#eq:lamarginal)
+p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
+&\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \tilde \omega(\mathbf{z}). (\#eq:lamarginal)
 \end{align}
 
 Equation \@ref(eq:lamarginal) is a mixture of the normalised Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
@@ -517,9 +517,9 @@ This package is briefly mentioned so as to note that the function `mgcv::ginla` 
 
 ## A universal INLA implementation {#universal}
 
-This section is about implementation of the INLA method using the `TMB` package, with both Gaussian and Laplace marginals, using AD.
-The implementation can be described as "universal" in that it is compatible with any model with a `TMB` C++ template, rather than being based on a restrictive formula interface [@vstrumbelj2023past].
-<!-- A probabilistic programming language can be said to be universal when it is Turing complete. -->
+This section is about implementation of the INLA method, with both Gaussian and Laplace marginal approximations, using AD via the `TMB` package.
+The implementation is universal in that it is compatible with any model with a `TMB` C++ template, rather than being based on a restrictive formula interface.
+The `TMB` probabilistic programming language is described as "universal" in that it is an extension of the Turing-complete general purpose language C++.
 
 @martino2019integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
 A universal INLA implementation facilitates application of the method to models which are not compatible with `R-INLA`.
@@ -541,9 +541,10 @@ This example is used as a demonstration of the benefit of a more generally appli
 ### Epilepsy GLMM {#epil}
 
 Consider a GLMM for an epilepsy drug double-blind clinical trial [@leppik1985double].
-The original model of @thall1990some was modified by @breslow1993approximate and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; @spiegelhalter1996bugs] manual.
+The original GLMM of @thall1990some was modified by @breslow1993approximate and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; @spiegelhalter1996bugs] manual.
+
 Patients $i = 1, \ldots, 59$ were each assigned either a new drug $\texttt{Trt}_i = 1$ or a placebo $\texttt{Trt}_i = 0$.
-Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th clinic visit.
+Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th clinic visit (Figure \@ref(fig:epil)).
 The covariates used in the model were baseline seizure counts $\texttt{Base}_i$, treatment $\texttt{Trt}_i$, age $\texttt{Age}_i$, and an indicator for the final clinic visit ${\texttt{V}_4}_j$.
 Each of the covariates were centred.
 The observations were modelled using a Poisson distribution
@@ -567,9 +568,9 @@ The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit 
 knitr::include_graphics("figures/naomi-aghq/epil.png")
 ```
 
-I consider inference for the epilepsy GLMM using a range of approaches:
+Consider inference for the epilepsy GLMM using a range of approaches:
 
-1. INLA with `R-INLA` (Section \@ref(epil-inla));
+1. INLA with `R-INLA` (Section \@ref(epil-inla)) with varied `strategy` and `int.strategy` controls;
 2. Gaussian marginals and EB with `TMB` (Section \@ref(epil-gauss-eb-tmb));
 3. Gaussian marginals and AGHQ with `TMB` (Section \@ref(epil-gauss-aghq-tmb));
 4. Laplace marginals and EB with `TMB` (Section \@ref(epil-laplace-eb-tmb));
@@ -577,14 +578,15 @@ I consider inference for the epilepsy GLMM using a range of approaches:
 6. NUTS with `tmbstan` (Section \@ref(epil-nuts));
 7. NUTS with `rstan` (Section \@ref(epil-nuts-rstan)).
 
-These approaches are compared in Section \@ref(epil-comparison).
-The foremost objective is to demonstrate correspondence between inferences obtained from `R-INLA` and those from `TMB`.
-Illustrative code is used throughout this section, and will not be used in future sections.
+Section \@ref(epil-comparison) compares the results from these approaches.
+The foremost objective of this exercise is to demonstrate correspondence between inferences obtained from `R-INLA` and those from `TMB`.
+Furthermore, illustrative code is used throughout this section to enhance understanding of the methods and software used.
+As such, this section is more verbose than future sections.
 
 #### INLA with `R-INLA` {#epil-inla}
 
 The epilepsy data are available from the `R-INLA` package.
-The covariates may be obtained by:
+The covariates may be obtained and transformed by:
 
 ```r
 centre <- function(x) (x - mean(x))
@@ -616,6 +618,7 @@ tau_prior <- list(prec = list(
 )
 ```
 
+The prior is specified as `loggamma` because `R-INLA` represents the precision internally on the log scale, to avoid any $\tau > 0$ constraints.
 Inference may then be performed, specifying the latent field posterior marginals approach `strat` and quadrature approach `int_strat`:
 
 ```r
@@ -649,15 +652,16 @@ As described in Section \@ref(r-inla), `strat` may be set to one of `"gaussian"`
 A C++ template for the log-posterior of the model is required to obtain inferences with `TMB`.
 For simple models, writing this template is usually a more involved task then specifying the formula object required for `R-INLA`.
 The `TMB` C++ template `epil.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-epil).
-This template specifies exactly the same model as `R-INLA` in Section \@ref(epil-inla): in itself a non-trivial task.
-The lines with a `DATA` prefix specify the fixed data inputs to be passed to `TMB`.
+This template specifies exactly the same model as `R-INLA` in Section \@ref(epil-inla) (in itself this is non-trivial).
+
+Lines with a `DATA` prefix specify the fixed data inputs to be passed to `TMB`.
 Examples of data inputs include the data $\mathbf{y}$ and the covariate design matrix.
-The lines with a `PARAMETER` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
+Lines with a `PARAMETER` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
 More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER` section.
 Lines of the form `nlp -= ddist(...)` increment the negative log-posterior, where `dist` is the name of a distribution.
 
-The `TMB` template must first be compiled:
+The `TMB` user template must first be compiled and linked:
 
 ```r
 compile("epil.cpp")
@@ -684,7 +688,7 @@ Mathematically, these parameters correspond to the latent field
 \end{equation}
 
 The objective function `obj` may then be optimised using a gradient based optimiser to obtain $\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$.
-Here I use a quasi-Newton method [@dennis1981adaptive] as implemented by `nlminb` from the `stats` R package:
+Here I use a quasi-Newton method [@dennis1981adaptive] as implemented by `nlminb` from the `stats` R package, making use of the first derivative `obj$gr` of the objective function:
 
 ```r
 opt <- nlminb(
@@ -696,7 +700,8 @@ opt <- nlminb(
 ```
 
 The `sdreport` function is used to evaluate the Hessian matrices at a particular value.
-Typically, these Hessian matrices are for the hyperparameters, and setting `par.fixed` to the previously obtained `opt$par` returns $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$.
+Typically, these Hessian matrices are for the hyperparameters.
+Setting `par.fixed` to the previously obtained `opt$par` returns $\hat{\boldsymbol{\mathbf{H}}}_\texttt{LA}$.
 However, by setting `getJointPrecision = TRUE` the the full Hessian matrix for the hyperparameters and latent field together is returned:
 
 ```r
@@ -745,16 +750,16 @@ For a more complete `aghq` vignette, see @stringer2021implementing.
 #### Laplace marginals and EB with `TMB` {#epil-laplace-eb-tmb}
 
 The Laplace latent field marginal $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ may be obtained using `TMB` by setting `random` to $\mathbf{x}_{-i}$ in the `MakeADFun` function call.
-However, doing so is not directly possible, as the `random` argument takes a vector of strings as input (e.g. `c("beta", "epsilon", "nu")`) and does not have a native method for indexing.
+However, it is not directly possible to do this, because the `random` argument takes a vector of strings as input (e.g. `c("beta", "epsilon", "nu")`) and does not have a native method for indexing.
 Instead, the following steps can be taken to modify the `TMB` C++ template to enable the desired indexing:
 
-1. Include `DATA_INTEGER(i)` to pass the index $i$ to `TMB` via the `data` argument.
-2. Concatenate the latent field to `PARAMETER_VECTOR(x_minus_i)` and `PARAMETER(x_i)` such that `random` can be set to `x_minus_i`.
-3. Include `DATA_IVECTOR(x_lengths)` and `DATA_IVECTOR(x_starts)` to pass the start point and lengths of each subvector of $\mathbf{x}$ via the `data` argument.
-The $j$th subvector may then be obtained within the template via `x.segment(x_starts(j), x_lengths(j))`.
+1. Include `DATA_INTEGER(i)` to pass the index $i$ to `TMB` via the `data` argument of `MakeADFun`.
+2. Concatenate the latent field to `PARAMETER_VECTOR(x_minus_i)` and `PARAMETER(x_i)` such that `random` can be set to `x_minus_i` in the call to `MakeADFun`.
+3. Include `DATA_IVECTOR(x_lengths)` and `DATA_IVECTOR(x_starts)` to pass the (integer) start point and lengths of each subvector of $\mathbf{x}$ via the `data` argument of `MakeADFun`.
+The $j$th subvector may then be obtained from within the `TMB` template via `x.segment(x_starts(j), x_lengths(j))`.
 
-As an example of these steps, the modified `TMB` C++ template `epil_modified.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil), and may be compared to the unmodified version.
-After suitable alterations are made to `dat` and `param`, it is then possible to obtain the desired objective function via:
+The modified `TMB` C++ template `epil_modified.cpp` for the epilepsy GLMM is in Appendix \@ref(tmb-modified-epil), and may be compared to the unmodified version to provide an example of implementing the above steps.
+After suitable alterations are made to `dat` and `param`, it is then possible to obtain the desired objective function in `TMB` via:
 
 ```r
 compile("epil_modified.cpp")
@@ -769,16 +774,17 @@ obj_i <- MakeADFun(
 )
 ```
 
-This section takes an EB approach, fixing the hyperparameters to their modal value
+This section takes an EB approach, fixing the hyperparameters to their modal value $\boldsymbol{\mathbf{\theta}} = \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}$ obtained previously in `opt`.
+The latent field marginals approximation is then directly proportional to the unnormalised Laplace approximation obtained above as `obj_i`, evaluated at $(x_i, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA})$
 \begin{align}
 \tilde p(x_i \, | \, \mathbf{y}) &\approx \tilde p_\texttt{LA}(x_i \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}) \tilde p_\texttt{LA}(\hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA} \, | \, \mathbf{y}) \\
 &\propto \tilde p_\texttt{LA}(x_i, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}).
 \end{align}
-The unnormalised posterior marginal $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ (implemented by `obj_i`) may be evaluated at a set of GHQ nodes $z \in \mathcal{Q}(1, l)$ adapted $z \mapsto x_i(z)$ based on the mode and standard deviation of the Gaussian marginal.
+This expression may be evaluated at a set of GHQ nodes $z \in \mathcal{Q}(1, l)$ adapted $z \mapsto x_i(z)$ based on the mode and standard deviation of the Gaussian marginal.
 Here, $l = 5$ was chosen.
-Each evaluation of `obj_i` can be initialised by $\mathbf{x}_{-i}$ set to the mode of the full $N$-dimensional Gaussian approximation $p_\texttt{G}(\mathbf{x} \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y})$ with the $i$th entry removed $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})_{-i}$.
+Each evaluation of `obj_i`, which involves an inner optimisation loop to compute the Laplace approximation, can be initialised by $\mathbf{x}_{-i}$ set to the mode of the full $N$-dimensional Gaussian approximation $p_\texttt{G}(\mathbf{x} \, | \, \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y})$ with the $i$th entry removed $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})_{-i}$.
 This is an efficient approach because the $(N - 1)$-dimensional posterior mode, with $x_i$ fixed, is likely to be similar to the $N$-dimensional posterior mode with the $i$th entry removed.
-A normalised posterior can be obtained by computing a de novo posterior normalising constant based on the set of evaluated AGHQ nodes.
+A normalised posterior can be obtained by computing a de novo posterior normalising constant based on the set of evaluated $l$ quadrature nodes.
 
 This approach requires creation of the objective function `obj_i` for $i = 1, \ldots, N$.
 Each of these functions are then evaluated at a set of $l$ quadrature nodes.
@@ -789,27 +795,30 @@ It is inefficient to run `MakeADFun` from scratch for each $i$, when only one da
 obj_i$env$data$i <- i
 ```
 
-This would be a more efficient approach.
-However, if else statements on updateable data items (as used in `epil_modified.cpp`) are not supported, so this is not yet possible.
+Although this approach would be more efficient, if else statements on updateable data items (as used in `epil_modified.cpp`) are not supported, so this is not yet possible.
 
 #### Laplace marginals and AGHQ with `TMB` {#epil-laplace-aghq-tmb}
 
 The approach taken in Section \@ref(epil-laplace-eb-tmb) may be extended by integrating with respect to the hyperparameters.
-To do so, the quadrature nodes used to integrate $p_\texttt{LA}({\boldsymbol{\mathbf{\theta}}}, \mathbf{y})$ can be reused.
-\begin{align}
-\tilde p(x_i \, | \, \mathbf{y}) &= |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}) \\
-&\propto \cdots.
-\end{align}
-Now, each of the $N$ objective functions is evaluated at $k \times l$ points, rather than the $1 \times l$ points required in the EB approach.
+To perform this integration, the quadrature nodes used to integrate $p_\texttt{LA}({\boldsymbol{\mathbf{\theta}}}, \mathbf{y})$ may be reused.
+The latent field marginal approximation is then
+\begin{equation}
+\tilde p(x_i \, | \, \mathbf{y}) \propto \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}).
+\end{equation}
+As in Section \@ref(epil-laplace-eb-tmb) this expression may be evaluated at a set of $l$ quadrature nodes, and normalised de novo.
+Each objective function inner optimisation can be initialised using the mode $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}))_{-i}$ of $p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})$.
+Integration over the hyperparameters requires each of the $N$ objective functions to be evaluated at $k \times l$ points, rather than the $1 \times l$ points required in the EB approach.
 
 #### NUTS with `tmbstan` {#epil-nuts}
 
 Running NUTS with `tmbstan` using the objective function `obj` is easy to do:
 
 ```r
-fit <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
+fit <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0, laplace = FALSE)
 ```
 
+As specified above, the objective function with no marginal Laplace approximation is used.
+To instead use the marginal Laplace approximation, set `laplace = TRUE`.
 Convergence diagnostics for NUTS with `tmbstan` are in Appendix \@ref(tmbstan-epil).
 
 #### NUTS with `rstan` {#epil-nuts-rstan}
@@ -1235,6 +1244,7 @@ This section discusses these contributions in turn, before outlining suggestions
 
 After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly made available.
 However, it is more sustainable to enable users to implement their own distributions and models.
+Discussion of Bayesian inference software in @vstrumbelj2023past.
 
 ### PCA-AGHQ with application to INLA for Naomi
 
