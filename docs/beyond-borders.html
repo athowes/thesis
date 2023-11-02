@@ -700,11 +700,21 @@ The data and modelling choices were designed with a spatial epidemiology setting
 </tr>
 </tbody>
 </table>
-<p>To study robustness to spatial misspecification synthetic data were simulated from three known data generating processes.</p>
+<p>Synthetic data were simulated from three known data generating processes.
+Data <span class="math inline">\(\y = (y_i)_{i \in [n]}\)</span> were simulated from <span class="math inline">\(y_i \sim \text{Bin}(m_i, \rho_i)\)</span> where the probabilities <span class="math inline">\(\rho_i \in [0, 1]\)</span> were linked to linear predictors <span class="math inline">\(\eta_i \in \mathbb{R}\)</span> via
+<span class="math display">\[\begin{equation}
+\log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
+\end{equation}\]</span>
+Sample sizes were fixed as <span class="math inline">\(m_i = 25\)</span> for all <span class="math inline">\(i \in [n]\)</span>, the intercept parameter as <span class="math inline">\(\beta_0 = -2\)</span> and the spatial random effect precision parameter as <span class="math inline">\(\tau_\phi = 1\)</span>.</p>
+<p>Seven geometries were considered.
+These were the four vignette geometries from Figure <a href="beyond-borders.html#fig:maup1">4.2</a> which share an adjacency graph, and three more realistic geometries consisting of a <span class="math inline">\(6 \times 6\)</span> lattice grid, the 33 districts of Côte d’Ivoire and the 36 congressional districts of Texas.
+The realistic geometries were chosen to represent plausible variation over spatial regularity for the small-area estimation setting.
+For each spatial random effect and geometry 200 simulations were generated, resulting in 1400 total simulations.</p>
 </div>
 <div id="inferential-models" class="section level3 hasAnchor" number="4.3.2">
 <h3><span class="header-section-number">4.3.2</span> Inferential models<a href="beyond-borders.html#inferential-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <table>
+<caption><span id="tab:inferential-models">Table 4.2: </span> The models used for inference.</caption>
 <thead>
 <tr class="header">
 <th>Model</th>
@@ -713,14 +723,34 @@ The data and modelling choices were designed with a spatial epidemiology setting
 </thead>
 <tbody>
 <tr class="odd">
-<td>IID</td>
+<td>Constant</td>
 <td></td>
 </tr>
 <tr class="even">
-<td>Besag</td>
+<td>IID</td>
 <td></td>
 </tr>
 <tr class="odd">
+<td>Besag</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>BYM2</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>FCK</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>CK</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>FIK</td>
+<td></td>
+</tr>
+<tr class="even">
 <td>IK</td>
 <td></td>
 </tr>

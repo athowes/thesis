@@ -341,15 +341,32 @@ The data and modelling choices were designed with a spatial epidemiology setting
 
 Table: (\#tab:simulation-models) The models used to create synthetic data.
 
-To study robustness to spatial misspecification synthetic data were simulated from three known data generating processes.
+Synthetic data were simulated from three known data generating processes.
+Data $\y = (y_i)_{i \in [n]}$ were simulated from $y_i \sim \text{Bin}(m_i, \rho_i)$ where the probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \in \mathbb{R}$ via
+\begin{equation}
+\log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
+\end{equation}
+Sample sizes were fixed as $m_i = 25$ for all $i \in [n]$, the intercept parameter as $\beta_0 = -2$ and the spatial random effect precision parameter as $\tau_\phi = 1$.
+
+Seven geometries were considered.
+These were the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph, and three more realistic geometries consisting of a $6 \times 6$ lattice grid, the 33 districts of Côte d'Ivoire and the 36 congressional districts of Texas.
+The realistic geometries were chosen to represent plausible variation over spatial regularity for the small-area estimation setting.
+For each spatial random effect and geometry 200 simulations were generated, resulting in 1400 total simulations.
 
 ### Inferential models
 
 | Model | Details       |
 |-------|---------------|
+| Constant |            |
 | IID   |               |
 | Besag |               |
+| BYM2  |               |
+| FCK   |               |
+| CK    |               |
+| FIK   |               |
 | IK    |               |
+
+Table: (\#tab:inferential-models) The models used for inference.
 
 A weakly informative half-Gaussian prior was placed on the standard deviation [@gelman2006prior] such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$.
 The value 2.5 was chosen to avoid placing significant prior density on the region $\sigma_\phi > 5$, which after a logistic transformation facilitates variation on the probability scale very close to either zero or one.
