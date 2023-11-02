@@ -483,7 +483,7 @@ In other words,
 The Besag-York-Mollié (BYM) model of <span class="citation">Besag, York, and Mollié (<a href="#ref-besag1991bayesian">1991</a>)</span> accounts for this in a natural way by decomposing the spatial random effect <span class="math inline">\(\mathbf{u} = \mathbf{v} + \mathbf{w}\)</span> into a sum of an unstructured IID component <span class="math inline">\(\mathbf{v}\)</span> and a spatially structured Besag component <span class="math inline">\(\mathbf{w}\)</span>, each of which with their own respective precision parameters <span class="math inline">\(\tau_v\)</span> and <span class="math inline">\(\tau_w\)</span>.
 The resulting distribution is
 <span class="math display" id="eq:bym">\[\begin{equation}
-    \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \tag{4.4}.
+  \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) \tag{4.4}.
 \end{equation}\]</span>
 Including both <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> is intended to enable the model to learn the relative extent of the unstructured and structured components via <span class="math inline">\(\tau_v\)</span> and <span class="math inline">\(\tau_w\)</span>.
 However, in this specification scaling of the Besag precision matrix <span class="math inline">\(\mathbf{Q}\)</span> is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
@@ -492,7 +492,7 @@ Additionally, supposing we have a prior belief that the over-dispersion is prima
 This highlights identifiability issues of the parameters <span class="math inline">\((\tau_v, \tau_w)\)</span> resulting from them not being orthogonal.
 Building on the models of <span class="citation">Leroux, Lei, and Breslow (<a href="#ref-leroux2000estimation">2000</a>)</span> and <span class="citation">Dean, Ugarte, and Militino (<a href="#ref-dean2001detecting">2001</a>)</span> which tackle this identifiability problem, but do not scale the spatially structured noise, <span class="citation">Simpson et al. (<a href="#ref-simpson2017penalising">2017</a>)</span> propose a reparameterisation <span class="math inline">\((\tau_v, \tau_w) \mapsto (\tau_u, \phi)\)</span> of the BYM model known as the BYM2 model and given by
 <span class="math display" id="eq:bym2">\[\begin{align}
-\mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \tag{4.5}
+  \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \tag{4.5}
 \end{align}\]</span>
 where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <span class="math inline">\(\mathbf{u}\)</span>, <span class="math inline">\(\phi \in [0, 1]\)</span> gives the proportion of the marginal variance explained by each component, and <span class="math inline">\(\mathbf{w}^\star\)</span> is a scaled version of <span class="math inline">\(\mathbf{w}\)</span> with precision matrix given by the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star\)</span>.
 When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
@@ -529,8 +529,10 @@ Figure 4.4: Each of the shaded areas are split into two moving from Panel A to P
 <h4><span class="header-section-number">4.1.4.1</span> Adjacency compression<a href="beyond-borders.html#adjacency-compression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Summarising a geometry by an adjacency graph represents a loss of information.
 Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure).
-This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
-Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
+This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
+The regularity of realistic geometries may help to constrain each class to be similar.
+In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.</p>
+<p>Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
 In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
 On the other hand, the regions of a country, determined by political and geographic forces, tend to display greater irregularity.
 The appropriateness of adjacency compression therefore varies by the type of geometry common to the application setting.</p>
@@ -559,10 +561,10 @@ This problem does not only apply locally: since the effect of <span class="math 
 <div id="models-using-kernels" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Models using kernels<a href="beyond-borders.html#models-using-kernels" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Section <a href="beyond-borders.html#adjacency">4.1</a> reviewed ways to construct spatial random effect precision matrices using an adjacency relation.
-An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas <span class="math inline">\(K: \mathcal{P}(\Sc) \times \mathcal{P}(\Sc) \to \mathbb{R}\)</span>, where <span class="math inline">\(\mathcal{P}\)</span> denotes the power set such that <span class="math inline">\(\mathcal{P}(\Sc)\)</span> is the space of subsets of the study region.
+An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas <span class="math inline">\(K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}\)</span>, where <span class="math inline">\(\mathcal{P}\)</span> denotes the power set such that <span class="math inline">\(\mathcal{P}(\mathcal{S})\)</span> is the space of subsets of the study region.
 If <span class="math inline">\(K\)</span> is positive semi-definite, then define areal kernel spatial random effects by
-<span class="math display">\[\begin{equation}
-    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), \label{eq:arealkernel}
+<span class="math display" id="eq:arealkernel">\[\begin{equation}
+    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), \tag{4.6}
 \end{equation}\]</span>
 where the <span class="math inline">\(n \times n\)</span> Gram matrix <span class="math inline">\(\mathbf{K}\)</span> with entries <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> is a valid covariance matrix.
 Here, the precision parameter <span class="math inline">\(\tau_\phi\)</span> is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices.
@@ -571,7 +573,8 @@ A simple method to construct <span class="math inline">\(K\)</span> from <span c
 <div id="centroid-kernel" class="section level3 hasAnchor" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> Centroid kernel<a href="beyond-borders.html#centroid-kernel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The simplest approach is to use a single point such that <span class="math inline">\(K(A_i, A_j) = k(p_i, p_j)\)</span>.
-A natural choice is the centroid <span class="math inline">\(p_i = c_i\)</span>, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+A natural choice is the centroid <span class="math inline">\(p_i = c_i\)</span>, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.
+That said, it is not guaranteed for the centroid to lie within the area i.e. it is possible <span class="math inline">\(c_i \notin A_i\)</span>.
 This results in the centroid kernel
 <span class="math display">\[\begin{equation}
     K(A_i, A_j) = k(c_i, c_j).
@@ -584,28 +587,29 @@ That said, it is unsuprising that a stationary covariance would struggle to reco
 <h3><span class="header-section-number">4.2.2</span> Integrated kernel<a href="beyond-borders.html#integrated-kernel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
 This results in the integrated kernel
-<span class="math display">\[\begin{equation}
-K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s&#39;) \text{d} s \text{d} s&#39;. \label{eq:ik1}
+<span class="math display" id="eq:ik1">\[\begin{equation}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s&#39;) \text{d} s \text{d} s&#39;. \tag{4.7}
 \end{equation}\]</span>
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel <span class="math inline">\(k\)</span> over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-law2018variational">Law et al. 2018</a>; <a href="#ref-tanaka2019spatially">Tanaka et al. 2019</a>; <a href="#ref-yousefi2019multi">Yousefi, Smith, and Alvarez 2019</a>; <a href="#ref-hamelijnck2019multi">Hamelijnck et al. 2019</a>)</span>.
 Unlike for the centroid kernel where <span class="math inline">\(K_{ii} = 1\)</span> for all <span class="math inline">\(i\)</span>, the marginal variance of the <span class="math inline">\(i\)</span>th spatial random effect <span class="math inline">\(K_{ii} = K(A_i, A_i)\)</span> varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.</p>
 <div id="accounting-for-heterogeneity" class="section level4 hasAnchor" number="4.2.2.1">
 <h4><span class="header-section-number">4.2.2.1</span> Accounting for heterogeneity<a href="beyond-borders.html#accounting-for-heterogeneity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Additional information accounting for heterogeneity over <span class="math inline">\(A_i\)</span> may be incorporated into the integrated kernel<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>
+<p>Additional information accounting for heterogeneity over <span class="math inline">\(A_i\)</span> may be incorporated into the integrated kernel.
 This can be accomplished using weighting distributions <span class="math inline">\(\{W_i\}\)</span> which represent an unequal contribution of each point to the similarity measure, to give a weighted integrated kernel
-<span class="math display">\[\begin{equation}
-K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d} s \text{d} s&#39;, \label{eq:ik2}
+<span class="math display" id="eq:ik2">\[\begin{equation}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d} s \text{d} s&#39;, \tag{4.8}
 \end{equation}\]</span>
-This may be useful in disease mapping, where we expect regions with populations who live close to their shared border to be more strongly correlated than regions whose populations live far apart, which could be accounted for by weighting according to a high resolution measure of population density.</p>
+This may be useful in disease mapping, where we expect regions with populations who live close to their shared border to be more strongly correlated than regions whose populations live far apart, which could be accounted for by weighting according to a high resolution measure of population density.
+Analogously, weighted centroids could also be used in the centroid kernel.</p>
 </div>
 <div id="computation" class="section level4 hasAnchor" number="4.2.2.2">
 <h4><span class="header-section-number">4.2.2.2</span> Computation<a href="beyond-borders.html#computation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Most of the time we do not expect to be able to calculate Equation <span class="math inline">\(\ref{eq:ik2}\)</span> analytically.
+<p>Most of the time we do not expect to be able to calculate Equation <a href="beyond-borders.html#eq:ik2">(4.8)</a> analytically.
 Instead, given <span class="math inline">\(n\)</span> collections of <span class="math inline">\(L_i\)</span> samples <span class="math inline">\(\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)\)</span> drawn uniformly from each area then the integral may be approximated using Monte Carlo by the double sum
-<span class="math display">\[\begin{equation}
-K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
-w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
-k \left( s^{(i)}_l, s^{(j)}_m \right). \label{eq:mcintegratedkernel}
+<span class="math display" id="eq:mcintegratedkernel">\[\begin{equation}
+  K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
+  w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
+  k \left( s^{(i)}_l, s^{(j)}_m \right). \tag{4.9}
 \end{equation}\]</span>
 Equivalently, samples drawn from <span class="math inline">\(W_i\)</span> may be used without weighting by <span class="math inline">\(w_i(s)\)</span>.
 Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
@@ -625,18 +629,18 @@ On the other hand, for non-linear link functions <span class="math inline">\(g\)
 <div id="log-gaussian-cox-processes" class="section level4 hasAnchor" number="4.2.2.4">
 <h4><span class="header-section-number">4.2.2.4</span> Log-Gaussian Cox processes<a href="beyond-borders.html#log-gaussian-cox-processes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The log-Gaussian Cox Process framework <span class="citation">(<a href="#ref-diggle2013spatial">Diggle et al. 2013</a>)</span> arrives naturally at the integrated kernel formulation.
-A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function <span class="math inline">\(\{ x(s), s \in \Sc \}\)</span> such that conditional on the realisation of <span class="math inline">\(x(s)\)</span> the number of points in any area <span class="math inline">\(A_i\)</span> follows a Poisson distribution.
+A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function <span class="math inline">\(\{ x(s), s \in \mathcal{S} \}\)</span> such that conditional on the realisation of <span class="math inline">\(x(s)\)</span> the number of points in any area <span class="math inline">\(A_i\)</span> follows a Poisson distribution.
 The rate parameter of this Poisson distribution is explicitly aggregated as follows
 <span class="math display">\[\begin{equation}
-y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
+  y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
 \end{equation}\]</span>
 In a LGCP the log intensity <span class="math inline">\(\log x(s) = \eta(s)\)</span> is modelled using a Gaussian process prior <span class="math inline">\(\eta(s) \sim \mathcal{GP}(\mu(s), k(s, s&#39;))\)</span>.
-<span class="citation">O. Johnson, Diggle, and Giorgi (<a href="#ref-johnson2019spatially">2019</a>)</span> obtain Equation <span class="math inline">\(\ref{eq:ik2}\)</span> by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby <span class="math inline">\(\eta(s)\)</span> is approximated by a piecewise constant <span class="math inline">\(\eta_i = \mu_i + \phi_i\)</span> in each area <span class="math inline">\(A_i\)</span>.
+<span class="citation">O. Johnson, Diggle, and Giorgi (<a href="#ref-johnson2019spatially">2019</a>)</span> obtain Equation <a href="beyond-borders.html#eq:ik2">(4.8)</a> by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby <span class="math inline">\(\eta(s)\)</span> is approximated by a piecewise constant <span class="math inline">\(\eta_i = \mu_i + \phi_i\)</span> in each area <span class="math inline">\(A_i\)</span>.
 The <span class="math inline">\(i\)</span>th discrete spatial random effect is then <span class="math inline">\(\phi_i = \int_{A_i} w_i(s) \phi(s) \text{d}s\)</span>,
 with covariance structure
 <span class="math display">\[\begin{equation}
-\text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s&#39;) \phi(s&#39;) \text{d}s&#39; \right)
-= \int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d}s\text{d}s&#39;,
+  \text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s&#39;) \phi(s&#39;) \text{d}s&#39; \right)
+  = \int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d}s\text{d}s&#39;,
 \end{equation}\]</span>
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.</p>
 <!-- Discuss Gary's paper here? [@konstantinoudis2020discrete] -->
@@ -773,14 +777,6 @@ Weiss, Daniel J, Bonnie Mappin, Ursula Dalrymple, Samir Bhatt, Ewan Cameron, Sim
 <div id="ref-yousefi2019multi" class="csl-entry">
 Yousefi, Fariba, Michael T Smith, and Mauricio Alvarez. 2019. <span>“Multi-Task Learning for Aggregated Data Using Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 32.
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="1">
-<li id="fn1"><p>The regularity of realistic geometries may help to constrain each class to be more similar than it strictly has to be. In other words, although pathological geometries can be constructed, they are implausible in statistical practise and so not of great concern to us here.<a href="beyond-borders.html#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>Note it is not guaranteed for the centroid to (even) lie within the area i.e. we may have <span class="math inline">\(c_i \notin A_i\)</span>.<a href="beyond-borders.html#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>Analogously, weighted centroids could also be used in the centroid kernel.<a href="beyond-borders.html#fnref3" class="footnote-back">↩︎</a></p></li>
-</ol>
 </div>
             </section>
 

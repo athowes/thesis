@@ -145,7 +145,7 @@ Often, as well as spatial structure, there exists IID over-dispersion in the res
 The Besag-York-Mollié (BYM) model of @besag1991bayesian accounts for this in a natural way by decomposing the spatial random effect $\mathbf{u} = \mathbf{v} + \mathbf{w}$ into a sum of an unstructured IID component $\mathbf{v}$ and a spatially structured Besag component $\mathbf{w}$, each of which with their own respective precision parameters $\tau_v$ and $\tau_w$.
 The resulting distribution is
 \begin{equation}
-    \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) (\#eq:bym).
+  \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) (\#eq:bym).
 \end{equation}
 Including both $\mathbf{v}$ and $\mathbf{w}$ is intended to enable the model to learn the relative extent of the unstructured and structured components via $\tau_v$ and $\tau_w$.
 However, in this specification scaling of the Besag precision matrix $\mathbf{Q}$ is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
@@ -154,7 +154,7 @@ Additionally, supposing we have a prior belief that the over-dispersion is prima
 This highlights identifiability issues of the parameters $(\tau_v, \tau_w)$ resulting from them not being orthogonal.
 Building on the models of @leroux2000estimation and @dean2001detecting which tackle this identifiability problem, but do not scale the spatially structured noise, @simpson2017penalising propose a reparameterisation $(\tau_v, \tau_w) \mapsto (\tau_u, \phi)$ of the BYM model known as the BYM2 model and given by
 \begin{align}
-\mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), (\#eq:bym2)
+  \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), (\#eq:bym2)
 \end{align}
 where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ gives the proportion of the marginal variance explained by each component, and $\mathbf{w}^\star$ is a scaled version of $\mathbf{w}$ with precision matrix given by the scaled structure matrix $\mathbf{R}^\star$.
 When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
@@ -189,7 +189,10 @@ knitr::include_graphics("figures/beyond-borders/maup3.png")
 
 Summarising a geometry by an adjacency graph represents a loss of information.
 Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure).
-This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.^[The regularity of realistic geometries may help to constrain each class to be more similar than it strictly has to be. In other words, although pathological geometries can be constructed, they are implausible in statistical practise and so not of great concern to us here.]
+This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
+The regularity of realistic geometries may help to constrain each class to be similar.
+In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.
+
 Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
 In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
 On the other hand, the regions of a country, determined by political and geographic forces, tend to display greater irregularity.
@@ -218,10 +221,10 @@ This problem does not only apply locally: since the effect of $\sigma^2_u$ appli
 ## Models using kernels
 
 Section \@ref(adjacency) reviewed ways to construct spatial random effect precision matrices using an adjacency relation.
-An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas $K: \mathcal{P}(\Sc) \times \mathcal{P}(\Sc) \to \mathbb{R}$, where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\Sc)$ is the space of subsets of the study region.
+An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas $K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}$, where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\mathcal{S})$ is the space of subsets of the study region.
 If $K$ is positive semi-definite, then define areal kernel spatial random effects by
 \begin{equation}
-    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), \label{eq:arealkernel}
+    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), (\#eq:arealkernel)
 \end{equation}
 where the $n \times n$ Gram matrix $\mathbf{K}$ with entries $K_{ij} = K(A_i, A_j)$ is a valid covariance matrix.
 Here, the precision parameter $\tau_\phi$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices.
@@ -231,7 +234,8 @@ A simple method to construct $K$ from $k$ is to average the kernel $k$ computed 
 ### Centroid kernel
 
 The simplest approach is to use a single point such that $K(A_i, A_j) = k(p_i, p_j)$.
-A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.^[Note it is not guaranteed for the centroid to (even) lie within the area i.e. we may have $c_i \notin A_i$.]
+A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.
+That said, it is not guaranteed for the centroid to lie within the area i.e. it is possible $c_i \notin A_i$.
 This results in the centroid kernel
 \begin{equation}
     K(A_i, A_j) = k(c_i, c_j).
@@ -245,28 +249,29 @@ That said, it is unsuprising that a stationary covariance would struggle to reco
 Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
 This results in the integrated kernel
 \begin{equation}
-K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. \label{eq:ik1}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. (\#eq:ik1)
 \end{equation}
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
 Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
 
 #### Accounting for heterogeneity
 
-Additional information accounting for heterogeneity over $A_i$ may be incorporated into the integrated kernel^[Analogously, weighted centroids could also be used in the centroid kernel.]
+Additional information accounting for heterogeneity over $A_i$ may be incorporated into the integrated kernel.
 This can be accomplished using weighting distributions $\{W_i\}$ which represent an unequal contribution of each point to the similarity measure, to give a weighted integrated kernel
 \begin{equation}
-K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', \label{eq:ik2}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', (\#eq:ik2)
 \end{equation}
 This may be useful in disease mapping, where we expect regions with populations who live close to their shared border to be more strongly correlated than regions whose populations live far apart, which could be accounted for by weighting according to a high resolution measure of population density.
+Analogously, weighted centroids could also be used in the centroid kernel.
 
 #### Computation
 
-Most of the time we do not expect to be able to calculate Equation \ref{eq:ik2} analytically.
+Most of the time we do not expect to be able to calculate Equation \@ref(eq:ik2) analytically.
 Instead, given $n$ collections of $L_i$ samples $\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)$ drawn uniformly from each area then the integral may be approximated using Monte Carlo by the double sum
 \begin{equation}
-K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
-w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
-k \left( s^{(i)}_l, s^{(j)}_m \right). \label{eq:mcintegratedkernel}
+  K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
+  w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
+  k \left( s^{(i)}_l, s^{(j)}_m \right). (\#eq:mcintegratedkernel)
 \end{equation}
 Equivalently, samples drawn from $W_i$ may be used without weighting by $w_i(s)$.
 Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
@@ -286,18 +291,18 @@ On the other hand, for non-linear link functions $g$ such as the commonly used e
 #### Log-Gaussian Cox processes
 
 The log-Gaussian Cox Process framework [@diggle2013spatial] arrives naturally at the integrated kernel formulation.
-A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function $\{ x(s), s \in \Sc \}$ such that conditional on the realisation of $x(s)$ the number of points in any area $A_i$ follows a Poisson distribution.
+A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function $\{ x(s), s \in \mathcal{S} \}$ such that conditional on the realisation of $x(s)$ the number of points in any area $A_i$ follows a Poisson distribution.
 The rate parameter of this Poisson distribution is explicitly aggregated as follows
 \begin{equation}
-y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
+  y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
 \end{equation}
 In a LGCP the log intensity $\log x(s) = \eta(s)$ is modelled using a Gaussian process prior $\eta(s) \sim \mathcal{GP}(\mu(s), k(s, s'))$.
-@johnson2019spatially obtain Equation \ref{eq:ik2} by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby $\eta(s)$ is approximated by a piecewise constant $\eta_i = \mu_i + \phi_i$ in each area $A_i$.
+@johnson2019spatially obtain Equation \@ref(eq:ik2) by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby $\eta(s)$ is approximated by a piecewise constant $\eta_i = \mu_i + \phi_i$ in each area $A_i$.
 The $i$th discrete spatial random effect is then $\phi_i = \int_{A_i} w_i(s) \phi(s) \text{d}s$,
 with covariance structure
 \begin{equation}
-\text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s') \phi(s') \text{d}s' \right)
-= \int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d}s\text{d}s',
+  \text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s') \phi(s') \text{d}s' \right)
+  = \int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d}s\text{d}s',
 \end{equation}
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.
 

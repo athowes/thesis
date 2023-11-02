@@ -813,6 +813,7 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
 The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function’s derivative.
+A review of AD and how it can be efficiently implemented is provided by <span class="citation">C. C. Margossian (<a href="#ref-margossian2019review">2019</a>)</span>.
 <code>TMB</code> uses the C++ package <code>CppAD</code> <span class="citation">(<a href="#ref-cppaddocumentation">Bell 2023</a>)</span> for AD [Section 3; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>].
 The development of <code>TMB</code> was strongly inspired by the Automatic Differentiation Model Builder [ADMB; <span class="citation">Fournier et al. (<a href="#ref-fournier2012ad">2012</a>)</span>; <span class="citation">Bolker et al. (<a href="#ref-bolker2013strategies">2013</a>)</span>] project.
 An algorithm is used in <code>TMB</code> to automatically determine matrix sparsity structure [Section 4.2; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>].
@@ -1573,7 +1574,7 @@ It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other 
 <li>NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
 Other MCMC algorithms, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>, could be considered.
 Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the <code>NIMBLE</code> probabilistic programming language <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span>.</li>
-<li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in <code>tmbstan</code> by setting <code>laplace = TRUE</code>, is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">Margossian et al. 2020</a>)</span>.
+<li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in <code>tmbstan</code> by setting <code>laplace = TRUE</code>, is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">C. Margossian et al. 2020</a>)</span>.
 When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.</li>
 </ol>
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
@@ -1644,7 +1645,7 @@ Figure 6.12: Monthly R package downloads from the Comprehensive R Archive Networ
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
-Implementation in <code>Stan</code> is made possible by the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a <code>Stan</code> model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in <code>Stan</code> by <span class="citation">Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
+Implementation in <code>Stan</code> is made possible by the <code>bridgestan</code> package <span class="citation">(<a href="#ref-bridgestan">Ward 2023</a>)</span>, which provides access to the methods of a <code>Stan</code> model, and could be combined with the prototyping of an adjoint-differentiated Laplace approximation done in <code>Stan</code> by <span class="citation">C. Margossian et al. (<a href="#ref-margossian2020hamiltonian">2020</a>)</span>.
 The ratio of downloads of <code>rstan</code> as compared with <code>brms</code> suggests a larger proportion of <code>Stan</code> users are interested in specifying their own model.
 Implementation in <code>NIMBLE</code> is also possible as of version &gt;1.0.0 which includes functionality for automatic differentiation and Laplace approximation [Part V; <span class="citation">de Valpine et al. (<a href="#ref-nimblemanual">2023</a>)</span>] like <code>TMB</code> built using <code>CppAD</code>.
 Both <code>NIMBLE</code> and <code>Stan</code> developers are actively looking into implementation of algorithms combining the Laplace approximation and quadrature.</p>
@@ -1753,6 +1754,9 @@ Leppik, IE, FE Dreifuss, T Bowman-Cloyd, N Santilli, M Jacobs, C Crosby, J Cloyd
 </div>
 <div id="ref-lindgren2011explicit" class="csl-entry">
 Lindgren, Finn, Håvard Rue, and Johan Lindström. 2011. <span>“An Explicit Link Between Gaussian Fields and Gaussian Markov Random Fields: The Stochastic Partial Differential Equation Approach.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 73 (4): 423–98.
+</div>
+<div id="ref-margossian2019review" class="csl-entry">
+Margossian, Charles C. 2019. <span>“A Review of Automatic Differentiation and Its Efficient Implementation.”</span> <em>Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery</em> 9 (4): e1305.
 </div>
 <div id="ref-margossian2020hamiltonian" class="csl-entry">
 Margossian, Charles, Aki Vehtari, Daniel Simpson, and Raj Agrawal. 2020. <span>“Hamiltonian Monte Carlo Using an Adjoint-Differentiated Laplace Approximation: Bayesian Inference for Latent Gaussian Models and Beyond.”</span> <em>Advances in Neural Information Processing Systems</em> 33: 9086–97.
