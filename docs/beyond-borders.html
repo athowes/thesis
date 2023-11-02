@@ -215,7 +215,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="4.1" data-path="beyond-borders.html"><a href="beyond-borders.html#adjacency"><i class="fa fa-check"></i><b>4.1</b> Models based on adjacency</a>
 <ul>
-<li class="chapter" data-level="4.1.1" data-path="beyond-borders.html"><a href="beyond-borders.html#the-besag-model"><i class="fa fa-check"></i><b>4.1.1</b> The Besag model</a></li>
+<li class="chapter" data-level="4.1.1" data-path="beyond-borders.html"><a href="beyond-borders.html#besag"><i class="fa fa-check"></i><b>4.1.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.1.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.1.2</b> Best practises for the Besag model</a></li>
 <li class="chapter" data-level="4.1.3" data-path="beyond-borders.html"><a href="beyond-borders.html#the-reparameterised-besag-york-mollié-model"><i class="fa fa-check"></i><b>4.1.3</b> The reparameterised Besag-York-Mollié model</a></li>
 <li class="chapter" data-level="4.1.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-models-spatial-representation"><i class="fa fa-check"></i><b>4.1.4</b> Concerns about the Besag model’s spatial representation</a></li>
@@ -228,7 +228,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="beyond-borders.html"><a href="beyond-borders.html#simulation-study"><i class="fa fa-check"></i><b>4.3</b> Simulation study</a>
 <ul>
-<li class="chapter" data-level="4.3.1" data-path="beyond-borders.html"><a href="beyond-borders.html#synthetic-data-sets"><i class="fa fa-check"></i><b>4.3.1</b> Synthetic data-sets</a></li>
+<li class="chapter" data-level="4.3.1" data-path="beyond-borders.html"><a href="beyond-borders.html#synthetic-data"><i class="fa fa-check"></i><b>4.3.1</b> Synthetic data</a></li>
+<li class="chapter" data-level="4.3.2" data-path="beyond-borders.html"><a href="beyond-borders.html#inferential-models"><i class="fa fa-check"></i><b>4.3.2</b> Inferential models</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="beyond-borders.html"><a href="beyond-borders.html#hiv-prevalence-study"><i class="fa fa-check"></i><b>4.4</b> HIV prevalence study</a></li>
 <li class="chapter" data-level="4.5" data-path="beyond-borders.html"><a href="beyond-borders.html#discussion"><i class="fa fa-check"></i><b>4.5</b> Discussion</a></li>
@@ -398,8 +399,8 @@ Code for the analysis in this chapter is available from <a href="https://github.
 <h2><span class="header-section-number">4.1</span> Models based on adjacency<a href="beyond-borders.html#adjacency" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section discusses spatial random effect models based on an symmetric adjacency relation <span class="math inline">\(i \sim j\)</span> between areas <span class="math inline">\(A_i\)</span> and <span class="math inline">\(A_j\)</span>.
 Adjacency is typically defined by a shared border, though other choices are possible <span class="citation">(<a href="#ref-paciorek2013spatial">Paciorek et al. 2013</a>)</span>.</p>
-<div id="the-besag-model" class="section level3 hasAnchor" number="4.1.1">
-<h3><span class="header-section-number">4.1.1</span> The Besag model<a href="beyond-borders.html#the-besag-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="besag" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> The Besag model<a href="beyond-borders.html#besag" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:geometry-graph"></span>
 <img src="figures/beyond-borders/geometry-graph.png" alt="Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph structure \(\mathcal{G}\), with nodes positioned in alignment with the district that they correspond to." width="95%" />
@@ -504,6 +505,8 @@ To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håva
 Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
 As such, I have a number of concerns about the model’s applicability to this broader setting.
 This discussion is closely linked to the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Jonathan Wakefield and Lyons 2010</a>)</span>.</p>
+<div id="adjacency-compression" class="section level4 hasAnchor" number="4.1.4.1">
+<h4><span class="header-section-number">4.1.4.1</span> Adjacency compression<a href="beyond-borders.html#adjacency-compression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup1"></span>
 <img src="figures/beyond-borders/maup1.png" alt="Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph." width="95%" />
@@ -511,24 +514,8 @@ This discussion is closely linked to the modifiable areal unit problem <span cla
 Figure 4.2: Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph.
 </p>
 </div>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup2"></span>
-<img src="figures/beyond-borders/maup2.png" alt="A sequence of geometries where the number of neighbours of area one grows by one at each iteration." width="95%" />
-<p class="caption">
-Figure 4.3: A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
-</p>
-</div>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup3"></span>
-<img src="figures/beyond-borders/maup3.png" alt="Each of the shaded areas are split into two moving from Panel A to Panel B." width="95%" />
-<p class="caption">
-Figure 4.4: Each of the shaded areas are split into two moving from Panel A to Panel B.
-</p>
-</div>
-<div id="adjacency-compression" class="section level4 hasAnchor" number="4.1.4.1">
-<h4><span class="header-section-number">4.1.4.1</span> Adjacency compression<a href="beyond-borders.html#adjacency-compression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Summarising a geometry by an adjacency graph represents a loss of information.
-Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure).
+Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure <a href="beyond-borders.html#fig:maup1">4.2</a>).
 This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
 The regularity of realistic geometries may help to constrain each class to be similar.
 In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.</p>
@@ -541,19 +528,33 @@ The appropriateness of adjacency compression therefore varies by the type of geo
 <h4><span class="header-section-number">4.1.4.2</span> Mean structure<a href="beyond-borders.html#mean-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>In the Besag model is all adjacent areas count equally.
 This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbours.
-Figure illustrates a number of heuristic features for neighbour importance, including length of shared border, and the proximity of centers of mass.</p>
+Figure <a href="beyond-borders.html#fig:maup1">4.2</a> illustrates a number of heuristic features for neighbour importance, including length of shared border (Panel C), and the proximity of centers of mass (Panel D).</p>
 </div>
 <div id="variance-structure" class="section level4 hasAnchor" number="4.1.4.3">
 <h4><span class="header-section-number">4.1.4.3</span> Variance structure<a href="beyond-borders.html#variance-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup2"></span>
+<img src="figures/beyond-borders/maup2.png" alt="A sequence of geometries where the number of neighbours of area one grows by one at each iteration." width="95%" />
+<p class="caption">
+Figure 4.3: A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
+</p>
+</div>
 <p>In Equation <a href="beyond-borders.html#eq:besag">(4.1)</a> the precision of <span class="math inline">\(u_i\)</span> is proportional to its number of neighbours <span class="math inline">\(n_{\delta i}\)</span>.
 It follow that as <span class="math inline">\(n_{\delta i} \to \infty\)</span> then <span class="math inline">\(\text{Var}(u_i) \to 0\)</span>.
-This is illustrated by Figure where the area on the right is repeatedly divided such that its number of neighbours increases.
+This is illustrated by Figure <a href="beyond-borders.html#fig:maup2">4.3</a> where the area on the right is repeatedly divided such that its number of neighbours increases.
 This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
 However, if the amount of information in the shaded area remains fixed, it is inappropriate that <span class="math inline">\(\text{Var}(u_1)\)</span> should tend to zero as a result of drawing additional, arbitrary, boundaries.
 In the image analysis setting this modelling assumption is reasonable: each pixel represents a fixed amount of information and a higher pixel density represents a greater amount of information.
 On the other hand, in public health and epidemiology, drawing boundaries to create additional areas is not expected to correspond to a greater amount of information.</p>
-<p>Suppose we fit a Besag model upon identical data using each of the two geometries in Figure.
-If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance <span class="math inline">\(\sigma^2_u\)</span> in geometry (ii) as compared with geometry (i) because there will appear to be less variation between neighbouring areas.
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup3"></span>
+<img src="figures/beyond-borders/maup3.png" alt="Each of the shaded areas are split into two moving from Panel A to Panel B." width="95%" />
+<p class="caption">
+Figure 4.4: Each of the shaded areas are split into two moving from Panel A to Panel B.
+</p>
+</div>
+<p>Suppose we fit a Besag model upon identical data using each of the two geometries in Figure <a href="beyond-borders.html#fig:maup3">4.4</a>.
+If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance <span class="math inline">\(\sigma^2_u\)</span> in Panel B as compared with Panel A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of <span class="math inline">\(\sigma^2_u\)</span> applies everywhere, the smoothing will change even in unaltered parts of the study region.</p>
 </div>
 </div>
@@ -585,6 +586,13 @@ That said, it is unsuprising that a stationary covariance would struggle to reco
 </div>
 <div id="integrated-kernel" class="section level3 hasAnchor" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Integrated kernel<a href="beyond-borders.html#integrated-kernel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:integration-strategy"></span>
+<img src="figures/beyond-borders/integration-strategy.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 4.5: Figure caption.
+</p>
+</div>
 <p>Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
 This results in the integrated kernel
 <span class="math display" id="eq:ik1">\[\begin{equation}
@@ -663,8 +671,64 @@ Rather than focusing on the aggregate nature of areal observations as primarily 
 <h2><span class="header-section-number">4.3</span> Simulation study<a href="beyond-borders.html#simulation-study" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We tested the ability of inferential models with varying spatial random effect specifications to accurately recover small-area quantities.
 The data and modelling choices were designed with a spatial epidemiology setting in mind.</p>
-<div id="synthetic-data-sets" class="section level3 hasAnchor" number="4.3.1">
-<h3><span class="header-section-number">4.3.1</span> Synthetic data-sets<a href="beyond-borders.html#synthetic-data-sets" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="synthetic-data" class="section level3 hasAnchor" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Synthetic data<a href="beyond-borders.html#synthetic-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<table>
+<caption><span id="tab:simulation-models">Table 4.1: </span> The models used to create synthetic data.</caption>
+<colgroup>
+<col width="31%" />
+<col width="68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>IID</td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \mathbf{I}_n)\)</span></td>
+</tr>
+<tr class="even">
+<td>Besag</td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})\)</span> as in Section <a href="beyond-borders.html#besag">4.1.1</a></td>
+</tr>
+<tr class="odd">
+<td>IK</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>To study robustness to spatial misspecification synthetic data were simulated from three known data generating processes.</p>
+</div>
+<div id="inferential-models" class="section level3 hasAnchor" number="4.3.2">
+<h3><span class="header-section-number">4.3.2</span> Inferential models<a href="beyond-borders.html#inferential-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>IID</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Besag</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>IK</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>A weakly informative half-Gaussian prior was placed on the standard deviation <span class="citation">(<a href="#ref-gelman2006prior">Gelman 2006</a>)</span> such that <span class="math inline">\(\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)\)</span>.
+The value 2.5 was chosen to avoid placing significant prior density on the region <span class="math inline">\(\sigma_\phi &gt; 5\)</span>, which after a logistic transformation facilitates variation on the probability scale very close to either zero or one.
+A weakly informative <span class="math inline">\(\mathcal{N}(-2, 1)\)</span> prior was placed on <span class="math inline">\(\beta_0\)</span>, setting most of the prior probability density for <span class="math inline">\(\rho_i\)</span> within a range <span class="math inline">\([0, 0.25]\)</span> typical for a disease prevalence.</p>
 </div>
 </div>
 <div id="hiv-prevalence-study" class="section level2 hasAnchor" number="4.4">
@@ -704,6 +768,9 @@ Follestad, Turid, and Håvard Rue. 2003. <span>“Modelling Spatial Variation in
 </div>
 <div id="ref-freni2018note" class="csl-entry">
 Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue. 2018. <span>“A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 26: 25–34.
+</div>
+<div id="ref-gelman2006prior" class="csl-entry">
+———. 2006. <span>“Prior Distributions for Variance Parameters in Hierarchical Models (Comment on Article by Browne and Draper).”</span>
 </div>
 <div id="ref-gossl2001bayesian" class="csl-entry">
 Gössl, Christoff, Dorothee P Auer, and Ludwig Fahrmeir. 2001. <span>“Bayesian Spatiotemporal Inference in Functional Magnetic Resonance Imaging.”</span> <em>Biometrics</em> 57 (2): 554–62.

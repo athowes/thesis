@@ -58,7 +58,7 @@ Code for the analysis in this chapter is available from [`https://github.com/ath
 This section discusses spatial random effect models based on an symmetric adjacency relation $i \sim j$ between areas $A_i$ and $A_j$.
 Adjacency is typically defined by a shared border, though other choices are possible [@paciorek2013spatial].
 
-### The Besag model
+### The Besag model {#besag}
 
 (ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph structure $\mathcal{G}$, with nodes positioned in alignment with the district that they correspond to.
 
@@ -167,28 +167,16 @@ Since then, it has seen wider use, including in situations, like small-area esti
 As such, I have a number of concerns about the model's applicability to this broader setting.
 This discussion is closely linked to the modifiable areal unit problem [@openshow1979million], whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy [@wakefield2010aggregation].
 
+#### Adjacency compression
+
 (ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph.
 
 ```{r maup1, fig.cap="(ref:maup1)"}
 knitr::include_graphics("figures/beyond-borders/maup1.png")
 ```
 
-(ref:maup2) A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
-
-```{r maup2, fig.cap="(ref:maup2)"}
-knitr::include_graphics("figures/beyond-borders/maup2.png")
-```
-
-(ref:maup3) Each of the shaded areas are split into two moving from Panel A to Panel B.
-
-```{r maup3, fig.cap="(ref:maup3)"}
-knitr::include_graphics("figures/beyond-borders/maup3.png")
-```
-
-#### Adjacency compression
-
 Summarising a geometry by an adjacency graph represents a loss of information.
-Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure).
+Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure \@ref(fig:maup1)).
 This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
 The regularity of realistic geometries may help to constrain each class to be similar.
 In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.
@@ -202,20 +190,32 @@ The appropriateness of adjacency compression therefore varies by the type of geo
 
 In the Besag model is all adjacent areas count equally.
 This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbours.
-Figure illustrates a number of heuristic features for neighbour importance, including length of shared border, and the proximity of centers of mass.
+Figure \@ref(fig:maup1) illustrates a number of heuristic features for neighbour importance, including length of shared border (Panel C), and the proximity of centers of mass (Panel D).
 
 #### Variance structure
 
+(ref:maup2) A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
+
+```{r maup2, fig.cap="(ref:maup2)"}
+knitr::include_graphics("figures/beyond-borders/maup2.png")
+```
+
 In Equation \@ref(eq:besag) the precision of $u_i$ is proportional to its number of neighbours $n_{\delta i}$.
 It follow that as $n_{\delta i} \to \infty$ then $\text{Var}(u_i) \to 0$.
-This is illustrated by Figure where the area on the right is repeatedly divided such that its number of neighbours increases.
+This is illustrated by Figure \@ref(fig:maup2) where the area on the right is repeatedly divided such that its number of neighbours increases.
 This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
 However, if the amount of information in the shaded area remains fixed, it is inappropriate that $\text{Var}(u_1)$ should tend to zero as a result of drawing additional, arbitrary, boundaries.
 In the image analysis setting this modelling assumption is reasonable: each pixel represents a fixed amount of information and a higher pixel density represents a greater amount of information.
 On the other hand, in public health and epidemiology, drawing boundaries to create additional areas is not expected to correspond to a greater amount of information.
 
-Suppose we fit a Besag model upon identical data using each of the two geometries in Figure.
-If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in geometry (ii) as compared with geometry (i) because there will appear to be less variation between neighbouring areas.
+(ref:maup3) Each of the shaded areas are split into two moving from Panel A to Panel B.
+
+```{r maup3, fig.cap="(ref:maup3)", fig.height=3.5}
+knitr::include_graphics("figures/beyond-borders/maup3.png")
+```
+
+Suppose we fit a Besag model upon identical data using each of the two geometries in Figure \@ref(fig:maup3).
+If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel B as compared with Panel A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of $\sigma^2_u$ applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
 ## Models using kernels
@@ -245,6 +245,12 @@ A model comparison study [Section 3; @best2005comparison] simulated data represe
 That said, it is unsuprising that a stationary covariance would struggle to recover non-stationary structure.
 
 ### Integrated kernel
+
+(ref:integration-strategy) Figure caption.
+
+```{r integration-strategy, fig.cap="(ref:integration-strategy)"}
+knitr::include_graphics("figures/beyond-borders/integration-strategy.png")
+```
 
 Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
 This results in the integrated kernel
@@ -325,7 +331,29 @@ This is a more computationally efficient way to implement integrated kernels.
 We tested the ability of inferential models with varying spatial random effect specifications to accurately recover small-area quantities.
 The data and modelling choices were designed with a spatial epidemiology setting in mind.
 
-### Synthetic data-sets
+### Synthetic data
+
+| Model | Details       |
+|-------|---------------|
+| IID   | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{I}_n)$ |
+| Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
+| IK    |               |
+
+Table: (\#tab:simulation-models) The models used to create synthetic data.
+
+To study robustness to spatial misspecification synthetic data were simulated from three known data generating processes.
+
+### Inferential models
+
+| Model | Details       |
+|-------|---------------|
+| IID   |               |
+| Besag |               |
+| IK    |               |
+
+A weakly informative half-Gaussian prior was placed on the standard deviation [@gelman2006prior] such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$.
+The value 2.5 was chosen to avoid placing significant prior density on the region $\sigma_\phi > 5$, which after a logistic transformation facilitates variation on the probability scale very close to either zero or one.
+A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting most of the prior probability density for $\rho_i$ within a range $[0, 0.25]$ typical for a disease prevalence.
 
 ## HIV prevalence study
 
