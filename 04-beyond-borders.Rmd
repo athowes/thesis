@@ -22,43 +22,49 @@ resource_version <- "temp"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
-It was motivated by a question that often occurs during model construction.
-Should a model be expanded to capture a sensible, albeit hypothetical, feature of the data?
-The hypothesised data feature in this case pertains to the correlation structure between areas.
-A widely used base model uses a binary relationship between areas.
-One way to extend this model is to consider varying strengths of relationship between areas.
-This investigation has practical significance because modelling spatial structure is of particular importance to small-area estimation of HIV.
-It was prompted by confusion in seeing the base model be used in situations that appear to violate its assumptions.
-The results are presented in @howes2023beyond.
-Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
+The investigation was motivated by a question that often occurs during model construction.
+Namely, should the model be expanded to capture a sensible, albeit hypothetical, feature of the data?
 
-## Background
-
-Modelling of spatial variation is especially important for the small-area estimation of HIV.
-This is because it is difficult to measure the covariates which are most strongly associated with HIV.
+The hypothesised feature in this case pertains to the spatial correlation structure between areas.
+Modelling of spatial variation is particularly important for the small-area estimation of HIV.
+This is because the covariates which are most strongly associated with HIV are difficult to measure.
 Examples include sexual risk behaviour.
-As a result, in previous small-area models of HIV including covariates only resulted in a modest improvement in predictions [Supplementary Figure 20, @dwyer2019mapping].
-This lack of predictive covariates foregrounds the role of modelling spatial variation.
-For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less important [@weiss2015re].
+As a result, in previous small-area models of HIV have found including including covariates to only result in a modest improvement in predictive performance [Supplementary Figure 20, @dwyer2019mapping].
+The lack of predictive covariates foregrounds the role of modelling spatial variation.
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less pertinent [@weiss2015re].
 
 Spatial variation in areal data are often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
 The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; @rue2005gaussian].
 These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
 Observations made in areas close together are assumed to be correlated, and more distant relationships are ignored.
-Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area.
-The Besag model is attractive as it requires minimal additional modelling choices and is widely implemented.
-As such, it has seen widespread use, including in agriculture [@oliver2015soil], ecology [@saracco2010modeling], epidemiology [@lawson2013statistical], image analysis [@schmid2006bayesian], neuroscience [@gossl2001bayesian] and public health [@dwyer2015drinking].
-However, for irregular geometries like the administrative divisions of a country, the assumptions made by the Besag model about space are unrealistic.
+Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area, based on a binary relationship.
+The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented.
+It has been widely used, including:
+
+* to model bird population dynamics from capute-recapture data [@saracco2010modeling];
+* for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian];
+* to model alcohol use patterns [@dwyer2015drinking].
+
+The Besag model was designed for use in image analysis, on a regular grid.
+However, for more irregular geometries, the assumptions made are unrealistic and appear to be violated.
+The administrative divisions of a country used in small-area estimation are one example of a more irregular geometry.
 This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
 In doing so, it offers practical recommendations for modelling areal spatial structure.
+The results are presented in @howes2023beyond.
+Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
 
 ## Models based on adjacency {#adjacency}
 
+This section discusses spatial random effect models based on an symmetric adjacency relation $i \sim j$ between areas $A_i$ and $A_j$.
+Adjacency is typically defined by a shared border, though other choices are possible [@paciorek2013spatial].
+
 ### The Besag model
 
-Spatial structure can be encoded using a symmetric relation between areas.
-Let $i \sim j$ if the areas $A_i$ and $A_j$ are adjacent or neighbouring.
-Adjacency is often defined by a shared border, though other choices are possible [@paciorek2013spatial].
+(ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph structure $\mathcal{G}$, with nodes positioned in alignment with the district that they correspond to.
+
+```{r geometry-graph, fig.cap="(ref:geometry-graph)"}
+knitr::include_graphics("figures/beyond-borders/geometry-graph.png")
+```
 
 The Besag model [@besag1991bayesian] is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the $i$th spatial random effect is given by
 \begin{equation}
@@ -70,7 +76,7 @@ By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag mo
 \begin{equation}
     \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}). (\#eq:gmrf)
 \end{equation}
-The matrix $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient structure matrix $\mathbf{R}$, so-called because it defines the structure of the precision matrix, with entries
+The matrix $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient structure matrix $\mathbf{R}$ with entries
 \begin{equation}
     R_{ij} =
     \begin{cases}
@@ -81,7 +87,8 @@ The matrix $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient str
 \end{equation}
 The Markov property arises due to the conditional independence structure $p(u_i \, | \, \mathbf{u}_{-i}) = p(u_i \, | \, \mathbf{u}_{\delta i})$ whereby each area only depends on its neighbours.
 This is reflected in the sparsity of $\mathbf{R}$ such that $u_i \perp u_j \, | \, \mathbf{u}_{-ij}$ if and only if $R_{ij} = 0$.
-The structure matrix $\mathbf{R}$ may also be expressed as the Laplacian of the adjacency graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ with vertices $v \in \mathcal{V}$ corresponding to each area and edges $e \in \mathcal{E}$ between vertices $i$ and $j$ when $i \sim j$.
+The structure matrix $\mathbf{R}$ may also be expressed as the Laplacian matrix of the adjacency graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ with vertices $v \in \mathcal{V}$ corresponding to each area and edges $e \in \mathcal{E}$ between vertices $i$ and $j$ when $i \sim j$.
+Figure \@ref(fig:geometry-graph) shows the adjacency graph for the districts of Zimbabwe.
 
 Rewriting Equation \@ref(eq:gmrf), the probability density function of $\mathbf{u}$ is
 \begin{equation}
@@ -89,30 +96,48 @@ Rewriting Equation \@ref(eq:gmrf), the probability density function of $\mathbf{
     \propto \exp \left( -\frac{\tau_u}{2} \mathbf{u}^\top \mathbf{R} \mathbf{u} \right)
     \propto \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right). (\#eq:pdfu)
 \end{equation}
-This density is a function of the pairwise differences $u_i - u_j$ and so is invariant to the addition of a constant $c$ to each entry $p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})$, resulting in an improper uniform distribution on the average of the $u_i$.
+This density is a function of the pairwise differences $u_i - u_j$ and so is invariant to the addition of a constant $c$ to each entry $p(\mathbf{u}) = p(\mathbf{u} + c\mathbf{1})$.
+As a result, there is an improper uniform distribution on the average of the $u_i$.
 If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can be reached from any other vertex, then there is only one impropriety in the model and $\text{rank}(\mathbf{R}) = n - 1$, while if $\mathcal{G}$ is disconnected, and composed of $n_c \geq 2$ connected components with index sets $I_1, \ldots, I_{n_c}$, then the corresponding structure matrix $\mathbf{R}$ has rank $n - n_c$ and the density is invariant to the addition of a constant to each of the connected components $p(\mathbf{u}_{I}) = p(\mathbf{u}_{I} + c\mathbf{1})$ where $I = I_1, \ldots, I_{n_c}$.
 
 ### Best practises for the Besag model
 
-@freni2018note recommended three best practices for use of the Besag model:
+@freni2018note recommended three best practices:
 
-1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance, defined by the geometric mean of the diagonal elements of its generalised inverse
+1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance equal to one. 
+The generalised variance is defined by the geometric mean of the diagonal elements of its generalised inverse
 \begin{equation}
-    \sigma^2_{\text{GV}}(\mathbf{R}) = \prod_{i = 1}^n (\mathbf{R}^-_{ii})^{1/n} = \exp \left( \frac{1}{n} \sum_{i = 1}^n \log (\mathbf{R}^-_{ii}) \right),
+    \sigma^2_{\text{GV}}(\mathbf{R}) = \prod_{i = 1}^n (\mathbf{R}^-_{ii})^{1/n} = \exp \left( \frac{1}{n} \sum_{i = 1}^n \log (R^-_{ii}) \right).
 \end{equation}
-equal to one, by replacing $\mathbf{R}$ with $\mathbf{R}^\star = \mathbf{R} / \sigma^2_{\text{GV}}(\mathbf{R})$.
+The structure matrix $\mathbf{R}$ may be replaced by
+\begin{equation}
+\mathbf{R}^\star = \mathbf{R} / \sigma^2_{\text{GV}}(\mathbf{R}).
+\end{equation}
 As the diagonal elements $R^-_{ii}$ correspond to marginal variances, the generalised variance gives a measure of the average marginal variance.
-However, this measure, introduced by @sorbye2014scaling, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
+This measure, introduced by @sorbye2014scaling, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
 Scaling mitigates the influence of the adjacency graph on the variance of $\mathbf{u}$.
 Allowing the variance to be controlled by $\tau_u$ alone is important as it allows for consistent, interpretable prior selection.
 
-When the adjacency graph is disconnected it is not appropriate to scale the structure matrix $\mathbf{R}$ uniformly since for a given precision $\tau_u$, local smoothing operates on each connected component independently.
-As such, each connected component should be scaled independently to have generalised variance one giving $\mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)$ where $\mathbf{R}_I$ is the sub-matrix of the structure matrix corresponding to index set $I$.
+    When the adjacency graph is disconnected it is not appropriate to scale the structure matrix $\mathbf{R}$ uniformly for the reason that given the precision $\tau_u$, local smoothing operates on each connected component independently.
+    As such, each connected component should be scaled independently to have generalised variance one giving
+    \begin{equation}
+      \mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)
+    \end{equation}
+    where $\mathbf{R}_I$ is the sub-matrix of the structure matrix corresponding to index set $I$.
 
-2. When one of the connected components is a single area, known either as a singleton or an island, the probability density $\exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)$ has no dependence on $u_i$.
-This is equivalent to using an improper prior $p(u_i) \propto 1$ and can be avoided by setting each singleton to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, 1)$.
+2. When one of the connected components is a single area (known either as a singleton or an island) the probability density
+\begin{equation}
+  p(u_i) \propto  \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)
+\end{equation}
+has no dependence on $u_i$.
+This is equivalent to using an improper prior $p(u_i) \propto 1$.
+To avoid this, each singleton can be set to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, 1)$.
+
 3. To avoid confounding of the spatial random effects with the intercept, it is recommended to place a sum-to-zero constraint on each non-singleton connected component.
-In other words, for each $|I| > 1$ that $\sum_{i \in I} u_i = 0$.
+In other words,
+\begin{equation}
+  \sum_{i \in I} u_i = 0, \quad |I| > 1.
+\end{equation}
 
 ### The reparameterised Besag-York-Mollié model
 
