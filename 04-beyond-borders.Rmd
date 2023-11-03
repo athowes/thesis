@@ -139,7 +139,7 @@ In other words,
   \sum_{i \in I} u_i = 0, \quad |I| > 1.
 \end{equation}
 
-### The reparameterised Besag-York-Mollié model
+### The reparameterised Besag-York-Mollié model {#bym2}
 
 Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
 The Besag-York-Mollié (BYM) model of @besag1991bayesian accounts for this in a natural way by decomposing the spatial random effect $\mathbf{u} = \mathbf{v} + \mathbf{w}$ into a sum of an unstructured IID component $\mathbf{v}$ and a spatially structured Besag component $\mathbf{w}$, each of which with their own respective precision parameters $\tau_v$ and $\tau_w$.
@@ -365,10 +365,10 @@ For each of the three spatial random effect models and seven geometries 200 simu
 
 | Model | Details       |
 |-------|---------------|
-| Constant |            |
-| IID   |               |
-| Besag |               |
-| BYM2  |               |
+| Constant | Without spatial random effects |
+| IID   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{I}_n)$ |
+| Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
+| BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
 | FCK   |               |
 | CK    |               |
 | FIK   |               |
@@ -376,9 +376,39 @@ For each of the three spatial random effect models and seven geometries 200 simu
 
 Table: (\#tab:inferential-models) The models used for inference.
 
-A weakly informative half-Gaussian prior was placed on the standard deviation [@gelman2006prior] such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$.
-The value 2.5 was chosen to avoid placing significant prior density on the region $\sigma_\phi > 5$, which after a logistic transformation facilitates variation on the probability scale very close to either zero or one.
-A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting most of the prior probability density for $\rho_i$ within a range $[0, 0.25]$ typical for a disease prevalence.
+Eight inferential models were fit to the synthetic data (Table \@ref(tab:inferential-models)).
+Apart from the spatial random effect specification, each inferential model was the same as the simulation model.
+
+#### Kernels
+
+Gram matrices were computed using the Matérn kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$ [@stein1999interpolation].
+This kernel is given by
+\begin{equation}
+k(s, s') =
+\frac{1}{2^{\nu - 1}\Gamma(\nu)} \left(\frac{\sqrt{2\nu}\lvert s - s' \rvert}{l}\right)^\nu
+B_\nu\left(\frac{\sqrt{2\nu}\lvert s - s' \rvert}{l}\right), (\#eq:matern)
+\end{equation}
+where $B_\nu$ is the modified Bessel function of the second kind, $|s - s'|$ is the Euclidean distance between $s$ and $s'$, $\nu$ is the smoothness hyperparameter and $l$ is the length-scale hyperparameter on the latitude-longitude scale.
+The smoothness parameter $\nu$ is difficult to identify from data and so was fixed at $3/2$.
+This value matches that used to simulate data, and simplifies Equation \@ref(eq:matern) to
+\begin{equation}
+k(s, s') = \left(1 + \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right).
+\end{equation}
+
+#### Priors
+
+A weakly informative half-Gaussian prior was placed on the standard deviation such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$ [@gelman2006prior].
+The value 2.5 avoids placing significant prior density on the region $\sigma_\phi > 5$, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
+A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting most of the prior probability density for $\text{logit}^{-1}(\beta_0)$ within a range typical for a disease prevalence.
+
+In cases where the length-scale $l$ was fixed, it was set based on the geometry such that points an average distance apart had 1\% correlation [@best1999bayesian].
+In cases where a prior distribution was set on the length-scale it was $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$, with $a$ and $b$ chosen for each geometry such that 1\% of the prior mass was below 0.1 and 1\% of the prior mass was above the maximum distance between points [@betancourt2017robust].
+
+#### Inference
+
+Approximate Bayesian inference was conducted using adaptive Gauss-Hermite quadrature [AGHQ; @stringer2022fast] with $k = 3$ quadrature points over a marginal Laplace approximation via the `aghq` package [@stringer2021implementing].
+Models were implemented using a Template Model Builder C++ template for the log-posterior via the `TMB` R package [@kristensen2016tmb].
+Appendix \@ref(aghq-nuts) compares approximate inference results to those obtained using the No-U-Turn Sampling (NUTS) Hamiltonian Monte Carlo (HMC) algorithm run using `Stan` [@carpenter2017stan] via the `tmbstan` package [@monnahan2018no].
 
 ## HIV prevalence study
 
