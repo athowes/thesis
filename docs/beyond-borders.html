@@ -696,20 +696,29 @@ The data and modelling choices were designed with a spatial epidemiology setting
 </tr>
 <tr class="odd">
 <td>IK</td>
-<td></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with Matern kernel, <span class="math inline">\(\nu = 3/2, l = 2.5\)</span> and <span class="math inline">\(L_i = 100\)</span> points per area</td>
 </tr>
 </tbody>
 </table>
-<p>Synthetic data were simulated from three known data generating processes.
-Data <span class="math inline">\(\y = (y_i)_{i \in [n]}\)</span> were simulated from <span class="math inline">\(y_i \sim \text{Bin}(m_i, \rho_i)\)</span> where the probabilities <span class="math inline">\(\rho_i \in [0, 1]\)</span> were linked to linear predictors <span class="math inline">\(\eta_i \in \mathbb{R}\)</span> via
+<p>Data <span class="math inline">\(\mathbf{y} = (y_i)_{i \in [n]}\)</span> were simulated from a binomial likelihood <span class="math inline">\(y_i \sim \text{Bin}(m_i, \rho_i)\)</span>.
+The probabilities <span class="math inline">\(\rho_i \in [0, 1]\)</span> were linked to linear predictors <span class="math inline">\(\eta_i \in \mathbb{R}\)</span> via
 <span class="math display">\[\begin{equation}
 \log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
 \end{equation}\]</span>
+Spatial random effects were generated according to three different models (Table <a href="beyond-borders.html#tab:simulation-models">4.1</a>).
 Sample sizes were fixed as <span class="math inline">\(m_i = 25\)</span> for all <span class="math inline">\(i \in [n]\)</span>, the intercept parameter as <span class="math inline">\(\beta_0 = -2\)</span> and the spatial random effect precision parameter as <span class="math inline">\(\tau_\phi = 1\)</span>.</p>
-<p>Seven geometries were considered.
-These were the four vignette geometries from Figure <a href="beyond-borders.html#fig:maup1">4.2</a> which share an adjacency graph, and three more realistic geometries consisting of a <span class="math inline">\(6 \times 6\)</span> lattice grid, the 33 districts of Côte d’Ivoire and the 36 congressional districts of Texas.
-The realistic geometries were chosen to represent plausible variation over spatial regularity for the small-area estimation setting.
-For each spatial random effect and geometry 200 simulations were generated, resulting in 1400 total simulations.</p>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:geometries"></span>
+<img src="figures/beyond-borders/geometries.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 4.6: Figure caption.
+</p>
+</div>
+<p>Seven geometries were considered (Figure <a href="beyond-borders.html#fig:geometries">4.6</a>).
+These include the four vignette geometries from Figure <a href="beyond-borders.html#fig:maup1">4.2</a> which share an adjacency graph.
+Three more realistic geometries chosen to represent plausible variation over spatial regularity for the small-area estimation setting were also considered.
+These were a <span class="math inline">\(6 \times 6\)</span> lattice grid, the 33 districts of Côte d’Ivoire and the 36 congressional districts of Texas.
+For each of the three spatial random effect models and seven geometries 200 simulations were generated, resulting in 4200 total synthetic data.</p>
 </div>
 <div id="inferential-models" class="section level3 hasAnchor" number="4.3.2">
 <h3><span class="header-section-number">4.3.2</span> Inferential models<a href="beyond-borders.html#inferential-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -766,7 +775,9 @@ A weakly informative <span class="math inline">\(\mathcal{N}(-2, 1)\)</span> pri
 </div>
 <div id="discussion" class="section level2 hasAnchor" number="4.5">
 <h2><span class="header-section-number">4.5</span> Discussion<a href="beyond-borders.html#discussion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><span class="citation">Follestad and Rue (<a href="#ref-follestad2003modelling">2003</a>)</span></p>
+<p>Previous comparisons of spatial random effects such as <span class="citation">Best, Richardson, and Thomson (<a href="#ref-best2005comparison">2005</a>)</span> and <span class="citation">Lee (<a href="#ref-lee2011comparison">2011</a>)</span> used the DIC measure of model fit.
+Use of the DIC is not generally recommended.
+<!-- @follestad2003modelling --></p>
 
 </div>
 </div>
@@ -792,9 +803,6 @@ Dwyer-Lindgren, Laura, Michael A Cork, Amber Sligar, Krista M Steuben, Kate F Wi
 </div>
 <div id="ref-dwyer2015drinking" class="csl-entry">
 Dwyer-Lindgren, Laura, Abraham D Flaxman, Marie Ng, Gillian M Hansen, Christopher JL Murray, and Ali H Mokdad. 2015. <span>“<span class="nocase">Drinking patterns in US counties from 2002 to 2012</span>.”</span> <em>American Journal of Public Health</em> 105 (6): 1120–27.
-</div>
-<div id="ref-follestad2003modelling" class="csl-entry">
-Follestad, Turid, and Håvard Rue. 2003. <span>“Modelling Spatial Variation in Disease Risk Using Gaussian Markov Random Field Proxies for Gaussian Random Fields.”</span> SIS-2003-305.
 </div>
 <div id="ref-freni2018note" class="csl-entry">
 Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue. 2018. <span>“A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 26: 25–34.
@@ -822,6 +830,9 @@ Kelsall, Julia, and Jonathan Wakefield. 2002. <span>“Modeling Spatial Variatio
 </div>
 <div id="ref-law2018variational" class="csl-entry">
 Law, Ho Chung, Dino Sejdinovic, Ewan Cameron, Tim Lucas, Seth Flaxman, Katherine Battle, and Kenji Fukumizu. 2018. <span>“Variational Learning on Aggregate Outputs with Gaussian Processes.”</span> <em>Advances in Neural Information Processing Systems</em> 31.
+</div>
+<div id="ref-lee2011comparison" class="csl-entry">
+Lee, Duncan. 2011. <span>“A Comparison of Conditional Autoregressive Models Used in Bayesian Disease Mapping.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 2 (2): 79–89.
 </div>
 <div id="ref-leroux2000estimation" class="csl-entry">
 Leroux, Brian G, Xingye Lei, and Norman Breslow. 2000. <span>“Estimation of Disease Rates in Small Areas: A New Mixed Model for Spatial Dependence.”</span> In <em>Statistical Models in Epidemiology, the Environment, and Clinical Trials</em>, 179–91. Springer.

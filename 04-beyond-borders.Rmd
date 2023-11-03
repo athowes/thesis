@@ -231,7 +231,7 @@ Here, the precision parameter $\tau_\phi$ is placed outside of the Gram matrix, 
 Most well-known spatial process models define the correlation structure between a pair of points using a kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$.
 A simple method to construct $K$ from $k$ is to average the kernel $k$ computed on some collection of points from within each area.
 
-### Centroid kernel
+### Centroid kernel {#centroid-kernel}
 
 The simplest approach is to use a single point such that $K(A_i, A_j) = k(p_i, p_j)$.
 A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.
@@ -244,7 +244,7 @@ The centroid kernel has been used in environmental epidemiology [@wakefield1999s
 A model comparison study [Section 3; @best2005comparison] simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
 That said, it is unsuprising that a stationary covariance would struggle to recover non-stationary structure.
 
-### Integrated kernel
+### Integrated kernel {#integrated-kernel}
 
 (ref:integration-strategy) Figure caption.
 
@@ -337,21 +337,29 @@ The data and modelling choices were designed with a spatial epidemiology setting
 |-------|---------------|
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{I}_n)$ |
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
-| IK    |               |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matern kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
 
 Table: (\#tab:simulation-models) The models used to create synthetic data.
 
-Synthetic data were simulated from three known data generating processes.
-Data $\y = (y_i)_{i \in [n]}$ were simulated from $y_i \sim \text{Bin}(m_i, \rho_i)$ where the probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \in \mathbb{R}$ via
+Data $\mathbf{y} = (y_i)_{i \in [n]}$ were simulated from a binomial likelihood $y_i \sim \text{Bin}(m_i, \rho_i)$.
+The probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \in \mathbb{R}$ via
 \begin{equation}
 \log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
 \end{equation}
+Spatial random effects were generated according to three different models (Table \@ref(tab:simulation-models)).
 Sample sizes were fixed as $m_i = 25$ for all $i \in [n]$, the intercept parameter as $\beta_0 = -2$ and the spatial random effect precision parameter as $\tau_\phi = 1$.
 
-Seven geometries were considered.
-These were the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph, and three more realistic geometries consisting of a $6 \times 6$ lattice grid, the 33 districts of Côte d'Ivoire and the 36 congressional districts of Texas.
-The realistic geometries were chosen to represent plausible variation over spatial regularity for the small-area estimation setting.
-For each spatial random effect and geometry 200 simulations were generated, resulting in 1400 total simulations.
+(ref:geometries) Figure caption.
+
+```{r geometries, fig.cap="(ref:geometries)"}
+knitr::include_graphics("figures/beyond-borders/geometries.png")
+```
+
+Seven geometries were considered (Figure \@ref(fig:geometries)).
+These include the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
+Three more realistic geometries chosen to represent plausible variation over spatial regularity for the small-area estimation setting were also considered.
+These were a $6 \times 6$ lattice grid, the 33 districts of Côte d'Ivoire and the 36 congressional districts of Texas.
+For each of the three spatial random effect models and seven geometries 200 simulations were generated, resulting in 4200 total synthetic data.
 
 ### Inferential models
 
@@ -376,4 +384,6 @@ A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting
 
 ## Discussion
 
-@follestad2003modelling
+Previous comparisons of spatial random effects such as @best2005comparison and @lee2011comparison used the DIC measure of model fit.
+Use of the DIC is not generally recommended.
+<!-- @follestad2003modelling -->

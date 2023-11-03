@@ -357,7 +357,26 @@ In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to prod
 
 ## Model comparison
 
-Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections.
+<!-- Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections. --> 
+
+The deviance information criterion [DIC; @spiegelhalter2002bayesian] is
+$$
+\begin{equation}
+  \text{DIC} = -2 \times \text{elpd}_\text{DIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}} \right).
+\end{equation}
+$$
+where $\hat{\boldsymbol{\mathbf{\phi}}}$ is a point estimate of the parameters, and the effective number of parameters is
+$$
+p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right)
+$$
+A weakness of the DIC is that it is based on a point estimate [@spiegelhalter2014deviance; @gelman2014understanding]
+
+The widely applicable information criterion [WAIC; @watanabe2013widely] improves upon the DIC by using the predictive density of the data and is given by
+$$
+\begin{equation}
+\text{WAIC} = -2 \times \text{elpd}_\text{WAIC} = -2 \times \left( \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC} \right),
+\end{equation}
+$$
 
 ## Survey methods {#survey}
 

@@ -672,7 +672,24 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 </div>
 <div id="model-comparison" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Model comparison<a href="bayes-st.html#model-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections.</p>
+<!-- Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections. -->
+<p>The deviance information criterion [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] is
+<span class="math display">\[
+\begin{equation}
+  \text{DIC} = -2 \times \text{elpd}_\text{DIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}} \right).
+\end{equation}
+\]</span>
+where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is a point estimate of the parameters, and the effective number of parameters is
+<span class="math display">\[
+p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right)
+\]</span>
+A weakness of the DIC is that it is based on a point estimate <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>; <a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span></p>
+<p>The widely applicable information criterion [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon the DIC by using the predictive density of the data and is given by
+<span class="math display">\[
+\begin{equation}
+\text{WAIC} = -2 \times \text{elpd}_\text{WAIC} = -2 \times \left( \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC} \right),
+\end{equation}
+\]</span></p>
 </div>
 <div id="survey" class="section level2 hasAnchor" number="3.5">
 <h2><span class="header-section-number">3.5</span> Survey methods<a href="bayes-st.html#survey" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -820,6 +837,9 @@ Gelman, Andrew. 2005. <span>“Analysis of Variance—Why It Is More Important T
 <div id="ref-gelman2013bayesian" class="csl-entry">
 Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B Rubin. 2013. <em>Bayesian Data Analysis</em>. CRC press.
 </div>
+<div id="ref-gelman2014understanding" class="csl-entry">
+Gelman, Andrew, Jessica Hwang, and Aki Vehtari. 2014. <span>“<span class="nocase">Understanding predictive information criteria for Bayesian models</span>.”</span> <em>Statistics and Computing</em> 24 (6): 997–1016.
+</div>
 <div id="ref-gelman2017prior" class="csl-entry">
 Gelman, Andrew, Daniel Simpson, and Michael Betancourt. 2017. <span>“The Prior Can Often Only Be Understood in the Context of the Likelihood.”</span> <em>Entropy</em> 19 (10): 555.
 </div>
@@ -895,6 +915,12 @@ Sisson, Scott A, Yanan Fan, and Mark Beaumont. 2018. <em>Handbook of Approximate
 <div id="ref-smith2015better" class="csl-entry">
 Smith, Nathaniel, and Stéfan van der Walt. 2015. <span>“<span class="nocase">A Better Default Colormap for Matplotlib</span>.”</span> In <em>Proceedings of the 14th Python in Science Conference (SciPy)</em>.
 </div>
+<div id="ref-spiegelhalter2002bayesian" class="csl-entry">
+Spiegelhalter, David J, Nicola G Best, Bradley P Carlin, and Angelika Van Der Linde. 2002. <span>“<span class="nocase">Bayesian measures of model complexity and fit</span>.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 64 (4): 583–639.
+</div>
+<div id="ref-spiegelhalter2014deviance" class="csl-entry">
+Spiegelhalter, David J, Nicola G Best, Bradley P Carlin, and Angelika Van der Linde. 2014. <span>“The Deviance Information Criterion: 12 Years On.”</span> <em>Journal of the Royal Statistical Society: Series B: Statistical Methodology</em>, 485–93.
+</div>
 <div id="ref-stringer2022fast" class="csl-entry">
 Stringer, Alex, Patrick Brown, and Jamie Stafford. 2022. <span>“Fast, Scalable Approximations to Posterior Distributions in Extended Latent Gaussian Models.”</span> <em>Journal of Computational and Graphical Statistics</em>, 1–15.
 </div>
@@ -903,6 +929,9 @@ Tobler, Waldo R. 1970. <span>“A Computer Movie Simulating Urban Growth in the 
 </div>
 <div id="ref-tokdar2010importance" class="csl-entry">
 Tokdar, Surya T, and Robert E Kass. 2010. <span>“Importance Sampling: A Review.”</span> <em>Wiley Interdisciplinary Reviews: Computational Statistics</em> 2 (1): 54–60.
+</div>
+<div id="ref-watanabe2013widely" class="csl-entry">
+Watanabe, Sumio. 2013. <span>“<span class="nocase">A widely applicable Bayesian information criterion</span>.”</span> <em>Journal of Machine Learning Research</em> 14 (Mar): 867–97.
 </div>
 <div id="ref-wood2017generalized" class="csl-entry">
 Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with r</em>. CRC press.
