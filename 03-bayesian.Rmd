@@ -357,7 +357,17 @@ In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to prod
 
 ## Model comparison
 
-<!-- Talk about: BF, AIC, BIC, WAIC, LOO, LOO-CV, connections. --> 
+### Information criteria
+
+Bayes factor
+\begin{equation}
+B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)}.
+\end{equation}
+
+The Akaike information criterion [AIC; @akaike1973information] is
+\begin{equation}
+  \text{AIC} = -2 \times \text{elpd}_\text{AIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{AIC}} \right).
+\end{equation}
 
 The deviance information criterion [DIC; @spiegelhalter2002bayesian] is
 \begin{equation}
@@ -374,29 +384,39 @@ The widely applicable information criterion [WAIC; @watanabe2013widely] improves
   \text{WAIC} = -2 \times \text{elpd}_\text{WAIC} = -2 \times \left( \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC} \right),
 \end{equation}
 
+Can be viewed as approximations to cross-validation.
+
+### Scoring rules
+
+Not just the log score.
+Other scoring rules.
+Proper SR.
+Strictly proper SR.
+
+The continuous ranked probability score [CRPS; @matheson1976scoring] generalises the Brier score [@brier1950verification] to distributional forecasts.
+
 ## Survey methods {#survey}
 
-Large national household surveys provide the highest quality population-level information about HIV indicators in SSA.
-Demographic and Health Surveys (DHS) are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
-Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every four to five years in high HIV burden countries.
+Large national household surveys (Section \@ref(hiv-data)) provide the high quality population-level information about HIV indicators in SSA.
+Two examples are the Demographic and Health Surveys [DHS; @measure2012sampling] and Population-based HIV Impact Assessment (PHIA) surveys.
+DHS are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries, and PHIA are funded by PEPFAR and run every four to five years in high HIV burden countries.
+Specific methods are required to analyse the data produced by these surveys.
 
 ### Survey notation and key terms
 
 Consider a population of individuals $i = 1, \ldots, N$ with outcomes of interest $y_i$.
-A census is a type of survey where all individuals are selected.
-Supposing responses from all individuals were recorded, then all population quantities can be calculated directly.
+It is usually too expensive or otherwise impractical to run a census, so only a subset of these individuals are sampled.
+Let $S_i$ be an indicator for whether or not individual $i$ is sampled.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
+Let $R_i$ be an indicator for whether or not $y_i$ is recorded.
+If $S_i = 0$ then $R_i = 0$, and if $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
+
+If a census were run, and all responses were recorded, then any population quantity could be directly calculated.
 For example, if $G_i = G(y_i)$ then the population mean of $G$ is
 \begin{equation}
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
 \end{equation}
-
-In practice, it is usually too expensive to run a census.
-Instead, only a subset of the individuals are sampled.
-Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
-Let $S_i$ be an indicator for whether or not individual $i$ is sampled, and $R_i$ be an indicator for whether or not $y_i$ is recorded.
-If $S_i = 0$ then $R_i = 0$.
-If $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
-The population mean may be estimated directly based on the recorded subset of the population by
+Instead, population quantities may be estimated based on the recorded subset of the population by
 \begin{equation}
 \bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
 \end{equation}
@@ -404,22 +424,27 @@ where $m_R = \sum_{i = 1}^N R_i$ is the recorded sample size.
 
 A probability sample refers to the case when individuals are selected to be included in the survey at random.
 In a non-probability sample, inclusion or exclusion from the survey is deterministic.
-A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal, so that $P(S_i = 1) = 1 / N$.
-The survey design is called complex when the sampling probabilities for each individual vary, such that $P(S_i = 1) = \pi_i$ with $\sum_{i = 1}^N \pi_i = 1$ and $\pi_i > 0$.
-
+A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal
+\begin{equation}
+P(S_i = 1) = \frac{1}{N}.
+\end{equation}
+A survey design is called complex when the sampling probabilities for each individual vary, such that
+\begin{equation}
+P(S_i = 1) = \pi_i,
+\end{equation}
+with $\sum_{i = 1}^N \pi_i = 1$ and $\pi_i > 0$.
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
-However, particular care is required in analysing data collected using complex survey designs.
-Under a complex design, not accounting for unequal sampling probabilities will result in bias.
-That said, even for a SRS, nonresponse can cause analogous bias.
+Care is required in analysing data collected using complex survey designs.
+Under a complex design, not accounting for unequal sampling probabilities will result in bias (that said, for a SRS, nonresponse can cause analogous bias).
 
 ### Survey design
 
 <!-- Add figure here to demonstrate sampling of DHS data -->
 
-The DHS [@measure2012sampling] employs a two-stage sampling procedure.
+The DHS employs a two-stage sampling procedure.
 In the first stage, ennumeration areas (EAs) from a recently conducted census are typically used as the primary sampling unit (PSU).
-The EAs are then stratified by region, as well as urban-rural.
-After appropriate sample sizes are determined, EAs sampled with probability proportional to size (PPS) measured 
+The EAs are then stratified by region, as well as by urban-rural status.
+After appropriate sample sizes are determined, EAs sampled with probability proportional to size (PPS). 
 In the second stage, the secondary sampling units (SSUs) are households.
 All households in the selected EAs are listed, before being sampled systematically.
 Finally, each selected household is visited, and all adults are interviewed.
