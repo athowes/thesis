@@ -542,8 +542,8 @@ This example is used as a demonstration of the benefit of a more generally appli
 
 ### Epilepsy GLMM {#epil}
 
-Consider a GLMM for an epilepsy drug double-blind clinical trial [@leppik1985double].
-The original GLMM of @thall1990some was modified by @breslow1993approximate and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; @spiegelhalter1996bugs] manual.
+@thall1990some considered a GLMM for an epilepsy drug double-blind clinical trial [@leppik1985double].
+This model was modified by @breslow1993approximate and widely disseminated as a part of the BUGS [Bayesian inference using Gibbs sampling; @spiegelhalter1996bugs] manual.
 
 Patients $i = 1, \ldots, 59$ were each assigned either a new drug $\texttt{Trt}_i = 1$ or a placebo $\texttt{Trt}_i = 0$.
 Each patient made four visits the clinic $j = 1, \ldots, 4$, and the observations $y_{ij}$ are the number of seizures of the $i$th person in the two weeks preceding their $j$th clinic visit (Figure \@ref(fig:epil)).
@@ -883,21 +883,48 @@ knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
 knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 ```
 
-### An example that `R-INLA` doesn't work for {#unknown}
+### Loa loa GLMM {#loaloa}
 
-An example of a model that `R-INLA` can't fit but INLA with `TMB` can.
-Demonstrate Laplace marginals making a difference to accuracy as compared with Gaussian marginals.
-The model structure was as follows.
-Inference was performed using:
+(ref:loa-loa-data) Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria.
 
-1. Gaussian marginals and EB with `TMB`
-2. Gaussian marginals and AGHQ with `TMB`
-3. Laplace marginals and EB with `TMB`
-4. Laplace marginals and AGHQ with `TMB`
-5. NUTS with `tmbstan`
+```{r loa-loa-data, fig.cap="(ref:loa-loa-data)"}
+knitr::include_graphics("figures/naomi-aghq/loa-loa-data.png")
+```
 
-These methods were implemented as in Section \@ref(epil).
-The results obtained were as follows.
+@diggle2016model considered a GLMM for the prevalence of the parasitic worm Loa loa.
+Observations were collected at $n = 190$ villages in Cameroon and Nigeria (Figure \@ref(fig:loa-loa-data)).
+Some areas are thought to be unsuitable for disease transmission.
+A zero-inflated binomial likelihood was used
+\begin{equation}
+y_i \sim
+ \begin{cases}
+    0, & \text{w.p. } 1 - \phi(s), \\
+    \text{Bin}(n_i, \rho(s_i)), & \text{w.p. } \phi(s). \\
+  \end{cases}
+  (\#eq:loaloa-likelihood)
+\end{equation}
+to account for the possibility of structural zeros via a suitability probability $\phi(s) \in [0, 1]$.
+The prevalence and suitability log-odds were modelled according to
+\begin{align}
+  \phi(s) &= \text{logit}^{-1} \left( \beta_\phi + u(s) \right), \\
+  \rho(s) &= \text{logit}^{-1} \left( \beta_\rho + v(s) \right),
+\end{align}
+where $\beta_\phi, \beta_\rho \sim p(\beta)$ are regression coefficients and $u(s), v(s)$ are independent spatial random fields.
+
+It is not possible to fit this model in `R-INLA` because of the zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)).
+Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler model without zero-inflation, which includes covariates.
+
+@bilodeau2022stochastic implemented the zero-inflated model in `TMB` and performed inference using Gaussian marginals and AGHQ via the `aghq` package.
+As well, @bilodeau2022stochastic ran NUTS via `tmbstan` but were not able to generate chains which convergened after days of running the sampler.
+This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)): the two approaches considered by @bilodeau2022stochastic and an approach using Laplace marginals.
+
+| Method         | Software      |
+|----------------|---------------|
+| Gaussian, AGHQ | `TMB` and `aghq` |
+| Laplace, AGHQ  | `TMB` and `aghq` |
+| NUTS           | `tmbstan`     |
+
+Table: (\#tab:loaloa-approaches) The inference methods and software considered.
 
 ## The Naomi model {#naomi}
 
