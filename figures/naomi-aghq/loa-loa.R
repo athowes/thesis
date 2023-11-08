@@ -139,7 +139,9 @@ nrow(covariance_samples)
 
 # Error in UnifyXT(x, y, z, T, grid = grid, distances = distances, dim = dim) : 
 #   is.numeric(x) is not TRUE
-# model="matrix", x="SpatVector"
+# 'matrix,SpatRaster'
+
+# Happens with no data so must be either model or x that is the issue!
 
 loaloa_v <- vect(loaloa_sf$geometry)
 values(loaloa_v) <- as.data.frame(v_samples)
