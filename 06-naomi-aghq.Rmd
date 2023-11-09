@@ -534,11 +534,12 @@ As this suggestion was made close to 15 years ago, it is surprising that its pot
 I demonstrate the universal implementation with two examples:
 
 1. Section \@ref(epil) considers a generalised linear mixed model (GLMM) of an epilepsy drug.
-This example was used in Section 5.2 of @rue2009approximate, and the model is compatible with `R-INLA`.
+The model was used in Section 5.2 of @rue2009approximate, and is compatible with `R-INLA`.
 For some parameters there is a notable difference in approximation error depending on use of Gaussian or Laplace marginals.
-This example is therefore used to demonstrate the correspondence between my Laplace marginal implementation, and that of `R-INLA` with `method` set to `"laplace"`.
-2. Section \@ref(unknown) considers a model which is not is not compatible with `R-INLA`.
-This example is used as a demonstration of the benefit of a more generally applicable INLA implementation.
+This example demonstrates the correspondence between the Laplace marginal implementation developed in `TMB`, and that of `R-INLA` with `method` set to `"laplace"`.
+2. Section \@ref(loaloa) considers an extended latent Gaussian model (ELGM) of a tropical parasitic infection.
+The model was used in Section 5.2 of @bilodeau2022stochastic, and is not compatible with `R-INLA`.
+This example demonstrates the benefit of a more widely applicable INLA implementation.
 
 ### Epilepsy GLMM {#epil}
 
@@ -883,40 +884,42 @@ knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
 knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 ```
 
-### Loa loa GLMM {#loaloa}
+### Loa loa ELGM {#loaloa}
 
-(ref:loa-loa-data) Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria.
+(ref:loa-loa-data) Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
 
 ```{r loa-loa-data, fig.cap="(ref:loa-loa-data)"}
 knitr::include_graphics("figures/naomi-aghq/loa-loa-data.png")
 ```
 
-@diggle2016model considered a GLMM for the prevalence of the parasitic worm Loa loa.
-Observations were collected at $n = 190$ villages in Cameroon and Nigeria (Figure \@ref(fig:loa-loa-data)).
-Some areas are thought to be unsuitable for disease transmission.
-A zero-inflated binomial likelihood was used
+@bilodeau2022stochastic considered a ELGM for the prevalence of the parasitic worm Loa loa.
+Case counts $y_i$ were obtained from field studies in $n = 190$ villages in Cameroon and Nigeria [@schluter2016using; Figure \@ref(fig:loa-loa-data)].
+Some areas are thought to be unsuitable for disease transmission, and as a result there are a high number of villages with zero prevalence. 
+Following @diggle2016model a zero-inflated binomial likelihood was used
 \begin{equation}
-y_i \sim
- \begin{cases}
-    0, & \text{w.p. } 1 - \phi(s), \\
-    \text{Bin}(n_i, \rho(s_i)), & \text{w.p. } \phi(s). \\
-  \end{cases}
-  (\#eq:loaloa-likelihood)
+p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) (\#eq:loaloa-likelihood)
 \end{equation}
 to account for the possibility of structural zeros via a suitability probability $\phi(s) \in [0, 1]$.
 The prevalence and suitability log-odds were modelled according to
 \begin{align}
-  \phi(s) &= \text{logit}^{-1} \left( \beta_\phi + u(s) \right), \\
-  \rho(s) &= \text{logit}^{-1} \left( \beta_\rho + v(s) \right),
+  \text{logit}[\phi(s)] &= \beta_\phi + u(s), \\
+  \text{logit}[\rho(s)] &= \beta_\rho + v(s).
 \end{align}
-where $\beta_\phi, \beta_\rho \sim p(\beta)$ are regression coefficients and $u(s), v(s)$ are independent spatial random fields.
+The regression coefficients $\beta_\phi, \beta_\rho$ were given $\mathcal{N}(0, 1000)$ prior distributions.
+Independent Gaussian processes $u(s), v(s)$ were specified with a shared Matern kernel.
+The hyperparameters $\theta = (\sigma, \rho)$ of the kernel were given penalised complexity [@simpson2017penalising; @fuglstad2019constructing] prior distributions with
+\begin{align}
+\mathbb{P}(\sigma < 4) &= 0.975, \\
+\mathbb{P}(\rho < 200\text{km}) &= 0.975.
+\end{align}
 
+The model was implemented by @bilodeau2022stochastic in `TMB`.
+Inference was performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
+The Markov chain diagnostics were poor, even after days of running the sampler.
+
+In this section inference is considered using three approaches (Table \@ref(tab:loaloa-approaches)): the two approaches considered by @bilodeau2022stochastic and an approach using Laplace marginals.
 It is not possible to fit this model in `R-INLA` because of the zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)).
 Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler model without zero-inflation, which includes covariates.
-
-@bilodeau2022stochastic implemented the zero-inflated model in `TMB` and performed inference using Gaussian marginals and AGHQ via the `aghq` package.
-As well, @bilodeau2022stochastic ran NUTS via `tmbstan` but were not able to generate chains which convergened after days of running the sampler.
-This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)): the two approaches considered by @bilodeau2022stochastic and an approach using Laplace marginals.
 
 | Method         | Software      |
 |----------------|---------------|

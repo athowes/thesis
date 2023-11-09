@@ -287,7 +287,7 @@ div.csl-indent {
 <li class="chapter" data-level="6.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#universal"><i class="fa fa-check"></i><b>6.2</b> A universal INLA implementation</a>
 <ul>
 <li class="chapter" data-level="6.2.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#epil"><i class="fa fa-check"></i><b>6.2.1</b> Epilepsy GLMM</a></li>
-<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#loaloa"><i class="fa fa-check"></i><b>6.2.2</b> Loa loa GLMM</a></li>
+<li class="chapter" data-level="6.2.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#loaloa"><i class="fa fa-check"></i><b>6.2.2</b> Loa loa ELGM</a></li>
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi"><i class="fa fa-check"></i><b>6.3</b> The Naomi model</a>
 <ul>
@@ -863,11 +863,12 @@ As this suggestion was made close to 15 years ago, it is surprising that its pot
 <p>I demonstrate the universal implementation with two examples:</p>
 <ol style="list-style-type: decimal">
 <li>Section <a href="naomi-aghq.html#epil">6.2.1</a> considers a generalised linear mixed model (GLMM) of an epilepsy drug.
-This example was used in Section 5.2 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, and the model is compatible with <code>R-INLA</code>.
+The model was used in Section 5.2 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, and is compatible with <code>R-INLA</code>.
 For some parameters there is a notable difference in approximation error depending on use of Gaussian or Laplace marginals.
-This example is therefore used to demonstrate the correspondence between my Laplace marginal implementation, and that of <code>R-INLA</code> with <code>method</code> set to <code>"laplace"</code>.</li>
-<li>Section <a href="#unknown"><strong>??</strong></a> considers a model which is not is not compatible with <code>R-INLA</code>.
-This example is used as a demonstration of the benefit of a more generally applicable INLA implementation.</li>
+This example demonstrates the correspondence between the Laplace marginal implementation developed in <code>TMB</code>, and that of <code>R-INLA</code> with <code>method</code> set to <code>"laplace"</code>.</li>
+<li>Section <a href="naomi-aghq.html#loaloa">6.2.2</a> considers an extended latent Gaussian model (ELGM) of a tropical parasitic infection.
+The model was used in Section 5.2 of <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>, and is not compatible with <code>R-INLA</code>.
+This example demonstrates the benefit of a more widely applicable INLA implementation.</li>
 </ol>
 <div id="epil" class="section level3 hasAnchor" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Epilepsy GLMM<a href="naomi-aghq.html#epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1190,38 +1191,40 @@ Figure 6.9: The amount of time taken (in seconds) to perform inference with each
 </div>
 </div>
 <div id="loaloa" class="section level3 hasAnchor" number="6.2.2">
-<h3><span class="header-section-number">6.2.2</span> Loa loa GLMM<a href="naomi-aghq.html#loaloa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<h3><span class="header-section-number">6.2.2</span> Loa loa ELGM<a href="naomi-aghq.html#loaloa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-data"></span>
-<img src="figures/naomi-aghq/loa-loa-data.png" alt="Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria." width="95%" />
+<img src="figures/naomi-aghq/loa-loa-data.png" alt="Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros." width="95%" />
 <p class="caption">
-Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria.
+Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
 </p>
 </div>
-<p><span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span> considered a GLMM for the prevalence of the parasitic worm Loa loa.
-Observations were collected at <span class="math inline">\(n = 190\)</span> villages in Cameroon and Nigeria (Figure <a href="naomi-aghq.html#fig:loa-loa-data">6.10</a>).
-Some areas are thought to be unsuitable for disease transmission.
-A zero-inflated binomial likelihood was used
+<p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> considered a ELGM for the prevalence of the parasitic worm Loa loa.
+Case counts <span class="math inline">\(y_i\)</span> were obtained from field studies in <span class="math inline">\(n = 190\)</span> villages in Cameroon and Nigeria [<span class="citation">Schlüter et al. (<a href="#ref-schluter2016using">2016</a>)</span>; Figure <a href="naomi-aghq.html#fig:loa-loa-data">6.10</a>].
+Some areas are thought to be unsuitable for disease transmission, and as a result there are a high number of villages with zero prevalence.
+Following <span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span> a zero-inflated binomial likelihood was used
 <span class="math display" id="eq:loaloa-likelihood">\[\begin{equation}
-y_i \sim
-\begin{cases}
-    0, &amp; \text{w.p. } 1 - \phi(s), \\
-    \text{Bin}(n_i, \rho(s_i)), &amp; \text{w.p. } \phi(s). \\
-  \end{cases}
-  \tag{6.19}
+p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) \tag{6.19}
 \end{equation}\]</span>
 to account for the possibility of structural zeros via a suitability probability <span class="math inline">\(\phi(s) \in [0, 1]\)</span>.
 The prevalence and suitability log-odds were modelled according to
 <span class="math display">\[\begin{align}
-  \phi(s) &amp;= \text{logit}^{-1} \left( \beta_\phi + u(s) \right), \\
-  \rho(s) &amp;= \text{logit}^{-1} \left( \beta_\rho + v(s) \right),
+  \text{logit}[\phi(s)] &amp;= \beta_\phi + u(s), \\
+  \text{logit}[\rho(s)] &amp;= \beta_\rho + v(s).
 \end{align}\]</span>
-where <span class="math inline">\(\beta_\phi, \beta_\rho \sim p(\beta)\)</span> are regression coefficients and <span class="math inline">\(u(s), v(s)\)</span> are independent spatial random fields.</p>
-<p>It is not possible to fit this model in <code>R-INLA</code> because of the zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>).
+The regression coefficients <span class="math inline">\(\beta_\phi, \beta_\rho\)</span> were given <span class="math inline">\(\mathcal{N}(0, 1000)\)</span> prior distributions.
+Independent Gaussian processes <span class="math inline">\(u(s), v(s)\)</span> were specified with a shared Matern kernel.
+The hyperparameters <span class="math inline">\(\theta = (\sigma, \rho)\)</span> of the kernel were given penalised complexity <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>; <a href="#ref-fuglstad2019constructing">Fuglstad et al. 2019</a>)</span> prior distributions with
+<span class="math display">\[\begin{align}
+\mathbb{P}(\sigma &lt; 4) &amp;= 0.975, \\
+\mathbb{P}(\rho &lt; 200\text{km}) &amp;= 0.975.
+\end{align}\]</span></p>
+<p>The model was implemented by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> in <code>TMB</code>.
+Inference was performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
+The Markov chain diagnostics were poor, even after days of running the sampler.</p>
+<p>In this section inference is considered using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>): the two approaches considered by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> and an approach using Laplace marginals.
+It is not possible to fit this model in <code>R-INLA</code> because of the zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>).
 Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler model without zero-inflation, which includes covariates.</p>
-<p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented the zero-inflated model in <code>TMB</code> and performed inference using Gaussian marginals and AGHQ via the <code>aghq</code> package.
-As well, <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> ran NUTS via <code>tmbstan</code> but were not able to generate chains which convergened after days of running the sampler.
-This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>): the two approaches considered by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> and an approach using Laplace marginals.</p>
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered.</caption>
 <thead>
@@ -1785,6 +1788,9 @@ Fattah, Esmail Abdul, Janet Van Niekerk, and Håvard Rue. 2021. <span>“Smart G
 <div id="ref-fournier2012ad" class="csl-entry">
 Fournier, David A, Hans J Skaug, Johnoel Ancheta, James Ianelli, Arni Magnusson, Mark N Maunder, Anders Nielsen, and John Sibert. 2012. <span>“AD Model Builder: Using Automatic Differentiation for Statistical Inference of Highly Parameterized Complex Nonlinear Models.”</span> <em>Optimization Methods and Software</em> 27 (2): 233–49.
 </div>
+<div id="ref-fuglstad2019constructing" class="csl-entry">
+Fuglstad, Geir-Arne, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2019. <span>“Constructing Priors That Penalize the Complexity of Gaussian Random Fields.”</span> <em>Journal of the American Statistical Association</em> 114 (525): 445–52.
+</div>
 <div id="ref-gaedke2023parallelized" class="csl-entry">
 Gaedke-Merzhäuser, Lisa, Janet van Niekerk, Olaf Schenk, and Håvard Rue. 2023. <span>“Parallelized Integrated Nested Laplace Approximations for Fast Bayesian Inference.”</span> <em>Statistics and Computing</em> 33 (1): 25.
 </div>
@@ -1877,6 +1883,9 @@ Rue, Håvard, Andrea Riebler, Sigrunn H Sørbye, Janine B Illian, Daniel P Simps
 </div>
 <div id="ref-schlather2015analysis" class="csl-entry">
 Schlather, Martin, Alexander Malinowski, Peter J Menck, Marco Oesting, and Kirstin Strokorb. 2015. <span>“Analysis, Simulation and Prediction of Multivariate Random Fields with Package RandomFields.”</span> <em>Journal of Statistical Software</em> 63: 1–25.
+</div>
+<div id="ref-schluter2016using" class="csl-entry">
+Schlüter, Daniela K, Martial L Ndeffo-Mbah, Innocent Takougang, Tony Ukety, Samuel Wanji, Alison P Galvani, and Peter J Diggle. 2016. <span>“Using Community-Level Prevalence of Loa Loa Infection to Predict the Proportion of Highly-Infected Individuals: Statistical Modelling to Support Lymphatic Filariasis and Onchocerciasis Elimination Programs.”</span> <em>PLoS Neglected Tropical Diseases</em> 10 (12): e0005157.
 </div>
 <div id="ref-shapley1953value" class="csl-entry">
 Shapley, Lloyd S et al. 1953. <span>“A Value for n-Person Games.”</span>

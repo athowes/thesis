@@ -3,6 +3,8 @@ library(geostatsp)
 library(aghq)
 library(tmbstan)
 library(stars)
+library(tidyverse)
+library(patchwork)
 
 data(loaloa, package = "geostatsp")
 loaloa <- terra::vect(loaloa)
@@ -90,23 +92,46 @@ cmr <- sf::st_read("figures/naomi-aghq/gadm41_CMR_2.json")
 nga <- sf::st_read("figures/naomi-aghq/gadm41_NGA_2.json")
 areas <- rbind(cmr, nga)
 
-loaloa_sf <- mutate(loaloa_sf, p = y / N)
+loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
 
 grid <- raster::raster(loaloa_sf, nrows = 30, ncols = 30)
 grid_stars <- stars::st_as_stars(grid)
 b <- gstat::krige(p ~ 1, loaloa_sf, grid_stars)
 b_sf <- st_as_sf(b)
 
-ggplot() +
+figA <- ggplot() +
   geom_sf(data = areas, col = "grey70") +
-  geom_sf(data = loaloa_sf, aes(col = p)) +
+  geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
   # geom_sf(data = b_sf, aes(fill = var1.pred)) +
   scale_color_viridis_c() +
+  scale_size(range = c(1, 4)) +
   theme_void() +
   lims(x = c(7.5, 16), y = c(3, 7)) +
-  labs(x = "", y = "", col = "")
+  labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero", tag = "A") +
+  guides(
+    col = guide_colourbar(order = 1),
+    shape = guide_legend(override.aes = list(size = 2.5, col = "grey20"), order = 2),
+    size = guide_legend(override.aes = list(shape = 16, col = "grey20"), order = 3)
+  ) +
+  theme(
+    legend.direction = "vertical", 
+    legend.box = "vertical",
+    legend.position = "right",
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7),
+    legend.key.width = unit(1, "line"),
+    legend.key.height = unit(1, "line")
+  )
 
-ggsave("figures/naomi-aghq/loa-loa-data.png", h = 4, w = 6.25)
+figB <- ggplot(loaloa_sf, aes(x = p)) +
+  geom_histogram(col = "grey60", fill = "grey80") +
+  labs(x = "", y = "", tag = "B") +
+  coord_fixed(ratio = 0.01) +
+  theme_minimal()
+
+figA / figB + plot_layout(heights = c(1.5, 1))
+
+ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
 
 aghq_samples <- sample_marginal(quad, 100)
 u_samples <- aghq_samples$samps[c(1:190), ]
