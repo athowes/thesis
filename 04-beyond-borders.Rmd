@@ -22,8 +22,8 @@ resource_version <- "temp"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a question that often occurs during model construction.
-Namely, should the model be expanded to capture a sensible, albeit hypothetical, feature of the data?
+The investigation was motivated by a question which often occurs during model construction.
+Namely, should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
 
 The hypothesised feature in this case pertains to the spatial correlation structure between areas.
 Modelling of spatial variation is particularly important for the small-area estimation of HIV.
@@ -160,7 +160,7 @@ where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ give
 When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
-### Concerns about the Besag model's spatial representation
+### Concerns about the Besag model
 
 The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
 Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
@@ -218,62 +218,124 @@ Suppose we fit a Besag model upon identical data using each of the two geometrie
 If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel B as compared with Panel A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of $\sigma^2_u$ applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
+### Weighted ICAR models
+
+The Besag model is a special case of a more general class of (zero-mean) weighted ICAR models.
+These models can be specified in terms of scaled weights $\{b_{ij}\}_{j \sim i}$ and a precision vector $\boldsymbol{\mathbf{\kappa}} = (\kappa_i)_{i \in [n]}$ such that
+\begin{equation}
+  u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left( \sum_{j: j \sim i} b_{ij} u_j, \frac{1}{\kappa_i \tau_u} \right). (\#eq:weighted-icar-fc)
+\end{equation}
+For the Besag model, then $b_{ij} = 1 / n_{\delta i}$ and $\kappa_i = n_{\delta i}$.
+The structure matrix $\mathbf{R}$ corresponding to the more general full conditionals in Equation \@ref(eq:weighted-icar-fc) is
+\begin{equation}
+  \mathbf{R} = \mathbf{D}_\kappa(\mathbf{I} - \mathbf{B}),
+\end{equation}
+where the unscaled weights matrix $\mathbf{B}$ has elements
+\begin{equation}
+  \mathbf{B}_{ij} =
+  \begin{cases}
+  b_{ij}, & \text{for } i \sim j, \\
+  0, & \text{for } i = j, i \nsim j.
+  \end{cases},
+\end{equation}
+and the matrix $\mathbf{D}_\kappa$ is given by $\text{diag}(\kappa_1, \ldots, \kappa_n)$.
+Ensuring that the structure matrix is symmetric requires that for all $i, j \in [n]$
+\begin{equation}
+b_{ij} \kappa_i = b_{ji} \kappa_j.
+\end{equation}
+To meet this condition, it can be simpler to directly consider symmetry of the unscaled weights matrix
+\begin{equation}
+  \mathbf{W} = \mathbf{D}_\kappa \mathbf{B},
+\end{equation}
+such that $\mathbf{R} = \mathbf{D}_\kappa - \mathbf{W}$.
+For the Besag model the unscaled weights matrix $\mathbf{W}$ corresponds to the adjacency matrix.
+Scaled weights can be recovered by $b_{ij} = w_{ij} / \kappa_i$ where $\kappa_i = \sum_{k: k \sim i} w_{ik}$.
+@duncan2017spatial provide discussion of methods for specifying $\mathbf{W}$, including
+\begin{align}
+w_{ij} &= \left( \frac{1}{d_{ij}} \right), \\
+w_{ij} &= \exp (-d_{ij}).
+\end{align}
+
 ## Models using kernels {#kernel-models}
 
 Section \@ref(adjacency-models) reviewed ways to construct spatial random effect precision matrices using an adjacency relation.
-An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas $K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}$, where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\mathcal{S})$ is the space of subsets of the study region.
-If $K$ is positive semi-definite, then define areal kernel spatial random effects by
+An alternate approach is to define the covariance matrix using an areal kernel function which gives a measure of similarity between two areas.
+Such a function may be specified as
 \begin{equation}
-    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), (\#eq:arealkernel)
+K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}, (\#eq:areal-kernel-function)
+\end{equation}
+where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\mathcal{S})$ is the space of subsets of the study region.
+If the function $K$ is positive semi-definite, then define areal kernel spatial random effects by
+\begin{equation}
+    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), (\#eq:areal-kernel-sre)
 \end{equation}
 where the $n \times n$ Gram matrix $\mathbf{K}$ with entries $K_{ij} = K(A_i, A_j)$ is a valid covariance matrix.
-Here, the precision parameter $\tau_\phi$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices.
-Most well-known spatial process models define the correlation structure between a pair of points using a kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$.
-A simple method to construct $K$ from $k$ is to average the kernel $k$ computed on some collection of points from within each area.
+The precision parameter $\tau_\phi$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices, but could be omitted.
+Areal kernels may be thought of as a type of kernels on sets [@gartner2002multi].
+
+It is challenging to think directly about the correlation structure between areas.
+Instead, most well-known spatial process models define the correlation structure between a points using a kernel function
+\begin{equation}
+k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}. (\#eq:kernel-function)
+\end{equation}
+A simple method, and the one considered here henceforth, is to construct $K$ (Equation \@ref(eq:areal-kernel-function)) from $k$ (Equation \@ref(eq:kernel-function)) by averaging the kernel $k$ computed on some collection of points representing each area.
 
 ### Centroid kernel {#centroid-kernel}
 
-The simplest approach is to use a single point such that $K(A_i, A_j) = k(p_i, p_j)$.
-A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude, which may be representative of the area.
-That said, it is not guaranteed for the centroid to lie within the area i.e. it is possible $c_i \notin A_i$.
-This results in the centroid kernel
+The simplest approach is to use a single point to represent each area such that
 \begin{equation}
-    K(A_i, A_j) = k(c_i, c_j).
+  K(A_i, A_j) = k(p_i, p_j).
 \end{equation}
-The centroid kernel has been used in environmental epidemiology [@wakefield1999spatial] and to model the reproduction number of COVID-19 [@teh2021efficient].
-A model comparison study [Section 3; @best2005comparison] simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
-That said, it is unsuprising that a stationary covariance would struggle to recover non-stationary structure.
+A natural choice is the centroid $p_i = c_i$, given by the arithmetic mean of the latitude and longitude.
+(Note that it is not guaranteed for the centroid to lie within the area i.e. it is possible $c_i \notin A_i$, and more generally points representing an area may not be contained by that area.)
+This choice results in the centroid kernel
+\begin{equation}
+    K(A_i, A_j) = k(c_i, c_j). (\#eq:ck)
+\end{equation}
+The centroid kernel has been used:
+
+* in environmental epidemiology [@wakefield1999spatial];
+* to model the reproduction number of COVID-19 [@teh2021efficient].
+
+In a model comparison study @best2005comparison (Section 3) simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
+That said, it no surprising that a stationary covariance function would struggle to recover non-stationary structure.
 
 ### Integrated kernel {#integrated-kernel}
 
-(ref:integration-strategy) Figure caption.
+Rather than choosing a single representative point, an alternative is to more completely represent the area by integrating the kernel over the areas of interest
+This results in the integrated kernel
+\begin{equation}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. (\#eq:ik1)
+\end{equation}
+Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
+
+This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition.
+In the machine learning literature, models of this kind have been studied in the  under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+
+#### Accounting for heterogeneity
+
+Additional information accounting for heterogeneity over $A_i$ may be incorporated into the integrated kernel.
+This can be accomplished using weighting distributions $\{w_i\}$ which represent an unequal contribution of each point to the similarity measure.
+The weighted integrated kernel is given by
+\begin{equation}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', (\#eq:ik2)
+\end{equation}
+This areal kernel may be useful in disease mapping.
+For example, areas with populations who live close to a shared border are likely to be more strongly correlated than areas whose populations live far apart.
+This detail could be accounted for by weighting according to a high resolution measure of population density.
+Though e.g. weighted centroids may also be used in Equation \@ref(eq:ck), accounting for heterogeneity over an area is more natural within the integrated kernel than the centroid kernel.
+
+#### Practical computation
+
+(ref:integration-strategy) Panel A centroids. Panel B randomly chosen points. Panel C hexagonal points. Panel D grid points.
 
 ```{r integration-strategy, fig.cap="(ref:integration-strategy)"}
 knitr::include_graphics("figures/beyond-borders/integration-strategy.png")
 ```
 
-Rather than choosing a single representative point, an alternative is to represent the whole area by integrating the kernel over the areas of interest.
-This results in the integrated kernel
-\begin{equation}
-  K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. (\#eq:ik1)
-\end{equation}
-This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition, and has been studied in the machine learning literature under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
-Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
-
-#### Accounting for heterogeneity
-
-Additional information accounting for heterogeneity over $A_i$ may be incorporated into the integrated kernel.
-This can be accomplished using weighting distributions $\{W_i\}$ which represent an unequal contribution of each point to the similarity measure, to give a weighted integrated kernel
-\begin{equation}
-  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', (\#eq:ik2)
-\end{equation}
-This may be useful in disease mapping, where we expect regions with populations who live close to their shared border to be more strongly correlated than regions whose populations live far apart, which could be accounted for by weighting according to a high resolution measure of population density.
-Analogously, weighted centroids could also be used in the centroid kernel.
-
-#### Computation
-
-Most of the time we do not expect to be able to calculate Equation \@ref(eq:ik2) analytically.
-Instead, given $n$ collections of $L_i$ samples $\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)$ drawn uniformly from each area then the integral may be approximated using Monte Carlo by the double sum
+Most of the time it is not possible to calculate Equation \@ref(eq:ik2) analytically.
+Instead, consider $n$ collections of $L_i$ samples $\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)$ drawn uniformly from each area.
+Then the integral may be approximated using Monte Carlo by the double sum
 \begin{equation}
   K(A_i, A_j) \approx \frac{1}{L_i L_j} \sum_{l = 1}^{L_i} \sum_{m = 1}^{L_j}
   w_i \left( s^{(i)}_l \right) w_j \left( s^{(j)}_m \right)
@@ -281,9 +343,17 @@ Instead, given $n$ collections of $L_i$ samples $\{s^{(i)}_l \}_{l = 1}^{L_i} \s
 \end{equation}
 Equivalently, samples drawn from $W_i$ may be used without weighting by $w_i(s)$.
 Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
-These approaches require $\mathcal{O}(\sum_{i = 1}^n \sum_{j = 1}^n L_i L_j)$ evaluations of the kernel $k$ to compute the $n \times n$ Gram matrix $K$.
-This imposes a significant computational cost if the Gram matrix is often recomputed during inference, as is the case in MCMC when any of the kernel hyperparameters are learnt, placing a limit on the number of samples or nodes it is feasible to use.
-@kelsall2002modeling make inference more feasible by using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.
+Figure \@ref(fig:integration-strategy) shows...
+
+These approaches require
+\begin{equation}
+\mathcal{O}(\sum_{i = 1}^n \sum_{j = 1}^n L_i L_j)
+\end{equation}
+evaluations of the kernel $k$ to compute the $n \times n$ Gram matrix $K$.
+This imposes a significant computational cost if the Gram matrix is often recomputed during inference.
+For example, during MCMC when the kernel has hyperparamters which are learnt then the Gram matrix is recomputed for each proposed set of hyperparameters.
+As such, there is a limit on the size of $L_i$ which it is feasible to use.
+@kelsall2002modeling encounter this challenge, and take the approach of using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.
 
 #### Mismatch to data generating process
 
@@ -322,11 +392,11 @@ Rather than focusing on the aggregate nature of areal observations as primarily 
 <!-- Disaggregation is challenging without auxiliary information. -->
 <!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. -->
 
-### The stochastic partial differential equation approximation
+<!-- ### The stochastic partial differential equation approximation -->
 
-This is a more computationally efficient way to implement integrated kernels.
+<!-- This is a more computationally efficient way to implement integrated kernels. -->
 
-## Simulation study
+## Simulation study {#simulation-study}
 
 This simulation study tests the ability of inferential models with varying spatial random effect specifications to accurately recover small-area quantities.
 The data and modelling choices were designed with a spatial epidemiology setting in mind.
@@ -349,7 +419,7 @@ The probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \
 Spatial random effects were generated according to three different models (Table \@ref(tab:simulation-models)).
 Sample sizes were fixed as $m_i = 25$ for all $i \in [n]$, the intercept parameter as $\beta_0 = -2$ and the spatial random effect precision parameter as $\tau_\phi = 1$.
 
-(ref:geometries) Figure caption.
+(ref:geometries) Seven geometries were considered in the synthetic data study. These were the four geometries from Figure \@ref(fig:maup1) shown in Panel A, B, C and D, and three more realistic geometries shown in Panel E, F and G.
 
 ```{r geometries, fig.cap="(ref:geometries)"}
 knitr::include_graphics("figures/beyond-borders/geometries.png")
@@ -358,7 +428,12 @@ knitr::include_graphics("figures/beyond-borders/geometries.png")
 Seven geometries were considered (Figure \@ref(fig:geometries)).
 These include the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
 Three more realistic geometries chosen to represent plausible variation over spatial regularity for the small-area estimation setting were also considered.
-These were a $6 \times 6$ lattice grid, the 33 districts of Côte d'Ivoire and the 36 congressional districts of Texas.
+These were:
+
+* a $6 \times 6$ lattice grid;
+* the 33 districts of Côte d'Ivoire;
+* the 36 congressional districts of Texas.
+
 For each of the three spatial random effect models and seven geometries 200 simulations were generated, resulting in 4200 total synthetic data.
 
 ### Inferential models
@@ -369,8 +444,8 @@ For each of the three spatial random effect models and seven geometries 200 simu
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{I}_n)$ |
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
-| FCK   |               |
-| CK    |               |
+| FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
+| CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
 | FIK   |               |
 | IK    |               |
 
@@ -381,16 +456,21 @@ Apart from the spatial random effect specification, each inferential model was t
 
 #### Kernels
 
-Gram matrices were computed using the Matérn kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$ [@stein1999interpolation].
-This kernel is given by
+Gram matrices were computed using the Matérn kernel $k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}$ [@stein1999interpolation] given by
 \begin{equation}
 k(s, s') =
 \frac{1}{2^{\nu - 1}\Gamma(\nu)} \left(\frac{\sqrt{2\nu}\lvert s - s' \rvert}{l}\right)^\nu
-B_\nu\left(\frac{\sqrt{2\nu}\lvert s - s' \rvert}{l}\right), (\#eq:matern)
+B_\nu\left(\frac{\sqrt{2\nu}\lvert s - s' \rvert}{l}\right). (\#eq:matern)
 \end{equation}
-where $B_\nu$ is the modified Bessel function of the second kind, $|s - s'|$ is the Euclidean distance between $s$ and $s'$, $\nu$ is the smoothness hyperparameter and $l$ is the length-scale hyperparameter on the latitude-longitude scale.
+In Equation \@ref(eq:matern):
+
+* $B_\nu$ is the modified Bessel function of the second kind;
+* $|s - s'|$ is the Euclidean distance between the point locations $s$ and $s'$;
+* $\nu$ is the smoothness hyperparameter;
+* $l$ is the length-scale hyperparameter on the latitude-longitude scale.
+
 The smoothness parameter $\nu$ is difficult to identify from data and so was fixed at $3/2$.
-This value matches that used to simulate data, and simplifies Equation \@ref(eq:matern) to
+This value matches that used to simulate data, and simplifies Equation \@ref(eq:matern) as follows
 \begin{equation}
 k(s, s') = \left(1 + \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right).
 \end{equation}
@@ -410,21 +490,35 @@ Approximate Bayesian inference was conducted using adaptive Gauss-Hermite quadra
 Models were implemented using a Template Model Builder C++ template for the log-posterior via the `TMB` R package [@kristensen2016tmb].
 Appendix \@ref(aghq-nuts) compares approximate inference results to those obtained using the No-U-Turn Sampling (NUTS) Hamiltonian Monte Carlo (HMC) algorithm run using `Stan` [@carpenter2017stan] via the `tmbstan` package [@monnahan2018no].
 
-### Model comparison
+### Model assessment
+
+Models were first assessed using the continuous ranked probability score [CRPS; @matheson1976scoring], a strictly proper scoring rule [SPSR; @gneiting2007strictly].
+Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \mathbf{y})$ with cumulative distribution function $F$.
+If the true value of $\phi$ used in the simulation was $\omega$ then the CRPS is
+\begin{equation}
+\text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi.
+\end{equation}
 
 ### Results
 
-## HIV prevalence study
+## HIV prevalence study {#hiv-study}
 
-Model performance was compared in estimating HIV prevalence $\rho_i \in [0, 1]$ in adults aged $15-49$ across four countries in sub-Saharan Africa: Côte d'Ivoire ($n = 33$), Malawi ($n = 28$), Tanzania ($n = 159$) and Zimbabwe ($n = 60$).
-As before, the spatial random effect specification included in the model was varied.
+Model performance was compared in estimating HIV prevalence $\rho_i \in [0, 1]$ in adults aged $15-49$ across four countries in sub-Saharan Africa.
+These were:
+
+* Côte d'Ivoire ($n = 33$);
+* Malawi ($n = 28$);
+* Tanzania ($n = 159$);
+* Zimbabwe ($n = 60$).
 
 ### Household survey data
 
-Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey for each country was used.
+Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used for each country.
 Sampling weights $w_{ij} = 1 / \pi_{ij}$ were used to account for complex survey design.
 
 ### Inferential models
+
+Like in Section \@ref(simulation-study), the spatial random effect specification included in the model was varied according to Table \@ref(tab:inferential-models).
 
 ### Model comparison
 
