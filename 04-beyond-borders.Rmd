@@ -520,10 +520,13 @@ Appendix \@ref(aghq-nuts) compares approximate inference results to those obtain
 
 ### Model assessment
 
-Models were assessed using the continuous ranked probability score [CRPS; @matheson1976scoring].
+Models were assessed using two methods:
+
+* the continuous ranked probability score [CRPS; @matheson1976scoring];
+* their calibration.
+
 The CRPS is a strictly proper scoring rule [SPSR; @gneiting2007strictly] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
 Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.
-
 Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \mathbf{y})$ with cumulative distribution function $F$.
 If the true value of $\phi$ used in the simulation was $\omega$ then the CRPS is
 \begin{equation}
@@ -534,17 +537,23 @@ Let $\phi_s$ be samples $s \in [S]$ from $f$, then the CRPS may be estimated by
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. (\#eq:crps-approx)
 \end{equation}
 
-Additionally, models were assessed according to their calibration.
-A posterior marginal can be said to be calibrated if over repeated simulations, $F(\omega) = q \sim \mathcal{U}[0, 1]$.
+A posterior marginal is calibrated if over repeated simulations
+\begin{equation}
+F(\omega) = q \sim \mathcal{U}[0, 1].
+\end{equation}
+In other words, if the quantile of the true value is uniform within the posterior marginal.
 It follows that at any given nominal coverage $1 - \alpha$, the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
-Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power; @sailynoja2022graphical].
+Uniformity was assessed using:
+
+* probability integral transform (PIT) histograms [@dawid1984present];
+* empirical cumulative distribution function (ECDF) difference plots [@aldor2013power; @sailynoja2022graphical].
 
 ### Results
 
 ## HIV prevalence study {#hiv-study}
 
-Model performance was compared in estimating HIV prevalence $\rho_i \in [0, 1]$ in adults aged $15-49$ across four countries in sub-Saharan Africa.
-These were:
+Model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 across four countries in sub-Saharan Africa.
+These included countries were:
 
 * Côte d'Ivoire ($n = 33$);
 * Malawi ($n = 28$);
@@ -554,13 +563,23 @@ These were:
 ### Household survey data
 
 Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used for each country.
-Sampling weights $w_{ij} = 1 / \pi_{ij}$ were used to account for complex survey design.
+Sampling weights
+\begin{equation}
+w_{ij} = \frac{1}{\pi_{ij}}
+\end{equation}
+were used to account for the complex survey design.
 
 ### Inferential models
 
-Like in Section \@ref(simulation-study), the spatial random effect specification included in the model was varied according to Table \@ref(tab:inferential-models).
+The spatial random effect specification included in the model varied according to Table \@ref(tab:inferential-models).
 
 ### Model comparison
+
+(ref:cv) In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data.
+
+```{r cv, fig.cap="(ref:cv)"}
+knitr::include_graphics("figures/beyond-borders/cv.png")
+```
 
 ### Results
 

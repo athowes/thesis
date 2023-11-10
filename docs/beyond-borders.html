@@ -916,10 +916,14 @@ Appendix <a href="models-for-spatial-structure.html#aghq-nuts">A.1</a> compares 
 </div>
 <div id="model-assessment" class="section level3 hasAnchor" number="4.3.3">
 <h3><span class="header-section-number">4.3.3</span> Model assessment<a href="beyond-borders.html#model-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Models were assessed using the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>].
-The CRPS is a strictly proper scoring rule [SPSR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
-Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.</p>
-<p>Let the parameter <span class="math inline">\(\phi\)</span> have posterior marginal <span class="math inline">\(f(\phi) = p(\phi \, | \, \mathbf{y})\)</span> with cumulative distribution function <span class="math inline">\(F\)</span>.
+<p>Models were assessed using two methods:</p>
+<ul>
+<li>the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>];</li>
+<li>their calibration.</li>
+</ul>
+<p>The CRPS is a strictly proper scoring rule [SPSR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
+Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.
+Let the parameter <span class="math inline">\(\phi\)</span> have posterior marginal <span class="math inline">\(f(\phi) = p(\phi \, | \, \mathbf{y})\)</span> with cumulative distribution function <span class="math inline">\(F\)</span>.
 If the true value of <span class="math inline">\(\phi\)</span> used in the simulation was <span class="math inline">\(\omega\)</span> then the CRPS is
 <span class="math display" id="eq:crps">\[\begin{equation}
 \text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi. \tag{4.15}
@@ -928,10 +932,17 @@ Let <span class="math inline">\(\phi_s\)</span> be samples <span class="math inl
 <span class="math display" id="eq:crps-approx">\[\begin{equation}
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. \tag{4.16}
 \end{equation}\]</span></p>
-<p>Additionally, models were assessed according to their calibration.
-A posterior marginal can be said to be calibrated if over repeated simulations, <span class="math inline">\(F(\omega) = q \sim \mathcal{U}[0, 1]\)</span>.
+<p>A posterior marginal is calibrated if over repeated simulations
+<span class="math display">\[\begin{equation}
+F(\omega) = q \sim \mathcal{U}[0, 1].
+\end{equation}\]</span>
+In other words, if the quantile of the true value is uniform within the posterior marginal.
 It follows that at any given nominal coverage <span class="math inline">\(1 - \alpha\)</span>, the proportion of quantile-based credible intervals containing <span class="math inline">\(\omega\)</span> is also <span class="math inline">\(1 - \alpha\)</span>.
-Uniformity was assessed using probability integral transform (PIT) histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span> and empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power"><strong>aldor2013power?</strong></a>; <a href="#ref-sailynoja2022graphical"><strong>sailynoja2022graphical?</strong></a>)</span>.</p>
+Uniformity was assessed using:</p>
+<ul>
+<li>probability integral transform (PIT) histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span>;</li>
+<li>empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power">Aldor-Noiman et al. 2013</a>; <a href="#ref-sailynoja2022graphical">Säilynoja, Bürkner, and Vehtari 2022</a>)</span>.</li>
+</ul>
 </div>
 <div id="results" class="section level3 hasAnchor" number="4.3.4">
 <h3><span class="header-section-number">4.3.4</span> Results<a href="beyond-borders.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -939,8 +950,8 @@ Uniformity was assessed using probability integral transform (PIT) histograms <s
 </div>
 <div id="hiv-study" class="section level2 hasAnchor" number="4.4">
 <h2><span class="header-section-number">4.4</span> HIV prevalence study<a href="beyond-borders.html#hiv-study" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Model performance was compared in estimating HIV prevalence <span class="math inline">\(\rho_i \in [0, 1]\)</span> in adults aged <span class="math inline">\(15-49\)</span> across four countries in sub-Saharan Africa.
-These were:</p>
+<p>Model performance was compared in estimating district-level HIV prevalence <span class="math inline">\(\rho_i \in [0, 1]\)</span> in adults aged 15-49 across four countries in sub-Saharan Africa.
+These included countries were:</p>
 <ul>
 <li>Côte d’Ivoire (<span class="math inline">\(n = 33\)</span>);</li>
 <li>Malawi (<span class="math inline">\(n = 28\)</span>);</li>
@@ -950,14 +961,25 @@ These were:</p>
 <div id="household-survey-data" class="section level3 hasAnchor" number="4.4.1">
 <h3><span class="header-section-number">4.4.1</span> Household survey data<a href="beyond-borders.html#household-survey-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used for each country.
-Sampling weights <span class="math inline">\(w_{ij} = 1 / \pi_{ij}\)</span> were used to account for complex survey design.</p>
+Sampling weights
+<span class="math display">\[\begin{equation}
+w_{ij} = \frac{1}{\pi_{ij}}
+\end{equation}\]</span>
+were used to account for the complex survey design.</p>
 </div>
 <div id="inferential-models-1" class="section level3 hasAnchor" number="4.4.2">
 <h3><span class="header-section-number">4.4.2</span> Inferential models<a href="beyond-borders.html#inferential-models-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Like in Section <a href="beyond-borders.html#simulation-study">4.3</a>, the spatial random effect specification included in the model was varied according to Table <a href="beyond-borders.html#tab:inferential-models">4.2</a>.</p>
+<p>The spatial random effect specification included in the model varied according to Table <a href="beyond-borders.html#tab:inferential-models">4.2</a>.</p>
 </div>
 <div id="model-comparison-1" class="section level3 hasAnchor" number="4.4.3">
 <h3><span class="header-section-number">4.4.3</span> Model comparison<a href="beyond-borders.html#model-comparison-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:cv"></span>
+<img src="figures/beyond-borders/cv.png" alt="In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data." width="95%" />
+<p class="caption">
+Figure 4.7: In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data.
+</p>
+</div>
 </div>
 <div id="results-1" class="section level3 hasAnchor" number="4.4.4">
 <h3><span class="header-section-number">4.4.4</span> Results<a href="beyond-borders.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -974,6 +996,9 @@ Related work to discuss includes <span class="citation">Follestad and Rue (<a hr
 </div>
 <h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-aldor2013power" class="csl-entry">
+Aldor-Noiman, Sivan, Lawrence D Brown, Andreas Buja, Wolfgang Rolke, and Robert A Stine. 2013. <span>“The Power to See: A New Graphical Test of Normality.”</span> <em>The American Statistician</em> 67 (4): 249–60.
+</div>
 <div id="ref-besag1991bayesian" class="csl-entry">
 Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
 </div>
@@ -1081,6 +1106,9 @@ Pebesma, Edzer. 2018. <span>“<span class="nocase">Simple Features for R: Stand
 </div>
 <div id="ref-rue2005gaussian" class="csl-entry">
 Rue, Havard, and Leonhard Held. 2005. <em><span class="nocase">Gaussian Markov random fields: theory and applications</span></em>. CRC press.
+</div>
+<div id="ref-sailynoja2022graphical" class="csl-entry">
+———. 2022. <span>“Graphical Test for Discrete Uniformity and Its Applications in Goodness-of-Fit Evaluation and Multiple Sample Comparison.”</span> <em>Statistics and Computing</em> 32 (2): 32.
 </div>
 <div id="ref-saracco2010modeling" class="csl-entry">
 Saracco, James F, J Andrew Royle, David F DeSante, and Beth Gardner. 2010. <span>“Modeling Spatial Variation in Avian Survival and Residency Probabilities.”</span> <em>Ecology</em> 91 (7): 1885–91.
