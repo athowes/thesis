@@ -221,9 +221,9 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="4.1.1" data-path="beyond-borders.html"><a href="beyond-borders.html#besag"><i class="fa fa-check"></i><b>4.1.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.1.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.1.2</b> Best practises for the Besag model</a></li>
-<li class="chapter" data-level="4.1.3" data-path="beyond-borders.html"><a href="beyond-borders.html#bym2"><i class="fa fa-check"></i><b>4.1.3</b> The reparameterised Besag-York-Mollié model</a></li>
-<li class="chapter" data-level="4.1.4" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns-about-the-besag-model"><i class="fa fa-check"></i><b>4.1.4</b> Concerns about the Besag model</a></li>
-<li class="chapter" data-level="4.1.5" data-path="beyond-borders.html"><a href="beyond-borders.html#weighted-icar-models"><i class="fa fa-check"></i><b>4.1.5</b> Weighted ICAR models</a></li>
+<li class="chapter" data-level="4.1.3" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns"><i class="fa fa-check"></i><b>4.1.3</b> Concerns about the Besag model</a></li>
+<li class="chapter" data-level="4.1.4" data-path="beyond-borders.html"><a href="beyond-borders.html#weighted-icar-models"><i class="fa fa-check"></i><b>4.1.4</b> Weighted ICAR models</a></li>
+<li class="chapter" data-level="4.1.5" data-path="beyond-borders.html"><a href="beyond-borders.html#bym2"><i class="fa fa-check"></i><b>4.1.5</b> The reparameterised Besag-York-Mollié model</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#kernel-models"><i class="fa fa-check"></i><b>4.2</b> Models using kernels</a>
 <ul>
@@ -1200,31 +1200,34 @@ Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon
 </p>
 </div>
 <p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> considered a ELGM for the prevalence of the parasitic worm Loa loa.
-Case counts <span class="math inline">\(y_i\)</span> were obtained from field studies in <span class="math inline">\(n = 190\)</span> villages in Cameroon and Nigeria [<span class="citation">Schlüter et al. (<a href="#ref-schluter2016using">2016</a>)</span>; Figure <a href="naomi-aghq.html#fig:loa-loa-data">6.10</a>].
-Some areas are thought to be unsuitable for disease transmission, and as a result there are a high number of villages with zero prevalence.
+Counts of cases <span class="math inline">\(y_i \in \mathbb{N}^{+}\)</span> from a sample of size <span class="math inline">\(n_i \in \mathbb{N}^{+}\)</span> were obtained from field studies in <span class="math inline">\(n = 190\)</span> villages in Cameroon and Nigeria [<span class="citation">Schlüter et al. (<a href="#ref-schluter2016using">2016</a>)</span>; Figure <a href="naomi-aghq.html#fig:loa-loa-data">6.10</a>].
+Some areas are thought to be unsuitable for disease transmission, and there are relatively high number of villages with zero prevalence.
 Following <span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span> a zero-inflated binomial likelihood was used
 <span class="math display" id="eq:loaloa-likelihood">\[\begin{equation}
 p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) \tag{6.19}
 \end{equation}\]</span>
-to account for the possibility of structural zeros via a suitability probability <span class="math inline">\(\phi(s) \in [0, 1]\)</span>.
-The prevalence and suitability log-odds were modelled according to
+to account for the possibility of structural zeros via a suitability probability <span class="math inline">\(\phi(s_i) \in [0, 1]\)</span>, where <span class="math inline">\(s_i \in \mathbb{R}^2\)</span> is the village location and <span class="math inline">\(\rho(s_i) \in [0, 1]\)</span> is the disease prevalence.
+The prevalence and suitability were modelled jointly according to
 <span class="math display">\[\begin{align}
   \text{logit}[\phi(s)] &amp;= \beta_\phi + u(s), \\
   \text{logit}[\rho(s)] &amp;= \beta_\rho + v(s).
 \end{align}\]</span>
-The regression coefficients <span class="math inline">\(\beta_\phi, \beta_\rho\)</span> were given <span class="math inline">\(\mathcal{N}(0, 1000)\)</span> prior distributions.
-Independent Gaussian processes <span class="math inline">\(u(s), v(s)\)</span> were specified with a shared Matern kernel.
-The hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\sigma, \rho)\)</span> of the kernel were given penalised complexity <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>; <a href="#ref-fuglstad2019constructing">Fuglstad et al. 2019</a>)</span> prior distributions with
+The regression coefficients were given diffuse Gaussian prior distributions
+<span class="math display">\[\begin{equation}
+\beta_\phi, \beta_\rho \sim \mathcal{N}(0, 1000).
+\end{equation}\]</span>
+Independent Gaussian processes <span class="math inline">\(u(s)\)</span> and <span class="math inline">\(v(s)\)</span> were specified by a Matérn kernel <span class="citation">(<a href="#ref-stein1999interpolation">Stein 1999</a>)</span> with shared hyperparameters.
+Gamma penalised complexity <span class="citation">(<a href="#ref-simpson2017penalising">Simpson et al. 2017</a>; <a href="#ref-fuglstad2019constructing">Fuglstad et al. 2019</a>)</span> prior distributions were used for the standard deviation <span class="math inline">\(\sigma\)</span> and range <span class="math inline">\(\rho\)</span> hyperparameters such that <span class="citation">(<a href="#ref-brown2015model">Brown 2015</a>)</span>
 <span class="math display">\[\begin{align}
 \mathbb{P}(\sigma &lt; 4) &amp;= 0.975, \\
 \mathbb{P}(\rho &lt; 200\text{km}) &amp;= 0.975.
 \end{align}\]</span></p>
-<p>The model was implemented by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> in <code>TMB</code>.
+<p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented this model in <code>TMB</code>.
 Inference was performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
-The Markov chain diagnostics were poor, even after days of running the sampler.</p>
-<p>In this section inference is considered using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>): the two approaches considered by <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> and an approach using Laplace marginals.
-It is not possible to fit this model in <code>R-INLA</code> because of the zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>).
-Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler model without zero-inflation, which includes covariates.</p>
+After days of running the sampler, the Markov chain diagnostics were poor.</p>
+<p>This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>).
+The zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>) is not compatible with <code>R-INLA</code>, so only approaches based on the more flexible <code>TMB</code> template were included.
+Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.</p>
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered.</caption>
 <thead>
@@ -1260,7 +1263,7 @@ The nowcasting and temporal projection components of the complete model are omit
 However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
 Some features of the simplified model are left to more exhaustive description in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>.
-After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is not an extended latent Gaussian model [ELGM; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>] rather than a latent Gaussian model [LGM; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>].</p>
+After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span> rather than an LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>.</p>
 <div id="naomi-model" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Naomi synthesises data from three different sources to estimate HIV indicators at a district-level, by age and sex.
@@ -1898,6 +1901,9 @@ Skaug, Hans J. 2009. <span>“<span class="nocase">Discussion of "Approximate Ba
 </div>
 <div id="ref-spiegelhalter1996bugs" class="csl-entry">
 Spiegelhalter, David, Andrew Thomas, Nicky Best, and Wally Gilks. 1996. <span>“BUGS 0.5 Examples.”</span> <em>MRC Biostatistics Unit, Institute of Public Health, Cambridge, UK</em> 256.
+</div>
+<div id="ref-stein1999interpolation" class="csl-entry">
+Stein, Michael L. 1999. <span>“Interpolation of Spatial Data: Some Theory for Kriging.”</span>
 </div>
 <div id="ref-stringer2021implementing" class="csl-entry">
 ———. 2021b. <span>“Implementing Approximate Bayesian Inference Using Adaptive Quadrature: The Aghq Package.”</span> <em>arXiv Preprint arXiv:2101.04468</em>.

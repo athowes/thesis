@@ -22,14 +22,13 @@ resource_version <- "temp"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a question which often occurs during model construction.
-Namely, should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
+The investigation was motivated by a question which often occurs during model construction: should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
 
-The hypothesised feature in this case pertains to the spatial correlation structure between areas.
+In this case, the feature in question pertains to the spatial correlation structure between areas.
 Modelling of spatial variation is particularly important for the small-area estimation of HIV.
 This is because the covariates which are most strongly associated with HIV are difficult to measure.
 Examples include sexual risk behaviour.
-As a result, in previous small-area models of HIV have found including including covariates to only result in a modest improvement in predictive performance [Supplementary Figure 20, @dwyer2019mapping].
+As a result, in previous small-area models of HIV have found including covariates to only result in a modest improvement in predictive performance [Supplementary Figure 20, @dwyer2019mapping].
 The lack of predictive covariates foregrounds the role of modelling spatial variation.
 For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less pertinent [@weiss2015re].
 
@@ -41,7 +40,7 @@ Perhaps the simplest GMRF model is that of @besag1991bayesian in which informati
 The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented.
 It has been widely used, including:
 
-* to model bird population dynamics from capute-recapture data [@saracco2010modeling];
+* to model bird population dynamics from capture-recapture data [@saracco2010modeling];
 * for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian];
 * to model alcohol use patterns [@dwyer2015drinking].
 
@@ -60,7 +59,7 @@ Adjacency is typically defined by a shared border, though other choices are poss
 
 ### The Besag model {#besag}
 
-(ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph structure $\mathcal{G}$, with nodes positioned in alignment with the district that they correspond to.
+(ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph $\mathcal{G}$ with vertices positioned in alignment with the area that they correspond to, and edges between adjacent areas.
 
 ```{r geometry-graph, fig.cap="(ref:geometry-graph)"}
 knitr::include_graphics("figures/beyond-borders/geometry-graph.png")
@@ -88,7 +87,7 @@ The matrix $\mathbf{R}^{-}$ is the generalised inverse of the rank-deficient str
 The Markov property arises due to the conditional independence structure $p(u_i \, | \, \mathbf{u}_{-i}) = p(u_i \, | \, \mathbf{u}_{\delta i})$ whereby each area only depends on its neighbours.
 This is reflected in the sparsity of $\mathbf{R}$ such that $u_i \perp u_j \, | \, \mathbf{u}_{-ij}$ if and only if $R_{ij} = 0$.
 The structure matrix $\mathbf{R}$ may also be expressed as the Laplacian matrix of the adjacency graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ with vertices $v \in \mathcal{V}$ corresponding to each area and edges $e \in \mathcal{E}$ between vertices $i$ and $j$ when $i \sim j$.
-Figure \@ref(fig:geometry-graph) shows the adjacency graph for the districts of Zimbabwe.
+Figure \@ref(fig:geometry-graph) shows the districts of Zimbabwe with corresponding adjacency graph.
 
 Rewriting Equation \@ref(eq:gmrf), the probability density function of $\mathbf{u}$ is
 \begin{equation}
@@ -105,96 +104,88 @@ If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can b
 @freni2018note recommended three best practices:
 
 1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance equal to one.
-The generalised variance is defined by the geometric mean of the diagonal elements of its generalised inverse
+The generalised variance of a matrix is defined by the geometric mean of the diagonal elements of its generalised inverse.
+For the structure matrix that is
 \begin{equation}
     \sigma^2_{\text{GV}}(\mathbf{R}) = \prod_{i = 1}^n (\mathbf{R}^-_{ii})^{1/n} = \exp \left( \frac{1}{n} \sum_{i = 1}^n \log (R^-_{ii}) \right).
 \end{equation}
-The structure matrix $\mathbf{R}$ may be replaced by
+The scaled structure matrix $\mathbf{R}^\star$ is given by
 \begin{equation}
 \mathbf{R}^\star = \mathbf{R} / \sigma^2_{\text{GV}}(\mathbf{R}).
 \end{equation}
 As the diagonal elements $R^-_{ii}$ correspond to marginal variances, the generalised variance gives a measure of the average marginal variance.
-This measure, introduced by @sorbye2014scaling, ignores off-diagonal entries and more broadly any measure of typical variance could be used.
-Scaling mitigates the influence of the adjacency graph on the variance of $\mathbf{u}$.
-Allowing the variance to be controlled by $\tau_u$ alone is important as it allows for consistent, interpretable prior selection.
+This measure, introduced by @sorbye2014scaling, ignores off-diagonal entries.
+More broadly, other measures of typical variance could be used.
 
-    When the adjacency graph is disconnected it is not appropriate to scale the structure matrix $\mathbf{R}$ uniformly for the reason that given the precision $\tau_u$, local smoothing operates on each connected component independently.
-    As such, each connected component should be scaled independently to have generalised variance one giving
+    Scaling mitigates the influence of the adjacency graph on the variance of $\mathbf{u}$.
+    For consistent and interpretable prior distribution selection, it is important to allow the variance to be controlled by $\tau_u$ alone.
+
+    When the adjacency graph is disconnected it is not appropriate to scale the structure matrix $\mathbf{R}$ uniformly.
+    This is because, given the precision $\tau_u$, local smoothing operates on each connected component independently.
+    As such, each connected component $I = I_1, \ldots, I_{n_c}$ should be scaled independently to have generalised variance one
     \begin{equation}
       \mathbf{R}^\star_I = \mathbf{R}_I / \sigma^2_{\text{GV}}(\mathbf{R}_I)
     \end{equation}
     where $\mathbf{R}_I$ is the sub-matrix of the structure matrix corresponding to index set $I$.
 
-2. When one of the connected components is a single area (known either as a singleton or an island) the probability density
+2. When one of the connected components is a single area, known either as a singleton or an island, the probability density
 \begin{equation}
-  p(u_i) \propto  \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right)
+  p(u_i) \propto  \exp \left( -\frac{\tau_u}{2} \sum_{i \sim j} (u_i - u_j)^2 \right) \propto 1
 \end{equation}
 has no dependence on $u_i$.
-This is equivalent to using an improper prior $p(u_i) \propto 1$.
-To avoid this, each singleton can be set to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, 1)$.
+This is equivalent to using an improper prior.
+To avoid this, each singleton should be set to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, 1)$.
 
 3. To avoid confounding of the spatial random effects with the intercept, it is recommended to place a sum-to-zero constraint on each non-singleton connected component.
 In other words,
 \begin{equation}
   \sum_{i \in I} u_i = 0, \quad |I| > 1.
 \end{equation}
+As such, in total the number of sum-to-zero constraints equals to the number of non-singleton connected components.
 
-### The reparameterised Besag-York-Mollié model {#bym2}
+### Concerns about the Besag model {#concerns}
 
-Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
-The Besag-York-Mollié (BYM) model of @besag1991bayesian accounts for this in a natural way by decomposing the spatial random effect $\mathbf{u} = \mathbf{v} + \mathbf{w}$ into a sum of an unstructured IID component $\mathbf{v}$ and a spatially structured Besag component $\mathbf{w}$, each of which with their own respective precision parameters $\tau_v$ and $\tau_w$.
-The resulting distribution is
-\begin{equation}
-  \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) (\#eq:bym).
-\end{equation}
-Including both $\mathbf{v}$ and $\mathbf{w}$ is intended to enable the model to learn the relative extent of the unstructured and structured components via $\tau_v$ and $\tau_w$.
-However, in this specification scaling of the Besag precision matrix $\mathbf{Q}$ is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
-In particular, placing a joint prior $(\tau_v, \tau_w) \sim p(\tau_v, \tau_w)$ which doesn't privilege either component is more easily accomplished if $\mathbf{Q}$ and $\mathbf{I}$ have the same scale.
-Additionally, supposing we have a prior belief that the over-dispersion is primarily IID and $\mathbf{v}$ accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief using $p(\tau_v, \tau_w)$, without inadvertently altering the prior about the overall variation.
-This highlights identifiability issues of the parameters $(\tau_v, \tau_w)$ resulting from them not being orthogonal.
-Building on the models of @leroux2000estimation and @dean2001detecting which tackle this identifiability problem, but do not scale the spatially structured noise, @simpson2017penalising propose a reparameterisation $(\tau_v, \tau_w) \mapsto (\tau_u, \phi)$ of the BYM model known as the BYM2 model and given by
-\begin{align}
-  \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), (\#eq:bym2)
-\end{align}
-where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ gives the proportion of the marginal variance explained by each component, and $\mathbf{w}^\star$ is a scaled version of $\mathbf{w}$ with precision matrix given by the scaled structure matrix $\mathbf{R}^\star$.
-When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
-To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
+The Besag model was originally proposed by @besag1991bayesian for use in image analysis.
+In this setting, areas correspond to pixels arranged in a regular lattice structure.
+Since then, it has seen wider use.
+In some situations, like small-area estimation of HIV, the spatial structure is less regular than a lattice.
+This raises a number of concerns about the Besag model's applicability to this broader setting.
+The discussion in this section is closely linked to:
 
-### Concerns about the Besag model
+* the modifiable areal unit problem [@openshow1979million], whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation;
+* the challenge of ecological inference and the ecological fallacy [@wakefield2010aggregation].
 
-The Besag model was originally proposed for use in image analysis, where areas correspond to pixels arranged in a regular lattice structure.
-Since then, it has seen wider use, including in situations, like small-area estimation of HIV, where the spatial structure is less regular.
-As such, I have a number of concerns about the model's applicability to this broader setting.
-This discussion is closely linked to the modifiable areal unit problem [@openshow1979million], whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, as well as the challenge of ecological inference and the ecological fallacy [@wakefield2010aggregation].
+#### Compression to adjacency 
 
-#### Adjacency compression
-
-(ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph.
+(ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometries would have the same distribution under the Besag model.
 
 ```{r maup1, fig.cap="(ref:maup1)"}
 knitr::include_graphics("figures/beyond-borders/maup1.png")
 ```
 
-Summarising a geometry by an adjacency graph represents a loss of information.
-Many geometries share the same adjacency graph, and are as such isomorphic identical under the Besag model (Figure \@ref(fig:maup1)).
-This is not in itself a problem, but does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
-The regularity of realistic geometries may help to constrain each class to be similar.
-In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.
+A fundamental objection is that summarising a geometry by an adjacency graph represents a loss of information.
+Many geometries share the same adjacency graph, and as such are isomorphic under the Besag model (Figure \@ref(fig:maup1)).
+Though not in itself a problem, this fact does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
 
 Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
 In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
 On the other hand, the regions of a country, determined by political and geographic forces, tend to display greater irregularity.
 The appropriateness of adjacency compression therefore varies by the type of geometry common to the application setting.
 
+The regularity of realistic geometries may help to constrain each class to be similar.
+In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.
+
 #### Mean structure
 
 In the Besag model is all adjacent areas count equally.
-This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbours.
-Figure \@ref(fig:maup1) illustrates a number of heuristic features for neighbour importance, including length of shared border (Panel C), and the proximity of centers of mass (Panel D).
+This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbouring areas.
+Figure \@ref(fig:maup1) illustrates a number of heuristic features for neighbour importance.
+In Panel C, the area with a longer shared border would be expected to be more highly correlated.
+In Pancel D, the area with a closer centre of mass would be expected to be more highly correlated.
 
 #### Variance structure
 
-(ref:maup2) A sequence of geometries where the number of neighbours of area one grows by one at each iteration.
+(ref:maup2) A sequence of geometries where the number of neighbours of area one grows by one at each iteration, as the shaded area is split into more areas. In the limit, the precision of the spatial random effect in the first area tends to infinity. This is not reasonable behaviour if the amount of information being shared is not also increasing.
 
 ```{r maup2, fig.cap="(ref:maup2)"}
 knitr::include_graphics("figures/beyond-borders/maup2.png")
@@ -214,18 +205,19 @@ On the other hand, in public health and epidemiology, drawing boundaries to crea
 knitr::include_graphics("figures/beyond-borders/maup3.png")
 ```
 
-Suppose we fit a Besag model upon identical data using each of the two geometries in Figure \@ref(fig:maup3).
+As a second example of undesirable behaviour, suppose we fit a Besag model upon identical data using each of the two geometries in Figure \@ref(fig:maup3).
 If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel B as compared with Panel A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of $\sigma^2_u$ applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
 ### Weighted ICAR models
 
 The Besag model is a special case of a more general class of (zero-mean) weighted ICAR models.
-These models can be specified in terms of scaled weights $\{b_{ij}\}_{j \sim i}$ and a precision vector $\boldsymbol{\mathbf{\kappa}} = (\kappa_i)_{i \in [n]}$ such that
+These models can be specified in terms of scaled weights $\{b_{ij}\}_{j \sim i}$ and a precision vector $\boldsymbol{\mathbf{\kappa}} = (\kappa_i)_{i \in [n]}$.
+The full conditionals are then
 \begin{equation}
   u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left( \sum_{j: j \sim i} b_{ij} u_j, \frac{1}{\kappa_i \tau_u} \right). (\#eq:weighted-icar-fc)
 \end{equation}
-For the Besag model, then $b_{ij} = 1 / n_{\delta i}$ and $\kappa_i = n_{\delta i}$.
+Setting $b_{ij} = 1 / n_{\delta i}$ and $\kappa_i = n_{\delta i}$ recovers the Besag model in Equation \@ref(eq:besag).
 The structure matrix $\mathbf{R}$ corresponding to the more general full conditionals in Equation \@ref(eq:weighted-icar-fc) is
 \begin{equation}
   \mathbf{R} = \mathbf{D}_\kappa(\mathbf{I} - \mathbf{B}),
@@ -241,7 +233,7 @@ where the unscaled weights matrix $\mathbf{B}$ has elements
 and the matrix $\mathbf{D}_\kappa$ is given by $\text{diag}(\kappa_1, \ldots, \kappa_n)$.
 Ensuring that the structure matrix is symmetric requires that for all $i, j \in [n]$
 \begin{equation}
-b_{ij} \kappa_i = b_{ji} \kappa_j.
+- b_{ij} \kappa_i = - b_{ji} \kappa_j.
 \end{equation}
 To meet this condition, it can be simpler to directly consider symmetry of the unscaled weights matrix
 \begin{equation}
@@ -255,6 +247,44 @@ Scaled weights can be recovered by $b_{ij} = w_{ij} / \kappa_i$ where $\kappa_i 
 w_{ij} &= \left( \frac{1}{d_{ij}} \right), \\
 w_{ij} &= \exp (-d_{ij}).
 \end{align}
+Weighted ICAR models appear to overcome some of the limitations discussed in Section \@ref(concerns).
+
+### The reparameterised Besag-York-Mollié model {#bym2}
+
+Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
+The Besag-York-Mollié (BYM) model of @besag1991bayesian accounts for this in a natural way by decomposing the spatial random effect $\mathbf{u} = \mathbf{v} + \mathbf{w}$ into a sum of an unstructured IID component $\mathbf{v}$ and a spatially structured Besag component $\mathbf{w}$.
+Each component has its own respective precision parameter $\tau_v$ and $\tau_w$.
+The resulting distribution is
+\begin{equation}
+  \mathbf{u} \sim \mathcal{N}(0, \tau_v^{-1} \mathbf{I} + \tau_w^{-1} \mathbf{R}^{-}) (\#eq:bym).
+\end{equation}
+Including both $\mathbf{v}$ and $\mathbf{w}$ is intended to enable the model to learn the relative extent of the unstructured and structured components via $\tau_v$ and $\tau_w$.
+
+However, in the BYM model, scaling of the Besag precision matrix $\mathbf{Q}$ is not taken into account despite this issue being particularly pertinent when dealing with multiple sources of noise.
+In particular, placing a joint prior distribution
+\begin{equation}
+(\tau_v, \tau_w) \sim p(\tau_v, \tau_w)
+\end{equation}
+which does not privilege either component is more easily accomplished if $\mathbf{Q}$ and $\mathbf{I}$ have the same scale.
+Additionally, supposing one has a prior belief that the over-dispersion is primarily IID and $\mathbf{v}$ accounts for the majority of the dispersion, then it is not immediately obvious how to represent this belief, without inadvertently altering the prior distribution on the amount of overall variation.
+This highlights identifiability issues of the parameters $(\tau_v, \tau_w)$ resulting from them being non-orthogonal.
+
+Building on the models of @leroux2000estimation and @dean2001detecting which tackle this identifiability problem, but do not scale the spatially structured noise, @simpson2017penalising propose a reparameterisation $(\tau_v, \tau_w) \mapsto (\tau_u, \phi)$ of the BYM model.
+This is known as the BYM2 model and given by
+\begin{align}
+  \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), (\#eq:bym2)
+\end{align}
+where:
+
+* $\tau_u$ is the marginal precision of $\mathbf{u}$;
+* $\phi \in [0, 1]$ gives the proportion of the marginal variance explained by each component;
+* $\mathbf{w}^\star$ is a scaled version of $\mathbf{w}$ with precision matrix given by the scaled structure matrix $\mathbf{R}^\star$.
+
+When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
+To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
+
+Although the BYM and BYM2 models were originally proposed using the Besag model as spatially structured component, this need not be the case.
+Indeed, more broadly it is reasonable to consider convolution random effects with any model for spatially structured noise.
 
 ## Models using kernels {#kernel-models}
 
@@ -310,7 +340,8 @@ This results in the integrated kernel
 Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
 
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition.
-In the machine learning literature, models of this kind have been studied in the  under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+Examples of use of this model in statistical practise are rare.
 
 #### Accounting for heterogeneity
 
@@ -327,7 +358,7 @@ Though e.g. weighted centroids may also be used in Equation \@ref(eq:ck), accoun
 
 #### Practical computation
 
-(ref:integration-strategy) Panel A centroids. Panel B randomly chosen points. Panel C hexagonal points. Panel D grid points.
+(ref:integration-strategy) The $n = 28$ districts of Malawi. Panel A shows the centroids as in Section \@ref(centroid-kernel). Panel B shows $L_i = 10$ randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the `sf::st_sample` function [@pebesma2018sf].
 
 ```{r integration-strategy, fig.cap="(ref:integration-strategy)"}
 knitr::include_graphics("figures/beyond-borders/integration-strategy.png")
@@ -351,18 +382,9 @@ These approaches require
 \end{equation}
 evaluations of the kernel $k$ to compute the $n \times n$ Gram matrix $K$.
 This imposes a significant computational cost if the Gram matrix is often recomputed during inference.
-For example, during MCMC when the kernel has hyperparamters which are learnt then the Gram matrix is recomputed for each proposed set of hyperparameters.
+For example, during MCMC when the kernel has hyperparameters which are learnt then the Gram matrix is recomputed for each proposed set of hyperparameters.
 As such, there is a limit on the size of $L_i$ which it is feasible to use.
 @kelsall2002modeling encounter this challenge, and take the approach of using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.
-
-#### Mismatch to data generating process
-
-Aggregation via the integrated kernel occurs at the level of the latent field rather than at the level of the data.
-<!-- This corresponds to a generative model of the form $y_i \sim p(y_i \, | \,  g^{-1}(x_i))$, with $x_i = |A_i|^{-1}\int_{A_i} x(s) \text{d} s$. -->
-If the link function $g$ is the identity or linear then aggregation at the level of the latent field is equivalent to aggregation at the level of the data.
-On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
-<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
-<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
 
 #### Log-Gaussian Cox processes
 
@@ -382,19 +404,25 @@ with covariance structure
 \end{equation}
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.
 
-<!-- Discuss Gary's paper here? [@konstantinoudis2020discrete] -->
-
 #### Disaggregation regression
 
 Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as primarily a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @nandi2023disaggregation].
-<!-- Accurate point-level estimates are close to being a necessary intermediate goal towards obtaining accurate area-level estimates. -->
-<!-- Disaggregation is challenging without auxiliary information. -->
-<!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. -->
+Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @nandi2023disaggregation].
+These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
+However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.
 
 <!-- ### The stochastic partial differential equation approximation -->
 
 <!-- This is a more computationally efficient way to implement integrated kernels. -->
+
+#### Possible mismatch to data generating process
+
+Aggregation via the integrated kernel occurs at the level of the latent field.
+However, most of the time we expect aggregation to occur at the level of the data.
+If the link function $g$ is the identity or linear then the two are equivalent.
+On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
+<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
+<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
 
 ## Simulation study {#simulation-study}
 
@@ -407,7 +435,7 @@ The data and modelling choices were designed with a spatial epidemiology setting
 |-------|---------------|
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{I}_n)$ |
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matern kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matérn kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
 
 Table: (\#tab:simulation-models) The models used to create synthetic data.
 
@@ -492,12 +520,24 @@ Appendix \@ref(aghq-nuts) compares approximate inference results to those obtain
 
 ### Model assessment
 
-Models were first assessed using the continuous ranked probability score [CRPS; @matheson1976scoring], a strictly proper scoring rule [SPSR; @gneiting2007strictly].
+Models were assessed using the continuous ranked probability score [CRPS; @matheson1976scoring].
+The CRPS is a strictly proper scoring rule [SPSR; @gneiting2007strictly] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
+Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.
+
 Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \mathbf{y})$ with cumulative distribution function $F$.
 If the true value of $\phi$ used in the simulation was $\omega$ then the CRPS is
 \begin{equation}
-\text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi.
+\text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi. (\#eq:crps)
 \end{equation}
+Let $\phi_s$ be samples $s \in [S]$ from $f$, then the CRPS may be estimated by
+\begin{equation}
+\text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. (\#eq:crps-approx)
+\end{equation}
+
+Additionally, models were assessed according to their calibration.
+A posterior marginal can be said to be calibrated if over repeated simulations, $F(\omega) = q \sim \mathcal{U}[0, 1]$.
+It follows that at any given nominal coverage $1 - \alpha$, the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
+Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power; @sailynoja2022graphical].
 
 ### Results
 
@@ -529,3 +569,4 @@ Like in Section \@ref(simulation-study), the spatial random effect specification
 Previous comparisons of spatial random effects such as @best2005comparison and @lee2011comparison used the DIC measure of model fit.
 Use of the DIC is not generally recommended.
 Related work to discuss includes @follestad2003modelling, @konstantinoudis2020discrete.
+<!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. -->

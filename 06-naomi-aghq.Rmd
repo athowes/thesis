@@ -893,33 +893,36 @@ knitr::include_graphics("figures/naomi-aghq/loa-loa-data.png")
 ```
 
 @bilodeau2022stochastic considered a ELGM for the prevalence of the parasitic worm Loa loa.
-Case counts $y_i$ were obtained from field studies in $n = 190$ villages in Cameroon and Nigeria [@schluter2016using; Figure \@ref(fig:loa-loa-data)].
-Some areas are thought to be unsuitable for disease transmission, and as a result there are a high number of villages with zero prevalence. 
+Counts of cases $y_i \in \mathbb{N}^{+}$ from a sample of size $n_i \in \mathbb{N}^{+}$ were obtained from field studies in $n = 190$ villages in Cameroon and Nigeria [@schluter2016using; Figure \@ref(fig:loa-loa-data)].
+Some areas are thought to be unsuitable for disease transmission, and there are relatively high number of villages with zero prevalence. 
 Following @diggle2016model a zero-inflated binomial likelihood was used
 \begin{equation}
 p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) (\#eq:loaloa-likelihood)
 \end{equation}
-to account for the possibility of structural zeros via a suitability probability $\phi(s) \in [0, 1]$.
-The prevalence and suitability log-odds were modelled according to
+to account for the possibility of structural zeros via a suitability probability $\phi(s_i) \in [0, 1]$, where $s_i \in \mathbb{R}^2$ is the village location and $\rho(s_i) \in [0, 1]$ is the disease prevalence.
+The prevalence and suitability were modelled jointly according to
 \begin{align}
   \text{logit}[\phi(s)] &= \beta_\phi + u(s), \\
   \text{logit}[\rho(s)] &= \beta_\rho + v(s).
 \end{align}
-The regression coefficients $\beta_\phi, \beta_\rho$ were given $\mathcal{N}(0, 1000)$ prior distributions.
-Independent Gaussian processes $u(s), v(s)$ were specified with a shared Matern kernel.
-The hyperparameters $\boldsymbol{\mathbf{\theta}} = (\sigma, \rho)$ of the kernel were given penalised complexity [@simpson2017penalising; @fuglstad2019constructing] prior distributions with
+The regression coefficients were given diffuse Gaussian prior distributions
+\begin{equation}
+\beta_\phi, \beta_\rho \sim \mathcal{N}(0, 1000).
+\end{equation}
+Independent Gaussian processes $u(s)$ and $v(s)$ were specified by a Matérn kernel [@stein1999interpolation] with shared hyperparameters.
+Gamma penalised complexity [@simpson2017penalising; @fuglstad2019constructing] prior distributions were used for the standard deviation $\sigma$ and range $\rho$ hyperparameters such that [@brown2015model]
 \begin{align}
 \mathbb{P}(\sigma < 4) &= 0.975, \\
 \mathbb{P}(\rho < 200\text{km}) &= 0.975.
 \end{align}
 
-The model was implemented by @bilodeau2022stochastic in `TMB`.
+@bilodeau2022stochastic implemented this model in `TMB`.
 Inference was performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
-The Markov chain diagnostics were poor, even after days of running the sampler.
+After days of running the sampler, the Markov chain diagnostics were poor.
 
-In this section inference is considered using three approaches (Table \@ref(tab:loaloa-approaches)): the two approaches considered by @bilodeau2022stochastic and an approach using Laplace marginals.
-It is not possible to fit this model in `R-INLA` because of the zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)).
-Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler model without zero-inflation, which includes covariates.
+This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)).
+The zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)) is not compatible with `R-INLA`, so only approaches based on the more flexible `TMB` template were included. 
+Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler LGM model which includes covariates.
 
 | Method         | Software      |
 |----------------|---------------|
@@ -940,7 +943,7 @@ The nowcasting and temporal projection components of the complete model are omit
 However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are very likely transferable to the complete model.
 Some features of the simplified model are left to more exhaustive description in Appendix \@ref(naomi-math).
-After outlining the model, Section \@ref(naomi-elgm) explains why it is not an extended latent Gaussian model [ELGM; @stringer2022fast] rather than a latent Gaussian model [LGM; @rue2009approximate].
+After outlining the model, Section \@ref(naomi-elgm) explains why it is an ELGM [@stringer2022fast] rather than an LGM [@rue2009approximate].
 
 ### Model structure {#naomi-model}
 

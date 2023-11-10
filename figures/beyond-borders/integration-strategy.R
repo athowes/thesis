@@ -7,6 +7,8 @@ set.seed(2)
 sf <- sf::st_read("figures/beyond-borders/mwi_areas.geojson")
 sf <- filter(sf, area_level == 3)
 
+nrow(sf)
+
 plot_samples <- function(samples, tag){
   ggplot(sf) +
     geom_sf(fill = "#E6E6E6") +
