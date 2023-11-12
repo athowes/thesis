@@ -50,7 +50,7 @@ The administrative divisions of a country used in small-area estimation are one 
 This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
 In doing so, it offers practical recommendations for modelling areal spatial structure.
 The results are presented in @howes2023beyond.
-Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders).
+Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders), and supported by the `arealutils` R package [@howes2023arealutils].
 
 ## Models based on adjacency {#adjacency-models}
  
@@ -474,10 +474,10 @@ For each of the three spatial random effect models and seven geometries 200 simu
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
 | FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
 | CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
-| FIK   |               |
-| IK    |               |
+| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
 
-Table: (\#tab:inferential-models) The models used for inference.
+Table: (\#tab:inferential-models) The models used for inference. Each model is implemented in the `arealutils` package.
 
 Eight inferential models were fit to the synthetic data (Table \@ref(tab:inferential-models)).
 Apart from the spatial random effect specification, each inferential model was the same as the simulation model.
