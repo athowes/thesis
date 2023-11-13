@@ -42,6 +42,7 @@ It has been widely used, including:
 
 * to model bird population dynamics from capture-recapture data [@saracco2010modeling];
 * for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian];
+* to map mortality from cancers [@rashid2023inequalities];
 * to model alcohol use patterns [@dwyer2015drinking].
 
 The Besag model was designed for use in image analysis, on a regular grid.
@@ -335,7 +336,7 @@ This results in the integrated kernel
 Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
 
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition.
-In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@flaxman2015supported; @law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
 Examples of use of this model in statistical practise are rare.
 
 #### Accounting for heterogeneity
@@ -402,7 +403,7 @@ corresponding to an areal integrated kernel with a logarithmic link function and
 #### Connection to disaggregation regression
 
 Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @nandi2023disaggregation].
+Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @arambepola2022simulation; @nandi2023disaggregation]
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.
 
@@ -610,6 +611,8 @@ However, most of the time we expect aggregation to occur at the level of the dat
 If the link function $g$ is the identity or linear then the two are equivalent.
 On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
 * Discussion of the overall area versus point question. Papers of Sam using point level.
+* @li2012spatial and @li2012lgcp
+* Discussion of non-stationarity [@paciorek2006spatial]
 
 <!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
 <!-- Explain under what circumstances we believe this approximation to be acceptable. -->

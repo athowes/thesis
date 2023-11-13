@@ -397,6 +397,7 @@ It has been widely used, including:</p>
 <ul>
 <li>to model bird population dynamics from capture-recapture data <span class="citation">(<a href="#ref-saracco2010modeling">Saracco et al. 2010</a>)</span>;</li>
 <li>for the analysis of magnetic resonance images <span class="citation">(<a href="#ref-gossl2001bayesian">Gössl, Auer, and Fahrmeir 2001</a>; <a href="#ref-schmid2006bayesian">Schmid et al. 2006</a>)</span>;</li>
+<li>to map mortality from cancers <span class="citation">(<a href="#ref-rashid2023inequalities">Rashid et al. 2023</a>)</span>;</li>
 <li>to model alcohol use patterns <span class="citation">(<a href="#ref-dwyer2015drinking">Dwyer-Lindgren et al. 2015</a>)</span>.</li>
 </ul>
 <p>The Besag model was designed for use in image analysis, on a regular grid.
@@ -409,7 +410,7 @@ Code for the analysis in this chapter is available from <a href="https://github.
 <div id="adjacency-models" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Models based on adjacency<a href="beyond-borders.html#adjacency-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section discusses spatial random effect models based on an symmetric adjacency relation <span class="math inline">\(i \sim j\)</span> between areas <span class="math inline">\(A_i\)</span> and <span class="math inline">\(A_j\)</span>.
-Adjacency is typically defined by a shared border, though other choices are possible <span class="citation">(<a href="#ref-paciorek2013spatial">Paciorek et al. 2013</a>)</span>.</p>
+Adjacency is typically defined by a shared border, though other choices are possible <span class="citation">(<a href="#ref-paciorek2013spatial">Christopher J. Paciorek et al. 2013</a>)</span>.</p>
 <div id="besag" class="section level3 hasAnchor" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> The Besag model<a href="beyond-borders.html#besag" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
@@ -681,7 +682,7 @@ This results in the integrated kernel
 \end{equation}\]</span>
 Unlike for the centroid kernel where <span class="math inline">\(K_{ii} = 1\)</span> for all <span class="math inline">\(i\)</span>, the marginal variance of the <span class="math inline">\(i\)</span>th spatial random effect <span class="math inline">\(K_{ii} = K(A_i, A_i)\)</span> varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.</p>
 <p>This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel <span class="math inline">\(k\)</span> over the areal partition.
-In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-law2018variational">Law et al. 2018</a>; <a href="#ref-tanaka2019spatially">Tanaka et al. 2019</a>; <a href="#ref-yousefi2019multi">Yousefi, Smith, and Alvarez 2019</a>; <a href="#ref-hamelijnck2019multi">Hamelijnck et al. 2019</a>)</span>.
+In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-flaxman2015supported">Flaxman, Wang, and Smola 2015</a>; <a href="#ref-law2018variational">Law et al. 2018</a>; <a href="#ref-tanaka2019spatially">Tanaka et al. 2019</a>; <a href="#ref-yousefi2019multi">Yousefi, Smith, and Alvarez 2019</a>; <a href="#ref-hamelijnck2019multi">Hamelijnck et al. 2019</a>)</span>.
 Examples of use of this model in statistical practise are rare.</p>
 <div id="accounting-for-heterogeneity" class="section level4 hasAnchor" number="4.2.2.1">
 <h4><span class="header-section-number">4.2.2.1</span> Accounting for heterogeneity<a href="beyond-borders.html#accounting-for-heterogeneity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -747,7 +748,7 @@ corresponding to an areal integrated kernel with a logarithmic link function and
 <div id="connection-to-disaggregation-regression" class="section level4 hasAnchor" number="4.2.2.4">
 <h4><span class="header-section-number">4.2.2.4</span> Connection to disaggregation regression<a href="beyond-borders.html#connection-to-disaggregation-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>.
+Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-arambepola2022simulation">Arambepola et al. 2022</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.</p>
 <!-- ### The stochastic partial differential equation approximation -->
@@ -1009,6 +1010,8 @@ However, most of the time we expect aggregation to occur at the level of the dat
 If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent.
 On the other hand, for non-linear link functions <span class="math inline">\(g\)</span> such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.</li>
 <li>Discussion of the overall area versus point question. Papers of Sam using point level.</li>
+<li><span class="citation">Li, Brown, Rue, et al. (<a href="#ref-li2012spatial">2012</a>)</span> and <span class="citation">Li, Brown, Gesink, et al. (<a href="#ref-li2012lgcp">2012</a>)</span></li>
+<li>Discussion of non-stationarity <span class="citation">(<a href="#ref-paciorek2006spatial">Christopher J. Paciorek and Schervish 2006</a>)</span></li>
 </ul>
 <!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
 <!-- Explain under what circumstances we believe this approximation to be acceptable. -->
@@ -1019,6 +1022,9 @@ On the other hand, for non-linear link functions <span class="math inline">\(g\)
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-aldor2013power" class="csl-entry">
 Aldor-Noiman, Sivan, Lawrence D Brown, Andreas Buja, Wolfgang Rolke, and Robert A Stine. 2013. <span>“The Power to See: A New Graphical Test of Normality.”</span> <em>The American Statistician</em> 67 (4): 249–60.
+</div>
+<div id="ref-arambepola2022simulation" class="csl-entry">
+Arambepola, Rohan, Tim CD Lucas, Anita K Nandi, Peter W Gething, and Ewan Cameron. 2022. <span>“A Simulation Study of Disaggregation Regression for Spatial Disease Mapping.”</span> <em>Statistics in Medicine</em> 41 (1): 1–16.
 </div>
 <div id="ref-besag1991bayesian" class="csl-entry">
 Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
@@ -1061,6 +1067,9 @@ Dwyer-Lindgren, Laura, Michael A Cork, Amber Sligar, Krista M Steuben, Kate F Wi
 </div>
 <div id="ref-dwyer2015drinking" class="csl-entry">
 Dwyer-Lindgren, Laura, Abraham D Flaxman, Marie Ng, Gillian M Hansen, Christopher JL Murray, and Ali H Mokdad. 2015. <span>“<span class="nocase">Drinking patterns in US counties from 2002 to 2012</span>.”</span> <em>American Journal of Public Health</em> 105 (6): 1120–27.
+</div>
+<div id="ref-flaxman2015supported" class="csl-entry">
+Flaxman, Seth R, Yu-Xiang Wang, and Alexander J Smola. 2015. <span>“Who Supported Obama in 2012? Ecological Inference Through Distribution Regression.”</span> In <em>Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 289–98.
 </div>
 <div id="ref-follestad2003modelling" class="csl-entry">
 Follestad, Turid, and Håvard Rue. 2003. <span>“Modelling Spatial Variation in Disease Risk Using Gaussian Markov Random Field Proxies for Gaussian Random Fields.”</span> SIS-2003-305.
@@ -1113,6 +1122,12 @@ Lee, Duncan. 2011. <span>“A Comparison of Conditional Autoregressive Models Us
 <div id="ref-leroux2000estimation" class="csl-entry">
 Leroux, Brian G, Xingye Lei, and Norman Breslow. 2000. <span>“Estimation of Disease Rates in Small Areas: A New Mixed Model for Spatial Dependence.”</span> In <em>Statistical Models in Epidemiology, the Environment, and Clinical Trials</em>, 179–91. Springer.
 </div>
+<div id="ref-li2012lgcp" class="csl-entry">
+Li, Ye, Patrick Brown, Dionne C Gesink, and Håvard Rue. 2012. <span>“Log Gaussian Cox Processes and Spatially Aggregated Disease Incidence Data.”</span> <em>Statistical Methods in Medical Research</em> 21 (5): 479–507. <a href="https://doi.org/10.1177/0962280212446326">https://doi.org/10.1177/0962280212446326</a>.
+</div>
+<div id="ref-li2012spatial" class="csl-entry">
+Li, Ye, Patrick Brown, Håvard Rue, Mustafa Al-Maini, and Paul Fortin. 2012. <span>“Spatial Modelling of Lupus Incidence over 40 Years with Changes in Census Areas.”</span> <em>Journal of the Royal Statistical Society Series C: Applied Statistics</em> 61 (1): 99–115.
+</div>
 <div id="ref-matheson1976scoring" class="csl-entry">
 Matheson, James E, and Robert L Winkler. 1976. <span>“Scoring Rules for Continuous Probability Distributions.”</span> <em>Management Science</em> 22 (10): 1087–96.
 </div>
@@ -1131,8 +1146,14 @@ Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“A Statistical Review 
 <div id="ref-paciorek2013spatial" class="csl-entry">
 Paciorek, Christopher J et al. 2013. <span>“Spatial Models for Point and Areal Data Using Markov Random Fields on a Fine Grid.”</span> <em>Electronic Journal of Statistics</em> 7: 946–72.
 </div>
+<div id="ref-paciorek2006spatial" class="csl-entry">
+Paciorek, Christopher J., and Mark J. Schervish. 2006. <span>“Spatial Modelling Using a New Class of Nonstationary Covariance Functions.”</span> <em>Environmetrics</em> 17 (5): 483–506. https://doi.org/<a href="https://doi.org/10.1002/env.785">https://doi.org/10.1002/env.785</a>.
+</div>
 <div id="ref-pebesma2018sf" class="csl-entry">
 Pebesma, Edzer. 2018. <span>“<span class="nocase">Simple Features for R: Standardized Support for Spatial Vector Data</span>.”</span> <em><span>The R Journal</span></em> 10 (1): 439–46. <a href="https://doi.org/10.32614/RJ-2018-009">https://doi.org/10.32614/RJ-2018-009</a>.
+</div>
+<div id="ref-rashid2023inequalities" class="csl-entry">
+Rashid, T, JE Bennett, D Muller, A Cross, J Pearson-Stuttard, H Daby, D Fecht, B Davies, and M Ezzati. 2023. <span>“Inequalities in Mortality from Leading Cancers in Districts of England from 2002 to 2019: Population-Based High-Resolution Spatiotemporal Analysis of Vital Registration Data.”</span> <em>The Lancet Oncology</em>. <a href="http://hdl.handle.net/10044/1/107364">http://hdl.handle.net/10044/1/107364</a>.
 </div>
 <div id="ref-rue2020comment" class="csl-entry">
 ———. 2020. <span>“Comment on r-INLA Discussion Group Thread.”</span>
