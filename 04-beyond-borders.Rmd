@@ -293,10 +293,10 @@ K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}, (\#e
 where $\mathcal{P}$ denotes the power set such that $\mathcal{P}(\mathcal{S})$ is the space of subsets of the study region.
 If the function $K$ is positive semi-definite, then define areal kernel spatial random effects by
 \begin{equation}
-    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), (\#eq:areal-kernel-sre)
+    \mathbf{u} \sim \mathcal{N} \left( 0, \frac{1}{\tau_u} \mathbf{K} \right), (\#eq:areal-kernel-sre)
 \end{equation}
 where the $n \times n$ Gram matrix $\mathbf{K}$ with entries $K_{ij} = K(A_i, A_j)$ is a valid covariance matrix.
-The precision parameter $\tau_\phi$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices, but could be omitted.
+The precision parameter $\tau_u$ is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices, but could be omitted.
 Areal kernels may be thought of as a type of kernels on sets [@gartner2002multi].
 
 It is challenging to think directly about the correlation structure between areas.
@@ -391,11 +391,11 @@ The rate parameter of this Poisson distribution is explicitly aggregated as foll
   y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
 \end{equation}
 In a LGCP the log intensity $\log x(s) = \eta(s)$ is modelled using a Gaussian process prior $\eta(s) \sim \mathcal{GP}(\mu(s), k(s, s'))$.
-@johnson2019spatially obtain Equation \@ref(eq:ik2) by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby $\eta(s)$ is approximated by a piecewise constant $\eta_i = \mu_i + \phi_i$ in each area $A_i$.
-The $i$th discrete spatial random effect is then $\phi_i = \int_{A_i} w_i(s) \phi(s) \text{d}s$,
+@johnson2019spatially obtain Equation \@ref(eq:ik2) by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby $\eta(s)$ is approximated by a piecewise constant $\eta_i = \mu_i + u_i$ in each area $A_i$.
+The $i$th discrete spatial random effect is then $u_i = \int_{A_i} w_i(s) u(s) \text{d}s$,
 with covariance structure
 \begin{equation}
-  \text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s') \phi(s') \text{d}s' \right)
+  \text{Cov} \left( \int_{A_i} w_i(s) u(s) \text{d}s, \int_{A_j} w_j(s') u(s') \text{d}s' \right)
   = \int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d}s\text{d}s',
 \end{equation}
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.
@@ -432,7 +432,7 @@ The probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \
 \log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
 \end{equation}
 Spatial random effects were generated according to three different models (Table \@ref(tab:simulation-models)).
-Sample sizes were fixed as $m_i = 25$ for all $i \in [n]$, the intercept parameter as $\beta_0 = -2$ and the spatial random effect precision parameter as $\tau_\phi = 1$.
+Sample sizes were fixed as $m_i = 25$ for all $i \in [n]$, the intercept parameter as $\beta_0 = -2$ and the spatial random effect precision parameter as $\tau_u = 1$.
 
 (ref:geometries) Seven geometries were considered in the synthetic data study. These were the four geometries from Figure \@ref(fig:maup1) shown in Panel A, B, C and D, and three more realistic geometries shown in Panel E, F and G.
 
@@ -457,12 +457,12 @@ For each of the three spatial random effect models and seven geometries 200 simu
 |-------|---------------|
 | Constant | Without spatial random effects |
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{I}_n)$ |
-| Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
+| Besag | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
-| FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
-| CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
-| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
+| FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
+| CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
+| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
 
 Table: (\#tab:inferential-models) The models used for inference. Each model is implemented in the `arealutils` package.
 
@@ -495,8 +495,8 @@ The actual values of $L_i$ sometimes differed from 10 because `sf::st_sample` wi
 
 #### Priors
 
-A weakly informative half-Gaussian prior was placed on the standard deviation such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$ [@gelman2006prior].
-The value 2.5 avoids placing significant prior density on the region $\sigma_\phi > 5$, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
+A weakly informative half-Gaussian prior was placed on the standard deviation such that $\sigma_u \sim \mathcal{N}_+(0, 2.5^2)$ [@gelman2006prior].
+The value 2.5 avoids placing significant prior density on the region $\sigma_u > 5$, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
 A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting most of the prior probability density for $\text{logit}^{-1}(\beta_0)$ within a range typical for a disease prevalence.
 
 In cases where the length-scale $l$ was fixed, it was set based on the geometry such that points an average distance apart had 1\% correlation [@best1999bayesian].

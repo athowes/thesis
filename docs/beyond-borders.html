@@ -642,10 +642,10 @@ K: \mathcal{P}(\mathcal{S}) \times \mathcal{P}(\mathcal{S}) \to \mathbb{R}, \tag
 where <span class="math inline">\(\mathcal{P}\)</span> denotes the power set such that <span class="math inline">\(\mathcal{P}(\mathcal{S})\)</span> is the space of subsets of the study region.
 If the function <span class="math inline">\(K\)</span> is positive semi-definite, then define areal kernel spatial random effects by
 <span class="math display" id="eq:areal-kernel-sre">\[\begin{equation}
-    \phi \sim \mathcal{N} \left( 0, \frac{1}{\tau_\phi} \mathbf{K} \right), \tag{4.8}
+    \mathbf{u} \sim \mathcal{N} \left( 0, \frac{1}{\tau_u} \mathbf{K} \right), \tag{4.8}
 \end{equation}\]</span>
 where the <span class="math inline">\(n \times n\)</span> Gram matrix <span class="math inline">\(\mathbf{K}\)</span> with entries <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> is a valid covariance matrix.
-The precision parameter <span class="math inline">\(\tau_\phi\)</span> is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices, but could be omitted.
+The precision parameter <span class="math inline">\(\tau_u\)</span> is placed outside of the Gram matrix, analogous to the relation of the precision and structure matrices, but could be omitted.
 Areal kernels may be thought of as a type of kernels on sets <span class="citation">(<a href="#ref-gartner2002multi">Gärtner et al. 2002</a>)</span>.</p>
 <p>It is challenging to think directly about the correlation structure between areas.
 Instead, most well-known spatial process models define the correlation structure between a points using a kernel function
@@ -736,11 +736,11 @@ The rate parameter of this Poisson distribution is explicitly aggregated as foll
   y_i \, | \, x(s) \sim \text{Poisson} \left(\int_{s \in A_i} x(s) \text{d}s \right).
 \end{equation}\]</span>
 In a LGCP the log intensity <span class="math inline">\(\log x(s) = \eta(s)\)</span> is modelled using a Gaussian process prior <span class="math inline">\(\eta(s) \sim \mathcal{GP}(\mu(s), k(s, s&#39;))\)</span>.
-<span class="citation">O. Johnson, Diggle, and Giorgi (<a href="#ref-johnson2019spatially">2019</a>)</span> obtain Equation <a href="beyond-borders.html#eq:ik2">(4.12)</a> by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby <span class="math inline">\(\eta(s)\)</span> is approximated by a piecewise constant <span class="math inline">\(\eta_i = \mu_i + \phi_i\)</span> in each area <span class="math inline">\(A_i\)</span>.
-The <span class="math inline">\(i\)</span>th discrete spatial random effect is then <span class="math inline">\(\phi_i = \int_{A_i} w_i(s) \phi(s) \text{d}s\)</span>,
+<span class="citation">O. Johnson, Diggle, and Giorgi (<a href="#ref-johnson2019spatially">2019</a>)</span> obtain Equation <a href="beyond-borders.html#eq:ik2">(4.12)</a> by considering a discrete Poisson log-linear mixed model approximation to a continuous LGCP, whereby <span class="math inline">\(\eta(s)\)</span> is approximated by a piecewise constant <span class="math inline">\(\eta_i = \mu_i + u_i\)</span> in each area <span class="math inline">\(A_i\)</span>.
+The <span class="math inline">\(i\)</span>th discrete spatial random effect is then <span class="math inline">\(u_i = \int_{A_i} w_i(s) u(s) \text{d}s\)</span>,
 with covariance structure
 <span class="math display">\[\begin{equation}
-  \text{Cov} \left( \int_{A_i} w_i(s) \phi(s) \text{d}s, \int_{A_j} w_j(s&#39;) \phi(s&#39;) \text{d}s&#39; \right)
+  \text{Cov} \left( \int_{A_i} w_i(s) u(s) \text{d}s, \int_{A_j} w_j(s&#39;) u(s&#39;) \text{d}s&#39; \right)
   = \int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d}s\text{d}s&#39;,
 \end{equation}\]</span>
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.</p>
@@ -795,7 +795,7 @@ The probabilities <span class="math inline">\(\rho_i \in [0, 1]\)</span> were li
 \log \left( \frac{\rho_i}{1 - \rho_i} \right) = \eta_i = \beta_0 + u_i, \quad i \in [n].
 \end{equation}\]</span>
 Spatial random effects were generated according to three different models (Table <a href="beyond-borders.html#tab:simulation-models">4.1</a>).
-Sample sizes were fixed as <span class="math inline">\(m_i = 25\)</span> for all <span class="math inline">\(i \in [n]\)</span>, the intercept parameter as <span class="math inline">\(\beta_0 = -2\)</span> and the spatial random effect precision parameter as <span class="math inline">\(\tau_\phi = 1\)</span>.</p>
+Sample sizes were fixed as <span class="math inline">\(m_i = 25\)</span> for all <span class="math inline">\(i \in [n]\)</span>, the intercept parameter as <span class="math inline">\(\beta_0 = -2\)</span> and the spatial random effect precision parameter as <span class="math inline">\(\tau_u = 1\)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:geometries"></span>
 <img src="figures/beyond-borders/geometries.png" alt="Seven geometries were considered in the synthetic data study. These were the four geometries from Figure 4.2 shown in Panel A, B, C and D, and three more realistic geometries shown in Panel E, F and G." width="95%" />
@@ -839,7 +839,7 @@ These were:</p>
 </tr>
 <tr class="odd">
 <td>Besag</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})\)</span> as in Section <a href="beyond-borders.html#besag">4.1.1</a></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} {\mathbf{R}^\star}^{-})\)</span> as in Section <a href="beyond-borders.html#besag">4.1.1</a></td>
 </tr>
 <tr class="even">
 <td>BYM2</td>
@@ -847,19 +847,19 @@ These were:</p>
 </tr>
 <tr class="odd">
 <td>FCK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = k(c_i, c_j)\)</span> as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a> with fixed length-scale <span class="math inline">\(l\)</span></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = k(c_i, c_j)\)</span> as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a> with fixed length-scale <span class="math inline">\(l\)</span></td>
 </tr>
 <tr class="even">
 <td>CK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = k(c_i, c_j)\)</span> as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a> with length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = k(c_i, c_j)\)</span> as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a> with length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span></td>
 </tr>
 <tr class="odd">
 <td>FIK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with fixed length-scale <span class="math inline">\(l\)</span></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with fixed length-scale <span class="math inline">\(l\)</span></td>
 </tr>
 <tr class="even">
 <td>IK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_\phi^{-1} \mathbf{K})\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -890,8 +890,8 @@ The actual values of <span class="math inline">\(L_i\)</span> sometimes differed
 </div>
 <div id="priors" class="section level4 hasAnchor" number="4.3.2.2">
 <h4><span class="header-section-number">4.3.2.2</span> Priors<a href="beyond-borders.html#priors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>A weakly informative half-Gaussian prior was placed on the standard deviation such that <span class="math inline">\(\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)\)</span> <span class="citation">(<a href="#ref-gelman2006prior">Gelman 2006</a>)</span>.
-The value 2.5 avoids placing significant prior density on the region <span class="math inline">\(\sigma_\phi &gt; 5\)</span>, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
+<p>A weakly informative half-Gaussian prior was placed on the standard deviation such that <span class="math inline">\(\sigma_u \sim \mathcal{N}_+(0, 2.5^2)\)</span> <span class="citation">(<a href="#ref-gelman2006prior">Gelman 2006</a>)</span>.
+The value 2.5 avoids placing significant prior density on the region <span class="math inline">\(\sigma_u &gt; 5\)</span>, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
 A weakly informative <span class="math inline">\(\mathcal{N}(-2, 1)\)</span> prior was placed on <span class="math inline">\(\beta_0\)</span>, setting most of the prior probability density for <span class="math inline">\(\text{logit}^{-1}(\beta_0)\)</span> within a range typical for a disease prevalence.</p>
 <p>In cases where the length-scale <span class="math inline">\(l\)</span> was fixed, it was set based on the geometry such that points an average distance apart had 1% correlation <span class="citation">(<a href="#ref-best1999bayesian">N. Best et al. 1999</a>)</span>.
 In cases where a prior distribution was set on the length-scale it was <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span>, with <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> chosen for each geometry such that 1% of the prior mass was below 0.1 and 1% of the prior mass was above the maximum distance between points <span class="citation">(<a href="#ref-betancourt2017robust">Betancourt 2017</a>)</span>.</p>
