@@ -379,9 +379,9 @@ div.csl-indent {
 <h1><span class="header-section-number">4</span> Models for spatial structure<a href="beyond-borders.html#beyond-borders" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <p>This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a question which often occurs during model construction: should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?</p>
-<p>In this case, the feature in question pertains to the spatial correlation structure between areas.
-Modelling of spatial variation is particularly important for the small-area estimation of HIV.
+The investigation was motivated by a question which often occurs during model construction: should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
+Here, the feature in question pertains to the spatial correlation structure between areas.</p>
+<p>Modelling of spatial variation is particularly important for the small-area estimation of HIV.
 This is because the covariates which are most strongly associated with HIV are difficult to measure.
 Examples include sexual risk behaviour.
 As a result, in previous small-area models of HIV have found including covariates to only result in a modest improvement in predictive performance <span class="citation">(Supplementary Figure 20, <a href="#ref-dwyer2019mapping">Dwyer-Lindgren et al. 2019</a>)</span>.
@@ -623,13 +623,8 @@ This is known as the BYM2 model and given by
 <span class="math display" id="eq:bym2">\[\begin{align}
   \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), \tag{4.6}
 \end{align}\]</span>
-where:</p>
-<ul>
-<li><span class="math inline">\(\tau_u\)</span> is the marginal precision of <span class="math inline">\(\mathbf{u}\)</span>;</li>
-<li><span class="math inline">\(\phi \in [0, 1]\)</span> gives the proportion of the marginal variance explained by each component;</li>
-<li><span class="math inline">\(\mathbf{w}^\star\)</span> is a scaled version of <span class="math inline">\(\mathbf{w}\)</span> with precision matrix given by the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star\)</span>.</li>
-</ul>
-<p>When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
+where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <span class="math inline">\(\mathbf{u}\)</span>, <span class="math inline">\(\phi \in [0, 1]\)</span> gives the proportion of the marginal variance explained by each component, and <span class="math inline">\(\mathbf{w}^\star\)</span> is a scaled version of <span class="math inline">\(\mathbf{w}\)</span> with precision matrix given by the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star\)</span>.
+When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
 To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue 2020</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
 <p>Although the BYM and BYM2 models were originally proposed using the Besag model as spatially structured component, this need not be the case.
 Indeed, more broadly it is reasonable to consider convolution random effects with any model for spatially structured noise.</p>
@@ -701,8 +696,8 @@ For example, areas with populations who live close to a shared border are likely
 This detail could be accounted for by weighting according to a high resolution measure of population density.
 Though e.g. weighted centroids may also be used in Equation <a href="beyond-borders.html#eq:ck">(4.10)</a>, accounting for heterogeneity over an area is more natural within the integrated kernel than the centroid kernel.</p>
 </div>
-<div id="practical-computation" class="section level4 hasAnchor" number="4.2.2.2">
-<h4><span class="header-section-number">4.2.2.2</span> Practical computation<a href="beyond-borders.html#practical-computation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="computation" class="section level4 hasAnchor" number="4.2.2.2">
+<h4><span class="header-section-number">4.2.2.2</span> Computation<a href="beyond-borders.html#computation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:integration-strategy"></span>
 <img src="figures/beyond-borders/integration-strategy.png" alt="The \(n = 28\) districts of Malawi. Panel A shows the centroids as in Section 4.2.1. Panel B shows \(L_i = 10\) randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the sf::st_sample function (Pebesma 2018)." width="95%" />
@@ -731,8 +726,8 @@ For example, during MCMC when the kernel has hyperparameters which are learnt th
 As such, there is a limit on the size of <span class="math inline">\(L_i\)</span> which it is feasible to use.
 <span class="citation">Kelsall and Wakefield (<a href="#ref-kelsall2002modeling">2002</a>)</span> encounter this challenge, and take the approach of using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.</p>
 </div>
-<div id="log-gaussian-cox-processes" class="section level4 hasAnchor" number="4.2.2.3">
-<h4><span class="header-section-number">4.2.2.3</span> Log-Gaussian Cox processes<a href="beyond-borders.html#log-gaussian-cox-processes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="connection-to-log-gaussian-cox-processes" class="section level4 hasAnchor" number="4.2.2.3">
+<h4><span class="header-section-number">4.2.2.3</span> Connection to log-Gaussian Cox processes<a href="beyond-borders.html#connection-to-log-gaussian-cox-processes" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The log-Gaussian Cox Process framework <span class="citation">(<a href="#ref-diggle2013spatial">Diggle et al. 2013</a>)</span> arrives naturally at the integrated kernel formulation.
 A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function <span class="math inline">\(\{ x(s), s \in \mathcal{S} \}\)</span> such that conditional on the realisation of <span class="math inline">\(x(s)\)</span> the number of points in any area <span class="math inline">\(A_i\)</span> follows a Poisson distribution.
 The rate parameter of this Poisson distribution is explicitly aggregated as follows
@@ -749,23 +744,14 @@ with covariance structure
 \end{equation}\]</span>
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.</p>
 </div>
-<div id="disaggregation-regression" class="section level4 hasAnchor" number="4.2.2.4">
-<h4><span class="header-section-number">4.2.2.4</span> Disaggregation regression<a href="beyond-borders.html#disaggregation-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="connection-to-disaggregation-regression" class="section level4 hasAnchor" number="4.2.2.4">
+<h4><span class="header-section-number">4.2.2.4</span> Connection to disaggregation regression<a href="beyond-borders.html#connection-to-disaggregation-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
 Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>.
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.</p>
 <!-- ### The stochastic partial differential equation approximation -->
 <!-- This is a more computationally efficient way to implement integrated kernels. -->
-</div>
-<div id="possible-mismatch-to-data-generating-process" class="section level4 hasAnchor" number="4.2.2.5">
-<h4><span class="header-section-number">4.2.2.5</span> Possible mismatch to data generating process<a href="beyond-borders.html#possible-mismatch-to-data-generating-process" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Aggregation via the integrated kernel occurs at the level of the latent field.
-However, most of the time we expect aggregation to occur at the level of the data.
-If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent.
-On the other hand, for non-linear link functions <span class="math inline">\(g\)</span> such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
-<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
-<!-- Explain under what circumstances we believe this approximation to be acceptable. --></p>
 </div>
 </div>
 </div>
@@ -898,6 +884,8 @@ This value matches that used to simulate data, and simplifies Equation <a href="
 <span class="math display">\[\begin{equation}
 k(s, s&#39;) = \left(1 + \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right).
 \end{equation}\]</span></p>
+<p>The number of points per area <span class="math inline">\(L_i\)</span> was set to 10 with a hexagonal spacing structure (Panel C, Figure <a href="beyond-borders.html#fig:integration-strategy">4.5</a>).
+The actual values of <span class="math inline">\(L_i\)</span> sometimes differed from 10 because <code>sf::st_sample</code> with <code>type = "hexagonal"</code> does not guarantee exactly the specified number of samples are returned <span class="citation">(<a href="#ref-pebesma2018sf">Pebesma 2018</a>)</span>.</p>
 </div>
 <div id="priors" class="section level4 hasAnchor" number="4.3.2.2">
 <h4><span class="header-section-number">4.3.2.2</span> Priors<a href="beyond-borders.html#priors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -916,33 +904,35 @@ Appendix <a href="models-for-spatial-structure.html#aghq-nuts">A.1</a> compares 
 </div>
 <div id="model-assessment" class="section level3 hasAnchor" number="4.3.3">
 <h3><span class="header-section-number">4.3.3</span> Model assessment<a href="beyond-borders.html#model-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Models were assessed using two methods:</p>
+<p>Let the parameter <span class="math inline">\(\phi\)</span> have posterior marginal <span class="math inline">\(f(\phi) = p(\phi \, | \, \mathbf{y})\)</span> with cumulative distribution function <span class="math inline">\(F\)</span>.
+Let <span class="math inline">\(\phi_s\)</span> be samples <span class="math inline">\(s \in [S]\)</span> from <span class="math inline">\(f\)</span>.
+Let <span class="math inline">\(\omega\)</span> be the true value of <span class="math inline">\(\phi\)</span> used in the simulation.</p>
+<p>Latent field parameter and hyperparameter marginals from each model were assessed using three methods:</p>
 <ul>
+<li>the mean squared error (MSE);</li>
 <li>the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>];</li>
-<li>their calibration.</li>
+<li>the calibration.</li>
 </ul>
-<p>The CRPS is a strictly proper scoring rule [SPSR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
-Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.
-Let the parameter <span class="math inline">\(\phi\)</span> have posterior marginal <span class="math inline">\(f(\phi) = p(\phi \, | \, \mathbf{y})\)</span> with cumulative distribution function <span class="math inline">\(F\)</span>.
-If the true value of <span class="math inline">\(\phi\)</span> used in the simulation was <span class="math inline">\(\omega\)</span> then the CRPS is
+<p>The MSE is a simple and popular measure given by
+<span class="math display">\[\begin{equation}
+\text{MSE}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S (\phi_s - \omega)^2.
+\end{equation}\]</span></p>
+<p>The CRPS is a strictly proper scoring rule (SPSR) which “enjoys appealing properties and might serve as a standard score” <span class="citation">(<a href="#ref-gneiting2007strictly">Gneiting and Raftery 2007</a>)</span>.
+Any scoring rule which is not strictly proper rewards a misrepresentation of beliefs.
+The CRPS is
 <span class="math display" id="eq:crps">\[\begin{equation}
 \text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi. \tag{4.15}
 \end{equation}\]</span>
-Let <span class="math inline">\(\phi_s\)</span> be samples <span class="math inline">\(s \in [S]\)</span> from <span class="math inline">\(f\)</span>, then the CRPS may be estimated by
+The CRPS may be estimated using samples by
 <span class="math display" id="eq:crps-approx">\[\begin{equation}
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. \tag{4.16}
 \end{equation}\]</span></p>
-<p>A posterior marginal is calibrated if over repeated simulations
-<span class="math display">\[\begin{equation}
-F(\omega) = q \sim \mathcal{U}[0, 1].
+<p>A posterior marginal is calibrated if over repeated simulations the quantile of the true value is uniformly distributed such that
+<span class="math display" id="eq:unif">\[\begin{equation}
+F(\omega) \approx \frac{1}{S} \sum_{s = 1}^S \mathbb{I} \{\phi_i \geq \omega \} = q \sim \mathcal{U}[0, 1]. \tag{4.17}
 \end{equation}\]</span>
-In other words, if the quantile of the true value is uniform within the posterior marginal.
-It follows that at any given nominal coverage <span class="math inline">\(1 - \alpha\)</span>, the proportion of quantile-based credible intervals containing <span class="math inline">\(\omega\)</span> is also <span class="math inline">\(1 - \alpha\)</span>.
-Uniformity was assessed using:</p>
-<ul>
-<li>probability integral transform (PIT) histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span>;</li>
-<li>empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power">Aldor-Noiman et al. 2013</a>; <a href="#ref-sailynoja2022graphical">Säilynoja, Bürkner, and Vehtari 2022</a>)</span>.</li>
-</ul>
+If Equation <a href="beyond-borders.html#eq:unif">(4.17)</a> holds then at any given nominal coverage <span class="math inline">\(1 - \alpha\)</span> the proportion of quantile-based credible intervals containing <span class="math inline">\(\omega\)</span> is also <span class="math inline">\(1 - \alpha\)</span>.
+Uniformity was assessed using probability integral transform (PIT) histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span> and empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power">Aldor-Noiman et al. 2013</a>)</span> with simultaneous confidence bands <span class="citation">(<a href="#ref-sailynoja2022graphical">Säilynoja, Bürkner, and Vehtari 2022</a>)</span>.</p>
 </div>
 <div id="results" class="section level3 hasAnchor" number="4.3.4">
 <h3><span class="header-section-number">4.3.4</span> Results<a href="beyond-borders.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -962,9 +952,9 @@ These included countries were:</p>
 <h3><span class="header-section-number">4.4.1</span> Household survey data<a href="beyond-borders.html#household-survey-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:hiv-surveys"></span>
-<img src="resources/beyond-borders/20231111-193806-8b573544/depends/hiv-surveys.png" alt="Figure caption." width="95%" />
+<img src="resources/beyond-borders/20231111-193806-8b573544/depends/hiv-surveys.png" alt="Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d’Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D)." width="95%" />
 <p class="caption">
-Figure 4.7: Figure caption.
+Figure 4.7: Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d’Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D).
 </p>
 </div>
 <p>Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used for each country.
@@ -976,7 +966,14 @@ were used to account for the complex survey design.</p>
 </div>
 <div id="inferential-models-1" class="section level3 hasAnchor" number="4.4.2">
 <h3><span class="header-section-number">4.4.2</span> Inferential models<a href="beyond-borders.html#inferential-models-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The spatial random effect specification included in the model varied according to Table <a href="beyond-borders.html#tab:inferential-models">4.2</a>.</p>
+<p>The inferential models used correspond to those in Section <a href="beyond-borders.html#simulation-study">4.3</a> with a small modification.
+As before, prevalences <span class="math inline">\(\rho_i\)</span> were modelled via <span class="math inline">\(\text{logit}(\rho_i) = \beta_0 + u_i\)</span> with spatial random effect specification varied according to Table <a href="beyond-borders.html#tab:inferential-models">4.2</a>.
+Due to survey weighting, the effective number of cases <span class="math inline">\(y_i^\star \in \mathbb{R}\)</span> and effective sample size <span class="math inline">\(m_i^\star \in \mathbb{R}\)</span> may not be integers.
+Following <span class="citation">Chen, Wakefield, and Lumely (<a href="#ref-chen2014use">2014</a>)</span> a generalised binomial distribution <span class="math inline">\(y_i^\star \sim \text{xBin}(m_i^\star, \rho_i)\)</span> was used, with working likelihood for <span class="math inline">\(m^\star_i \geq y^\star_i\)</span> given by
+<span class="math display">\[\begin{equation}
+p(y_i^\star \, | \, m_i^\star, \rho_i) =
+\frac{\Gamma(m_i^\star + 1)}{\Gamma(y_i^\star + 1) \Gamma(m_i^\star - y_i^\star + 1)}  \rho_i ^{y_i^\star}  (1 - \rho_i)^{(m_i^\star - y_i^\star)}. \label{eq:xbinomial}
+\end{equation}\]</span></p>
 </div>
 <div id="model-comparison-1" class="section level3 hasAnchor" number="4.4.3">
 <h3><span class="header-section-number">4.4.3</span> Model comparison<a href="beyond-borders.html#model-comparison-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -987,6 +984,12 @@ were used to account for the complex survey design.</p>
 Figure 4.8: In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data.
 </p>
 </div>
+<p>Each model was assessed using (Figure <a href="beyond-borders.html#fig:cv">4.8</a>):</p>
+<ol style="list-style-type: decimal">
+<li>a standard leave-one-out cross-validation (LOO-CV);</li>
+<li>a spatial leave-one-out cross-validation (SLOO-CV).</li>
+</ol>
+<p>At each fold the CRPS, MSE and quantile (as in Section <a href="beyond-borders.html#model-assessment">4.3.3</a>) of posterior predictive samples as compared with the observed data were computed.</p>
 </div>
 <div id="results-1" class="section level3 hasAnchor" number="4.4.4">
 <h3><span class="header-section-number">4.4.4</span> Results<a href="beyond-borders.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -994,10 +997,20 @@ Figure 4.8: In leave-one-out (LOO) cross-validation, in each fold one observatio
 </div>
 <div id="discussion" class="section level2 hasAnchor" number="4.5">
 <h2><span class="header-section-number">4.5</span> Discussion<a href="beyond-borders.html#discussion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Previous comparisons of spatial random effects such as <span class="citation">Nicky Best, Richardson, and Thomson (<a href="#ref-best2005comparison">2005</a>)</span> and <span class="citation">Lee (<a href="#ref-lee2011comparison">2011</a>)</span> used the DIC measure of model fit.
-Use of the DIC is not generally recommended.
-Related work to discuss includes <span class="citation">Follestad and Rue (<a href="#ref-follestad2003modelling">2003</a>)</span>, <span class="citation">Konstantinoudis et al. (<a href="#ref-konstantinoudis2020discrete">2020</a>)</span>.
-<!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. --></p>
+<ul>
+<li>Application of scoring rules to transformed versions of parameters <span class="citation">(<a href="#ref-bosse2023scoring">Nikos I. Bosse et al. 2023</a>)</span>.</li>
+<li>The log-score was considered but requires a kernel density estimate.</li>
+<li>Previous comparisons of spatial random effects <span class="citation">(<a href="#ref-best2005comparison">Nicky Best, Richardson, and Thomson 2005</a>; <a href="#ref-lee2011comparison">Lee 2011</a>)</span> were limited to the DIC measure of model fit. <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2014deviance">2014</a>)</span> discuss the flaws of the DIC. The metrics used in this study were more theoretically suitable and enabled more precise findings.</li>
+<li>Related work to discuss includes <span class="citation">Follestad and Rue (<a href="#ref-follestad2003modelling">2003</a>)</span> and <span class="citation">Konstantinoudis et al. (<a href="#ref-konstantinoudis2020discrete">2020</a>)</span>.</li>
+<li>This study was facilitated by all models being implemented in <code>TMB</code>. Inference was then conducted using AGHQ over the marginal Laplace approximation using the <code>aghq</code> package. The accuracy of inferences was compared to gold-standard results from NUTS obtained using the <code>tmbstan</code> package. <code>TMB</code> is a fast and flexible tool for spatial modelling <span class="citation">(<a href="#ref-osgood2023statistical">Osgood-Zimmerman and Wakefield 2023</a>)</span>. Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> extends <code>TMB</code> to implement the INLA algorithm of <code>R-INLA</code>.</li>
+<li>An earlier version of this study used <code>R-INLA</code>. Not all of the models were compatible with <code>R-INLA</code>, so <code>rstan</code> was used in some cases. However, this study design was flawed, as models cannot be directly compared when fit with differing inference methods. This problem was solved by using <code>TMB</code>.</li>
+<li>Aggregation via the integrated kernel occurs at the level of the latent field.
+However, most of the time we expect aggregation to occur at the level of the data.
+If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent.
+On the other hand, for non-linear link functions <span class="math inline">\(g\)</span> such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.</li>
+</ul>
+<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
+<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
 
 </div>
 </div>
@@ -1018,8 +1031,14 @@ Best, Nicky, Sylvia Richardson, and Andrew Thomson. 2005. <span>“<span class="
 <div id="ref-betancourt2017robust" class="csl-entry">
 Betancourt, Michael. 2017. <span>“Robust Gaussian Processes in Stan.”</span> <a href="https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html">https://betanalpha.github.io/assets/case_studies/gp_part3/part3.html</a>.
 </div>
+<div id="ref-bosse2023scoring" class="csl-entry">
+Bosse, Nikos I, Sam Abbott, Anne Cori, Edwin van Leeuwen, Johannes Bracher, and Sebastian Funk. 2023. <span>“Scoring Epidemiological Forecasts on Transformed Scales.”</span> <em>PLoS Computational Biology</em> 19 (8): e1011393.
+</div>
 <div id="ref-carpenter2017stan" class="csl-entry">
 Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).
+</div>
+<div id="ref-chen2014use" class="csl-entry">
+Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“The Use of Sampling Weights in Bayesian Hierarchical Models for Small Area Estimation.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 11: 33–43.
 </div>
 <div id="ref-cramb2018investigation" class="csl-entry">
 Cramb, SM, EW Duncan, PD Baade, and KL Mengersen. 2018. <span>“Investigation of Bayesian Spatial Models.”</span>
@@ -1105,6 +1124,9 @@ Nandi, Anita K, Tim CD Lucas, Rohan Arambepola, Peter Gething, and Daniel J Weis
 <div id="ref-openshow1979million" class="csl-entry">
 Openshaw, S, and P. J. Taylor. 1979. <span>“A Million or so Correlation Coefficients, Three Experiments on the Modifiable Areal Unit Problem.”</span> <em>Statistical Applications in the Spatial Science</em>, 127–44.
 </div>
+<div id="ref-osgood2023statistical" class="csl-entry">
+Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“A Statistical Review of Template Model Builder: A Flexible Tool for Spatial Modelling.”</span> <em>International Statistical Review</em> 91 (2): 318–42.
+</div>
 <div id="ref-paciorek2013spatial" class="csl-entry">
 Paciorek, Christopher J et al. 2013. <span>“Spatial Models for Point and Areal Data Using Markov Random Fields on a Fine Grid.”</span> <em>Electronic Journal of Statistics</em> 7: 946–72.
 </div>
@@ -1131,6 +1153,9 @@ Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørby
 </div>
 <div id="ref-sorbye2014scaling" class="csl-entry">
 Sørbye, Sigrunn Holbek, and Håvard Rue. 2014. <span>“<span class="nocase">Scaling intrinsic Gaussian Markov random field priors in spatial modelling</span>.”</span> <em>Spatial Statistics</em> 8: 39–51.
+</div>
+<div id="ref-spiegelhalter2014deviance" class="csl-entry">
+Spiegelhalter, David J, Nicola G Best, Bradley P Carlin, and Angelika Van der Linde. 2014. <span>“The Deviance Information Criterion: 12 Years On.”</span> <em>Journal of the Royal Statistical Society: Series B: Statistical Methodology</em>, 485–93.
 </div>
 <div id="ref-stein1999interpolation" class="csl-entry">
 Stein, Michael L. 1999. <span>“Interpolation of Spatial Data: Some Theory for Kriging.”</span>

@@ -23,8 +23,8 @@ resource_version <- "20231111-193806-8b573544"
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
 The investigation was motivated by a question which often occurs during model construction: should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
+Here, the feature in question pertains to the spatial correlation structure between areas.
 
-In this case, the feature in question pertains to the spatial correlation structure between areas.
 Modelling of spatial variation is particularly important for the small-area estimation of HIV.
 This is because the covariates which are most strongly associated with HIV are difficult to measure.
 Examples include sexual risk behaviour.
@@ -274,12 +274,7 @@ This is known as the BYM2 model and given by
 \begin{align}
   \mathbf{u} = \frac{1}{\tau_u} \left( \sqrt{1- \phi} \, \mathbf{v} + \sqrt{\phi} \, \mathbf{w}^\star \right), (\#eq:bym2)
 \end{align}
-where:
-
-* $\tau_u$ is the marginal precision of $\mathbf{u}$;
-* $\phi \in [0, 1]$ gives the proportion of the marginal variance explained by each component;
-* $\mathbf{w}^\star$ is a scaled version of $\mathbf{w}$ with precision matrix given by the scaled structure matrix $\mathbf{R}^\star$.
-
+where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ gives the proportion of the marginal variance explained by each component, and $\mathbf{w}^\star$ is a scaled version of $\mathbf{w}$ with precision matrix given by the scaled structure matrix $\mathbf{R}^\star$.
 When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
@@ -356,7 +351,7 @@ For example, areas with populations who live close to a shared border are likely
 This detail could be accounted for by weighting according to a high resolution measure of population density.
 Though e.g. weighted centroids may also be used in Equation \@ref(eq:ck), accounting for heterogeneity over an area is more natural within the integrated kernel than the centroid kernel.
 
-#### Practical computation
+#### Computation
 
 (ref:integration-strategy) The $n = 28$ districts of Malawi. Panel A shows the centroids as in Section \@ref(centroid-kernel). Panel B shows $L_i = 10$ randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the `sf::st_sample` function [@pebesma2018sf].
 
@@ -386,7 +381,7 @@ For example, during MCMC when the kernel has hyperparameters which are learnt th
 As such, there is a limit on the size of $L_i$ which it is feasible to use.
 @kelsall2002modeling encounter this challenge, and take the approach of using a discrete hyperparameter prior to reduce the number of Gram matrix constructions and inversions required.
 
-#### Log-Gaussian Cox processes
+#### Connection to log-Gaussian Cox processes
 
 The log-Gaussian Cox Process framework [@diggle2013spatial] arrives naturally at the integrated kernel formulation.
 A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function $\{ x(s), s \in \mathcal{S} \}$ such that conditional on the realisation of $x(s)$ the number of points in any area $A_i$ follows a Poisson distribution.
@@ -404,7 +399,7 @@ with covariance structure
 \end{equation}
 corresponding to an areal integrated kernel with a logarithmic link function and Poisson likelihood.
 
-#### Disaggregation regression
+#### Connection to disaggregation regression
 
 Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
 Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @nandi2023disaggregation].
@@ -414,15 +409,6 @@ However, disaggregation regression is challenging without auxiliary covariate in
 <!-- ### The stochastic partial differential equation approximation -->
 
 <!-- This is a more computationally efficient way to implement integrated kernels. -->
-
-#### Possible mismatch to data generating process
-
-Aggregation via the integrated kernel occurs at the level of the latent field.
-However, most of the time we expect aggregation to occur at the level of the data.
-If the link function $g$ is the identity or linear then the two are equivalent.
-On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
-<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
-<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
 
 ## Simulation study {#simulation-study}
 
@@ -503,6 +489,9 @@ This value matches that used to simulate data, and simplifies Equation \@ref(eq:
 k(s, s') = \left(1 + \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right).
 \end{equation}
 
+The number of points per area $L_i$ was set to 10 with a hexagonal spacing structure (Panel C, Figure \@ref(fig:integration-strategy)).
+The actual values of $L_i$ sometimes differed from 10 because `sf::st_sample` with `type = "hexagonal"` does not guarantee exactly the specified number of samples are returned [@pebesma2018sf].
+
 #### Priors
 
 A weakly informative half-Gaussian prior was placed on the standard deviation such that $\sigma_\phi \sim \mathcal{N}_+(0, 2.5^2)$ [@gelman2006prior].
@@ -518,35 +507,40 @@ Approximate Bayesian inference was conducted using adaptive Gauss-Hermite quadra
 Models were implemented using a Template Model Builder C++ template for the log-posterior via the `TMB` R package [@kristensen2016tmb].
 Appendix \@ref(aghq-nuts) compares approximate inference results to those obtained using the No-U-Turn Sampling (NUTS) Hamiltonian Monte Carlo (HMC) algorithm run using `Stan` [@carpenter2017stan] via the `tmbstan` package [@monnahan2018no].
 
-### Model assessment
+### Model assessment {#model-assessment}
 
-Models were assessed using two methods:
-
-* the continuous ranked probability score [CRPS; @matheson1976scoring];
-* their calibration.
-
-The CRPS is a strictly proper scoring rule [SPSR; @gneiting2007strictly] in that it is uniquely maximised by truthful representation of beliefs about the parameter in question.
-Any non-proper scoring rule rewards misrepresenting beliefs to maximise the score.
 Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \mathbf{y})$ with cumulative distribution function $F$.
-If the true value of $\phi$ used in the simulation was $\omega$ then the CRPS is
+Let $\phi_s$ be samples $s \in [S]$ from $f$.
+Let $\omega$ be the true value of $\phi$ used in the simulation.
+
+Latent field parameter and hyperparameter marginals from each model were assessed using three methods:
+
+* the mean squared error (MSE);
+* the continuous ranked probability score [CRPS; @matheson1976scoring];
+* the calibration.
+
+The MSE is a simple and popular measure given by
+\begin{equation}
+\text{MSE}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S (\phi_s - \omega)^2.
+\end{equation}
+
+The CRPS is a strictly proper scoring rule (SPSR) which "enjoys appealing properties and might serve as a standard score" [@gneiting2007strictly].
+Any scoring rule which is not strictly proper rewards a misrepresentation of beliefs.
+The CRPS is
 \begin{equation}
 \text{CRPS}(f, \omega) = \int_{-\infty}^{\infty} (F(\phi) - \mathbb{I} \{\phi \geq \omega \} )^2 \text{d}\phi. (\#eq:crps)
 \end{equation}
-Let $\phi_s$ be samples $s \in [S]$ from $f$, then the CRPS may be estimated by
+The CRPS may be estimated using samples by
 \begin{equation}
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. (\#eq:crps-approx)
 \end{equation}
 
-A posterior marginal is calibrated if over repeated simulations
+A posterior marginal is calibrated if over repeated simulations the quantile of the true value is uniformly distributed such that
 \begin{equation}
-F(\omega) = q \sim \mathcal{U}[0, 1].
+F(\omega) \approx \frac{1}{S} \sum_{s = 1}^S \mathbb{I} \{\phi_i \geq \omega \} = q \sim \mathcal{U}[0, 1]. (\#eq:unif)
 \end{equation}
-In other words, if the quantile of the true value is uniform within the posterior marginal.
-It follows that at any given nominal coverage $1 - \alpha$, the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
-Uniformity was assessed using:
-
-* probability integral transform (PIT) histograms [@dawid1984present];
-* empirical cumulative distribution function (ECDF) difference plots [@aldor2013power; @sailynoja2022graphical].
+If Equation \@ref(eq:unif) holds then at any given nominal coverage $1 - \alpha$ the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
+Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power] with simultaneous confidence bands [@sailynoja2022graphical].
 
 ### Results
 
@@ -562,7 +556,7 @@ These included countries were:
 
 ### Household survey data
 
-(ref:hiv-surveys) Figure caption.
+(ref:hiv-surveys) Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d'Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D).
 
 ```{r hiv-surveys, fig.cap="(ref:hiv-surveys)"}
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/hiv-surveys.png"))
@@ -577,7 +571,14 @@ were used to account for the complex survey design.
 
 ### Inferential models
 
-The spatial random effect specification included in the model varied according to Table \@ref(tab:inferential-models).
+The inferential models used correspond to those in Section \@ref(simulation-study) with a small modification.
+As before, prevalences $\rho_i$ were modelled via $\text{logit}(\rho_i) = \beta_0 + u_i$ with spatial random effect specification varied according to Table \@ref(tab:inferential-models).
+Due to survey weighting, the effective number of cases $y_i^\star \in \mathbb{R}$ and effective sample size $m_i^\star \in \mathbb{R}$ may not be integers.
+Following @chen2014use a generalised binomial distribution $y_i^\star \sim \text{xBin}(m_i^\star, \rho_i)$ was used, with working likelihood for $m^\star_i \geq y^\star_i$ given by
+\begin{equation}
+p(y_i^\star \, | \, m_i^\star, \rho_i) =
+\frac{\Gamma(m_i^\star + 1)}{\Gamma(y_i^\star + 1) \Gamma(m_i^\star - y_i^\star + 1)}  \rho_i ^{y_i^\star}  (1 - \rho_i)^{(m_i^\star - y_i^\star)}. \label{eq:xbinomial}
+\end{equation}
 
 ### Model comparison
 
@@ -587,11 +588,27 @@ The spatial random effect specification included in the model varied according t
 knitr::include_graphics("figures/beyond-borders/cv.png")
 ```
 
+Each model was assessed using (Figure \@ref(fig:cv)):
+
+1. a standard leave-one-out cross-validation (LOO-CV);
+2. a spatial leave-one-out cross-validation (SLOO-CV).
+
+At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
+
 ### Results
 
 ## Discussion
 
-Previous comparisons of spatial random effects such as @best2005comparison and @lee2011comparison used the DIC measure of model fit.
-Use of the DIC is not generally recommended.
-Related work to discuss includes @follestad2003modelling, @konstantinoudis2020discrete.
-<!-- A unified view on Bayesian varying coefficient models by Franco-Villoria et al. -->
+* Application of scoring rules to transformed versions of parameters [@bosse2023scoring].
+* The log-score was considered but requires a kernel density estimate.
+* Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model fit. @spiegelhalter2014deviance discuss the flaws of the DIC. The metrics used in this study were more theoretically suitable and enabled more precise findings.
+* Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete.
+* This study was facilitated by all models being implemented in `TMB`. Inference was then conducted using AGHQ over the marginal Laplace approximation using the `aghq` package. The accuracy of inferences was compared to gold-standard results from NUTS obtained using the `tmbstan` package. `TMB` is a fast and flexible tool for spatial modelling [@osgood2023statistical]. Chapter \@ref(naomi-aghq) extends `TMB` to implement the INLA algorithm of `R-INLA`.
+* An earlier version of this study used `R-INLA`. Not all of the models were compatible with `R-INLA`, so `rstan` was used in some cases. However, this study design was flawed, as models cannot be directly compared when fit with differing inference methods. This problem was solved by using `TMB`. 
+* Aggregation via the integrated kernel occurs at the level of the latent field.
+However, most of the time we expect aggregation to occur at the level of the data.
+If the link function $g$ is the identity or linear then the two are equivalent.
+On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
+
+<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
+<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
