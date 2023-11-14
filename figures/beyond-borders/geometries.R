@@ -76,8 +76,8 @@ figE <- ggplot() +
   labs(tag = "E") +
   theme_void()
 
-geometry_6 <- sf::st_geometry(sf::st_read("figures/beyond-borders/texas/U_S__House_District.shp"))
-geometry_6 <- sf::st_sf(geometry_6)
+geometry_6 <- readRDS("figures/beyond-borders/gadm36_CIV_2_sf.rds")
+geometry_6 <- sf::st_sf(geometry_7)
 sf::st_crs(geometry_6) <- NA
 
 figF <- ggplot() +
@@ -85,7 +85,7 @@ figF <- ggplot() +
   labs(tag = "F") +
   theme_void()
 
-geometry_7 <- readRDS("figures/beyond-borders/gadm36_CIV_2_sf.rds")
+geometry_7 <- sf::st_geometry(sf::st_read("figures/beyond-borders/texas/U_S__House_District.shp"))
 geometry_7 <- sf::st_sf(geometry_7)
 sf::st_crs(geometry_7) <- NA
 

@@ -22,23 +22,22 @@ resource_version <- "20231111-193806-8b573544"
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a question which often occurs during model construction: should the model be expanded to capture a reasonable, albeit hypothetical, feature of the data?
+The investigation was motivated by a commonly encountered question: should the model be altered to capture a reasonable, albeit hypothetical, feature of the data?
 Here, the feature in question pertains to the spatial correlation structure between areas.
 
 Modelling of spatial variation is particularly important for the small-area estimation of HIV.
-This is because the covariates which are most strongly associated with HIV are difficult to measure.
-Examples include sexual risk behaviour.
+This is because the covariates which are most strongly associated with HIV, such as sexual behaviour and STI status [@mayala2020predicting], are themselves difficult to measure.
 As a result, in previous small-area models of HIV have found including covariates to only result in a modest improvement in predictive performance [Supplementary Figure 20, @dwyer2019mapping].
 The lack of predictive covariates foregrounds the role of modelling spatial variation.
-For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less pertinent [@weiss2015re].
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less pertinent [@weiss2015re; @bhatt2015effect].
 
 Spatial variation in areal data are often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
 The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; @rue2005gaussian].
 These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
 Observations made in areas close together are assumed to be correlated, and more distant relationships are ignored.
 Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area, based on a binary relationship.
-The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented.
-It has been widely used, including:
+The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented in software such as `R-INLA` [@blangiardo2013spatial], `rstan` [@morris2019bayesian; @conegan2022geostan], `NIMBLE` [Chapter 9; @nimblemanual] and `PyMC` [@saunders2023pymc], among others.
+As a result, it has been widely used, including:
 
 * to model bird population dynamics from capture-recapture data [@saracco2010modeling];
 * for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian];
@@ -49,7 +48,8 @@ The Besag model was designed for use in image analysis, on a regular grid.
 However, for more irregular geometries, the assumptions made are unrealistic and appear to be violated.
 The administrative divisions of a country used in small-area estimation are one example of a more irregular geometry.
 This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
-In doing so, it offers practical recommendations for modelling areal spatial structure.
+Performance in this context refers to accurate forecasts of parameters as measured by scoring rules.
+In doing so, practical recommendations for modelling areal spatial structure are offered.
 The results are presented in @howes2023beyond.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/beyond-borders`](https://github.com/athowes/beyond-borders), and supported by the `arealutils` R package [@howes2023arealutils].
 
@@ -321,6 +321,7 @@ This choice results in the centroid kernel
 The centroid kernel has been used:
 
 * in environmental epidemiology [@wakefield1999spatial];
+* for US election modelling [@flaxman2015supported];
 * to model the reproduction number of COVID-19 [@teh2021efficient].
 
 In a model comparison study @best2005comparison (Section 3) simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
@@ -336,8 +337,8 @@ This results in the integrated kernel
 Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
 
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition.
-In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@flaxman2015supported; @law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
-Examples of use of this model in statistical practise are rare.
+In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+Examples of use of this model in statistical practice are rare.
 
 #### Accounting for heterogeneity
 
@@ -370,13 +371,13 @@ Then the integral may be approximated using Monte Carlo by the double sum
 \end{equation}
 Equivalently, samples drawn from $W_i$ may be used without weighting by $w_i(s)$.
 Nodes may also be selected deterministically to give a numerical quadrature estimate of the kernel.
-Figure \@ref(fig:integration-strategy) shows...
+Figure \@ref(fig:integration-strategy) shows three possible ways of choosing points $s^{(i)}_l$, together with the centroids approach.
 
-These approaches require
+Computing the $n \times n$ Gram matrix $K$ requires
 \begin{equation}
 \mathcal{O}(\sum_{i = 1}^n \sum_{j = 1}^n L_i L_j)
 \end{equation}
-evaluations of the kernel $k$ to compute the $n \times n$ Gram matrix $K$.
+evaluations of the kernel $k$.
 This imposes a significant computational cost if the Gram matrix is often recomputed during inference.
 For example, during MCMC when the kernel has hyperparameters which are learnt then the Gram matrix is recomputed for each proposed set of hyperparameters.
 As such, there is a limit on the size of $L_i$ which it is feasible to use.
@@ -406,10 +407,6 @@ Disaggregation regression, also known as downscaling or interpolation, is anothe
 Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @arambepola2022simulation; @nandi2023disaggregation]
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.
-
-<!-- ### The stochastic partial differential equation approximation -->
-
-<!-- This is a more computationally efficient way to implement integrated kernels. -->
 
 ## Simulation study {#simulation-study}
 
@@ -443,31 +440,31 @@ knitr::include_graphics("figures/beyond-borders/geometries.png")
 Seven geometries were considered (Figure \@ref(fig:geometries)).
 These include the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
 Three more realistic geometries chosen to represent plausible variation over spatial regularity for the small-area estimation setting were also considered.
-These were:
+From most to least spatially regular, these were:
 
 * a $6 \times 6$ lattice grid;
 * the 33 districts of Côte d'Ivoire;
 * the 36 congressional districts of Texas.
 
-For each of the three spatial random effect models and seven geometries 200 simulations were generated, resulting in 4200 total synthetic data.
+For each of the three spatial random effect models and seven geometries 100 simulations were generated, resulting in 2100 total synthetic data.
 
 ### Inferential models
 
 | Model | Details       |
 |-------|---------------|
-| Constant | Without spatial random effects |
+| Constant | Without spatial random effects $\mathbf{u} = \mathbf{0}$ |
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{I}_n)$ |
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
 | FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
 | CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
-| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
+| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = \cdots$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = \cdots$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
 
 Table: (\#tab:inferential-models) The models used for inference. Each model is implemented in the `arealutils` package.
 
 Eight inferential models were fit to the synthetic data (Table \@ref(tab:inferential-models)).
-Apart from the spatial random effect specification, each inferential model was the same as the simulation model.
+Apart from the spatial random effect specification, each inferential model corresponded exactly to the simulation model.
 
 #### Kernels
 
@@ -514,11 +511,8 @@ Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \math
 Let $\phi_s$ be samples $s \in [S]$ from $f$.
 Let $\omega$ be the true value of $\phi$ used in the simulation.
 
-Latent field parameter and hyperparameter marginals from each model were assessed using three methods:
-
-* the mean squared error (MSE);
-* the continuous ranked probability score [CRPS; @matheson1976scoring];
-* the calibration.
+Latent field parameter and hyperparameter marginals from each model were assessed using three methods.
+These were the mean squared error (MSE), the continuous ranked probability score [CRPS; @matheson1976scoring], and the calibration.
 
 The MSE is a simple and popular measure given by
 \begin{equation}
@@ -568,7 +562,12 @@ Sampling weights
 \begin{equation}
 w_{ij} = \frac{1}{\pi_{ij}}
 \end{equation}
-were used to account for the complex survey design.
+were used to account for the complex survey design whereby an individual $j$ in area $i$ has probability $\pi_{ij}$ of being included in the survey as follows.
+The Kish effective sample size [@kish1965survey]
+\begin{equation}
+m_i^\star = \frac{(\sum_j w_{ij})^2}{\sum_j w_{ij}^2}.
+\end{equation}
+The effective number of cases $y_i^\star$ may be thought of as what would have been observed had the survey been a simple random sample.
 
 ### Inferential models
 
@@ -611,8 +610,9 @@ However, most of the time we expect aggregation to occur at the level of the dat
 If the link function $g$ is the identity or linear then the two are equivalent.
 On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
 * Discussion of the overall area versus point question. Papers of Sam using point level.
-* @li2012spatial and @li2012lgcp
-* Discussion of non-stationarity [@paciorek2006spatial]
+* @li2012spatial and @li2012lgcp.
+* Discussion of non-stationarity [@paciorek2006spatial].
+* The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless].
 
 <!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
 <!-- Explain under what circumstances we believe this approximation to be acceptable. -->
