@@ -342,7 +342,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-epil"><i class="fa fa-check"></i><b>C.1.1</b> <code>TMB</code> C++ template</a></li>
 <li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-modified-epil"><i class="fa fa-check"></i><b>C.1.2</b> Modified <code>TMB</code> C++ template</a></li>
 <li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#stan-epil"><i class="fa fa-check"></i><b>C.1.3</b> <code>Stan</code> C++ template</a></li>
-<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-diagnostics"><i class="fa fa-check"></i><b>C.1.4</b> NUTS convergence diagnostics</a></li>
+<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability"><i class="fa fa-check"></i><b>C.1.4</b> NUTS convergence and suitability</a></li>
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.2</b> Simplified Naomi model description</a>
 <ul>
@@ -355,7 +355,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.4</b> AGHQ and PCA-AGHQ details</a></li>
 <li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.5</b> Normalising constant estimation</a></li>
 <li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.6</b> Inference comparison</a></li>
-<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#mcmc-convergence-and-suitability"><i class="fa fa-check"></i><b>C.7</b> MCMC convergence and suitability</a></li>
+<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-1"><i class="fa fa-check"></i><b>C.7</b> NUTS convergence and suitability</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
@@ -396,7 +396,7 @@ As a result, it has been widely used, including:</p>
 <ul>
 <li>to model bird population dynamics from capture-recapture data <span class="citation">(<a href="#ref-saracco2010modeling">Saracco et al. 2010</a>)</span>;</li>
 <li>for the analysis of magnetic resonance images <span class="citation">(<a href="#ref-gossl2001bayesian">Gössl, Auer, and Fahrmeir 2001</a>; <a href="#ref-schmid2006bayesian">Schmid et al. 2006</a>)</span>;</li>
-<li>to map mortality from cancers <span class="citation">(<a href="#ref-rashid2023inequalities">Rashid et al. 2023</a>)</span>;</li>
+<li>to map mortality from cancers <span class="citation">(<a href="#ref-rashid2023inequalities">Rashid et al. 2023</a>)</span>, injuries <span class="citation">(<a href="#ref-parks2020anomalously">Parks et al. 2020</a>)</span> and air pollution <span class="citation">(<a href="#ref-bennett2019particulate">Bennett et al. 2019</a>)</span>;</li>
 <li>to model alcohol use patterns <span class="citation">(<a href="#ref-dwyer2015drinking">Dwyer-Lindgren et al. 2015</a>)</span>.</li>
 </ul>
 <p>The Besag model was designed for use in image analysis, on a regular grid.
@@ -702,9 +702,9 @@ Though e.g. weighted centroids may also be used in Equation <a href="beyond-bor
 <h4><span class="header-section-number">4.2.2.2</span> Computation<a href="beyond-borders.html#computation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:integration-strategy"></span>
-<img src="figures/beyond-borders/integration-strategy.png" alt="The \(n = 28\) districts of Malawi. Panel A shows the centroids as in Section 4.2.1. Panel B shows \(L_i = 10\) randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the sf::st_sample function (Pebesma 2018)." width="95%" />
+<img src="figures/beyond-borders/integration-strategy.png" alt="The \(n = 28\) districts of Malawi. Panel A shows the centroids as in Section 4.2.1. Panel B shows \(L_i = 10\) randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the sf::st_sample function (E. Pebesma 2018)." width="95%" />
 <p class="caption">
-Figure 4.5: The <span class="math inline">\(n = 28\)</span> districts of Malawi. Panel A shows the centroids as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a>. Panel B shows <span class="math inline">\(L_i = 10\)</span> randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the <code>sf::st_sample</code> function <span class="citation">(<a href="#ref-pebesma2018sf">Pebesma 2018</a>)</span>.
+Figure 4.5: The <span class="math inline">\(n = 28\)</span> districts of Malawi. Panel A shows the centroids as in Section <a href="beyond-borders.html#centroid-kernel">4.2.1</a>. Panel B shows <span class="math inline">\(L_i = 10\)</span> randomly chosen points, Panel C hexagonal points, and Panel D grid points in each area, each generated using the <code>sf::st_sample</code> function <span class="citation">(<a href="#ref-pebesma2018sf">E. Pebesma 2018</a>)</span>.
 </p>
 </div>
 <p>Most of the time it is not possible to calculate Equation <a href="beyond-borders.html#eq:ik2">(4.12)</a> analytically.
@@ -885,7 +885,7 @@ This value matches that used to simulate data, and simplifies Equation <a href="
 k(s, s&#39;) = \left(1 + \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right).
 \end{equation}\]</span></p>
 <p>The number of points per area <span class="math inline">\(L_i\)</span> was set to 10 with a hexagonal spacing structure (Panel C, Figure <a href="beyond-borders.html#fig:integration-strategy">4.5</a>).
-The actual values of <span class="math inline">\(L_i\)</span> sometimes differed from 10 because <code>sf::st_sample</code> with <code>type = "hexagonal"</code> does not guarantee exactly the specified number of samples are returned <span class="citation">(<a href="#ref-pebesma2018sf">Pebesma 2018</a>)</span>.</p>
+The actual values of <span class="math inline">\(L_i\)</span> sometimes differed from 10 because <code>sf::st_sample</code> with <code>type = "hexagonal"</code> does not guarantee exactly the specified number of samples are returned <span class="citation">(<a href="#ref-pebesma2018sf">E. Pebesma 2018</a>)</span>.</p>
 </div>
 <div id="priors" class="section level4 hasAnchor" number="4.3.2.2">
 <h4><span class="header-section-number">4.3.2.2</span> Priors<a href="beyond-borders.html#priors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1026,6 +1026,9 @@ Aldor-Noiman, Sivan, Lawrence D Brown, Andreas Buja, Wolfgang Rolke, and Robert 
 </div>
 <div id="ref-arambepola2022simulation" class="csl-entry">
 Arambepola, Rohan, Tim CD Lucas, Anita K Nandi, Peter W Gething, and Ewan Cameron. 2022. <span>“A Simulation Study of Disaggregation Regression for Spatial Disease Mapping.”</span> <em>Statistics in Medicine</em> 41 (1): 1–16.
+</div>
+<div id="ref-bennett2019particulate" class="csl-entry">
+Bennett, James E, Helen Tamura-Wicks, Robbie M Parks, Richard T Burnett, C Arden Pope III, Matthew J Bechle, Julian D Marshall, Goodarz Danaei, and Majid Ezzati. 2019. <span>“Particulate Matter Air Pollution and National and County Life Expectancy Loss in the USA: A Spatiotemporal Analysis.”</span> <em>PLoS Medicine</em> 16 (7): e1002856.
 </div>
 <div id="ref-besag1991bayesian" class="csl-entry">
 Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
@@ -1170,6 +1173,9 @@ Paciorek, Christopher J et al. 2013. <span>“Spatial Models for Point and Areal
 </div>
 <div id="ref-paciorek2006spatial" class="csl-entry">
 Paciorek, Christopher J., and Mark J. Schervish. 2006. <span>“Spatial Modelling Using a New Class of Nonstationary Covariance Functions.”</span> <em>Environmetrics</em> 17 (5): 483–506. https://doi.org/<a href="https://doi.org/10.1002/env.785">https://doi.org/10.1002/env.785</a>.
+</div>
+<div id="ref-parks2020anomalously" class="csl-entry">
+Parks, Robbie M, James E Bennett, Helen Tamura-Wicks, Vasilis Kontis, Ralf Toumi, Goodarz Danaei, and Majid Ezzati. 2020. <span>“Anomalously Warm Temperatures Are Associated with Increased Injury Deaths.”</span> <em>Nature Medicine</em> 26 (1): 65–70.
 </div>
 <div id="ref-pebesma2018sf" class="csl-entry">
 Pebesma, Edzer. 2018. <span>“<span class="nocase">Simple Features for R: Standardized Support for Spatial Vector Data</span>.”</span> <em><span>The R Journal</span></em> 10 (1): 439–46. <a href="https://doi.org/10.32614/RJ-2018-009">https://doi.org/10.32614/RJ-2018-009</a>.

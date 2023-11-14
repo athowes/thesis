@@ -94,15 +94,9 @@ areas <- rbind(cmr, nga)
 
 loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
 
-grid <- raster::raster(loaloa_sf, nrows = 30, ncols = 30)
-grid_stars <- stars::st_as_stars(grid)
-b <- gstat::krige(p ~ 1, loaloa_sf, grid_stars)
-b_sf <- st_as_sf(b)
-
 figA <- ggplot() +
   geom_sf(data = areas, col = "grey70") +
   geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
-  # geom_sf(data = b_sf, aes(fill = var1.pred)) +
   scale_color_viridis_c() +
   scale_size(range = c(1, 4)) +
   theme_void() +
@@ -149,8 +143,6 @@ covariance_samples <- cbind(
 # Resolution for spatial interpolations
 resolution <- list(nrow = 50, ncol = 50)
 
-options(useRandomFields = TRUE)
-
 loaloa_u <- vect(loaloa_sf$geometry)
 values(loaloa_u) <- as.data.frame(u_samples)
 
@@ -159,14 +151,6 @@ u_brick <- geostatsp::RFsimulate(
   x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
   data = loaloa_u
 )
-
-nrow(covariance_samples)
-
-# Error in UnifyXT(x, y, z, T, grid = grid, distances = distances, dim = dim) : 
-#   is.numeric(x) is not TRUE
-# 'matrix,SpatRaster'
-
-# Happens with no data so must be either model or x that is the issue!
 
 loaloa_v <- vect(loaloa_sf$geometry)
 values(loaloa_v) <- as.data.frame(v_samples)
@@ -179,3 +163,39 @@ v_brick <- geostatsp::RFsimulate(
 
 eta_phi_brick <- beta_samples[1, ] + u_brick
 eta_rho_brick <- beta_samples[2, ] + v_brick
+
+# Testing RFsimulate function from RandomFields, and RFsimulate from geostatsp both get the same error...
+model1 <- c(var = 5, range = 1,shape = 0.5)
+model1 <- RandomFields::RMmatern(model1)
+myraster <- rast(nrows = 20, ncols = 30, extent = ext(0, 6, 0, 4), crs = "+proj=utm +zone=17 +datum=NAD27 +units=m +no_defs")
+sim <- RandomFields::RFsimulate(model1, x = myraster, n = 3)
+
+# Give up with using RandomFields: let's do it with gstat and write our own wrapper function
+grid <- st_bbox(loaloa_sf) %>%
+  st_as_stars(dx = 20000)
+
+vgm <- gstat::vgm(model = "Mat", range = 60000, shape = 1, psill = 1)
+kriging_results <- gstat::krige(p ~ 1, loaloa_sf, grid, model = vgm)
+
+ggplot() +
+  geom_stars(data = kriging_results, aes(fill = var1.pred, x = x, y = y)) +
+  geom_sf(data = loaloa_sf, shape = 4) +
+  geom_sf(data = cmr, fill = NA) +
+  scale_fill_viridis_c() +
+  theme_void() +
+  labs(fill = "Prevalence")
+
+ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
+
+kriging_samples <- gstat::krige(p ~ 1, loaloa_sf, grid, nmax = 30, model = vgm, nsim = 4)
+dim(st_as_sf(kriging_samples))
+dim(grid)
+
+ggplot() +
+  geom_stars(data = kriging_samples[,,,1:4]) +
+  facet_wrap(~ sample)   +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0))

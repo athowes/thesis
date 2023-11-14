@@ -342,7 +342,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.1.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-epil"><i class="fa fa-check"></i><b>C.1.1</b> <code>TMB</code> C++ template</a></li>
 <li class="chapter" data-level="C.1.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#tmb-modified-epil"><i class="fa fa-check"></i><b>C.1.2</b> Modified <code>TMB</code> C++ template</a></li>
 <li class="chapter" data-level="C.1.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#stan-epil"><i class="fa fa-check"></i><b>C.1.3</b> <code>Stan</code> C++ template</a></li>
-<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-diagnostics"><i class="fa fa-check"></i><b>C.1.4</b> NUTS convergence diagnostics</a></li>
+<li class="chapter" data-level="C.1.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability"><i class="fa fa-check"></i><b>C.1.4</b> NUTS convergence and suitability</a></li>
 </ul></li>
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.2</b> Simplified Naomi model description</a>
 <ul>
@@ -355,7 +355,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.4</b> AGHQ and PCA-AGHQ details</a></li>
 <li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.5</b> Normalising constant estimation</a></li>
 <li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.6</b> Inference comparison</a></li>
-<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#mcmc-convergence-and-suitability"><i class="fa fa-check"></i><b>C.7</b> MCMC convergence and suitability</a></li>
+<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-1"><i class="fa fa-check"></i><b>C.7</b> NUTS convergence and suitability</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
@@ -1251,7 +1251,14 @@ Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015<
 </tr>
 </tbody>
 </table>
-<p>Following <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>, the <code>geostatsp::RFsimulate</code> <span class="citation">(<a href="#ref-brown2015model">Brown 2015</a>)</span> was used as a wrapper to the <code>RandomFields</code> R package <span class="citation">(<a href="#ref-schlather2015analysis">Schlather et al. 2015</a>)</span> to implement conditional Gaussian field simulation with hyperparameter samples.</p>
+<p>The <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12] passing in hyperparameter samples one-at-a-time to the <code>model</code> argument.</p>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation"></span>
+<img src="figures/naomi-aghq/conditional-simulation.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.11: Figure caption.
+</p>
+</div>
 </div>
 </div>
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
@@ -1511,7 +1518,7 @@ This expression is a product of the univariate weighting functions for the relev
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to principal components analysis (PCA).
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.11</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.12</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
@@ -1526,7 +1533,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral \(I\)." width="95%" />
 <p class="caption">
-Figure 6.11: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral <span class="math inline">\(I\)</span>.
+Figure 6.12: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral <span class="math inline">\(I\)</span>.
 </p>
 </div>
 </div>
@@ -1537,7 +1544,7 @@ Figure 6.11: Consider the function <span class="math inline">\(f(z_1, z_2) = \te
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.12: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.13: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1561,7 +1568,7 @@ This represents a gold-standard.</li>
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.12</a>.</p>
+Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.13</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The effective sample size ratios generated sampling with NUTS were low.
@@ -1704,10 +1711,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.13: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.14: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.13</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.14</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
@@ -1863,6 +1870,12 @@ Neal, Radford M. 2003. <span>“Slice Sampling.”</span> <em>The Annals of Stat
 <div id="ref-osgood2023statistical" class="csl-entry">
 Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“A Statistical Review of Template Model Builder: A Flexible Tool for Spatial Modelling.”</span> <em>International Statistical Review</em> 91 (2): 318–42.
 </div>
+<div id="ref-pebesma2004gstat" class="csl-entry">
+Pebesma, Edzer J. 2004. <span>“Multivariable Geostatistics in <span>S</span>: The Gstat Package.”</span> <em>Computers &amp; Geosciences</em> 30: 683–91.
+</div>
+<div id="ref-sds" class="csl-entry">
+Pebesma, Edzer, and Roger Bivand. 2023. <em><span class="nocase">Spatial Data Science: With Applications in R</span></em>. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9780429459016">https://doi.org/10.1201/9780429459016</a>.
+</div>
 <div id="ref-press2007numerical" class="csl-entry">
 Press, William H, Teukolsky Saul A, William T Vetterling, and Brian P Flannery. 2007. <em>Numerical Recipes 3rd Edition: The Art of Scientific Computing</em>. Cambridge University Press.
 </div>
@@ -1883,9 +1896,6 @@ Rue, Håvard, Sara Martino, and Nicolas Chopin. 2009. <span>“<span class="noca
 </div>
 <div id="ref-rue2017bayesian" class="csl-entry">
 Rue, Håvard, Andrea Riebler, Sigrunn H Sørbye, Janine B Illian, Daniel P Simpson, and Finn K Lindgren. 2017. <span>“Bayesian Computing with INLA: A Review.”</span> <em>Annual Review of Statistics and Its Application</em> 4: 395–421.
-</div>
-<div id="ref-schlather2015analysis" class="csl-entry">
-Schlather, Martin, Alexander Malinowski, Peter J Menck, Marco Oesting, and Kirstin Strokorb. 2015. <span>“Analysis, Simulation and Prediction of Multivariate Random Fields with Package RandomFields.”</span> <em>Journal of Statistical Software</em> 63: 1–25.
 </div>
 <div id="ref-schluter2016using" class="csl-entry">
 Schlüter, Daniela K, Martial L Ndeffo-Mbah, Innocent Takougang, Tony Ukety, Samuel Wanji, Alison P Galvani, and Peter J Diggle. 2016. <span>“Using Community-Level Prevalence of Loa Loa Infection to Predict the Proportion of Highly-Infected Individuals: Statistical Modelling to Support Lymphatic Filariasis and Onchocerciasis Elimination Programs.”</span> <em>PLoS Neglected Tropical Diseases</em> 10 (12): e0005157.
