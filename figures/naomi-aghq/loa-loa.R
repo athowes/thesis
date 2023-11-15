@@ -6,6 +6,8 @@ library(stars)
 library(tidyverse)
 library(patchwork)
 
+source("figures/naomi-aghq/functions.R")
+
 data(loaloa, package = "geostatsp")
 loaloa <- terra::vect(loaloa)
 loaloa_sf <- sf::st_as_sf(loaloa)
@@ -233,3 +235,55 @@ fig_prevalence <- ggplot() +
 fig_suitability + fig_prevalence
 
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 4, w = 6.25, bg = "white")
+
+# Laplace marginals
+random <- obj$env$random
+N <- length(random)
+W_names <- names(obj$env$par[random])
+
+param[unique(W_names)] <- NULL
+param$W_minus_i <- rnorm(N - 1)
+param$W_i <- rnorm(1)
+
+compile("resources/naomi-aghq/loaloazip_modified.cpp")
+dyn.load(dynlib("resources/naomi-aghq/loaloazip_modified"))
+
+compute_laplace_marginal <- function(i, quad) {
+  dat$i <- i
+  
+  obj_i <- TMB::MakeADFun(
+    data = dat,
+    parameters = param,
+    random = "W_minus_i",
+    DLL = "loaloazip_modified",
+    silent = TRUE,
+  )
+  
+  random_i <- obj_i$env$random
+  mode_i <- quad$modesandhessians[["mode"]][[1]][-i]
+  gg <- create_approx_grid(quad$modesandhessians, i = i, k = 5)
+  out <- data.frame(index = i, par = W_names[i], x = mvQuad::getNodes(gg), w = mvQuad::getWeights(gg))
+  
+  theta_names <- make.unique(names(obj$par), sep = "")
+  
+  .g <- function(x) {
+    lp <- vector(mode = "numeric", length = nrow(quad$modesandhessians))
+    
+    for(z in 1:nrow(quad$modesandhessians)) {
+      theta <- as.numeric(quad$modesandhessians[z, theta_names])
+      obj_i$env$last.par[random_i] <- quad$modesandhessians[z, "mode"][[1]][-dat$i]
+      lp[z] <- as.numeric(- obj_i$fn(c(x, theta)))
+    }
+    
+    return(logSumExpWeights(lp, w = quad$normalized_posterior$nodesandweights$weights))
+  }
+  
+  out$lp <- purrr::map_dbl(out$x, .g)
+  lognormconst <- logSumExpWeights(out$lp, out$w)
+  out$lp_normalised <- out$lp - lognormconst
+  
+  return(out)
+}
+
+temp <- compute_laplace_marginal(i = 1, quad)
+temp
