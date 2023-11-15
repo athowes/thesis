@@ -146,32 +146,36 @@ resolution <- list(nrow = 50, ncol = 50)
 loaloa_u <- vect(loaloa_sf$geometry)
 values(loaloa_u) <- as.data.frame(u_samples)
 
-u_brick <- geostatsp::RFsimulate(
-  model = covariance_samples,
-  x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
-  data = loaloa_u
-)
+# Below code is broken with error:
+# Error in UnifyXT(x, y, z, T, grid = grid, distances = distances, dim = dim) : 
+#   is.numeric(x) is not TRUE
 
-loaloa_v <- vect(loaloa_sf$geometry)
-values(loaloa_v) <- as.data.frame(v_samples)
-
-v_brick <- geostatsp::RFsimulate(
-  model = covariance_samples,
-  x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
-  data = loaloa_v
-)
-
-eta_phi_brick <- beta_samples[1, ] + u_brick
-eta_rho_brick <- beta_samples[2, ] + v_brick
+# u_brick <- geostatsp::RFsimulate(
+#   model = covariance_samples,
+#   x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
+#   data = loaloa_u
+# )
+# 
+# loaloa_v <- vect(loaloa_sf$geometry)
+# values(loaloa_v) <- as.data.frame(v_samples)
+# 
+# v_brick <- geostatsp::RFsimulate(
+#   model = covariance_samples,
+#   x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
+#   data = loaloa_v
+# )
+# 
+# eta_phi_brick <- beta_samples[1, ] + u_brick
+# eta_rho_brick <- beta_samples[2, ] + v_brick
 
 # Testing RFsimulate function from RandomFields, and RFsimulate from geostatsp both get the same error...
-model1 <- c(var = 5, range = 1,shape = 0.5)
-model1 <- RandomFields::RMmatern(model1)
-myraster <- rast(nrows = 20, ncols = 30, extent = ext(0, 6, 0, 4), crs = "+proj=utm +zone=17 +datum=NAD27 +units=m +no_defs")
-sim <- RandomFields::RFsimulate(model1, x = myraster, n = 3)
+# model1 <- c(var = 5, range = 1,shape = 0.5)
+# model1 <- RandomFields::RMmatern(model1)
+# myraster <- rast(nrows = 20, ncols = 30, extent = ext(0, 6, 0, 4), crs = "+proj=utm +zone=17 +datum=NAD27 +units=m +no_defs")
+# sim <- RandomFields::RFsimulate(model1, x = myraster, n = 3)
 
 # Give up with using RandomFields: let's do it with gstat and write our own wrapper function
-grid <- st_bbox(loaloa_sf) %>%
+grid <- {st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)} %>%
   st_as_stars(dx = 20000)
 
 vgm <- gstat::vgm(model = "Mat", range = 60000, shape = 1, psill = 1)
@@ -185,17 +189,47 @@ ggplot() +
   theme_void() +
   labs(fill = "Prevalence")
 
-ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
-
-kriging_samples <- gstat::krige(p ~ 1, loaloa_sf, grid, nmax = 30, model = vgm, nsim = 4)
-dim(st_as_sf(kriging_samples))
-dim(grid)
+nsim <- 100
+u_sf <- st_sf("u" = rowMeans(u_samples), "geometry" = loaloa_sf$geometry)
+u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = nsim)
+u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
+u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
 
 ggplot() +
-  geom_stars(data = kriging_samples[,,,1:4]) +
+  geom_stars(data = u_kriging_stars[,,,1:4]) +
   facet_wrap(~ sample)   +
   coord_equal() +
   scale_fill_viridis_c() +
   theme_void() +
   scale_x_discrete(expand = c(0, 0)) +
   scale_y_discrete(expand = c(0, 0))
+
+eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, 1:nsim], each = nrow(u_kriging_samples))
+phi_samples <- apply(eta_phi_samples, 2, plogis)
+phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = u_kriging_samples_sf$geometry)
+
+fig_suitability <- ggplot() +
+  geom_sf(data = phi_sf, aes(fill = phi), alpha = 0.8) +
+  geom_sf(data = cmr, fill = NA) +
+  scale_fill_viridis_c(option = "A", direction = 1) +
+  theme_void() +
+  labs(fill = "Suitability")
+
+v_sf <- st_sf("v" = rowMeans(v_samples), "geometry" = loaloa_sf$geometry)
+v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = nsim)
+v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
+v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
+eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, 1:nsim], each = nrow(v_kriging_samples))
+rho_samples <- apply(eta_rho_samples, 2, plogis)
+rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = v_kriging_samples_sf$geometry)
+
+fig_prevalence <- ggplot() +
+  geom_sf(data = rho_sf, aes(fill = rho), alpha = 0.8) +
+  geom_sf(data = cmr, fill = NA) +
+  scale_fill_viridis_c(option = "D", direction = 1) +
+  theme_void() +
+  labs(fill = "Prevalence")
+
+fig_suitability + fig_prevalence
+
+ggsave("figures/naomi-aghq/conditional-simulation.png", h = 4, w = 6.25, bg = "white")
