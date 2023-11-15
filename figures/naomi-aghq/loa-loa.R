@@ -12,6 +12,11 @@ data(loaloa, package = "geostatsp")
 loaloa <- terra::vect(loaloa)
 loaloa_sf <- sf::st_as_sf(loaloa)
 
+cmr <- sf::st_read("figures/naomi-aghq/gadm41_CMR_2.json")
+nga <- sf::st_read("figures/naomi-aghq/gadm41_NGA_2.json")
+areas <- rbind(cmr, nga)
+areas <- st_transform(areas, crs = st_crs(loaloa_sf))
+
 compile("resources/naomi-aghq/loaloazip.cpp")
 dyn.load(dynlib("resources/naomi-aghq/loaloazip"))
 
@@ -88,21 +93,14 @@ obj <- MakeADFun(
 
 quad <- aghq::marginal_laplace_tmb(obj, 3, startingvalue = c(param$logkappa, param$logtau))
 
-# Sampling from AGHQ fitted model
-
-cmr <- sf::st_read("figures/naomi-aghq/gadm41_CMR_2.json")
-nga <- sf::st_read("figures/naomi-aghq/gadm41_NGA_2.json")
-areas <- rbind(cmr, nga)
-
 loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
 
 figA <- ggplot() +
-  geom_sf(data = areas, col = "grey70") +
+  geom_sf(data = areas, col = "grey20") +
   geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
   scale_color_viridis_c() +
   scale_size(range = c(1, 4)) +
   theme_void() +
-  lims(x = c(7.5, 16), y = c(3, 7)) +
   labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero", tag = "A") +
   guides(
     col = guide_colourbar(order = 1),
@@ -142,15 +140,15 @@ covariance_samples <- cbind(
   shape = matern$nu
 )
 
-# Resolution for spatial interpolations
-resolution <- list(nrow = 50, ncol = 50)
-
-loaloa_u <- vect(loaloa_sf$geometry)
-values(loaloa_u) <- as.data.frame(u_samples)
-
 # Below code is broken with error:
 # Error in UnifyXT(x, y, z, T, grid = grid, distances = distances, dim = dim) : 
 #   is.numeric(x) is not TRUE
+
+# Resolution for spatial interpolations
+# resolution <- list(nrow = 50, ncol = 50)
+# 
+# loaloa_u <- vect(loaloa_sf$geometry)
+# values(loaloa_u) <- as.data.frame(u_samples)
 
 # u_brick <- geostatsp::RFsimulate(
 #   model = covariance_samples,
@@ -177,16 +175,16 @@ values(loaloa_u) <- as.data.frame(u_samples)
 # sim <- RandomFields::RFsimulate(model1, x = myraster, n = 3)
 
 # Give up with using RandomFields: let's do it with gstat and write our own wrapper function
-grid <- {st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)} %>%
-  st_as_stars(dx = 10000)
+extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
+grid <- st_as_stars(extent, dx = 10000)
 
 vgm <- gstat::vgm(model = "Mat", range = 60000, shape = 1, psill = 1)
 kriging_results <- gstat::krige(p ~ 1, loaloa_sf, grid, model = vgm)
 
 ggplot() +
+  geom_sf(data = areas, fill = NA) +
   geom_stars(data = kriging_results, aes(fill = var1.pred, x = x, y = y)) +
   geom_sf(data = loaloa_sf, shape = 4) +
-  geom_sf(data = cmr, fill = NA) +
   scale_fill_viridis_c() +
   theme_void() +
   labs(fill = "Prevalence")
@@ -208,11 +206,12 @@ phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
 phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = u_kriging_samples_sf$geometry)
 
 fig_suitability <- ggplot() +
-  geom_sf(data = phi_sf, aes(fill = phi), alpha = 0.8) +
-  geom_sf(data = cmr, fill = NA) +
+  geom_sf(data = sf::st_intersection(phi_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
   scale_fill_viridis_c(option = "A", direction = 1) +
   theme_void() +
-  labs(fill = "Suitability")
+  labs(fill = "Suitability", tag = "A")
 
 rho_samples <- list()
 
@@ -230,13 +229,14 @@ rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
 rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = v_kriging_samples_sf$geometry)
 
 fig_prevalence <- ggplot() +
-  geom_sf(data = rho_sf, aes(fill = rho), alpha = 0.8) +
-  geom_sf(data = cmr, fill = NA) +
+  geom_sf(data = sf::st_intersection(rho_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
   scale_fill_viridis_c(option = "D", direction = 1) +
   theme_void() +
-  labs(fill = "Prevalence")
+  labs(fill = "Prevalence", tag = "B")
 
-fig_suitability + fig_prevalence
+fig_suitability / fig_prevalence
 
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 4, w = 6.25, bg = "white")
 
