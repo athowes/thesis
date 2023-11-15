@@ -178,7 +178,7 @@ values(loaloa_u) <- as.data.frame(u_samples)
 
 # Give up with using RandomFields: let's do it with gstat and write our own wrapper function
 grid <- {st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)} %>%
-  st_as_stars(dx = 20000)
+  st_as_stars(dx = 10000)
 
 vgm <- gstat::vgm(model = "Mat", range = 60000, shape = 1, psill = 1)
 kriging_results <- gstat::krige(p ~ 1, loaloa_sf, grid, model = vgm)
@@ -192,22 +192,19 @@ ggplot() +
   labs(fill = "Prevalence")
 
 nsim <- 100
-u_sf <- st_sf("u" = rowMeans(u_samples), "geometry" = loaloa_sf$geometry)
-u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = nsim)
-u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
-u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
+phi_samples <- list()
 
-ggplot() +
-  geom_stars(data = u_kriging_stars[,,,1:4]) +
-  facet_wrap(~ sample)   +
-  coord_equal() +
-  scale_fill_viridis_c() +
-  theme_void() +
-  scale_x_discrete(expand = c(0, 0)) +
-  scale_y_discrete(expand = c(0, 0))
+for(i in 1:nsim) {
+  vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+  u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
+  u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = 1)
+  u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
+  u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
+  eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, i], each = nrow(u_kriging_samples))
+  phi_samples[[i]] <- apply(eta_phi_samples, 2, plogis)
+}
 
-eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, 1:nsim], each = nrow(u_kriging_samples))
-phi_samples <- apply(eta_phi_samples, 2, plogis)
+phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
 phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = u_kriging_samples_sf$geometry)
 
 fig_suitability <- ggplot() +
@@ -217,12 +214,19 @@ fig_suitability <- ggplot() +
   theme_void() +
   labs(fill = "Suitability")
 
-v_sf <- st_sf("v" = rowMeans(v_samples), "geometry" = loaloa_sf$geometry)
-v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = nsim)
-v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
-v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
-eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, 1:nsim], each = nrow(v_kriging_samples))
-rho_samples <- apply(eta_rho_samples, 2, plogis)
+rho_samples <- list()
+
+for(i in 1:nsim) {
+  vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+  v_sf <- st_sf("v" = v_samples[, i], "geometry" = loaloa_sf$geometry)
+  v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = 1)
+  v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
+  v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
+  eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, i], each = nrow(v_kriging_samples))
+  rho_samples[[i]] <- apply(eta_rho_samples, 2, plogis)
+}
+
+rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
 rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = v_kriging_samples_sf$geometry)
 
 fig_prevalence <- ggplot() +
