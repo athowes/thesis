@@ -21,20 +21,20 @@ resource_version <- "20231111-193806-8b573544"
 \markboth{Models for spatial structure}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter presents an investigation of spatial random effects specifications for areal data.
-The investigation was motivated by a commonly encountered question: should the model be altered to capture a reasonable, albeit hypothetical, feature of the data?
-Here, the feature in question pertains to the spatial correlation structure between areas.
+This chapter investigates spatial random effect model specifications for areal data.
+A simple model based on the adjacency structure between areas is popular in HIV small-area estimation and beyond.
+The analysis aimed to determine if this model is adequate, or a more complex model is necessary.
 
-Modelling of spatial variation is particularly important for the small-area estimation of HIV.
+Modelling spatial correlation is particularly important for the small-area estimation of HIV.
 This is because the covariates which are most strongly associated with HIV, such as sexual behaviour and STI status [@mayala2020predicting], are themselves difficult to measure.
-As a result, in previous small-area models of HIV have found including covariates to only result in a modest improvement in predictive performance [Supplementary Figure 20, @dwyer2019mapping].
-The lack of predictive covariates foregrounds the role of modelling spatial variation.
-For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and modelling spatial variation is less pertinent [@weiss2015re; @bhatt2015effect].
+As a result, previous small-area models of HIV have found including covariates only modestly improve predictive performance [Supplementary Figure 20, @dwyer2019mapping].
+The lack of predictive covariates emphasises the role of modelling spatial variation.
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and directly modelling spatial correlation is less important [@weiss2015re; @bhatt2015effect].
 
-Spatial variation in areal data are often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
+Spatial variation in areal data is often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
 The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; @rue2005gaussian].
 These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
-Observations made in areas close together are assumed to be correlated, and more distant relationships are ignored.
+Observations in areas close together are assumed to be related, with more distant relationships not directly accounted for.
 Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area, based on a binary relationship.
 The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented in software such as `R-INLA` [@blangiardo2013spatial], `rstan` [@morris2019bayesian; @conegan2022geostan], `NIMBLE` [Chapter 9; @nimblemanual] and `PyMC` [@saunders2023pymc], among others.
 As a result, it has been widely used, including:
@@ -44,10 +44,10 @@ As a result, it has been widely used, including:
 * to map mortality from cancers [@rashid2023inequalities], injuries [@parks2020anomalously] and air pollution [@bennett2019particulate];
 * to model alcohol use patterns [@dwyer2015drinking].
 
-The Besag model was designed for use in image analysis, on a regular grid.
+The Besag model was designed for image analysis, on a regular grid.
 However, for more irregular geometries, the assumptions made are unrealistic and appear to be violated.
 The administrative divisions of a country used in small-area estimation are one example of a more irregular geometry.
-This chapter tests the hypothesis that using more realistic assumptions about spatial structure would improve the performance of small-area estimation models.
+This chapter tests the hypothesis that using more realistic assumptions about spatial structure improves the performance of small-area estimation models.
 Performance in this context refers to accurate forecasts of parameters as measured by scoring rules.
 In doing so, practical recommendations for modelling areal spatial structure are offered.
 The results are presented in @howes2023beyond.
@@ -55,23 +55,23 @@ Code for the analysis in this chapter is available from [`https://github.com/ath
 
 ## Models based on adjacency {#adjacency-models}
  
-This section discusses spatial random effect models based on an symmetric adjacency relation $i \sim j$ between areas $A_i$ and $A_j$.
+This section discusses spatial random effect models based on a symmetric adjacency relation $i \sim j$ between areas $A_i$ and $A_j$.
 Adjacency is typically defined by a shared border, though other choices are possible [@paciorek2013spatial].
 
 ### The Besag model {#besag}
 
-(ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph $\mathcal{G}$ with vertices positioned in alignment with the area that they correspond to, and edges between adjacent areas.
+(ref:geometry-graph) Panel A shows the districts of Zimbabwe. Panel B shows the corresponding adjacency graph $\mathcal{G}$ with vertices positioned at the centre of the area they correspond to, and edges between adjacent areas.
 
 ```{r geometry-graph, fig.cap="(ref:geometry-graph)"}
 knitr::include_graphics("figures/beyond-borders/geometry-graph.png")
 ```
 
-The Besag model [@besag1991bayesian] is an improper conditional auto-regressive (ICAR) model where the full conditional distribution of the $i$th spatial random effect is given by
+The Besag model [@besag1991bayesian] is an improper conditional auto-regressive (ICAR) model where the conditional mean of the random effect $u_i$ is the average of its neighbours $\{u_j\}_{j \sim i}$ and the precision is proportional to the number of neighbours.
+The full conditional distribution of the $i$th spatial random effect is given by
 \begin{equation}
     u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), (\#eq:besag)
 \end{equation}
 where $\delta i$ is the set of neighbours of $A_i$ with cardinality $n_{\delta i} = |\delta i|$ and $\mathbf{u}_{-i}$ is the vector of spatial random effects with the $i$th entry removed.
-The conditional mean of the random effect $u_i$ is the average of its neighbours $\{u_j\}_{j \sim i}$ and the precision $n_{\delta i}\tau_u$ is proportional to the number of neighbours $n_{\delta i}$.
 By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
 \begin{equation}
     \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}). (\#eq:gmrf)
@@ -102,7 +102,8 @@ If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can b
 
 ### Best practises for the Besag model
 
-@freni2018note recommended three best practices:
+Directly implementing the Besag model as described in Section \@ref(besag) in recommended against.
+@freni2018note provide three best practices:
 
 1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance equal to one.
 The generalised variance of a matrix is defined by the geometric mean of the diagonal elements of its generalised inverse.
@@ -150,7 +151,7 @@ The Besag model was originally proposed by @besag1991bayesian for use in image a
 In this setting, areas correspond to pixels arranged in a regular lattice structure.
 Since then, it has seen wider use.
 In some situations, like small-area estimation of HIV, the spatial structure is less regular than a lattice.
-This raises a number of concerns about the Besag model's applicability to this broader setting.
+This raises concerns about the Besag model's applicability to this broader setting.
 The discussion in this section is closely linked to:
 
 * the modifiable areal unit problem [@openshow1979million], whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation;
@@ -166,7 +167,7 @@ knitr::include_graphics("figures/beyond-borders/maup1.png")
 
 A fundamental objection is that summarising a geometry by an adjacency graph represents a loss of information.
 Many geometries share the same adjacency graph, and as such are isomorphic under the Besag model (Figure \@ref(fig:maup1)).
-Though not in itself a problem, this fact does prompt consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
+Though not in itself a problem, this fact prompts consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.
 
 Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
 In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
@@ -178,11 +179,11 @@ In other words, although pathological geometries can be constructed, they might 
 
 #### Mean structure
 
-In the Besag model is all adjacent areas count equally.
+In the Besag model all adjacent areas count equally in the equation for the conditional mean.
 This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbouring areas.
 Figure \@ref(fig:maup1) illustrates a number of heuristic features for neighbour importance.
-In Panel C, the area with a longer shared border would be expected to be more highly correlated.
-In Pancel D, the area with a closer centre of mass would be expected to be more highly correlated.
+In Panel \@ref(fig:maup1)C, the area with a longer shared border would be expected to be more highly correlated.
+In Panel \@ref(fig:maup1)D, the area with a closer centre would be expected to be more highly correlated.
 
 #### Variance structure
 
@@ -207,7 +208,7 @@ knitr::include_graphics("figures/beyond-borders/maup3.png")
 ```
 
 As a second example of undesirable behaviour, suppose we fit a Besag model upon identical data using each of the two geometries in Figure \@ref(fig:maup3).
-If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel B as compared with Panel A because there will appear to be less variation between neighbouring areas.
+If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel \@ref(fig:maup3)B as compared with Panel \@ref(fig:maup3)A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of $\sigma^2_u$ applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
 ### Weighted ICAR models
@@ -252,7 +253,7 @@ Weighted ICAR models appear to overcome some of the limitations discussed in Sec
 
 ### The reparameterised Besag-York-Mollié model {#bym2}
 
-Often, as well as spatial structure, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
+Often, as well as spatial correlation, there exists IID over-dispersion in the residuals and it is inappropriate to use purely spatially structured random effects in the model.
 The Besag-York-Mollié (BYM) model of @besag1991bayesian accounts for this in a natural way by decomposing the spatial random effect $\mathbf{u} = \mathbf{v} + \mathbf{w}$ into a sum of an unstructured IID component $\mathbf{v}$ and a spatially structured Besag component $\mathbf{w}$.
 Each component has its own respective precision parameter $\tau_v$ and $\tau_w$.
 The resulting distribution is
@@ -280,7 +281,8 @@ When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effec
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
 Although the BYM and BYM2 models were originally proposed using the Besag model as spatially structured component, this need not be the case.
-Indeed, more broadly it is reasonable to consider convolution random effects with any model for spatially structured noise.
+Indeed, more broadly it is reasonable to consider convolution random effects (of a form analogous to that in Equation \@ref(eq:bym) or \@ref(eq:bym2)) with any model for spatially structured noise.
+Any limitations of the model for spatially structured random effects are inherited by the convolution random effects.
 
 ## Models using kernels {#kernel-models}
 
@@ -300,11 +302,12 @@ The precision parameter $\tau_u$ is placed outside of the Gram matrix, analogous
 Areal kernels may be thought of as a type of kernels on sets [@gartner2002multi].
 
 It is challenging to think directly about the correlation structure between areas.
-Instead, most well-known spatial process models define the correlation structure between a points using a kernel function
+Instead, most well-known spatial process models define the correlation structure between points using a kernel function
 \begin{equation}
 k: \mathcal{S} \times \mathcal{S} \to \mathbb{R}. (\#eq:kernel-function)
 \end{equation}
-A simple method, and the one considered here henceforth, is to construct $K$ (Equation \@ref(eq:areal-kernel-function)) from $k$ (Equation \@ref(eq:kernel-function)) by averaging the kernel $k$ computed on some collection of points representing each area.
+A simple method, and the one considered here henceforth, is to construct $K$ (Equation \@ref(eq:areal-kernel-function)) from $k$ (Equation \@ref(eq:kernel-function)) by averaging the kernel $k$ computed on some number of points representing each area.
+In Section \@ref(centroid-kernel) one point is used, and in Section \@ref(integrated-kernel) multiple points are used.
 
 ### Centroid kernel {#centroid-kernel}
 
@@ -325,11 +328,11 @@ The centroid kernel has been used:
 * to model the reproduction number of COVID-19 [@teh2021efficient].
 
 In a model comparison study @best2005comparison (Section 3) simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
-That said, it no surprising that a stationary covariance function would struggle to recover non-stationary structure.
+That said, it unsurprising that a stationary covariance function would struggle to recover non-stationary structure.
 
 ### Integrated kernel {#integrated-kernel}
 
-Rather than choosing a single representative point, an alternative is to more completely represent the area by integrating the kernel over the areas of interest
+Rather than choosing a single representative point, an alternative is to more completely represent the area by integrating the kernel over the areas of interest.
 This results in the integrated kernel
 \begin{equation}
   K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. (\#eq:ik1)
@@ -337,7 +340,7 @@ This results in the integrated kernel
 Unlike for the centroid kernel where $K_{ii} = 1$ for all $i$, the marginal variance of the $i$th spatial random effect $K_{ii} = K(A_i, A_i)$ varies depending on the area: becoming smaller for more compact areas and larger for areas which are of greater extent or more spread out.
 
 This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel $k$ over the areal partition.
-In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi].
+In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes [@law2018variational; @tanaka2019spatially; @yousefi2019multi; @hamelijnck2019multi; @chau2021deconditional].
 Examples of use of this model in statistical practice are rare.
 
 #### Accounting for heterogeneity
@@ -411,7 +414,7 @@ However, disaggregation regression is challenging without auxiliary covariate in
 ## Simulation study {#simulation-study}
 
 This simulation study tests the ability of inferential models with varying spatial random effect specifications to accurately recover small-area quantities.
-The data and modelling choices were designed with a spatial epidemiology setting in mind.
+The data and modelling choices were designed with a spatial epidemiology application in mind.
 
 ### Synthetic data
 
@@ -419,7 +422,7 @@ The data and modelling choices were designed with a spatial epidemiology setting
 |-------|---------------|
 | IID   | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{I}_n)$ |
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matérn kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
+| Integrated kernel (IK) | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matérn kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
 
 Table: (\#tab:simulation-models) The models used to create synthetic data.
 
@@ -487,7 +490,7 @@ This value matches that used to simulate data, and simplifies Equation \@ref(eq:
 k(s, s') = \left(1 + \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right).
 \end{equation}
 
-The number of points per area $L_i$ was set to 10 with a hexagonal spacing structure (Panel C, Figure \@ref(fig:integration-strategy)).
+The number of points per area $L_i$ was set to 10 with a hexagonal spacing structure (Panel \@ref(fig:integration-strategy)C).
 The actual values of $L_i$ sometimes differed from 10 because `sf::st_sample` with `type = "hexagonal"` does not guarantee exactly the specified number of samples are returned [@pebesma2018sf].
 
 #### Priors
