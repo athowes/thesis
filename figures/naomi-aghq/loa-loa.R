@@ -238,7 +238,7 @@ fig_prevalence <- ggplot() +
 
 fig_suitability / fig_prevalence
 
-ggsave("figures/naomi-aghq/conditional-simulation.png", h = 4, w = 6.25, bg = "white")
+ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
 
 # Laplace marginals
 random <- obj$env$random
@@ -260,7 +260,8 @@ compute_laplace_marginal <- function(i, quad) {
     parameters = param,
     random = "W_minus_i",
     DLL = "loaloazip_modified",
-    silent = TRUE,
+    ADreport = FALSE,
+    silent = TRUE
   )
   
   random_i <- obj_i$env$random
@@ -290,4 +291,16 @@ compute_laplace_marginal <- function(i, quad) {
 }
 
 temp <- compute_laplace_marginal(i = 1, quad)
-temp
+
+sample_adam <- function(M) {
+  q <- runif(M)
+  pdf_and_cdf <- compute_pdf_and_cdf(nodes = temp$x, temp$lp_normalised)
+  s <- numeric(length(q))
+  for(j in 1:length(q)) s[j] <- pdf_and_cdf$x[max(which(pdf_and_cdf$cdf < q[j]))]
+  return(s)
+}
+
+samples <- sample_adam(1000)
+
+ggplot(data.frame(samples), aes(x = samples)) +
+  geom_histogram()
