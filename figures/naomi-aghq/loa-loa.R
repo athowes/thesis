@@ -290,7 +290,11 @@ compute_laplace_marginal <- function(i, quad) {
   return(out)
 }
 
+tictoc::tic()
 temp <- compute_laplace_marginal(i = 1, quad)
+time <- tictoc::toc()
+
+(time$toc - time$tic) * N / 60 / 60
 
 sample_adam <- function(M) {
   q <- runif(M)
