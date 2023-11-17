@@ -16,7 +16,8 @@ resource_version <- "20231117-120742-7a6a613f"
 
 ```{r}
 gt_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_crps.rds"))
-gt_crps
+if(knitr::is_html_output()) gt_crps
+if(knitr::is_latex_output()) gt_crps %>% gt::as_latex()
 ```
 
 Table: (\#tab:crps) The CRPS.
