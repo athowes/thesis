@@ -1,11 +1,11 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/85)<!-- -->
+![](https://geps.dev/progress/86)<!-- -->
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a couple of months. Currently
-> 212/~250 pages, and many/~tending to zero mistakes. The number 250 is
+> 216/~250 pages, and many/~tending to zero mistakes. The number 250 is
 > also mostly arbitrary.
 
 PhD in [Modern Statistics and Statistical Machine
@@ -96,12 +96,13 @@ interested.
 > I’m a statistician: which parts of the thesis might interest me?
 
 If you use spatial random effects to model areal spatial structure,
-[Chapter 4](https://athowes.github.io/thesis/beyond-borders.html). If
-you’re interested in modelling multinomial data using the
-multinomial-Poisson transformation and structured random effects,
-[Chapter 5](https://athowes.github.io/thesis/multi-agyw.html). If you
-have a complicated model which is not compatible with `R-INLA`, but
-would still like to use INLA-like methods, [Chapter
+[Chapter 4](https://athowes.github.io/thesis/beyond-borders.html). More
+broadly, this chapter uses a variety of model comparison techniques that
+may be of interest. If you’re interested in modelling multinomial data
+using the multinomial-Poisson transformation and structured random
+effects, [Chapter 5](https://athowes.github.io/thesis/multi-agyw.html).
+If you have a complicated model which is not compatible with `R-INLA`,
+but would still like to use INLA-like methods, [Chapter
 6](https://athowes.github.io/thesis/naomi-aghq.html). If you have such a
 model, get in touch! All of the methods are compatible with any model
 written in the (very general) [Template Model
