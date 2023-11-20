@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231119-201207-bc89d17f"
+resource_version <- "20231120-143446-b039098c"
 ```
 
 # Models for spatial structure {#beyond-borders}
@@ -542,15 +542,25 @@ Uniformity was assessed using probability integral transform (PIT) histograms [@
 
 ### Results
 
+(ref:crps-boxplot) Figure caption.
+
+```{r crps-boxplot, fig.cap="(ref:crps-boxplot)"}
+path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-boxplot.png")
+knitr::include_graphics(path)
+```
+
 ## HIV prevalence study {#hiv-study}
 
-Model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 across four countries in sub-Saharan Africa.
-These included countries were:
+Model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys)).
 
-* Côte d'Ivoire ($n = 33$);
-* Malawi ($n = 28$);
-* Tanzania ($n = 159$);
-* Zimbabwe ($n = 60$).
+| Country        | Survey    | Number of areas | Analysis level |
+|----------------|---------- |-----------------|-----------------|
+| Côte d'Ivoire  | PHIA 2017 | 33              | 1               |
+| Malawi         | PHIA 2016 | 28              | 5               |
+| Tanzania       | PHIA 2017 | 31              | 2               |
+| Zimbabwe       | PHIA 2016 | 60              | 2               |
+
+Table: (\#tab:hiv-surveys) Included household surveys.
 
 ### Household survey data
 
@@ -566,7 +576,7 @@ Sampling weights
 \begin{equation}
 w_{ij} = \frac{1}{\pi_{ij}}
 \end{equation}
-were used to account for the complex survey design whereby an individual $j$ in area $i$ has probability $\pi_{ij}$ of being included in the survey as follows.
+were used to account for the complex survey design whereby an individual $j$ in area $i$ has probability $\pi_{ij}$ of being included in the survey.
 The Kish effective sample size [@kish1965survey]
 \begin{equation}
 m_i^\star = \frac{(\sum_j w_{ij})^2}{\sum_j w_{ij}^2}.
@@ -598,6 +608,7 @@ Each model was assessed using (Figure \@ref(fig:cv)):
 2. a spatial leave-one-out cross-validation (SLOO-CV).
 
 At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
+To provide comparison, the DIC and WAIC measures of model fit were also computed.
 
 ### Results
 
