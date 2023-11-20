@@ -9,25 +9,10 @@ documentclass: book
 bibliography: references.bib
 ---
 
-```{r echo = FALSE}
-options(scipen = 100)
-
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  dpi = 320,
-  cache = TRUE,
-  out.width = "95%",
-  fig.align = 'center'
-)
-
-library(tidyverse)
-comma <- function(x) formatC(x, format = "d", big.mark = ",")
-```
-
 ```{r}
-resource_version <- "20230627-144735-3da88508"
+comma <- function(x) formatC(x, format = "d", big.mark = ",")
+
+resource_version <- "20231120-121631-164346ab"
 ```
 
 # A model for risk group proportions {#multi-agyw}
@@ -74,7 +59,8 @@ knitr::include_graphics("figures/multi-agyw/risk-grid.png")
 ### Behavioural data from household surveys
 
 ```{r results='hide', warning=FALSE, message=FALSE}
-available_surveys <- readr::read_csv(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.csv"))
+path <- paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.csv")
+available_surveys <- readr::read_csv(path)
 
 #' What was the total number of surveys?
 total_surveys <- available_surveys %>%
