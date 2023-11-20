@@ -551,14 +551,17 @@ knitr::include_graphics(path)
 
 ## HIV prevalence study {#hiv-study}
 
-Model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys)).
+Simulation studies are a valuable tool for experimenting on models in controlled environments.
+However, it is difficult to capture the complexity of realistic applied scenarios.
+Therefore, it is important to complement simulation studies with studies conducted on real data.
+To this end, model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 using household survey data across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys)).
 
 | Country        | Survey    | Number of areas | Analysis level |
 |----------------|---------- |-----------------|-----------------|
-| Côte d'Ivoire  | PHIA 2017 | 33              | 1               |
-| Malawi         | PHIA 2016 | 28              | 5               |
-| Tanzania       | PHIA 2017 | 31              | 2               |
-| Zimbabwe       | PHIA 2016 | 60              | 2               |
+| Côte d'Ivoire  | PHIA 2017 | 33              | Region          |
+| Malawi         | PHIA 2016 | 33              | Health district and cities |
+| Tanzania       | PHIA 2017 | 31              | Region          |
+| Zimbabwe       | PHIA 2016 | 60              | District        |
 
 Table: (\#tab:hiv-surveys) Included household surveys.
 
@@ -571,7 +574,7 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/hiv-surv
 knitr::include_graphics(path)
 ```
 
-Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used for each country.
+In each country, data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used.
 Sampling weights
 \begin{equation}
 w_{ij} = \frac{1}{\pi_{ij}}
@@ -608,7 +611,9 @@ Each model was assessed using (Figure \@ref(fig:cv)):
 2. a spatial leave-one-out cross-validation (SLOO-CV).
 
 At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
+
 To provide comparison, the DIC and WAIC measures of model fit were also computed.
+Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo].
 
 ### Results
 
