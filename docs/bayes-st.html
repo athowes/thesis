@@ -590,32 +590,37 @@ For example, those of the same sex are more likely to be similar, as are those o
 </div>
 <div id="model-structure" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Model structure<a href="bayes-st.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Section <a href="bayes-st.html#st-statistics">3.2</a> showed that in spatio-temporal statistics observations are related to each other, and should not all be considered as IID.
+<p>Section <a href="bayes-st.html#st-statistics">3.2</a> showed that in spatio-temporal statistics observations are related to each other, and inappropriate to treat as IID.
 This section discuss ways in which the relations between observations can be encoded mathematically.
-Beginning with simple approaches, the expressiveness required to model the data in this thesis is built up in stages.</p>
+First, simple structures are discussed, before moving on to more expressive structures.</p>
 <div id="linear-model" class="section level3 hasAnchor" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Linear model<a href="bayes-st.html#linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>In a linear model, each observation <span class="math inline">\(i = 1, \ldots, n\)</span> is modelled using a Gaussian distribution
+<p>In a linear model, each observation <span class="math inline">\(i \in [n]\)</span> is modelled using a Gaussian distribution
 <span class="math display">\[\begin{equation}
 y_i \sim \mathcal{N}(\mu_i, \sigma).
 \end{equation}\]</span>
 The conditional mean <span class="math inline">\(\mu_i\)</span> is assumed to be linearly related to a collection of <span class="math inline">\(l\)</span> covariates
-<span class="math display">\[\begin{equation}
-\mu_i = \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li}.
-\end{equation}\]</span>
-Priors may be placed on the regression coefficients <span class="math inline">\(\beta_l \sim p(\beta_l)\)</span> for <span class="math inline">\(l = 0, \ldots, p\)</span> as well as the observation standard deviation <span class="math inline">\(\sigma \sim p(\sigma)\)</span></p>
+<span class="math display" id="eq:linear-model">\[\begin{align}
+\mu_i &amp;= \eta_i \\
+\eta_i &amp;= \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li}. \tag{3.3}
+\end{align}\]</span>
+Priors may be placed on the regression coefficients <span class="math inline">\(\beta_l \sim p(\beta_l)\)</span> for <span class="math inline">\(l = 0, \ldots, p\)</span> as well as the observation standard deviation <span class="math inline">\(\sigma \sim p(\sigma)\)</span>.</p>
 </div>
 <div id="generalised-linear-model" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Generalised linear model<a href="bayes-st.html#generalised-linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>A generalised linear model (GLM) extends the linear model by allowing the conditional mean to be connected to the linear predictor via a link function
+<p>Generalised linear models (GLMs) extend the linear models by allowing the conditional mean <span class="math inline">\(\mu_i\)</span> to be connected to the linear predictor <span class="math inline">\(\eta_i\)</span> via a link function <span class="math inline">\(g\)</span>.
 <span class="math display">\[\begin{align}
 y_i &amp;\sim p(y_i \, | \, \eta_i), \\
 \mu_i &amp;= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i).
-\end{align}\]</span></p>
+\end{align}\]</span>
+The logistic function <span class="math inline">\(g(\eta) = \exp(\eta) / (1 + \exp(\eta))\)</span> is commonly used as a link function to ensure that the conditional mean is in the range <span class="math inline">\([0, 1]\)</span>.
+Similarly, the exponential function <span class="math inline">\(g(\eta) = \exp(\eta)\)</span> is also commonly used to ensure the conditional mean is positive.
+GLMs also admit a wider range of likelihoods <span class="math inline">\(p(y_i \, | \, \eta_i)\)</span> than linear models, typically restrictly to the so-called exponential family of distributions.
+The equation for the linear predictor is the same as in the linear model case (Equation <a href="bayes-st.html#eq:linear-model">(3.3)</a>).</p>
 </div>
 <div id="generalised-linear-mixed-effects-model" class="section level3 hasAnchor" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Generalised linear mixed effects model<a href="bayes-st.html#generalised-linear-mixed-effects-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>In a generalised linear mixed effects model (GLMM) the linear predictor is extended as follows
+<p>In a generalised linear mixed effects model (GLMM) the linear predictor of the GLM is extended as follows
 <span class="math display">\[\begin{equation}
 \eta_i = \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li} + \sum_{k = 1}^{r} u_k(w_{ki}).
 \end{equation}\]</span>
@@ -623,41 +628,23 @@ The terms <span class="math inline">\(u_k\)</span> are called random effects, of
 The terms <span class="math inline">\(\beta_l\)</span> are then referred to as fixed effects.
 Unfortunately these terms have notoriously many different and incompatible definitions which can cause confusion <span class="citation">(<a href="#ref-gelman2005analysis">Gelman 2005</a>)</span>.</p>
 <p>Random effects allow for more complex sharing of information between observations.
-Complete pooling, no pooling, partial pooling.
-Random effects can be structured to share information between some observations more than others.
-In spatio-temporal statistics, structured spatial and temporal random effects are often used to impose smoothness.
-Spatial random effects are the subject of Chapter <a href="beyond-borders.html#beyond-borders">4</a>.</p>
+To demonstrate, consider the complete pooling model
+<span class="math display">\[\begin{equation}
+\eta_i = \beta_0.
+\end{equation}\]</span>
+In this model, all observations are assumed to be equivalent.
+Alternatively, consider the no pooling model
+<span class="math display">\[\begin{equation}
+\eta_i = \beta_0 + \beta_1 z_i,
+\end{equation}\]</span>
+with <span class="math inline">\(z_i \in \{0, 1\}\)</span> a binary covariate.
+Now, there are two groups of observations.
+Finally, consider the partial pooling model.
+For the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed at the outset, as with the complete or no pooling models.
+The parameter <span class="math inline">\(\beta_0\)</span> applies to all groups, and each group is differentiated by a specific value of <span class="math inline">\(u_i\)</span>.</p>
+<p>Random effects can be structured to share information between some observations more than others.
+In spatio-temporal statistics, structured spatial and temporal random effects are often used to encode smoothness.</p>
 <p>A generalised additive model [GAMs; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>; <span class="citation">Hastie and Tibshirani (<a href="#ref-hastie1987generalized">1987</a>)</span>] is a type of GLMM in which such and such.</p>
-<!-- Group structure is a simple, binary way in which observations are related. -->
-<!-- Figure \@ref(fig:hierarchical-structure) illustrates a case in which each individual in a study is observed some number of times, and observations of the same individual are grouped together. -->
-<!-- Observations from the same individual are more likely to be similar than observations of different individuals. -->
-<!-- Groups can also be nested within other groups, as well as crossed with each other. -->
-<!-- Consider three models for this data. -->
-<!-- In each case, the observations are assumed to be Gaussian. -->
-<!-- 1. **Complete pooling**: -->
-<!-- In the complete pooling model, group structure is ignored and all observations are treated as IID -->
-<!-- \begin{align} -->
-<!-- y_{ij} \sim \mathcal{N}(\mu, \sigma), \\ -->
-<!-- (\mu, \sigma) \sim p(\mu, \sigma). -->
-<!-- \end{align} -->
-<!-- 2. **No pooling**: -->
-<!-- Alternatively, the groups can be modelled entirely separately with group specific mean $\mu_i$ and standard deviation $\sigma_i$ parameters -->
-<!-- \begin{align} -->
-<!-- y_{ij} \sim \mathcal{N}(\mu_i, \sigma_i), \\ -->
-<!-- (\mu_i, \sigma_i) \sim p(\mu_i, \sigma_i). -->
-<!-- \end{align} -->
-<!-- 3. **Partial pooling**: -->
-<!-- In this model, some amount of information is shared between the groups -->
-<!-- \begin{align} -->
-<!-- y_{ij} &\sim \mathcal{N}(\mu_i, \sigma), \\ -->
-<!-- \mu_i &= \beta + u_i, \\ -->
-<!-- \beta &\sim p(\beta), \\ -->
-<!-- \mathbf{u} &\sim p(\mathbf{u}), \\ -->
-<!-- \sigma &\sim p(\sigma), -->
-<!-- \end{align} -->
-<!-- where the vector $\mathbf{u} = (u_1, \ldots, u_n)$. -->
-<!-- The parameter $\beta$ applies to all groups, and each group is differentiated by a specific value of $u_i$. -->
-<!-- When inference is performed for the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed at the outset, as with the complete or no pooling models. -->
 </div>
 <div id="lgm" class="section level3 hasAnchor" number="3.3.4">
 <h3><span class="header-section-number">3.3.4</span> Latent Gaussian model<a href="bayes-st.html#lgm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -672,7 +659,7 @@ The vector <span class="math inline">\(\boldsymbol{\mathbf{\theta}}_1 \in \mathb
 Let <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbol{\mathbf{\theta}}_2) \in \mathbb{R}^m\)</span> with <span class="math inline">\(m = s_1 + s_2\)</span> be all hyperparameters, with prior distribution <span class="math inline">\(p(\boldsymbol{\mathbf{\theta}})\)</span>.
 Such that <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> with posterior distribution
 <span class="math display">\[\begin{equation}
-p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}})
+p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}}).
 \end{equation}\]</span></p>
 </div>
 <div id="elgm" class="section level3 hasAnchor" number="3.3.5">
@@ -695,7 +682,7 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 </div>
 <div id="model-comparison" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Model comparison<a href="bayes-st.html#model-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>For a review see <span class="citation">Vehtari and Ojanen (<a href="#ref-vehtari2012survey">2012</a>)</span>.</p>
+<p>For a review see <span class="citation">Vehtari and Ojanen (<a href="#ref-vehtari2012survey">2012</a>)</span> or <span class="citation">Gelman, Hwang, and Vehtari (<a href="#ref-gelman2014understanding">2014</a>)</span>.</p>
 <div id="information-criteria" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
@@ -719,7 +706,7 @@ where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is t
 <span class="math display">\[\begin{equation}
 p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right).
 \end{equation}\]</span>
-A weakness of the DIC is that it is based on a point estimate <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>; <a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span></p></li>
+A weakness of the DIC is that it is based on a point estimate <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>)</span></p></li>
 <li><p>The widely applicable information criterion [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon the DIC by using the predictive density of the data and is given by
 <span class="math display">\[\begin{align}
 \text{WAIC} &amp;= -2 \times \text{elpd}_\text{WAIC}, \\

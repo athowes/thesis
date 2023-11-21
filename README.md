@@ -5,7 +5,7 @@
 
 > \[!WARNING\]  
 > Thesis under construction! Check back in a couple of months. Currently
-> 229/~250 pages, and many/~tending to zero mistakes. The number 250 is
+> 230/~250 pages, and many/~tending to zero mistakes. The number 250 is
 > also mostly arbitrary.
 
 PhD in [Modern Statistics and Statistical Machine
