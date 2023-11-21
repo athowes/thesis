@@ -206,7 +206,8 @@ div.csl-indent {
 <li class="chapter" data-level="3.4" data-path="bayes-st.html"><a href="bayes-st.html#model-comparison"><i class="fa fa-check"></i><b>3.4</b> Model comparison</a>
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#information-criteria"><i class="fa fa-check"></i><b>3.4.1</b> Information criteria</a></li>
-<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#scoring-rules"><i class="fa fa-check"></i><b>3.4.2</b> Scoring rules</a></li>
+<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#cross-validation"><i class="fa fa-check"></i><b>3.4.2</b> Cross-validation</a></li>
+<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#scoring-rules"><i class="fa fa-check"></i><b>3.4.3</b> Scoring rules</a></li>
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.5</b> Survey methods</a>
 <ul>
@@ -335,7 +336,7 @@ div.csl-indent {
 <li class="chapter" data-level="A.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#hiv-appendix"><i class="fa fa-check"></i><b>A.3</b> HIV study</a>
 <ul>
 <li class="chapter" data-level="A.3.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#estimates-1"><i class="fa fa-check"></i><b>A.3.1</b> Estimates</a></li>
-<li class="chapter" data-level="A.3.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#cross-validation"><i class="fa fa-check"></i><b>A.3.2</b> Cross-validation</a></li>
+<li class="chapter" data-level="A.3.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#cross-validation-1"><i class="fa fa-check"></i><b>A.3.2</b> Cross-validation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
@@ -694,38 +695,50 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 </div>
 <div id="model-comparison" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Model comparison<a href="bayes-st.html#model-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For a review see <span class="citation">Vehtari and Ojanen (<a href="#ref-vehtari2012survey">2012</a>)</span>.</p>
 <div id="information-criteria" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Bayes factor
+<ul>
+<li><p>Bayes factor
 <span class="math display">\[\begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)}.
-\end{equation}\]</span></p>
-<p>The Akaike information criterion [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>] is
+\end{equation}\]</span></p></li>
+<li><p>The log pointwise predictive density (LPPD), the expected log pointwise predictive density for new data (ELPPD) and the expected log predictive density for a new data point (ELPD).</p></li>
+<li><p>The Akaike information criterion [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>] is
+<span class="math display">\[\begin{align}
+\text{AIC} &amp;= -2 \times \text{elpd}_\text{AIC}, \\
+\text{elpd}_\text{AIC} &amp;=  \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{AIC}},
+\end{align}\]</span>
+where the point estimate <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is the maximum likelihood estimate.</p></li>
+<li><p>The deviance information criterion [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] is
+<span class="math display">\[\begin{align}
+\text{DIC} &amp;= -2 \times \text{elpd}_\text{DIC}, \\
+\text{elpd}_\text{DIC} &amp;= \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}},
+\end{align}\]</span>
+where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is the posterior mean or mode, and the effective number of parameters is
 <span class="math display">\[\begin{equation}
-  \text{AIC} = -2 \times \text{elpd}_\text{AIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{AIC}} \right).
-\end{equation}\]</span></p>
-<p>The deviance information criterion [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] is
-<span class="math display">\[\begin{equation}
-  \text{DIC} = -2 \times \text{elpd}_\text{DIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}} \right).
+p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right).
 \end{equation}\]</span>
-where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is a point estimate of the parameters, and the effective number of parameters is
-<span class="math display">\[\begin{equation}
-p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right)
-\end{equation}\]</span>
-A weakness of the DIC is that it is based on a point estimate <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>; <a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span></p>
-<p>The widely applicable information criterion [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon the DIC by using the predictive density of the data and is given by
-<span class="math display">\[\begin{equation}
-  \text{WAIC} = -2 \times \text{elpd}_\text{WAIC} = -2 \times \left( \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC} \right),
-\end{equation}\]</span></p>
-<p>Can be viewed as approximations to cross-validation.</p>
+A weakness of the DIC is that it is based on a point estimate <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>; <a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span></p></li>
+<li><p>The widely applicable information criterion [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon the DIC by using the predictive density of the data and is given by
+<span class="math display">\[\begin{align}
+\text{WAIC} &amp;= -2 \times \text{elpd}_\text{WAIC}, \\
+\text{elpd}_\text{WAIC}&amp; = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC}.
+\end{align}\]</span></p></li>
+</ul>
 </div>
-<div id="scoring-rules" class="section level3 hasAnchor" number="3.4.2">
-<h3><span class="header-section-number">3.4.2</span> Scoring rules<a href="bayes-st.html#scoring-rules" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Not just the log score.
-Other scoring rules.
-Proper SR.
-Strictly proper SR.</p>
-<p>The continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>] generalises the Brier score <span class="citation">(<a href="#ref-brier1950verification">Brier 1950</a>)</span> to distributional forecasts.</p>
+<div id="cross-validation" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Cross-validation<a href="bayes-st.html#cross-validation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The above information criteria can be viewed as approximations to cross-validation.
+There are three parts of a cross-validation: the way the data is divided, the scoring rule used, the computational method used.</p>
+</div>
+<div id="scoring-rules" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Scoring rules<a href="bayes-st.html#scoring-rules" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Scoring rules [SR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] measure the quality of probabilistic forecasts.
+The log score is one scoring rule.
+A proper scoring rule (PSR).
+A strictly proper scoring rule (SPSR).
+The continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>] generalises the Brier score <span class="citation">(<a href="#ref-brier1950verification">Brier 1950</a>)</span> beyond binary classification.</p>
 </div>
 </div>
 <div id="survey" class="section level2 hasAnchor" number="3.5">
@@ -900,6 +913,9 @@ Geman, Stuart, and Donald Geman. 1984. <span>“<span class="nocase">Stochastic 
 <div id="ref-giordano2018covariances" class="csl-entry">
 Giordano, Ryan, Tamara Broderick, and Michael I. Jordan. 2018. <span>“<span class="nocase">Covariances, Robustness, and Variational Bayes</span>.”</span> <em>Journal of Machine Learning Research</em> 19 (51): 1–49. <a href="http://jmlr.org/papers/v19/17-670.html">http://jmlr.org/papers/v19/17-670.html</a>.
 </div>
+<div id="ref-gneiting2007strictly" class="csl-entry">
+Gneiting, Tilmann, and Adrian E Raftery. 2007. <span>“<span class="nocase">Strictly proper scoring rules, prediction, and estimation</span>.”</span> <em>Journal of the American Statistical Association</em> 102 (477): 359–78.
+</div>
 <div id="ref-goldstein2006subjective" class="csl-entry">
 Goldstein, Michael. 2006. <span>“<span class="nocase">Subjective Bayesian analysis: principles and practice</span>.”</span>
 </div>
@@ -980,6 +996,9 @@ Tobler, Waldo R. 1970. <span>“<span class="nocase">A computer movie simulating
 </div>
 <div id="ref-tokdar2010importance" class="csl-entry">
 Tokdar, Surya T, and Robert E Kass. 2010. <span>“<span class="nocase">Importance sampling: a review</span>.”</span> <em>Wiley Interdisciplinary Reviews: Computational Statistics</em> 2 (1): 54–60.
+</div>
+<div id="ref-vehtari2012survey" class="csl-entry">
+Vehtari, Aki, and Janne Ojanen. 2012. <span>“A Survey of Bayesian Predictive Methods for Model Assessment, Selection and Comparison.”</span>
 </div>
 <div id="ref-watanabe2013widely" class="csl-entry">
 Watanabe, Sumio. 2013. <span>“<span class="nocase">A widely applicable Bayesian information criterion</span>.”</span> <em>Journal of Machine Learning Research</em> 14 (Mar): 867–97.

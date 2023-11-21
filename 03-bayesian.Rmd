@@ -358,43 +358,53 @@ In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to prod
 
 ## Model comparison
 
+For a review see @vehtari2012survey.
+
 ### Information criteria
 
-Bayes factor
+* Bayes factor
 \begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)}.
 \end{equation}
 
-The Akaike information criterion [AIC; @akaike1973information] is
-\begin{equation}
-  \text{AIC} = -2 \times \text{elpd}_\text{AIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{AIC}} \right).
-\end{equation}
+* The log pointwise predictive density (LPPD), the expected log pointwise predictive density for new data (ELPPD) and the expected log predictive density for a new data point (ELPD).
 
-The deviance information criterion [DIC; @spiegelhalter2002bayesian] is
+* The Akaike information criterion [AIC; @akaike1973information] is
+\begin{align}
+  \text{AIC} &= -2 \times \text{elpd}_\text{AIC}, \\
+  \text{elpd}_\text{AIC} &=  \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{AIC}},
+\end{align}
+where the point estimate $\hat{\boldsymbol{\mathbf{\phi}}}$ is the maximum likelihood estimate.
+
+* The deviance information criterion [DIC; @spiegelhalter2002bayesian] is
+\begin{align}
+  \text{DIC} &= -2 \times \text{elpd}_\text{DIC}, \\
+  \text{elpd}_\text{DIC} &= \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}},
+\end{align}
+where $\hat{\boldsymbol{\mathbf{\phi}}}$ is the posterior mean or mode, and the effective number of parameters is
 \begin{equation}
-  \text{DIC} = -2 \times \text{elpd}_\text{DIC} = -2 \times \left( \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}) - p_{\text{DIC}} \right).
-\end{equation}
-where $\hat{\boldsymbol{\mathbf{\phi}}}$ is a point estimate of the parameters, and the effective number of parameters is
-\begin{equation}
-p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right)
+p_\text{DIC} = 2 \left( \log p(\mathbf{y} \, | \,\hat{\boldsymbol{\mathbf{\phi}}}) - \mathbb{E}_{{\boldsymbol{\mathbf{\phi}}} \, | \, \mathbf{y}}[\log p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})] \right).
 \end{equation}
 A weakness of the DIC is that it is based on a point estimate [@spiegelhalter2014deviance; @gelman2014understanding]
 
-The widely applicable information criterion [WAIC; @watanabe2013widely] improves upon the DIC by using the predictive density of the data and is given by
-\begin{equation}
-  \text{WAIC} = -2 \times \text{elpd}_\text{WAIC} = -2 \times \left( \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC} \right),
-\end{equation}
+* The widely applicable information criterion [WAIC; @watanabe2013widely] improves upon the DIC by using the predictive density of the data and is given by
+\begin{align}
+  \text{WAIC} &= -2 \times \text{elpd}_\text{WAIC}, \\
+  \text{elpd}_\text{WAIC}& = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}) - p_\text{WAIC}.
+\end{align}
 
-Can be viewed as approximations to cross-validation.
+### Cross-validation
+
+The above information criteria can be viewed as approximations to cross-validation.
+There are three parts of a cross-validation: the way the data is divided, the scoring rule used, the computational method used.
 
 ### Scoring rules
 
-Not just the log score.
-Other scoring rules.
-Proper SR.
-Strictly proper SR.
-
-The continuous ranked probability score [CRPS; @matheson1976scoring] generalises the Brier score [@brier1950verification] to distributional forecasts.
+Scoring rules [SR; @gneiting2007strictly] measure the quality of probabilistic forecasts.
+The log score is one scoring rule.
+A proper scoring rule (PSR).
+A strictly proper scoring rule (SPSR).
+The continuous ranked probability score [CRPS; @matheson1976scoring] generalises the Brier score [@brier1950verification] beyond binary classification.
 
 ## Survey methods {#survey}
 
