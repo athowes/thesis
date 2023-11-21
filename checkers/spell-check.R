@@ -14,7 +14,7 @@ spell_check <- function(filename) {
     "tex", "biblatex", "documentclass", "adjustmtc", "mgcv", "waterloo", "stringer", "elgm", "hermite", "tmb", "malawi", "africa",
     "unnormalised", "besag", "daly", "dalys", "markboth", "png", "hmc", "antiretroviral", "pepfar", "saharan", "boldsymbol", "glm",
     "glmm", "waic", "bic", "dic", "cdot", "propto", "hamiltonian", "mathbb", "scipen", "zambia", "african", "argmin", "zimbabwe",
-    "risher", "mozambique", "lesotho", "kronecker"
+    "risher", "mozambique", "lesotho", "kronecker", "icar", "bym", "fck", "fik", "ck", "ik", "crps", "mse"
   )
   misspelled_words <- setdiff(misspelled_words, correct_words)
 
