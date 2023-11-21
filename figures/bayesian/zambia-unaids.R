@@ -90,8 +90,8 @@ maps <- sf_constituency %>%
   geom_sf(size = 0.1, color = "grey30") +
   facet_grid(sample_size ~ type) +
   scale_fill_viridis_c(
-    option = "D", direction = 1, limits = c(0, 0.6),
-    labels = scales::label_percent(1), na.value = "#440154"
+    option = "C", direction = 1, limits = c(0, 0.6),
+    labels = scales::label_percent(1), na.value = viridis::viridis(20, option = "C")[1]
   ) +
   labs(fill = "") +
   theme_void() +
@@ -117,7 +117,7 @@ scatter <- sf_constituency %>%
   geom_point(alpha = 0.5, shape = 1) +
   facet_grid(sample_size ~ type) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
-  stat_cor(aes(label = after_stat(r.label)), method = "pearson", label.x = 0.75, label.y = 0.1) +
+  stat_cor(aes(label = after_stat(r.label)), method = "pearson", label.x = 0.75, label.y = 0.1, p.digits = 3) +
   lims(x = c(0, 1), y = c(0, 1)) +
   labs(x = "Underlying truth", y = "Estimate") +
   theme_minimal()
