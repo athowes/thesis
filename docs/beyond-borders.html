@@ -723,6 +723,7 @@ Figure 4.5: The <span class="math inline">\(n = 33\)</span> districts of Malawi.
 </p>
 </div>
 <p>Most of the time it is not possible to calculate Equation <a href="beyond-borders.html#eq:ik2">(4.12)</a> analytically.
+<!-- Exceptions include @rasmussen2003bayesian. -->
 Instead, consider <span class="math inline">\(n\)</span> collections of <span class="math inline">\(L_i\)</span> samples <span class="math inline">\(\{s^{(i)}_l \}_{l = 1}^{L_i} \sim \mathcal{U}(A_i)\)</span> drawn uniformly from each area.
 Then the integral may be approximated using Monte Carlo by the double sum
 <span class="math display" id="eq:mcintegratedkernel">\[\begin{equation}
@@ -949,10 +950,24 @@ Uniformity was assessed using probability integral transform (PIT) histograms <s
 <div id="results" class="section level3 hasAnchor" number="4.3.4">
 <h3><span class="header-section-number">4.3.4</span> Results<a href="beyond-borders.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:crps-boxplot"></span>
-<img src="resources/beyond-borders/20231122-105059-c6eec861/depends/crps-boxplot.png" alt="Boxplots showing the minimum value, 25th quantile, median, 75th quantile and maximum value of the CRPS for each inferential model and simulation model. The mean value is shown as a point." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:crps-mean-se-grid"></span>
+<img src="resources/beyond-borders/20231122-165955-7dd5c01d/depends/crps-mean-se-grid.png" alt="The mean CRPS and its standard error for each inferential model and simulation model." width="95%" />
 <p class="caption">
-Figure 4.7: Boxplots showing the minimum value, 25th quantile, median, 75th quantile and maximum value of the CRPS for each inferential model and simulation model. The mean value is shown as a point.
+Figure 4.7: The mean CRPS and its standard error for each inferential model and simulation model.
+</p>
+</div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:crps-mean-se-civ"></span>
+<img src="resources/beyond-borders/20231122-165955-7dd5c01d/depends/crps-mean-se-civ.png" alt="The mean CRPS and its standard error for each inferential model and simulation model." width="95%" />
+<p class="caption">
+Figure 4.8: The mean CRPS and its standard error for each inferential model and simulation model.
+</p>
+</div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:crps-mean-se-tex"></span>
+<img src="resources/beyond-borders/20231122-165955-7dd5c01d/depends/crps-mean-se-tex.png" alt="The mean CRPS and its standard error for each inferential model and simulation model." width="95%" />
+<p class="caption">
+Figure 4.9: The mean CRPS and its standard error for each inferential model and simulation model.
 </p>
 </div>
 <p>The BYM2 model performed similarly to the IID model on IID synthetic data, and similarly to the Besag model on Besag data.
@@ -1017,7 +1032,7 @@ To this end, model performance was compared in estimating district-level HIV pre
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:hiv-surveys"></span>
 <img src="resources/beyond-borders/20231122-105059-c6eec861/depends/hiv-surveys.png" alt="Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d’Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D)." width="95%" />
 <p class="caption">
-Figure 4.8: Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d’Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D).
+Figure 4.10: Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d’Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D).
 </p>
 </div>
 <p>In each country, data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used.
@@ -1047,14 +1062,14 @@ p(y_i^\star \, | \, m_i^\star, \rho_i) =
 <h3><span class="header-section-number">4.4.3</span> Model comparison<a href="beyond-borders.html#model-comparison-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:cv"></span>
-<img src="figures/beyond-borders/cv.png" alt="In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data." width="95%" />
+<img src="figures/beyond-borders/cv.png" alt="In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-validation, observations corresponding to adjacent areas are also left out of the training data." width="95%" />
 <p class="caption">
-Figure 4.9: In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-valdation, observations corresponding to adjacent areas are also left out of the training data.
+Figure 4.11: In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-validation, observations corresponding to adjacent areas are also left out of the training data.
 </p>
 </div>
-<p>Each model was assessed using (Figure <a href="beyond-borders.html#fig:cv">4.9</a>):</p>
+<p>Each model was assessed using (Figure <a href="beyond-borders.html#fig:cv">4.11</a>):</p>
 <ol style="list-style-type: decimal">
-<li>a standard leave-one-out cross-validation (LOO-CV);</li>
+<li>a regular leave-one-out cross-validation (LOO-CV);</li>
 <li>a spatial leave-one-out cross-validation (SLOO-CV).</li>
 </ol>
 <p>At each fold the CRPS, MSE and quantile (as in Section <a href="beyond-borders.html#model-assessment">4.3.3</a>) of posterior predictive samples as compared with the observed data were computed.</p>
