@@ -140,41 +140,6 @@ covariance_samples <- cbind(
   shape = matern$nu
 )
 
-# Below code is broken with error:
-# Error in UnifyXT(x, y, z, T, grid = grid, distances = distances, dim = dim) : 
-#   is.numeric(x) is not TRUE
-
-# Resolution for spatial interpolations
-# resolution <- list(nrow = 50, ncol = 50)
-# 
-# loaloa_u <- vect(loaloa_sf$geometry)
-# values(loaloa_u) <- as.data.frame(u_samples)
-
-# u_brick <- geostatsp::RFsimulate(
-#   model = covariance_samples,
-#   x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
-#   data = loaloa_u
-# )
-# 
-# loaloa_v <- vect(loaloa_sf$geometry)
-# values(loaloa_v) <- as.data.frame(v_samples)
-# 
-# v_brick <- geostatsp::RFsimulate(
-#   model = covariance_samples,
-#   x = terra::rast(loaloa, nrows = resolution$nrow, ncols = resolution$ncol),
-#   data = loaloa_v
-# )
-# 
-# eta_phi_brick <- beta_samples[1, ] + u_brick
-# eta_rho_brick <- beta_samples[2, ] + v_brick
-
-# Testing RFsimulate function from RandomFields, and RFsimulate from geostatsp both get the same error...
-# model1 <- c(var = 5, range = 1,shape = 0.5)
-# model1 <- RandomFields::RMmatern(model1)
-# myraster <- rast(nrows = 20, ncols = 30, extent = ext(0, 6, 0, 4), crs = "+proj=utm +zone=17 +datum=NAD27 +units=m +no_defs")
-# sim <- RandomFields::RFsimulate(model1, x = myraster, n = 3)
-
-# Give up with using RandomFields: let's do it with gstat and write our own wrapper function
 extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
 grid <- st_as_stars(extent, dx = 10000)
 
@@ -308,3 +273,11 @@ samples <- sample_adam(1000)
 
 ggplot(data.frame(samples), aes(x = samples)) +
   geom_histogram()
+
+#' Try running tmbstan
+nuts <- tmbstan::tmbstan(obj, chains = 1, warmup = 50, iter = 100)
+nuts_samples <- as.data.frame(nuts)
+u_samples <- t(nuts_samples[, c(1:190)])
+v_samples <- t(nuts_samples[, c(192:381)])
+beta_samples <- t(nuts_samples[, c(191, 382)])
+theta_samples <- nuts_samples[, c(383, 384)]
