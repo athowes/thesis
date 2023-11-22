@@ -30,12 +30,21 @@ Table: (\#tab:unaids-strategy-targets) Commitments to be met for each interventi
 ```{r}
 gt_available_surveys <- readRDS(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.rds"))
 
-gt_available_surveys <- gt_available_surveys %>%
-  gt::sub_values(values = "[/]cmark", replacement = "Yes") %>%
-  gt::sub_values(values = "[/]xmark", replacement = "No")
+gt_available_surveys$`_boxhead`$column_label[[4]] <- "TS question"
+gt_available_surveys$`_boxhead`$column_align[[4]] <- "center"
 
-if(knitr::is_html_output()) gt_available_surveys
-if(knitr::is_latex_output()) gt::as_latex(gt_available_surveys)
+if(knitr::is_html_output()) {
+  gt_available_surveys %>%
+    gt::sub_values(values = "[/]cmark", replacement = "✓") %>%
+    gt::sub_values(values = "[/]xmark", replacement = "✗")
+}
+
+if(knitr::is_latex_output()) {
+  gt_available_surveys %>%
+    gt::sub_values(values = "[/]cmark", replacement = "\\cmark") %>%
+    gt::sub_values(values = "[/]xmark", replacement = "\\xmark") %>%
+    gt::as_latex()
+}
 ```
 
 | Survey              | Exclusion reason                           |
