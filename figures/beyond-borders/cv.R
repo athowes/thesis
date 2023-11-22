@@ -34,7 +34,7 @@ ggplot(df, aes(fill = as.factor(left_out))) +
   scale_fill_manual(
     values = c("#E6E6E6", "#56B4E9", "#009E73"),
     name = "",
-    labels = c("Fit to", "Left out", "Left out\nand predicted on")
+    labels = c("Training", "Left out", "Left out\nand predicted on")
   ) +
   guides(fill = guide_legend(override.aes = list(colour = NA))) +
   theme_void() +
