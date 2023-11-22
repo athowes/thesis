@@ -193,9 +193,10 @@ Though Section \@ref(naomi) provides a complete description of Naomi's likelihoo
 #### Household survey data
 
 The generalised binomial $y \sim \text{xBin}(m, p)$ is defined for $y, m \in \mathbb{R}^+$ with $y \leq m$ such that
-\begin{equation}
-\log p(y) = \log \Gamma(m + 1) - \log \Gamma(y + 1) - \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
-\end{equation}
+\begin{align}
+\log p(y) = &\log \Gamma(m + 1) - \log \Gamma(y + 1) \\
+            &- \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
+\end{align}
 where the gamma function $\Gamma$ is such that $\forall n \in \mathbb{N}$, $\Gamma(n) = (n - 1)!$.
 
 #### ANC testing data
@@ -226,62 +227,60 @@ The sex ratio for HIV incidence is determined by the sex incidence rate ratio fr
 ### Implementation {#naomi-implementation}
 
 The `TMB` C++ code for the negative log-posterior of the simplified Naomi model is available from [`https://github.com/athowes/naomi-aghq`](https://github.com/athowes/naomi-aghq).
-(It is not given here, as it is over 500 lines.)
 For ease of understanding, Table \@ref(tab:tmb-lookup) provides correspondence between the mathematical notation used in Section \@ref(naomi-math) and the variable names used in the `TMB` code, for all hyperparameters and latent field parameters.
 For further reference on the `TMB` software see @tmbdocumentation.
 
-| Variable name          | Notation                                             | Type   | Size | Domain            | $\rho$ input? | $\alpha$ input? | $\lambda$ input? |
-|------------------------|------------------------------------------------------|--------|------|-------------------|---------------|-----------------|------------------|
-| `logit_phi_rho_x`      | $\text{logit}(\phi_X^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `log_sigma_rho_x`      | $\log(\sigma_X^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `logit_phi_rho_xs`     | $\text{logit}(\phi_{XS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `log_sigma_rho_xs`     | $\log(\sigma_{XS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `logit_phi_rho_a`      | $\text{logit}(\phi_A^\rho)$                          | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `log_sigma_rho_a`      | $\log(\sigma_A^\rho)$                                | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `logit_phi_rho_as`     | $\text{logit}(\phi_{AS}^\rho)$                       | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `log_sigma_rho_as`     | $\log(\sigma_{AS}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `log_sigma_rho_xa`     | $\log(\sigma_{XA}^\rho)$                             | Hyper  | 1    | $\mathbb{R}$      | Yes           |                 |                  |
-| `logit_phi_alpha_x`    | $\text{logit}(\phi_X^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_alpha_x`    | $\log(\sigma_X^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `logit_phi_alpha_xs`   | $\text{logit}(\phi_{XS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_alpha_xs`   | $\log(\sigma_{XS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `logit_phi_alpha_a`    | $\text{logit}(\phi_A^\alpha)$                        | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_alpha_a`    | $\log(\sigma_A^\alpha)$                              | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `logit_phi_alpha_as`   | $\text{logit}(\phi_{AS}^\alpha)$                     | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_alpha_as`   | $\log(\sigma_{AS}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_alpha_xa`   | $\log(\sigma_{XA}^\alpha)$                           | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `OmegaT_raw`           | $\Omega_T$                                           | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
-| `log_betaT`            | $\log(\beta_T)$                                      | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
-| `log_sigma_lambda_x`   | $\log(\sigma^\lambda)$                               | Hyper  | 1    | $\mathbb{R}$      |               |                 | Yes              |
-| `log_sigma_ancrho_x`   | $\log(\sigma_X^{\rho^{\text{ANC}}})$                 | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_ancalpha_x` | $\log(\sigma_X^{\alpha^{\text{ANC}}})$               | Hyper  | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `log_sigma_or_gamma`   | $\log(\sigma_X^{\tilde \gamma})$                     | Hyper  | 1    | $\mathbb{R}$      |               |                 |                  |
-| `beta_rho`             | $(\beta^\rho_0, \beta_{s}^{\rho, s = \text{M}})$     | Latent | 2    | $\mathbb{R}^2$    | Yes           |                 |                  |
-| `beta_alpha`           | $(\beta^\alpha_0, \beta_{S}^{\alpha, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               | Yes             |                  |
-| `beta_lambda`          | $(\beta_0^\lambda, \beta_S^{\lambda, s = \text{M}})$ | Latent | 2    | $\mathbb{R}^2$    |               |                 | Yes              |
-| `beta_anc_rho`         | $\beta^{\rho^{\text{ANC}}}$                          | Latent | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `beta_anc_alpha`       | $\beta^{\alpha^{\text{ANC}}}$                        | Latent | 1    | $\mathbb{R}$      |               | Yes             |                  |
-| `u_rho_x`              | $\mathbf{w}^\rho_x$                                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
-| `us_rho_x`             | $\mathbf{v}^\rho_x$                                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
-| `u_rho_xs`             | $\mathbf{w}_x^{\rho, s = \text{M}}$                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
-| `us_rho_xs`            | $\mathbf{v}_x^{\rho, s = \text{M}}$                  | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
-| `u_rho_a`              | $\mathbf{u}^\rho_a$                                  | Latent | 10   | $\mathbb{R}^{10}$ | Yes           |                 |                  |
-| `u_rho_as`             | $\mathbf{u}_a^{\rho, s = \text{M}}$                  | Latent | 10   | $\mathbb{R}^{10}$ | Yes           |                 |                  |
-| `u_rho_xa`             | $\mathbf{u}_x^{\rho, a < 15}$                        | Latent | $n$  | $\mathbb{R}^{n}$  | Yes           |                 |                  |
-| `u_alpha_x`            | $\mathbf{w}^\alpha_x$                                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `us_alpha_x`           | $\mathbf{v}^\alpha_x$                                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `u_alpha_xs`           | $\mathbf{w}_x^{\alpha, s = \text{M}}$                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `us_alpha_xs`          | $\mathbf{v}_x^{\alpha, s = \text{M}}$                | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `u_alpha_a`            | $\mathbf{u}^\alpha_a$                                | Latent | 13   | $\mathbb{R}^{13}$ |               | Yes             |                  |
-| `u_alpha_as`           | $\mathbf{u}_a^{\alpha, s = \text{M}}$                | Latent | 10   | $\mathbb{R}^{10}$ |               | Yes             |                  |
-| `u_alpha_xa`           | $\mathbf{u}_x^{\alpha, a < 15}$                      | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `ui_lambda_x`          | $\mathbf{u}_x^\lambda$                               | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 | Yes              |
-| `ui_anc_rho_x`         | $\mathbf{u}_x^{\rho^{\text{ANC}}}$                   | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `ui_anc_alpha_x`       | $\mathbf{u}_x^{\alpha^{\text{ANC}}}$                 | Latent | $n$  | $\mathbb{R}^{n}$  |               | Yes             |                  |
-| `log_or_gamma`         | $\mathbf{u}_x^{\tilde \gamma}$                       | Latent | $n$  | $\mathbb{R}^{n}$  |               |                 |                  |
+| Variable name            | Notation          | Type   | Domain  | $\rho$ | $\alpha$ | $\lambda$ |
+|--------------------------|------------------ |--------|---------|--------|----------|-----------|
+| `logit_phi_rho_x`      | $\text{logit}(\phi_X^\rho)$                          | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `log_sigma_rho_x`      | $\log(\sigma_X^\rho)$                                | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `logit_phi_rho_xs`     | $\text{logit}(\phi_{XS}^\rho)$                       | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `log_sigma_rho_xs`     | $\log(\sigma_{XS}^\rho)$                             | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `logit_phi_rho_a`      | $\text{logit}(\phi_A^\rho)$                          | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `log_sigma_rho_a`      | $\log(\sigma_A^\rho)$                                | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `logit_phi_rho_as`     | $\text{logit}(\phi_{AS}^\rho)$                       | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `log_sigma_rho_as`     | $\log(\sigma_{AS}^\rho)$                             | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `log_sigma_rho_xa`     | $\log(\sigma_{XA}^\rho)$                             | Hyper  | $\mathbb{R}$      | Yes |     |     |
+| `logit_phi_alpha_x`    | $\text{logit}(\phi_X^\alpha)$                        | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_alpha_x`    | $\log(\sigma_X^\alpha)$                              | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `logit_phi_alpha_xs`   | $\text{logit}(\phi_{XS}^\alpha)$                     | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_alpha_xs`   | $\log(\sigma_{XS}^\alpha)$                           | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `logit_phi_alpha_a`    | $\text{logit}(\phi_A^\alpha)$                        | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_alpha_a`    | $\log(\sigma_A^\alpha)$                              | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `logit_phi_alpha_as`   | $\text{logit}(\phi_{AS}^\alpha)$                     | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_alpha_as`   | $\log(\sigma_{AS}^\alpha)$                           | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_alpha_xa`   | $\log(\sigma_{XA}^\alpha)$                           | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `OmegaT_raw`           | $\Omega_T$                                           | Hyper  | $\mathbb{R}$      |     |     | Yes |
+| `log_betaT`            | $\log(\beta_T)$                                      | Hyper  | $\mathbb{R}$      |     |     | Yes |
+| `log_sigma_lambda_x`   | $\log(\sigma^\lambda)$                               | Hyper  | $\mathbb{R}$      |     |     | Yes |
+| `log_sigma_ancrho_x`   | $\log(\sigma_X^{\rho^{\text{ANC}}})$                 | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_ancalpha_x` | $\log(\sigma_X^{\alpha^{\text{ANC}}})$               | Hyper  | $\mathbb{R}$      |     | Yes |     |
+| `log_sigma_or_gamma`   | $\log(\sigma_X^{\tilde \gamma})$                     | Hyper  | $\mathbb{R}$      |     |     |     |
+| `beta_rho`             | $(\beta^\rho_0, \beta_{s}^{\rho, s = \text{M}})$     | Latent | $\mathbb{R}^2$    | Yes |     |     |
+| `beta_alpha`           | $(\beta^\alpha_0, \beta_{S}^{\alpha, s = \text{M}})$ | Latent | $\mathbb{R}^2$    |     | Yes |     |
+| `beta_lambda`          | $(\beta_0^\lambda, \beta_S^{\lambda, s = \text{M}})$ | Latent | $\mathbb{R}^2$    |     |     | Yes |
+| `beta_anc_rho`         | $\beta^{\rho^{\text{ANC}}}$                          | Latent | $\mathbb{R}$      |     | Yes |     |
+| `beta_anc_alpha`       | $\beta^{\alpha^{\text{ANC}}}$                        | Latent | $\mathbb{R}$      |     | Yes |     |
+| `u_rho_x`              | $\mathbf{w}^\rho_x$                                  | Latent | $\mathbb{R}^{n}$  | Yes |     |     |
+| `us_rho_x`             | $\mathbf{v}^\rho_x$                                  | Latent | $\mathbb{R}^{n}$  | Yes |     |     |
+| `u_rho_xs`             | $\mathbf{w}_x^{\rho, s = \text{M}}$                  | Latent | $\mathbb{R}^{n}$  | Yes |     |     |
+| `us_rho_xs`            | $\mathbf{v}_x^{\rho, s = \text{M}}$                  | Latent | $\mathbb{R}^{n}$  | Yes |     |     |
+| `u_rho_a`              | $\mathbf{u}^\rho_a$                                  | Latent | $\mathbb{R}^{10}$ | Yes |     |     |
+| `u_rho_as`             | $\mathbf{u}_a^{\rho, s = \text{M}}$                  | Latent | $\mathbb{R}^{10}$ | Yes |     |     |
+| `u_rho_xa`             | $\mathbf{u}_x^{\rho, a < 15}$                        | Latent | $\mathbb{R}^{n}$  | Yes |     |     |
+| `u_alpha_x`            | $\mathbf{w}^\alpha_x$                                | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `us_alpha_x`           | $\mathbf{v}^\alpha_x$                                | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `u_alpha_xs`           | $\mathbf{w}_x^{\alpha, s = \text{M}}$                | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `us_alpha_xs`          | $\mathbf{v}_x^{\alpha, s = \text{M}}$                | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `u_alpha_a`            | $\mathbf{u}^\alpha_a$                                | Latent | $\mathbb{R}^{13}$ |     | Yes |     |
+| `u_alpha_as`           | $\mathbf{u}_a^{\alpha, s = \text{M}}$                | Latent | $\mathbb{R}^{10}$ |     | Yes |     |
+| `u_alpha_xa`           | $\mathbf{u}_x^{\alpha, a < 15}$                      | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `ui_lambda_x`          | $\mathbf{u}_x^\lambda$                               | Latent | $\mathbb{R}^{n}$  |     |     | Yes |
+| `ui_anc_rho_x`         | $\mathbf{u}_x^{\rho^{\text{ANC}}}$                   | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `ui_anc_alpha_x`       | $\mathbf{u}_x^{\alpha^{\text{ANC}}}$                 | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
+| `log_or_gamma`         | $\mathbf{u}_x^{\tilde \gamma}$                       | Latent | $\mathbb{R}^{n}$  |     |     |      
 
-
-Table: (\#tab:tmb-lookup)
+Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the Naomi `TMB` template and the mathematical notation used in Appendix \@ref(naomi-math). The parameter type, either a hyperparameter or elements of the latent field, are given. All of the parameters are defined on the real-scale in some dimension. In the final three columns ($\rho, \alpha, \lambda$) indication is given as to which component of the model the parameter is primarily used in.
 
 ## Model assessment
 

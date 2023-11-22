@@ -327,16 +327,19 @@ div.csl-indent {
 <li class="chapter" data-level="A" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for spatial structure</a>
 <ul>
 <li class="chapter" data-level="A.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#aghq-nuts"><i class="fa fa-check"></i><b>A.1</b> Comparison of AGHQ to NUTS</a></li>
-<li class="chapter" data-level="A.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#simulation-appendix"><i class="fa fa-check"></i><b>A.2</b> Simulation study</a>
+<li class="chapter" data-level="A.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#lengthscale-prior"><i class="fa fa-check"></i><b>A.2</b> Lengthscale prior sensitivity analysis</a></li>
+<li class="chapter" data-level="A.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#simulation-appendix"><i class="fa fa-check"></i><b>A.3</b> Simulation study</a>
 <ul>
-<li class="chapter" data-level="A.2.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#mean-squared-error"><i class="fa fa-check"></i><b>A.2.1</b> Mean squared error</a></li>
-<li class="chapter" data-level="A.2.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#continuous-ranked-probability-score"><i class="fa fa-check"></i><b>A.2.2</b> Continuous ranked probability score</a></li>
-<li class="chapter" data-level="A.2.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#calibration"><i class="fa fa-check"></i><b>A.2.3</b> Calibration</a></li>
+<li class="chapter" data-level="A.3.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#lengthscale"><i class="fa fa-check"></i><b>A.3.1</b> Lengthscale hyperparameter</a></li>
+<li class="chapter" data-level="A.3.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#bym2-proportion"><i class="fa fa-check"></i><b>A.3.2</b> BYM2 proportion hyperparameter</a></li>
+<li class="chapter" data-level="A.3.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#mean-squared-error"><i class="fa fa-check"></i><b>A.3.3</b> Mean squared error</a></li>
+<li class="chapter" data-level="A.3.4" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#continuous-ranked-probability-score"><i class="fa fa-check"></i><b>A.3.4</b> Continuous ranked probability score</a></li>
+<li class="chapter" data-level="A.3.5" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#calibration"><i class="fa fa-check"></i><b>A.3.5</b> Calibration</a></li>
 </ul></li>
-<li class="chapter" data-level="A.3" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#hiv-appendix"><i class="fa fa-check"></i><b>A.3</b> HIV study</a>
+<li class="chapter" data-level="A.4" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#hiv-appendix"><i class="fa fa-check"></i><b>A.4</b> HIV study</a>
 <ul>
-<li class="chapter" data-level="A.3.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#estimates-1"><i class="fa fa-check"></i><b>A.3.1</b> Estimates</a></li>
-<li class="chapter" data-level="A.3.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#cross-validation-1"><i class="fa fa-check"></i><b>A.3.2</b> Cross-validation</a></li>
+<li class="chapter" data-level="A.4.1" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#estimates-1"><i class="fa fa-check"></i><b>A.4.1</b> Estimates</a></li>
+<li class="chapter" data-level="A.4.2" data-path="models-for-spatial-structure.html"><a href="models-for-spatial-structure.html#cross-validation-1"><i class="fa fa-check"></i><b>A.4.2</b> Cross-validation</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
@@ -391,7 +394,55 @@ div.csl-indent {
 <h2><span class="header-section-number">C.1</span> Epilepsy example<a href="fast-approximate-bayesian-inference.html#epilepsy-example" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="tmb-epil" class="section level3 hasAnchor" number="11.1.1">
 <h3><span class="header-section-number">C.1.1</span> <code>TMB</code> C++ template<a href="fast-approximate-bayesian-inference.html#tmb-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="fast-approximate-bayesian-inference.html#cb21-1" tabindex="-1"></a><span class="co">// epil.cpp</span></span>
+<div class="sourceCode" id="cb20"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb20-1"><a href="fast-approximate-bayesian-inference.html#cb20-1" tabindex="-1"></a><span class="co">// epil.cpp</span></span>
+<span id="cb20-2"><a href="fast-approximate-bayesian-inference.html#cb20-2" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="fast-approximate-bayesian-inference.html#cb20-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
+<span id="cb20-4"><a href="fast-approximate-bayesian-inference.html#cb20-4" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="fast-approximate-bayesian-inference.html#cb20-5" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Type<span class="op">&gt;</span></span>
+<span id="cb20-6"><a href="fast-approximate-bayesian-inference.html#cb20-6" tabindex="-1"></a>Type objective_function<span class="op">&lt;</span>Type<span class="op">&gt;::</span><span class="kw">operator</span><span class="op">()()</span></span>
+<span id="cb20-7"><a href="fast-approximate-bayesian-inference.html#cb20-7" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb20-8"><a href="fast-approximate-bayesian-inference.html#cb20-8" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>N<span class="op">);</span></span>
+<span id="cb20-9"><a href="fast-approximate-bayesian-inference.html#cb20-9" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>J<span class="op">);</span></span>
+<span id="cb20-10"><a href="fast-approximate-bayesian-inference.html#cb20-10" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>K<span class="op">);</span></span>
+<span id="cb20-11"><a href="fast-approximate-bayesian-inference.html#cb20-11" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>X<span class="op">);</span></span>
+<span id="cb20-12"><a href="fast-approximate-bayesian-inference.html#cb20-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
+<span id="cb20-13"><a href="fast-approximate-bayesian-inference.html#cb20-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
+<span id="cb20-14"><a href="fast-approximate-bayesian-inference.html#cb20-14" tabindex="-1"></a>  </span>
+<span id="cb20-15"><a href="fast-approximate-bayesian-inference.html#cb20-15" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>beta<span class="op">);</span></span>
+<span id="cb20-16"><a href="fast-approximate-bayesian-inference.html#cb20-16" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>epsilon<span class="op">);</span></span>
+<span id="cb20-17"><a href="fast-approximate-bayesian-inference.html#cb20-17" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>nu<span class="op">);</span></span>
+<span id="cb20-18"><a href="fast-approximate-bayesian-inference.html#cb20-18" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb20-19"><a href="fast-approximate-bayesian-inference.html#cb20-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb20-20"><a href="fast-approximate-bayesian-inference.html#cb20-20" tabindex="-1"></a>  </span>
+<span id="cb20-21"><a href="fast-approximate-bayesian-inference.html#cb20-21" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb20-22"><a href="fast-approximate-bayesian-inference.html#cb20-22" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb20-23"><a href="fast-approximate-bayesian-inference.html#cb20-23" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
+<span id="cb20-24"><a href="fast-approximate-bayesian-inference.html#cb20-24" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
+<span id="cb20-25"><a href="fast-approximate-bayesian-inference.html#cb20-25" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span> <span class="co">// Linear predictor</span></span>
+<span id="cb20-26"><a href="fast-approximate-bayesian-inference.html#cb20-26" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
+<span id="cb20-27"><a href="fast-approximate-bayesian-inference.html#cb20-27" tabindex="-1"></a>  </span>
+<span id="cb20-28"><a href="fast-approximate-bayesian-inference.html#cb20-28" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
+<span id="cb20-29"><a href="fast-approximate-bayesian-inference.html#cb20-29" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb20-30"><a href="fast-approximate-bayesian-inference.html#cb20-30" tabindex="-1"></a>  </span>
+<span id="cb20-31"><a href="fast-approximate-bayesian-inference.html#cb20-31" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
+<span id="cb20-32"><a href="fast-approximate-bayesian-inference.html#cb20-32" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
+<span id="cb20-33"><a href="fast-approximate-bayesian-inference.html#cb20-33" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb20-34"><a href="fast-approximate-bayesian-inference.html#cb20-34" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb20-35"><a href="fast-approximate-bayesian-inference.html#cb20-35" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-36"><a href="fast-approximate-bayesian-inference.html#cb20-36" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-37"><a href="fast-approximate-bayesian-inference.html#cb20-37" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-38"><a href="fast-approximate-bayesian-inference.html#cb20-38" tabindex="-1"></a>  </span>
+<span id="cb20-39"><a href="fast-approximate-bayesian-inference.html#cb20-39" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-40"><a href="fast-approximate-bayesian-inference.html#cb20-40" tabindex="-1"></a>  </span>
+<span id="cb20-41"><a href="fast-approximate-bayesian-inference.html#cb20-41" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
+<span id="cb20-42"><a href="fast-approximate-bayesian-inference.html#cb20-42" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
+<span id="cb20-43"><a href="fast-approximate-bayesian-inference.html#cb20-43" tabindex="-1"></a>  </span>
+<span id="cb20-44"><a href="fast-approximate-bayesian-inference.html#cb20-44" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
+<span id="cb20-45"><a href="fast-approximate-bayesian-inference.html#cb20-45" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="tmb-modified-epil" class="section level3 hasAnchor" number="11.1.2">
+<h3><span class="header-section-number">C.1.2</span> Modified <code>TMB</code> C++ template<a href="fast-approximate-bayesian-inference.html#tmb-modified-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="fast-approximate-bayesian-inference.html#cb21-1" tabindex="-1"></a><span class="co">// epil_modified.cpp</span></span>
 <span id="cb21-2"><a href="fast-approximate-bayesian-inference.html#cb21-2" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="fast-approximate-bayesian-inference.html#cb21-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
 <span id="cb21-4"><a href="fast-approximate-bayesian-inference.html#cb21-4" tabindex="-1"></a></span>
@@ -405,138 +456,90 @@ div.csl-indent {
 <span id="cb21-12"><a href="fast-approximate-bayesian-inference.html#cb21-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
 <span id="cb21-13"><a href="fast-approximate-bayesian-inference.html#cb21-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
 <span id="cb21-14"><a href="fast-approximate-bayesian-inference.html#cb21-14" tabindex="-1"></a>  </span>
-<span id="cb21-15"><a href="fast-approximate-bayesian-inference.html#cb21-15" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>beta<span class="op">);</span></span>
-<span id="cb21-16"><a href="fast-approximate-bayesian-inference.html#cb21-16" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>epsilon<span class="op">);</span></span>
-<span id="cb21-17"><a href="fast-approximate-bayesian-inference.html#cb21-17" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>nu<span class="op">);</span></span>
-<span id="cb21-18"><a href="fast-approximate-bayesian-inference.html#cb21-18" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb21-19"><a href="fast-approximate-bayesian-inference.html#cb21-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb21-20"><a href="fast-approximate-bayesian-inference.html#cb21-20" tabindex="-1"></a>  </span>
-<span id="cb21-21"><a href="fast-approximate-bayesian-inference.html#cb21-21" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb21-22"><a href="fast-approximate-bayesian-inference.html#cb21-22" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb21-23"><a href="fast-approximate-bayesian-inference.html#cb21-23" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
-<span id="cb21-24"><a href="fast-approximate-bayesian-inference.html#cb21-24" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
-<span id="cb21-25"><a href="fast-approximate-bayesian-inference.html#cb21-25" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span> <span class="co">// Linear predictor</span></span>
-<span id="cb21-26"><a href="fast-approximate-bayesian-inference.html#cb21-26" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
-<span id="cb21-27"><a href="fast-approximate-bayesian-inference.html#cb21-27" tabindex="-1"></a>  </span>
-<span id="cb21-28"><a href="fast-approximate-bayesian-inference.html#cb21-28" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
-<span id="cb21-29"><a href="fast-approximate-bayesian-inference.html#cb21-29" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
-<span id="cb21-30"><a href="fast-approximate-bayesian-inference.html#cb21-30" tabindex="-1"></a>  </span>
-<span id="cb21-31"><a href="fast-approximate-bayesian-inference.html#cb21-31" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
-<span id="cb21-32"><a href="fast-approximate-bayesian-inference.html#cb21-32" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
-<span id="cb21-33"><a href="fast-approximate-bayesian-inference.html#cb21-33" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb21-34"><a href="fast-approximate-bayesian-inference.html#cb21-34" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb21-35"><a href="fast-approximate-bayesian-inference.html#cb21-35" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-36"><a href="fast-approximate-bayesian-inference.html#cb21-36" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-37"><a href="fast-approximate-bayesian-inference.html#cb21-37" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-38"><a href="fast-approximate-bayesian-inference.html#cb21-38" tabindex="-1"></a>  </span>
-<span id="cb21-39"><a href="fast-approximate-bayesian-inference.html#cb21-39" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-40"><a href="fast-approximate-bayesian-inference.html#cb21-40" tabindex="-1"></a>  </span>
-<span id="cb21-41"><a href="fast-approximate-bayesian-inference.html#cb21-41" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
-<span id="cb21-42"><a href="fast-approximate-bayesian-inference.html#cb21-42" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
-<span id="cb21-43"><a href="fast-approximate-bayesian-inference.html#cb21-43" tabindex="-1"></a>  </span>
-<span id="cb21-44"><a href="fast-approximate-bayesian-inference.html#cb21-44" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
-<span id="cb21-45"><a href="fast-approximate-bayesian-inference.html#cb21-45" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</div>
-<div id="tmb-modified-epil" class="section level3 hasAnchor" number="11.1.2">
-<h3><span class="header-section-number">C.1.2</span> Modified <code>TMB</code> C++ template<a href="fast-approximate-bayesian-inference.html#tmb-modified-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="fast-approximate-bayesian-inference.html#cb22-1" tabindex="-1"></a><span class="co">// epil_modified.cpp</span></span>
-<span id="cb22-2"><a href="fast-approximate-bayesian-inference.html#cb22-2" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="fast-approximate-bayesian-inference.html#cb22-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
-<span id="cb22-4"><a href="fast-approximate-bayesian-inference.html#cb22-4" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="fast-approximate-bayesian-inference.html#cb22-5" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Type<span class="op">&gt;</span></span>
-<span id="cb22-6"><a href="fast-approximate-bayesian-inference.html#cb22-6" tabindex="-1"></a>Type objective_function<span class="op">&lt;</span>Type<span class="op">&gt;::</span><span class="kw">operator</span><span class="op">()()</span></span>
-<span id="cb22-7"><a href="fast-approximate-bayesian-inference.html#cb22-7" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb22-8"><a href="fast-approximate-bayesian-inference.html#cb22-8" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>N<span class="op">);</span></span>
-<span id="cb22-9"><a href="fast-approximate-bayesian-inference.html#cb22-9" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>J<span class="op">);</span></span>
-<span id="cb22-10"><a href="fast-approximate-bayesian-inference.html#cb22-10" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>K<span class="op">);</span></span>
-<span id="cb22-11"><a href="fast-approximate-bayesian-inference.html#cb22-11" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>X<span class="op">);</span></span>
-<span id="cb22-12"><a href="fast-approximate-bayesian-inference.html#cb22-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
-<span id="cb22-13"><a href="fast-approximate-bayesian-inference.html#cb22-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
-<span id="cb22-14"><a href="fast-approximate-bayesian-inference.html#cb22-14" tabindex="-1"></a>  </span>
-<span id="cb22-15"><a href="fast-approximate-bayesian-inference.html#cb22-15" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_starts<span class="op">);</span>  <span class="co">// Start index of each subvector of x</span></span>
-<span id="cb22-16"><a href="fast-approximate-bayesian-inference.html#cb22-16" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_lengths<span class="op">);</span> <span class="co">// Length of each subvector of x</span></span>
-<span id="cb22-17"><a href="fast-approximate-bayesian-inference.html#cb22-17" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>i<span class="op">);</span>         <span class="co">// Index i</span></span>
-<span id="cb22-18"><a href="fast-approximate-bayesian-inference.html#cb22-18" tabindex="-1"></a>  </span>
-<span id="cb22-19"><a href="fast-approximate-bayesian-inference.html#cb22-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>x_i<span class="op">);</span></span>
-<span id="cb22-20"><a href="fast-approximate-bayesian-inference.html#cb22-20" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>x_minus_i<span class="op">);</span></span>
-<span id="cb22-21"><a href="fast-approximate-bayesian-inference.html#cb22-21" tabindex="-1"></a>  </span>
-<span id="cb22-22"><a href="fast-approximate-bayesian-inference.html#cb22-22" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> x<span class="op">(</span><span class="dv">301</span><span class="op">);</span></span>
-<span id="cb22-23"><a href="fast-approximate-bayesian-inference.html#cb22-23" tabindex="-1"></a>  <span class="dt">int</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb22-24"><a href="fast-approximate-bayesian-inference.html#cb22-24" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> <span class="dv">301</span><span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb22-25"><a href="fast-approximate-bayesian-inference.html#cb22-25" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>j <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> i<span class="op">)</span> <span class="op">{</span> <span class="co">// +1 because C++ does zero-indexing</span></span>
-<span id="cb22-26"><a href="fast-approximate-bayesian-inference.html#cb22-26" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_i<span class="op">;</span></span>
-<span id="cb22-27"><a href="fast-approximate-bayesian-inference.html#cb22-27" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb22-28"><a href="fast-approximate-bayesian-inference.html#cb22-28" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_minus_i<span class="op">(</span>k<span class="op">);</span></span>
-<span id="cb22-29"><a href="fast-approximate-bayesian-inference.html#cb22-29" tabindex="-1"></a>      k<span class="op">++;</span></span>
-<span id="cb22-30"><a href="fast-approximate-bayesian-inference.html#cb22-30" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb22-31"><a href="fast-approximate-bayesian-inference.html#cb22-31" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb22-32"><a href="fast-approximate-bayesian-inference.html#cb22-32" tabindex="-1"></a>  </span>
-<span id="cb22-33"><a href="fast-approximate-bayesian-inference.html#cb22-33" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> beta <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">0</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">0</span><span class="op">));</span></span>
-<span id="cb22-34"><a href="fast-approximate-bayesian-inference.html#cb22-34" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> epsilon <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">1</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
-<span id="cb22-35"><a href="fast-approximate-bayesian-inference.html#cb22-35" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> nu <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">2</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">2</span><span class="op">));</span></span>
-<span id="cb22-36"><a href="fast-approximate-bayesian-inference.html#cb22-36" tabindex="-1"></a></span>
-<span id="cb22-37"><a href="fast-approximate-bayesian-inference.html#cb22-37" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb22-38"><a href="fast-approximate-bayesian-inference.html#cb22-38" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb22-39"><a href="fast-approximate-bayesian-inference.html#cb22-39" tabindex="-1"></a>  </span>
-<span id="cb22-40"><a href="fast-approximate-bayesian-inference.html#cb22-40" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb22-41"><a href="fast-approximate-bayesian-inference.html#cb22-41" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb22-42"><a href="fast-approximate-bayesian-inference.html#cb22-42" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
-<span id="cb22-43"><a href="fast-approximate-bayesian-inference.html#cb22-43" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
-<span id="cb22-44"><a href="fast-approximate-bayesian-inference.html#cb22-44" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span> <span class="co">// Linear predictor</span></span>
-<span id="cb22-45"><a href="fast-approximate-bayesian-inference.html#cb22-45" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
-<span id="cb22-46"><a href="fast-approximate-bayesian-inference.html#cb22-46" tabindex="-1"></a>  </span>
-<span id="cb22-47"><a href="fast-approximate-bayesian-inference.html#cb22-47" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
-<span id="cb22-48"><a href="fast-approximate-bayesian-inference.html#cb22-48" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
-<span id="cb22-49"><a href="fast-approximate-bayesian-inference.html#cb22-49" tabindex="-1"></a>  </span>
-<span id="cb22-50"><a href="fast-approximate-bayesian-inference.html#cb22-50" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
-<span id="cb22-51"><a href="fast-approximate-bayesian-inference.html#cb22-51" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
-<span id="cb22-52"><a href="fast-approximate-bayesian-inference.html#cb22-52" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb22-53"><a href="fast-approximate-bayesian-inference.html#cb22-53" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb22-54"><a href="fast-approximate-bayesian-inference.html#cb22-54" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-55"><a href="fast-approximate-bayesian-inference.html#cb22-55" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-56"><a href="fast-approximate-bayesian-inference.html#cb22-56" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-57"><a href="fast-approximate-bayesian-inference.html#cb22-57" tabindex="-1"></a>  </span>
-<span id="cb22-58"><a href="fast-approximate-bayesian-inference.html#cb22-58" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-59"><a href="fast-approximate-bayesian-inference.html#cb22-59" tabindex="-1"></a>  </span>
-<span id="cb22-60"><a href="fast-approximate-bayesian-inference.html#cb22-60" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
-<span id="cb22-61"><a href="fast-approximate-bayesian-inference.html#cb22-61" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
-<span id="cb22-62"><a href="fast-approximate-bayesian-inference.html#cb22-62" tabindex="-1"></a>  </span>
-<span id="cb22-63"><a href="fast-approximate-bayesian-inference.html#cb22-63" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
-<span id="cb22-64"><a href="fast-approximate-bayesian-inference.html#cb22-64" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb21-15"><a href="fast-approximate-bayesian-inference.html#cb21-15" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_starts<span class="op">);</span>  <span class="co">// Start index of each subvector of x</span></span>
+<span id="cb21-16"><a href="fast-approximate-bayesian-inference.html#cb21-16" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_lengths<span class="op">);</span> <span class="co">// Length of each subvector of x</span></span>
+<span id="cb21-17"><a href="fast-approximate-bayesian-inference.html#cb21-17" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>i<span class="op">);</span>         <span class="co">// Index i</span></span>
+<span id="cb21-18"><a href="fast-approximate-bayesian-inference.html#cb21-18" tabindex="-1"></a>  </span>
+<span id="cb21-19"><a href="fast-approximate-bayesian-inference.html#cb21-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>x_i<span class="op">);</span></span>
+<span id="cb21-20"><a href="fast-approximate-bayesian-inference.html#cb21-20" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>x_minus_i<span class="op">);</span></span>
+<span id="cb21-21"><a href="fast-approximate-bayesian-inference.html#cb21-21" tabindex="-1"></a>  </span>
+<span id="cb21-22"><a href="fast-approximate-bayesian-inference.html#cb21-22" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> x<span class="op">(</span><span class="dv">301</span><span class="op">);</span></span>
+<span id="cb21-23"><a href="fast-approximate-bayesian-inference.html#cb21-23" tabindex="-1"></a>  <span class="dt">int</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-24"><a href="fast-approximate-bayesian-inference.html#cb21-24" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> <span class="dv">301</span><span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb21-25"><a href="fast-approximate-bayesian-inference.html#cb21-25" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>j <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> i<span class="op">)</span> <span class="op">{</span> <span class="co">// +1 because C++ does zero-indexing</span></span>
+<span id="cb21-26"><a href="fast-approximate-bayesian-inference.html#cb21-26" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_i<span class="op">;</span></span>
+<span id="cb21-27"><a href="fast-approximate-bayesian-inference.html#cb21-27" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb21-28"><a href="fast-approximate-bayesian-inference.html#cb21-28" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_minus_i<span class="op">(</span>k<span class="op">);</span></span>
+<span id="cb21-29"><a href="fast-approximate-bayesian-inference.html#cb21-29" tabindex="-1"></a>      k<span class="op">++;</span></span>
+<span id="cb21-30"><a href="fast-approximate-bayesian-inference.html#cb21-30" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-31"><a href="fast-approximate-bayesian-inference.html#cb21-31" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb21-32"><a href="fast-approximate-bayesian-inference.html#cb21-32" tabindex="-1"></a>  </span>
+<span id="cb21-33"><a href="fast-approximate-bayesian-inference.html#cb21-33" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> beta <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">0</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">0</span><span class="op">));</span></span>
+<span id="cb21-34"><a href="fast-approximate-bayesian-inference.html#cb21-34" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> epsilon <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">1</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
+<span id="cb21-35"><a href="fast-approximate-bayesian-inference.html#cb21-35" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> nu <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">2</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">2</span><span class="op">));</span></span>
+<span id="cb21-36"><a href="fast-approximate-bayesian-inference.html#cb21-36" tabindex="-1"></a></span>
+<span id="cb21-37"><a href="fast-approximate-bayesian-inference.html#cb21-37" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb21-38"><a href="fast-approximate-bayesian-inference.html#cb21-38" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb21-39"><a href="fast-approximate-bayesian-inference.html#cb21-39" tabindex="-1"></a>  </span>
+<span id="cb21-40"><a href="fast-approximate-bayesian-inference.html#cb21-40" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb21-41"><a href="fast-approximate-bayesian-inference.html#cb21-41" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb21-42"><a href="fast-approximate-bayesian-inference.html#cb21-42" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
+<span id="cb21-43"><a href="fast-approximate-bayesian-inference.html#cb21-43" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
+<span id="cb21-44"><a href="fast-approximate-bayesian-inference.html#cb21-44" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span> <span class="co">// Linear predictor</span></span>
+<span id="cb21-45"><a href="fast-approximate-bayesian-inference.html#cb21-45" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
+<span id="cb21-46"><a href="fast-approximate-bayesian-inference.html#cb21-46" tabindex="-1"></a>  </span>
+<span id="cb21-47"><a href="fast-approximate-bayesian-inference.html#cb21-47" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
+<span id="cb21-48"><a href="fast-approximate-bayesian-inference.html#cb21-48" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb21-49"><a href="fast-approximate-bayesian-inference.html#cb21-49" tabindex="-1"></a>  </span>
+<span id="cb21-50"><a href="fast-approximate-bayesian-inference.html#cb21-50" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
+<span id="cb21-51"><a href="fast-approximate-bayesian-inference.html#cb21-51" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
+<span id="cb21-52"><a href="fast-approximate-bayesian-inference.html#cb21-52" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb21-53"><a href="fast-approximate-bayesian-inference.html#cb21-53" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb21-54"><a href="fast-approximate-bayesian-inference.html#cb21-54" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-55"><a href="fast-approximate-bayesian-inference.html#cb21-55" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-56"><a href="fast-approximate-bayesian-inference.html#cb21-56" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-57"><a href="fast-approximate-bayesian-inference.html#cb21-57" tabindex="-1"></a>  </span>
+<span id="cb21-58"><a href="fast-approximate-bayesian-inference.html#cb21-58" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-59"><a href="fast-approximate-bayesian-inference.html#cb21-59" tabindex="-1"></a>  </span>
+<span id="cb21-60"><a href="fast-approximate-bayesian-inference.html#cb21-60" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
+<span id="cb21-61"><a href="fast-approximate-bayesian-inference.html#cb21-61" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
+<span id="cb21-62"><a href="fast-approximate-bayesian-inference.html#cb21-62" tabindex="-1"></a>  </span>
+<span id="cb21-63"><a href="fast-approximate-bayesian-inference.html#cb21-63" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
+<span id="cb21-64"><a href="fast-approximate-bayesian-inference.html#cb21-64" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="stan-epil" class="section level3 hasAnchor" number="11.1.3">
 <h3><span class="header-section-number">C.1.3</span> <code>Stan</code> C++ template<a href="fast-approximate-bayesian-inference.html#stan-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="fast-approximate-bayesian-inference.html#cb23-1" tabindex="-1"></a><span class="co">// epil.stan</span></span>
-<span id="cb23-2"><a href="fast-approximate-bayesian-inference.html#cb23-2" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="fast-approximate-bayesian-inference.html#cb23-3" tabindex="-1"></a>data <span class="op">{</span></span>
-<span id="cb23-4"><a href="fast-approximate-bayesian-inference.html#cb23-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> N<span class="op">;</span>            <span class="co">// Number of patients</span></span>
-<span id="cb23-5"><a href="fast-approximate-bayesian-inference.html#cb23-5" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span>            <span class="co">// Number of clinic visits</span></span>
-<span id="cb23-6"><a href="fast-approximate-bayesian-inference.html#cb23-6" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> K<span class="op">;</span>            <span class="co">// Number of predictors (inc. intercept)</span></span>
-<span id="cb23-7"><a href="fast-approximate-bayesian-inference.html#cb23-7" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> K<span class="op">]</span> X<span class="op">;</span>        <span class="co">// Design matrix</span></span>
-<span id="cb23-8"><a href="fast-approximate-bayesian-inference.html#cb23-8" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> y<span class="op">[</span>N <span class="op">*</span> J<span class="op">];</span>     <span class="co">// Outcome variable</span></span>
-<span id="cb23-9"><a href="fast-approximate-bayesian-inference.html#cb23-9" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> N<span class="op">]</span> E<span class="op">;</span>        <span class="co">// Epsilon matrix</span></span>
-<span id="cb23-10"><a href="fast-approximate-bayesian-inference.html#cb23-10" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-11"><a href="fast-approximate-bayesian-inference.html#cb23-11" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="fast-approximate-bayesian-inference.html#cb23-12" tabindex="-1"></a>parameters <span class="op">{</span></span>
-<span id="cb23-13"><a href="fast-approximate-bayesian-inference.html#cb23-13" tabindex="-1"></a>  vector<span class="op">[</span>K<span class="op">]</span> beta<span class="op">;</span>            <span class="co">// Vector of coefficients</span></span>
-<span id="cb23-14"><a href="fast-approximate-bayesian-inference.html#cb23-14" tabindex="-1"></a>  vector<span class="op">[</span>N<span class="op">]</span> epsilon<span class="op">;</span>         <span class="co">// Patient specific errors</span></span>
-<span id="cb23-15"><a href="fast-approximate-bayesian-inference.html#cb23-15" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> nu<span class="op">;</span>          <span class="co">// Patient-visit errors</span></span>
-<span id="cb23-16"><a href="fast-approximate-bayesian-inference.html#cb23-16" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_epsilon<span class="op">;</span> <span class="co">// Precision of epsilon</span></span>
-<span id="cb23-17"><a href="fast-approximate-bayesian-inference.html#cb23-17" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_nu<span class="op">;</span>      <span class="co">// Precision of nu</span></span>
-<span id="cb23-18"><a href="fast-approximate-bayesian-inference.html#cb23-18" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-19"><a href="fast-approximate-bayesian-inference.html#cb23-19" tabindex="-1"></a></span>
-<span id="cb23-20"><a href="fast-approximate-bayesian-inference.html#cb23-20" tabindex="-1"></a>transformed parameters <span class="op">{</span></span>
-<span id="cb23-21"><a href="fast-approximate-bayesian-inference.html#cb23-21" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> eta <span class="op">=</span> X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">;</span>  <span class="co">// Linear predictor</span></span>
-<span id="cb23-22"><a href="fast-approximate-bayesian-inference.html#cb23-22" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-23"><a href="fast-approximate-bayesian-inference.html#cb23-23" tabindex="-1"></a></span>
-<span id="cb23-24"><a href="fast-approximate-bayesian-inference.html#cb23-24" tabindex="-1"></a>model <span class="op">{</span></span>
-<span id="cb23-25"><a href="fast-approximate-bayesian-inference.html#cb23-25" tabindex="-1"></a>  beta <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
-<span id="cb23-26"><a href="fast-approximate-bayesian-inference.html#cb23-26" tabindex="-1"></a>  tau_epsilon <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
-<span id="cb23-27"><a href="fast-approximate-bayesian-inference.html#cb23-27" tabindex="-1"></a>  tau_nu <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
-<span id="cb23-28"><a href="fast-approximate-bayesian-inference.html#cb23-28" tabindex="-1"></a>  epsilon <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">));</span></span>
-<span id="cb23-29"><a href="fast-approximate-bayesian-inference.html#cb23-29" tabindex="-1"></a>  nu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">));</span></span>
-<span id="cb23-30"><a href="fast-approximate-bayesian-inference.html#cb23-30" tabindex="-1"></a>  y <span class="op">~</span> poisson_log<span class="op">(</span>eta<span class="op">);</span></span>
-<span id="cb23-31"><a href="fast-approximate-bayesian-inference.html#cb23-31" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="fast-approximate-bayesian-inference.html#cb22-1" tabindex="-1"></a><span class="co">// epil.stan</span></span>
+<span id="cb22-2"><a href="fast-approximate-bayesian-inference.html#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="fast-approximate-bayesian-inference.html#cb22-3" tabindex="-1"></a>data <span class="op">{</span></span>
+<span id="cb22-4"><a href="fast-approximate-bayesian-inference.html#cb22-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> N<span class="op">;</span>            <span class="co">// Number of patients</span></span>
+<span id="cb22-5"><a href="fast-approximate-bayesian-inference.html#cb22-5" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span>            <span class="co">// Number of clinic visits</span></span>
+<span id="cb22-6"><a href="fast-approximate-bayesian-inference.html#cb22-6" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> K<span class="op">;</span>            <span class="co">// Number of predictors (inc. intercept)</span></span>
+<span id="cb22-7"><a href="fast-approximate-bayesian-inference.html#cb22-7" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> K<span class="op">]</span> X<span class="op">;</span>        <span class="co">// Design matrix</span></span>
+<span id="cb22-8"><a href="fast-approximate-bayesian-inference.html#cb22-8" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> y<span class="op">[</span>N <span class="op">*</span> J<span class="op">];</span>     <span class="co">// Outcome variable</span></span>
+<span id="cb22-9"><a href="fast-approximate-bayesian-inference.html#cb22-9" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> N<span class="op">]</span> E<span class="op">;</span>        <span class="co">// Epsilon matrix</span></span>
+<span id="cb22-10"><a href="fast-approximate-bayesian-inference.html#cb22-10" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-11"><a href="fast-approximate-bayesian-inference.html#cb22-11" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="fast-approximate-bayesian-inference.html#cb22-12" tabindex="-1"></a>parameters <span class="op">{</span></span>
+<span id="cb22-13"><a href="fast-approximate-bayesian-inference.html#cb22-13" tabindex="-1"></a>  vector<span class="op">[</span>K<span class="op">]</span> beta<span class="op">;</span>            <span class="co">// Vector of coefficients</span></span>
+<span id="cb22-14"><a href="fast-approximate-bayesian-inference.html#cb22-14" tabindex="-1"></a>  vector<span class="op">[</span>N<span class="op">]</span> epsilon<span class="op">;</span>         <span class="co">// Patient specific errors</span></span>
+<span id="cb22-15"><a href="fast-approximate-bayesian-inference.html#cb22-15" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> nu<span class="op">;</span>          <span class="co">// Patient-visit errors</span></span>
+<span id="cb22-16"><a href="fast-approximate-bayesian-inference.html#cb22-16" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_epsilon<span class="op">;</span> <span class="co">// Precision of epsilon</span></span>
+<span id="cb22-17"><a href="fast-approximate-bayesian-inference.html#cb22-17" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_nu<span class="op">;</span>      <span class="co">// Precision of nu</span></span>
+<span id="cb22-18"><a href="fast-approximate-bayesian-inference.html#cb22-18" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-19"><a href="fast-approximate-bayesian-inference.html#cb22-19" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="fast-approximate-bayesian-inference.html#cb22-20" tabindex="-1"></a>transformed parameters <span class="op">{</span></span>
+<span id="cb22-21"><a href="fast-approximate-bayesian-inference.html#cb22-21" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> eta <span class="op">=</span> X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">;</span>  <span class="co">// Linear predictor</span></span>
+<span id="cb22-22"><a href="fast-approximate-bayesian-inference.html#cb22-22" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-23"><a href="fast-approximate-bayesian-inference.html#cb22-23" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="fast-approximate-bayesian-inference.html#cb22-24" tabindex="-1"></a>model <span class="op">{</span></span>
+<span id="cb22-25"><a href="fast-approximate-bayesian-inference.html#cb22-25" tabindex="-1"></a>  beta <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
+<span id="cb22-26"><a href="fast-approximate-bayesian-inference.html#cb22-26" tabindex="-1"></a>  tau_epsilon <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
+<span id="cb22-27"><a href="fast-approximate-bayesian-inference.html#cb22-27" tabindex="-1"></a>  tau_nu <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
+<span id="cb22-28"><a href="fast-approximate-bayesian-inference.html#cb22-28" tabindex="-1"></a>  epsilon <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">));</span></span>
+<span id="cb22-29"><a href="fast-approximate-bayesian-inference.html#cb22-29" tabindex="-1"></a>  nu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">));</span></span>
+<span id="cb22-30"><a href="fast-approximate-bayesian-inference.html#cb22-30" tabindex="-1"></a>  y <span class="op">~</span> poisson_log<span class="op">(</span>eta<span class="op">);</span></span>
+<span id="cb22-31"><a href="fast-approximate-bayesian-inference.html#cb22-31" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="nuts-convergence-and-suitability" class="section level3 hasAnchor" number="11.1.4">
 <h3><span class="header-section-number">C.1.4</span> NUTS convergence and suitability<a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -879,9 +882,10 @@ No terms include <span class="math inline">\(x&#39;\)</span>, such that <span cl
 <div id="household-survey-data-2" class="section level4 hasAnchor" number="11.2.2.1">
 <h4><span class="header-section-number">C.2.2.1</span> Household survey data<a href="fast-approximate-bayesian-inference.html#household-survey-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The generalised binomial <span class="math inline">\(y \sim \text{xBin}(m, p)\)</span> is defined for <span class="math inline">\(y, m \in \mathbb{R}^+\)</span> with <span class="math inline">\(y \leq m\)</span> such that
-<span class="math display">\[\begin{equation}
-\log p(y) = \log \Gamma(m + 1) - \log \Gamma(y + 1) - \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
-\end{equation}\]</span>
+<span class="math display">\[\begin{align}
+\log p(y) = &amp;\log \Gamma(m + 1) - \log \Gamma(y + 1) \\
+            &amp;- \log \Gamma(m - y + 1) + y \log p + (m - y) \log(1 - p),
+\end{align}\]</span>
 where the gamma function <span class="math inline">\(\Gamma\)</span> is such that <span class="math inline">\(\forall n \in \mathbb{N}\)</span>, <span class="math inline">\(\Gamma(n) = (n - 1)!\)</span>.</p>
 </div>
 <div id="anc-testing-data" class="section level4 hasAnchor" number="11.2.2.2">
@@ -914,31 +918,28 @@ The sex ratio for HIV incidence is determined by the sex incidence rate ratio fr
 <div id="naomi-implementation" class="section level3 hasAnchor" number="11.2.4">
 <h3><span class="header-section-number">C.2.4</span> Implementation<a href="fast-approximate-bayesian-inference.html#naomi-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The <code>TMB</code> C++ code for the negative log-posterior of the simplified Naomi model is available from <a href="https://github.com/athowes/naomi-aghq"><code>https://github.com/athowes/naomi-aghq</code></a>.
-(It is not given here, as it is over 500 lines.)
 For ease of understanding, Table <a href="fast-approximate-bayesian-inference.html#tab:tmb-lookup">C.6</a> provides correspondence between the mathematical notation used in Section <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a> and the variable names used in the <code>TMB</code> code, for all hyperparameters and latent field parameters.
 For further reference on the <code>TMB</code> software see <span class="citation">Kristensen (<a href="#ref-tmbdocumentation">2021</a>)</span>.</p>
-<table style="width:100%;">
-<caption><span id="tab:tmb-lookup">Table C.6: </span></caption>
+<table>
+<caption><span id="tab:tmb-lookup">Table C.6: </span> Correspondence between the variable name used in the Naomi <code>TMB</code> template and the mathematical notation used in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.2</a>. The parameter type, either a hyperparameter or elements of the latent field, are given. All of the parameters are defined on the real-scale in some dimension. In the final three columns (<span class="math inline">\(\rho, \alpha, \lambda\)</span>) indication is given as to which component of the model the parameter is primarily used in.</caption>
 <colgroup>
-<col width="14%" />
-<col width="33%" />
-<col width="4%" />
-<col width="3%" />
-<col width="11%" />
-<col width="9%" />
+<col width="28%" />
+<col width="20%" />
+<col width="8%" />
 <col width="10%" />
+<col width="8%" />
 <col width="11%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>Variable name</th>
 <th>Notation</th>
 <th>Type</th>
-<th>Size</th>
 <th>Domain</th>
-<th><span class="math inline">\(\rho\)</span> input?</th>
-<th><span class="math inline">\(\alpha\)</span> input?</th>
-<th><span class="math inline">\(\lambda\)</span> input?</th>
+<th><span class="math inline">\(\rho\)</span></th>
+<th><span class="math inline">\(\alpha\)</span></th>
+<th><span class="math inline">\(\lambda\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -946,7 +947,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_rho_x</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_X^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -956,7 +956,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_rho_x</code></td>
 <td><span class="math inline">\(\log(\sigma_X^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -966,7 +965,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_rho_xs</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_{XS}^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -976,7 +974,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_rho_xs</code></td>
 <td><span class="math inline">\(\log(\sigma_{XS}^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -986,7 +983,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_rho_a</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_A^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -996,7 +992,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_rho_a</code></td>
 <td><span class="math inline">\(\log(\sigma_A^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1006,7 +1001,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_rho_as</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_{AS}^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1016,7 +1010,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_rho_as</code></td>
 <td><span class="math inline">\(\log(\sigma_{AS}^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1026,7 +1019,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_rho_xa</code></td>
 <td><span class="math inline">\(\log(\sigma_{XA}^\rho)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1036,7 +1028,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_alpha_x</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_X^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1046,7 +1037,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_alpha_x</code></td>
 <td><span class="math inline">\(\log(\sigma_X^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1056,7 +1046,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_alpha_xs</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_{XS}^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1066,7 +1055,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_alpha_xs</code></td>
 <td><span class="math inline">\(\log(\sigma_{XS}^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1076,7 +1064,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_alpha_a</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_A^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1086,7 +1073,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_alpha_a</code></td>
 <td><span class="math inline">\(\log(\sigma_A^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1096,7 +1082,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>logit_phi_alpha_as</code></td>
 <td><span class="math inline">\(\text{logit}(\phi_{AS}^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1106,7 +1091,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_alpha_as</code></td>
 <td><span class="math inline">\(\log(\sigma_{AS}^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1116,7 +1100,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_alpha_xa</code></td>
 <td><span class="math inline">\(\log(\sigma_{XA}^\alpha)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1126,7 +1109,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>OmegaT_raw</code></td>
 <td><span class="math inline">\(\Omega_T\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
@@ -1136,7 +1118,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_betaT</code></td>
 <td><span class="math inline">\(\log(\beta_T)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
@@ -1146,7 +1127,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_lambda_x</code></td>
 <td><span class="math inline">\(\log(\sigma^\lambda)\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
@@ -1156,7 +1136,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_ancrho_x</code></td>
 <td><span class="math inline">\(\log(\sigma_X^{\rho^{\text{ANC}}})\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1166,7 +1145,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_ancalpha_x</code></td>
 <td><span class="math inline">\(\log(\sigma_X^{\alpha^{\text{ANC}}})\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1176,7 +1154,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_sigma_or_gamma</code></td>
 <td><span class="math inline">\(\log(\sigma_X^{\tilde \gamma})\)</span></td>
 <td>Hyper</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td></td>
@@ -1186,7 +1163,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>beta_rho</code></td>
 <td><span class="math inline">\((\beta^\rho_0, \beta_{s}^{\rho, s = \text{M}})\)</span></td>
 <td>Latent</td>
-<td>2</td>
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1196,7 +1172,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>beta_alpha</code></td>
 <td><span class="math inline">\((\beta^\alpha_0, \beta_{S}^{\alpha, s = \text{M}})\)</span></td>
 <td>Latent</td>
-<td>2</td>
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1206,7 +1181,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>beta_lambda</code></td>
 <td><span class="math inline">\((\beta_0^\lambda, \beta_S^{\lambda, s = \text{M}})\)</span></td>
 <td>Latent</td>
-<td>2</td>
 <td><span class="math inline">\(\mathbb{R}^2\)</span></td>
 <td></td>
 <td></td>
@@ -1216,7 +1190,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>beta_anc_rho</code></td>
 <td><span class="math inline">\(\beta^{\rho^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1226,7 +1199,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>beta_anc_alpha</code></td>
 <td><span class="math inline">\(\beta^{\alpha^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
-<td>1</td>
 <td><span class="math inline">\(\mathbb{R}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1236,7 +1208,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_rho_x</code></td>
 <td><span class="math inline">\(\mathbf{w}^\rho_x\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1246,7 +1217,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>us_rho_x</code></td>
 <td><span class="math inline">\(\mathbf{v}^\rho_x\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1256,7 +1226,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_rho_xs</code></td>
 <td><span class="math inline">\(\mathbf{w}_x^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1266,7 +1235,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>us_rho_xs</code></td>
 <td><span class="math inline">\(\mathbf{v}_x^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1276,7 +1244,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_rho_a</code></td>
 <td><span class="math inline">\(\mathbf{u}^\rho_a\)</span></td>
 <td>Latent</td>
-<td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1286,7 +1253,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_rho_as</code></td>
 <td><span class="math inline">\(\mathbf{u}_a^{\rho, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1296,7 +1262,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_rho_xa</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^{\rho, a &lt; 15}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td>Yes</td>
 <td></td>
@@ -1306,7 +1271,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_alpha_x</code></td>
 <td><span class="math inline">\(\mathbf{w}^\alpha_x\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1316,7 +1280,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>us_alpha_x</code></td>
 <td><span class="math inline">\(\mathbf{v}^\alpha_x\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1326,7 +1289,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_alpha_xs</code></td>
 <td><span class="math inline">\(\mathbf{w}_x^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1336,7 +1298,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>us_alpha_xs</code></td>
 <td><span class="math inline">\(\mathbf{v}_x^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1346,7 +1307,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_alpha_a</code></td>
 <td><span class="math inline">\(\mathbf{u}^\alpha_a\)</span></td>
 <td>Latent</td>
-<td>13</td>
 <td><span class="math inline">\(\mathbb{R}^{13}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1356,7 +1316,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_alpha_as</code></td>
 <td><span class="math inline">\(\mathbf{u}_a^{\alpha, s = \text{M}}\)</span></td>
 <td>Latent</td>
-<td>10</td>
 <td><span class="math inline">\(\mathbb{R}^{10}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1366,7 +1325,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>u_alpha_xa</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^{\alpha, a &lt; 15}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1376,7 +1334,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>ui_lambda_x</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^\lambda\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td></td>
@@ -1386,7 +1343,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>ui_anc_rho_x</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^{\rho^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1396,7 +1352,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>ui_anc_alpha_x</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^{\alpha^{\text{ANC}}}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td>Yes</td>
@@ -1406,7 +1361,6 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <td><code>log_or_gamma</code></td>
 <td><span class="math inline">\(\mathbf{u}_x^{\tilde \gamma}\)</span></td>
 <td>Latent</td>
-<td><span class="math inline">\(n\)</span></td>
 <td><span class="math inline">\(\mathbb{R}^{n}\)</span></td>
 <td></td>
 <td></td>
