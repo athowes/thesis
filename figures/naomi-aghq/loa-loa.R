@@ -17,8 +17,42 @@ nga <- sf::st_read("figures/naomi-aghq/gadm41_NGA_2.json")
 areas <- rbind(cmr, nga)
 areas <- st_transform(areas, crs = st_crs(loaloa_sf))
 
-compile("resources/naomi-aghq/loaloazip.cpp")
-dyn.load(dynlib("resources/naomi-aghq/loaloazip"))
+loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
+
+figA <- ggplot() +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(loaloa_sf)), col = "grey20") +
+  geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
+  scale_color_viridis_c() +
+  scale_size(range = c(1, 4)) +
+  theme_void() +
+  labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero", tag = "A") +
+  guides(
+    col = guide_colourbar(order = 1),
+    shape = guide_legend(override.aes = list(size = 2.5, col = "grey20"), order = 2),
+    size = guide_legend(override.aes = list(shape = 16, col = "grey20"), order = 3)
+  ) +
+  theme(
+    legend.direction = "vertical", 
+    legend.box = "vertical",
+    legend.position = "right",
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7),
+    legend.key.width = unit(1, "line"),
+    legend.key.height = unit(1, "line")
+  )
+
+figB <- ggplot(loaloa_sf, aes(x = p)) +
+  geom_histogram(col = "grey60", fill = "grey80") +
+  labs(x = "", y = "", tag = "B") +
+  coord_fixed(ratio = 0.01) +
+  theme_minimal()
+
+figA / figB + plot_layout(heights = c(1.5, 1))
+
+ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
+
+compile("figures/naomi-aghq/TMB/loaloazip.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip"))
 
 Amat <- Diagonal(nrow(loaloa_sf))
 Xmat <- cbind(rep(1, nrow(Amat)))
@@ -93,39 +127,9 @@ obj <- MakeADFun(
 
 quad <- aghq::marginal_laplace_tmb(obj, 3, startingvalue = c(param$logkappa, param$logtau))
 
-loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
-
-figA <- ggplot() +
-  geom_sf(data = sf::st_crop(areas, sf::st_bbox(loaloa_sf)), col = "grey20") +
-  geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
-  scale_color_viridis_c() +
-  scale_size(range = c(1, 4)) +
-  theme_void() +
-  labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero", tag = "A") +
-  guides(
-    col = guide_colourbar(order = 1),
-    shape = guide_legend(override.aes = list(size = 2.5, col = "grey20"), order = 2),
-    size = guide_legend(override.aes = list(shape = 16, col = "grey20"), order = 3)
-  ) +
-  theme(
-    legend.direction = "vertical", 
-    legend.box = "vertical",
-    legend.position = "right",
-    legend.title = element_text(size = 8),
-    legend.text = element_text(size = 7),
-    legend.key.width = unit(1, "line"),
-    legend.key.height = unit(1, "line")
-  )
-
-figB <- ggplot(loaloa_sf, aes(x = p)) +
-  geom_histogram(col = "grey60", fill = "grey80") +
-  labs(x = "", y = "", tag = "B") +
-  coord_fixed(ratio = 0.01) +
-  theme_minimal()
-
-figA / figB + plot_layout(heights = c(1.5, 1))
-
-ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
+# Large number of samples here to estimate beta well for fixing later
+beta_samples <- sample_marginal(quad, 5000)
+round(rowMeans(beta_samples$samps[c(191, 382), ]), 2) # 2.95 -1.99
 
 aghq_samples <- sample_marginal(quad, 100)
 
@@ -215,8 +219,8 @@ param[unique(W_names)] <- NULL
 param$W_minus_i <- rnorm(N - 1)
 param$W_i <- rnorm(1)
 
-compile("resources/naomi-aghq/loaloazip_modified.cpp")
-dyn.load(dynlib("resources/naomi-aghq/loaloazip_modified"))
+compile("figures/naomi-aghq/TMB/loaloazip_modified.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_modified"))
 
 compute_laplace_marginal <- function(i, quad) {
   dat$i <- i

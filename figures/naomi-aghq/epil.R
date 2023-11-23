@@ -98,8 +98,8 @@ end <- Sys.time()
 inla_l_grid_time <- end - start
 
 start <- Sys.time() 
-compile("resources/naomi-aghq/epil.cpp")
-dyn.load(dynlib("resources/naomi-aghq/epil"))
+compile("figures/naomi-aghq/TMB/epil.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/epil"))
 
 param <- list(
   beta = rep(0, K),
@@ -187,8 +187,8 @@ param[unique(x_names)] <- NULL
 param$x_minus_i <- rep(0, sum(x_lengths) - 1)
 param$x_i <- 0
 
-compile("resources/naomi-aghq/epil_modified.cpp")
-dyn.load(dynlib("resources/naomi-aghq/epil_modified"))
+compile("figures/naomi-aghq/TMB/epil_modified.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/epil_modified"))
 
 compute_laplace_marginal <- function(i, quad) {
   dat$i <- i
@@ -246,7 +246,7 @@ end <- Sys.time()
 tmbstan_time <- end - start
 
 start <- Sys.time() 
-stan <- rstan::stan(file = "resources/naomi-aghq/epil.stan", data = dat, chains = 4, refresh = 0)
+stan <- rstan::stan(file = "figures/naomi-aghq/epil.stan", data = dat, chains = 4, refresh = 0)
 end <- Sys.time()
 stan_time <- end - start
 

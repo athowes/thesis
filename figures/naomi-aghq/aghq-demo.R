@@ -2,8 +2,8 @@ library(tidyverse)
 library(patchwork)
 library(TMB)
 
-TMB::compile("figures/naomi-aghq/2d.cpp")
-dyn.load(TMB::dynlib("figures/naomi-aghq/2d"))
+TMB::compile("figures/naomi-aghq/TMB/2d.cpp")
+dyn.load(TMB::dynlib("figures/naomi-aghq/TMB/2d"))
 
 obj <- TMB::MakeADFun(data = list(), parameters = list(theta1 = 0, theta2 = 0), DLL = "2d")
 
