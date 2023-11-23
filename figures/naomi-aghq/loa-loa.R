@@ -129,7 +129,42 @@ quad <- aghq::marginal_laplace_tmb(obj, 3, startingvalue = c(param$logkappa, par
 
 # Large number of samples here to estimate beta well for fixing later
 beta_samples <- sample_marginal(quad, 5000)
-round(rowMeans(beta_samples$samps[c(191, 382), ]), 2) # 2.95 -1.99
+beta_fixed <- round(rowMeans(beta_samples$samps[c(191, 382), ]), 2) # 2.95 -1.99
+
+compile("figures/naomi-aghq/TMB/loaloazip_fixed.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_fixed"))
+
+param_new <- with(param, list(
+  Uzi = W[1:190],
+  betazi = beta_fixed[1],
+  Urisk = W[192:381],
+  betarisk = beta_fixed[2],
+  logkappa = log(get_kappa(starting_sig, starting_rho)),
+  logtau = log(get_tau(starting_sig, starting_rho))
+))
+
+dat_new <- within(dat,{
+  A <- as(as(Amat, "dgCMatrix"), "dgTMatrix")
+  X <- Xmat
+})
+
+dat_new$design <- NULL
+
+obj_fixed <- MakeADFun(
+  data = dat_new,
+  parameters = param_new,
+  random = c("Uzi", "Urisk"),
+  map = list(betazi = factor(NA), betarisk = factor(NA)),
+  DLL = "loaloazip_fixed",
+  ADreport = FALSE,
+  silent = TRUE
+)
+
+obj_fixed$fn(obj_fixed$par)
+
+quad <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
+
+
 
 aghq_samples <- sample_marginal(quad, 100)
 
