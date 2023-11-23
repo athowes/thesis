@@ -260,28 +260,34 @@ plot_suitability(phi_fixed_sf) / plot_prevalence(rho_fixed_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation-fixed.png", h = 5, w = 6.25, bg = "white")
 
-# Laplace marginals
+# Laplace marginals with fixed beta
 set.seed(4564)
 
-random <- obj$env$random
-N <- length(random)
-W_names <- names(obj$env$par[random])
+W_names <- names(param_new)[1:4]
+W_lengths <- lengths(param_new[unique(W_names)])
+N <- sum(W_lengths)
+W_starts <- cumsum(W_lengths) - W_lengths
 
-param[unique(W_names)] <- NULL
-param$W_minus_i <- rnorm(N - 1)
-param$W_i <- rnorm(1)
+dat_new$W_starts <- as.numeric(W_starts)
+dat_new$W_lengths <- as.numeric(W_lengths)
 
-compile("figures/naomi-aghq/TMB/loaloazip_modified.cpp")
-dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_modified"))
+param_new[unique(W_names)] <- NULL
+param_new$W_minus_i <- rnorm(N - 1)
+param_new$W_i <- rnorm(1)
+
+compile("figures/naomi-aghq/TMB/loaloazip_fixed_modified.cpp")
+dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_fixed_modified"))
 
 compute_laplace_marginal <- function(i, quad) {
-  dat$i <- i
+  dat_new$i <- i
+  
+  # Need to set (W_minus_i, W_i) starts to the fixed values of beta
   
   obj_i <- TMB::MakeADFun(
-    data = dat,
-    parameters = param,
+    data = dat_new,
+    parameters = param_new,
     random = "W_minus_i",
-    DLL = "loaloazip_modified",
+    DLL = "loaloazip_fixed_modified",
     ADreport = FALSE,
     silent = TRUE
   )
