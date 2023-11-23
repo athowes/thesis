@@ -96,7 +96,7 @@ quad <- aghq::marginal_laplace_tmb(obj, 3, startingvalue = c(param$logkappa, par
 loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
 
 figA <- ggplot() +
-  geom_sf(data = areas, col = "grey20") +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(loaloa_sf)), col = "grey20") +
   geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
   scale_color_viridis_c() +
   scale_size(range = c(1, 4)) +
@@ -227,7 +227,7 @@ compute_laplace_marginal <- function(i, quad) {
     random = "W_minus_i",
     DLL = "loaloazip_modified",
     ADreport = FALSE,
-    silent = FALSE
+    silent = TRUE
   )
   
   random_i <- obj_i$env$random
@@ -263,7 +263,7 @@ time <- tictoc::toc()
 (time$toc - time$tic) * N / 60 / 60
 
 #' This would take around 3 hours to run
-quad_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad, .progress = TRUE)
+quad_laplace_marginals <- purrr::map(.x = 1:5, .f = compute_laplace_marginal, quad = quad, .progress = TRUE)
 
 sample_adam <- function(i, M) {
   q <- runif(M)
@@ -274,6 +274,28 @@ sample_adam <- function(i, M) {
 }
 
 samples_adam <- lapply(1:5, sample_adam, M = 1000)
+aghq_samples <- sample_marginal(quad, 1000)
+
+df <- bind_rows(
+  data.frame(method = "laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:5),
+  data.frame(method = "gaussian", mean = apply(aghq_samples$samps[1:5, ], 1, mean), sd = apply(aghq_samples$samps[1:5, ], 1, sd), index = 1:5)
+)
+
+df %>%
+  pivot_longer(cols = c("mean", "sd"), names_to = "indicator", values_to = "value") %>%
+  pivot_wider(id_cols = c("index", "indicator"), names_from = "method") %>%
+  mutate(
+    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd")
+  ) %>%
+  ggplot(aes(x = gaussian, y = (laplace - gaussian) / laplace)) +
+    geom_point(size = 1.5, shape = 1) +
+    facet_wrap(~ indicator, scales = "free_x") +
+    geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
+    scale_y_continuous(labels = scales::percent) +
+    labs(x = "Gaussian estimate", y = "Percentage difference to Laplace") +
+    theme_minimal()
+
+ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 3.5, w = 6.25, bg = "white")
 
 #' Try running tmbstan
 nuts <- tmbstan::tmbstan(obj, chains = 1, warmup = 50, iter = 100)
