@@ -160,20 +160,15 @@ obj_fixed <- MakeADFun(
   silent = TRUE
 )
 
-obj_fixed$fn(obj_fixed$par)
+quad_fixed <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
 
-quad <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
-
-
+summary(quad_fixed)
+summary(quad)
 
 aghq_samples <- sample_marginal(quad, 100)
+aghq_fixed_samples <- sample_marginal(quad_fixed, 100)
 
-# This is an overly specific function...
-random_field_simulation <- function(latent_samples, hyper_samples, nsim = 100) {
-  u_samples <- latent_samples[c(1:190), ]
-  v_samples <- latent_samples[c(192:381), ]
-  beta_samples <- latent_samples[c(191, 382), ]
-
+random_field_simulation <- function(u_samples, v_samples, beta_samples, theta_samples, nsim = 100) {
   covariance_samples <- cbind(
     var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
     range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
@@ -213,7 +208,13 @@ random_field_simulation <- function(latent_samples, hyper_samples, nsim = 100) {
   return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
 }
 
-random_field_samples <- random_field_simulation(latent_samples = aghq_samples$samps, hyper_samples = aghq_samples$theta)
+random_field_samples <- random_field_simulation(
+  u_samples = aghq_samples$samps[c(1:190), ],
+  v_samples = aghq_samples$samps[c(192:381), ],
+  beta_samples = aghq_samples$samps[c(191, 382), ],
+  theta_samples = aghq_samples$theta
+)
+
 phi_samples <- random_field_samples$phi_samples
 rho_samples <- random_field_samples$rho_samples
 phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = random_field_samples$grid$geometry)
@@ -242,6 +243,22 @@ plot_prevalence <- function(rho_sf) {
 plot_suitability(phi_sf) / plot_prevalence(rho_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
+
+random_field_samples_fixed <- random_field_simulation(
+  u_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Uzi"), ],
+  v_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Urisk"), ],
+  beta_samples = t(data.frame(rep(param_new$betarisk, 100), rep(param_new$betazi, 100))),
+  theta_samples = aghq_fixed_samples$theta
+)
+
+phi_fixed_samples <- random_field_samples_fixed$phi_samples
+rho_fixed_samples <- random_field_samples_fixed$rho_samples
+phi_fixed_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = random_field_samples_fixed$grid$geometry)
+rho_fixed_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = random_field_samples_fixed$grid$geometry)
+
+plot_suitability(phi_fixed_sf) / plot_prevalence(rho_fixed_sf)
+
+ggsave("figures/naomi-aghq/conditional-simulation-fixed.png", h = 5, w = 6.25, bg = "white")
 
 # Laplace marginals
 set.seed(4564)
