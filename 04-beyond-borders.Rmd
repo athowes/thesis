@@ -16,7 +16,7 @@ bibliography: references.bib
 resource_version <- "20231122-202015-77db2329"
 ```
 
-# Models for spatial structure {#beyond-borders}
+# Models for areal spatial structure {#beyond-borders}
 \adjustmtc
 \markboth{Models for spatial structure}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
@@ -543,6 +543,8 @@ Uniformity was assessed using probability integral transform (PIT) histograms [@
 
 ### Results
 
+Computing!
+
 (ref:crps-mean-se-grid) The mean CRPS and its standard error for each inferential model and simulation model.
 
 ```{r crps-mean-se-grid, fig.cap="(ref:crps-mean-se-grid)"}
@@ -597,16 +599,21 @@ knitr::include_graphics(path)
 ```
 
 In each country, data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used.
+Let $y_{ij} \in \{0, 1\}$ be the survey response for individual $j$ in area $i$.
 Sampling weights
 \begin{equation}
 w_{ij} = \frac{1}{\pi_{ij}}
 \end{equation}
-were used to account for the complex survey design whereby an individual $j$ in area $i$ has probability $\pi_{ij}$ of being included in the survey.
-The Kish effective sample size [@kish1965survey]
+were used to account for the complex survey design whereby an individual has probability $\pi_{ij}$ of being included in the survey.
+The weighted prevalence in area $i$ is
 \begin{equation}
-m_i^\star = \frac{(\sum_j w_{ij})^2}{\sum_j w_{ij}^2}.
+\rho_i^\star = \frac{\sum_{j} w_{ij} y_{ij}}{\sum_{j} w_{ij}}.
 \end{equation}
-The effective number of cases $y_i^\star$ may be thought of as what would have been observed had the survey been a simple random sample.
+The effective number of cases $y_i^\star = \rho_i^\star \cdot m_i^\star$ is given by the product of the weighted prevalence, and the Kish effective sample size [@kish1965survey]
+\begin{equation}
+m_i^\star = \frac{(\sum_j w_{ij})^2}{\sum_j w_{ij}^2},
+\end{equation}
+and may be intuitively thought of as what would have been observed had the survey been a simple random sample.
 
 ### Inferential models
 
@@ -638,6 +645,8 @@ To provide comparison, the DIC and WAIC measures of model fit were also computed
 Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo].
 
 ### Results
+
+Computing!
 
 ## Discussion
 
