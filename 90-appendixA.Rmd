@@ -43,16 +43,24 @@ knitr::include_graphics(path)
 
 ### Mean squared error
 
-```{r}
+```{r mse-table}
 gt_mse <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_mse.rds"))
+
+gt_mse <- gt_mse %>%
+  gt::tab_caption(caption = "The average mean squared error (MSE) of each inferential model, under different simulation and geometry settings.")
+
 if(knitr::is_html_output()) gt_mse
 if(knitr::is_latex_output()) gt::as_latex(gt_mse)
 ```
 
 ### Continuous ranked probability score
 
-```{r}
+```{r crps-table}
 gt_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_crps.rds"))
+
+gt_crps <- gt_crps %>%
+  gt::tab_caption(caption = "The average continuous ranked probability score (CRPS) of each inferential model, under different simulation and geometry settings.")
+
 if(knitr::is_html_output()) gt_crps
 if(knitr::is_latex_output()) gt::as_latex(gt_crps)
 ```
