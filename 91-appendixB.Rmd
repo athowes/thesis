@@ -13,7 +13,7 @@ resource_version <- "20231120-121631-164346ab"
 | High                  | 1.0-3.0\% incidence and high-risk behaviour                                                |
 | Very high             | >3.0\% incidence                                                                           |
 
-Table: (\#tab:unaids-strategy-prioritisation) Prioritisation strata according to HIV incidence in the general population and behavioural risk.
+Table: (\#tab:unaids-strategy-prioritisation) Prioritisation strata given by @unaids2021global based on to HIV incidence in the general population and behavioural risk.
 
 | Intervention                                                 | Low  | Moderate | High | Very High |
 |--------------------------------------------------------------|------|----------|------|-----------|
@@ -23,15 +23,18 @@ Table: (\#tab:unaids-strategy-prioritisation) Prioritisation strata according to
 | PrEP use                                                     | -    | 5\%      | 50\% | 50\%      |
 | Economic empowerment                                         | -    | -        | 20\% | 20\%      |
 
-Table: (\#tab:unaids-strategy-targets) Commitments to be met for each intervention, given in terms of the proportion of the prioritisation strata reached. The symbol "-" represents no commitment.
+Table: (\#tab:unaids-strategy-targets) Commitments recommended by @unaids2021global to be met for each intervention, given in terms of the proportion of the prioritisation strata reached. The symbol "-" represents no commitment.
 
 ## Household survey data
 
-```{r}
+```{r household-survey-data}
 gt_available_surveys <- readRDS(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.rds"))
 
 gt_available_surveys$`_boxhead`$column_label[[4]] <- "TS question"
 gt_available_surveys$`_boxhead`$column_align[[4]] <- "center"
+
+gt_available_surveys <- gt_available_surveys %>%
+  gt::tab_caption(caption = 'The sample size by age group for each included survey in the analysis. The column "TS question" refers to whether or not the survey included a specific question about transactional sex (TS).')
 
 if(knitr::is_html_output()) {
   gt_available_surveys %>%
@@ -99,3 +102,17 @@ Table: (\#tab:survey-questions-ais-dhs) The survey questions included in AIDS In
 | $\texttt{buysx12mo}$             | Paid money or given gifts for sex in the last 12 months.                    |
 
 Table: (\#tab:survey-questions-ais-dhs) The survey questions included in Population-Based HIV Impact Assessment (PHIA) surveys.
+
+## Additional figures
+
+(ref:aaa-variance-proportions) The proportion of posterior variance explained by each random effect, calculated as a ratio of the random effect variance posterior mean to the sum of all random effect variance posterior means. To allow calculation of this metric by country, the model was run for each country individually.
+
+```{r aaa-variance-proportions, fig.cap="(ref:aaa-variance-proportions)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/aaa-variance-proportions.png"))
+```
+
+(ref:age-variation) For the 20-24 and 25-29 age groups, the proportion of AGYW in the one cohabiting partner and non-regular or multiple partner(s) risk groups was bimodal.
+
+```{r age-variation, fig.cap="(ref:age-variation)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-variation.png"))
+```

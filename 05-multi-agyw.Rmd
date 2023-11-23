@@ -23,36 +23,37 @@ resource_version <- "20231120-121631-164346ab"
 This chapter describes an application of Bayesian spatio-temporal statistics to small-area estimation of HIV risk group proportions.
 This work was conducted in collaboration with colleagues from the MRC Centre for Global Infectious Disease Analysis and UNAIDS.
 I developed the statistical model, building upon an earlier version of the analysis conducted by Dr. Kathryn Risher.
-The model and results for 13 countries are presented in @howes2023spatio, and implemented in a spreadsheet tool ([`https://hivtools.unaids.org/pse/`](https://hivtools.unaids.org/pse/)) for use in national HIV response planning.
+The model and results for 13 countries are presented in @howes2023spatio.
+Outputs are implemented in a spreadsheet tool ([`https://hivtools.unaids.org/pse/`](https://hivtools.unaids.org/pse/)) for use in national HIV response planning.
 The tool is being updated by inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
 Code for the analysis in this chapter is available from [`https://github.com/athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
 
 ## Background
+
+(ref:risk-grid) Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. It is assumed here that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively.
+
+```{r risk-grid, fig.cap="(ref:risk-grid)"}
+knitr::include_graphics("figures/multi-agyw/risk-grid.png")
+```
 
 In SSA, adolescent girls and young women (AGYW) aged 15-29 are at increased risk of HIV infection.
 Though AGYW are only 28% of the population, they comprise 44% of new infections [@unaids2021update].
 HIV incidence for AGYW is 2.4 times higher than for similarly aged (15-29) males.
 The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, a younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services.
-Significant investments, such as the DREAMS partnership [@saul2018dreams] and by the Global Fund [@global2018measurement], have been made to support prevention programming.
+Significant investments, including the DREAMS partnership [@saul2018dreams] and by the Global Fund [@global2018measurement], have been made to support prevention programming.
 
 The Global AIDS Strategy 2021-2026 [@unaids2021global] was adopted by the United Nations (UN) General Assembly in June 2021, and "outlines the strategic priorities and actions to be implemented by global, regional, country and community partners to get on-track to ending AIDS".
-It proposed stratifying HIV prevention packages to AGYW based on two factors
+It proposed stratifying HIV prevention packages to AGYW based on two factors:
 
 1. local population-level HIV incidence, and
 2. individual-level sexual risk behaviour.
 
 Risk of acquiring HIV depends on both factors.
 As such, prioritisation of prevention services is more efficient if both factors are taken into account.
-I illustrate this stylistically in Figure \@ref(fig:risk-grid).
-The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions.
+Figure \@ref(fig:risk-grid) illustrates this stylistically.
+The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions (Table \@ref(tab:unaids-strategy-targets)) based on prioritisation strata which incorporate behavioural risk (Table \@ref(tab:unaids-strategy-prioritisation)).
 Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.
-
-(ref:risk-grid) Risk of acquiring HIV is depends on both individual-level risk behaviour and population-level HIV incidence. I assume that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively.
-
-```{r risk-grid, fig.cap="(ref:risk-grid)"}
-knitr::include_graphics("figures/multi-agyw/risk-grid.png")
-```
 
 ## Data
 
@@ -156,7 +157,7 @@ The median number of surveys per country was four, ranging from one in Botswana 
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
 ```
 
-For each survey, I classified respondents into one of four behavioural risk groups $k = 1, 2, 3, 4$ according to reported sexual risk behaviour in the past 12 months (Figure \@ref(fig:category-flowchart)).
+For each survey, respondents were classified into one of four behavioural risk groups $k = 1, 2, 3, 4$ according to reported sexual risk behaviour in the past 12 months (Figure \@ref(fig:category-flowchart)).
 In increasing order of HIV acquisition risk, these risk groups were:
 
 * $k = 1$: Not sexually active
@@ -170,7 +171,7 @@ Exact survey questions varied slightly across survey types and between survey ph
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so with how many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
 Possible partnership types included spouse, cohabiting partner, partner not cohabiting with respondent, friend, sex worker, sex work client, and other.
-Full survey questions used are in Appendix \@ref(survey-questions).
+The survey questions used are in Appendix \@ref(survey-questions).
 In the case of inconsistent responses, women were categorised according to the highest risk group they fell into, ensuring that the categories were mutually exclusive.
 
 Some surveys included a specific question asking if the respondent had received or given money or gifts for sex in the past twelve months.
@@ -179,6 +180,7 @@ In surveys without such a question, women almost never (0.01\%) answered that on
 This incomparability made it inappropriate to include surveys without a specific transactional sex question when estimating the proportion of the population who engaged in transactional sex.
 Of the total `r total_surveys` surveys included in the analysis, `r length(giftsvar_surveys)` had a specific transactional sex question, with a total sample size of `r comma(agyw_surveyed_giftsvar - giftsvar_Y025_029_overcount)` (`r comma(agyw_surveyed_giftsvar_age$Y015_019)` aged 15-19 years, `r comma(agyw_surveyed_giftsvar_age$Y020_024)` aged 20-24 years, and `r comma(agyw_surveyed_giftsvar_age$Y025_029 - giftsvar_Y025_029_overcount)` aged 25-29 years).
 The sample size for women aged 25-29 is smaller because there were `r length(giftsvar_exclude_Y025_029)` DHS surveys which excluded women 25-29 from the transactional sex survey question.
+Table \@ref(tab:household-survey-data) gives the sample size by age group for every survey included in the analysis.
 
 (ref:category-flowchart) Flowchart giving classification of survey respondents to HIV risk groups.
 
@@ -190,7 +192,7 @@ knitr::include_graphics(paste0("figures/multi-agyw/category-flowchart.png"))
 
 In addition to the household survey behavioural data, I used estimates of population, PLHIV and new HIV infections stratified by district and age group from HIV estimates published by UNAIDS that were developed using the Naomi model [@eaton2021naomi].
 I used the most recent 2022 estimates for all countries, apart from Mozambique where, due to data accuracy concerns, I used the 2021 estimates (in which the Cabo Delgado province is excluded due to disruption by conflict).
-I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries.
+I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries (Table \@ref(tab:area-levels)).
 Exceptions were Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
 
 ## Model for risk group proportions
@@ -231,7 +233,6 @@ This model is not an latent Gaussian model [LGM; @rue2009approximate] because ea
 The model, defined over `r n_district` districts, `r n_year` years, `r n_age` age groups, and `r n_group` risk groups, is too large for MCMC to be tractable in reasonable time.
 To recast this model as an LGM, I used the multinomial-Poisson transformation (detailed in Section \@ref(mp-transformation)).
 This modification allowed inference to be performed using the INLA [@rue2009approximate] algorithm via the `R-INLA` package [@martins2013bayesian].
-Inferences from INLA in the LGM setting are accurate and substantially faster than MCMC.
 
 #### The multinomial-Poisson transformation {#mp-transformation}
 
@@ -327,10 +328,13 @@ r_1 &\sim \left( 0, \frac{1}{1 - \rho^2} \right), \\
 r_t &= \rho r_{t - 1} + \epsilon_t, \quad t = 2, \ldots, T, 
 \end{align}
 where $\epsilon_t \sim \mathcal{N}(0, 1)$ and $|\rho| < 1$.
-As with the structured spatial random effects, I implemented this Kronecker product using the `group` option via `f(year_idx, model = "ar1", group = cat_idx, control.group = list(model = "iid"), ...)`.
-Again the more complicated variable was written first.
+As with the structured spatial random effects, I implemented this Kronecker product using the `group` option via:
+```r
+f(year_idx, model = "ar1", group = cat_idx, control.group = list(model = "iid"), ...)
+```
+Again the more variable with the more complicated model was written first.
 
-##### A note on spatio-temporal interaction random effects
+##### Note on spatio-temporal interaction random effects
 
 I also considered including separable space-time-category random effects $\delta_{itk}$ in the model, using the specification
 \begin{equation}
@@ -354,9 +358,13 @@ However, when fitting all countries jointly I found inclusion of the space-time-
 
 ##### Prior distributions
 
-All random effect precision parameters $\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma, \tau_\delta\}$ were given independent penalised complexity (PC) prior distributions [@simpson2017penalising] with base model $\sigma = 0$ given by
+All random effect precision parameters
 \begin{equation}
-p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right)
+\tau \in \{\tau_\beta, \tau_\zeta, \tau_\alpha, \tau_u, \tau_\gamma, \tau_\delta\}
+\end{equation}
+were given independent penalised complexity (PC) prior distributions [@simpson2017penalising] with base model $\sigma = 0$ given by
+\begin{equation}
+p(\tau) = 0.5 \nu \tau^{-3/2} \exp \left( - \nu \tau^{-1/2} \right),
 \end{equation}
 where $\nu = - \ln(0.01) / 2.5$ such that  $\mathbb{P}(\sigma > 2.5) = 0.01$.
 For the lag-one correlation parameter $\rho$, I used the PC prior distribution, as derived by @sorbye2017penalised, with base model $\rho = 1$ and condition $\mathbb{P}(\rho > 0 = 0.75)$.
@@ -377,7 +385,7 @@ In some cases it was not possible to implement all three sets of constraints for
 | Temporal       | $\sum_t \gamma_{tk} = 0, \, \forall \, k$ |
 | Spatio-temporal | $\sum_i \delta_{itk} = 0, \, \forall \, t, k; \sum_t \delta_{itk} = 0, \, \forall \, i, k; \sum_k \delta_{itk} = 0, \, \forall \, i, t$ |
 
-Table: (\#tab:constraints) Applying sum-to-zero constraints to interaction effects ensures that the main effect is not interfered with. 
+Table: (\#tab:constraints) Applying sum-to-zero constraints to interaction effects ensured that the main effect was not interfered with. 
 
 #### Survey weighted likelihood
 
@@ -409,7 +417,7 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 | DIC  | 100780 (300) | 101588 (317) | 100781 (300) | 101589 (317) |
 | WAIC | 103763 (358) | 105008 (383) | 103763 (358) | 105009 (383) |
 
-Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the multinomial logistic regression model with corresponding standard errors.
+Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the multinomial logistic regression model specifications with corresponding standard errors.
 
 ### Spatial logistic regression {#s-logistic}
 
@@ -427,8 +435,8 @@ As all such surveys occurred in the years 2013-2018 (Figure \@ref(fig:available-
 
 #### Model specifications
 
-|    | Intercept $\beta_0$ | Country $\zeta_{c}$ | Age $\alpha_{ac}$ | Spatial $u_{i}$ | Covariates |
-| -- | ------------------- | ------------------- | ----------------- | ---------------- | ---------- |
+|    |Intercept $\beta_0$|Country $\zeta_{c}$|Age $\alpha_{ac}$|Spatial $u_{i}$|Covariates|
+| -- |-------------------|-------------------|-----------------|---------------|----------|
 | L1 | Constant | IID | IID | IID   | None |
 | L2 | Constant | IID | IID | Besag | None |
 | L3 | Constant | IID | IID | IID   | `cfswever`   |
@@ -472,16 +480,15 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 
 |      | L1         | L2         | L3         | L4         | L5         | L6         |
 |------|------------|------------|------------|------------|------------|------------|
+| CPO  | 950 (15)   | 969 (15)   | 951 (15)   | 970 (15)   | 950 (15)   | 970 (15)   |
 | DIC  | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) |
 | WAIC | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) |
-| CPO  | 950 (15)   | 969 (15)   | 951 (15)   | 970 (15)   | 950 (15)   | 970 (15)   |
 
-Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the logistic regression model with corresponding standard errors.
+Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the logistic regression model specifications with corresponding standard errors.
 
-### Model combination
+<!-- ### Model combination -->
 
-How were the models combined?
-Using samples.
+<!-- The models were combined using samples. -->
 
 ### Female sex worker population size adjustment
 
@@ -508,25 +515,86 @@ The resulting age trends obtained (Figure \@ref(fig:age-disagg-fsw-line)) reflec
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-disagg-fsw-line.png"))
 ```
 
-### Results
+## Prevalence and incidence by risk group
 
-#### Coverage assessment
+Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:
 
-To assess the calibration of the fitted model, I calculated the quantile $q$ of each observation within the posterior predictive distribution.
-For calibrated models, these quantiles, known as probability integral transform (PIT) values [@dawid1984present; @bosse2022scoringutils], should follow a uniform distribution $q \sim \mathcal{U}[0, 1]$.
-To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
-Using the PIT values, it is possible to calculate the empirical coverage of all $(1 - \alpha)100$\% equal-tailed posterior predictive credible intervals.
-These empirical coverages can be compared to the nominal coverage $(1 - \alpha)$ for each value of $\alpha \in [0, 1]$ to give empirical cumulative distribution function (ECDF) difference values.
-This approach has the advantage of considering all possible confidence values at once.
-To test for uniformity, I used the binomial distribution based simultaneous confidence bands for ECDF difference values developed by @sailynoja2022graphical.
-I found the only significant deviation from uniformity occurred in the right-hand tail of the one cohabiting partner risk group.
-That is to say, the proportion of the PIT values which were greater than 0.95 was significantly more than would be expected under a calibrated model.
+1. HIV prevalence $\rho_{iak}$,
+2. the number of people living with HIV (PLHIV) $H_{iak}$,
+3. HIV incidence $\lambda_{iak}$, and
+4. the number of new HIV infections $I_{iak}$.
 
-(ref:coverage) Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.
+To do so, I disaggregated district, age group specific Naomi estimates by risk group.
 
-```{r coverage, fig.cap="(ref:coverage)"}
-knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/coverage.png"))
-```
+### Disaggregation of Naomi prevalence estimates
+
+To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios $\log(\text{OR}_k)$ relative to the general population.
+To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
+I also included general population HIV prevalence data.
+The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
+The log odds ratios may then be easily obtained by taking the difference in odds ratios.
+
+To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
+I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.
+
+Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV $H_{ia}$ on the logit scale using numerical optimisation.
+I did this by by finding the values of $\theta_{ia}$ which minimise the equation
+\begin{equation}
+f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia},
+\end{equation}
+where
+\begin{equation}
+\text{logistic}(x) = \exp(x) / (1 + \exp(x)),
+\end{equation}
+such that
+\begin{equation}
+\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}.
+\end{equation}
+These values are given by
+\begin{equation}
+\hat \theta_{ia} = \arg\min_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2.
+\end{equation}
+The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{iak}$ is the risk group population size.
+
+### Disaggregation of Naomi incidence estimates
+
+I calculated the number of new HIV infections by risk group using linear disaggregation
+\begin{align}
+    I_{ia} &= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
+    &= 0 + \lambda_{ia2} (1 - \rho_{ia2}) N_{ia2} + \lambda_{ia3} (1 - \rho_{ia3}) {ia3} + \lambda_{ia4} (1 - \rho_{ia4}) N_{ia4} \\
+    &= \lambda_{ia2} \left((1 - \rho_{ia2}) N_{ia2}  + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{i4}) N_{ia4}  \right),
+\end{align}
+where $\text{RR}_{2}$, $\text{RR}_{3}$ and $\text{RR}_{4}(\cdot)$ are the HIV risk ratios given in Table \@ref(tab:risk-groups), and $(1 - \rho_{iak}) N_{iak}$ are the susceptible population sizes in each risk group.
+The risk ratio for FSW was defined as a function of district-level incidence in the general population $\lambda_{ia}$.
+
+Risk group specific HIV incidence estimates were then given by
+\begin{align}
+    \lambda_{ia1} &= 0, \\
+    \lambda_{ia2} &= \frac{I_{ia}}{(1 - \rho_{ia2}) N_{ia2} + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{ia4}) N_{ia4}}, \\
+    \lambda_{ia3} &= \text{RR}_{3} \lambda_{ia2}, \\
+    \lambda_{ia4} &= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
+\end{align}
+I evaluated these equations using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
+The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
+
+### Expected new infections reached
+
+I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population.
+That is, for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group. 
+
+To illustrate this approach, consider stratification by age.
+I first aggregated the number of new HIV infections and HIV incidence such that
+\begin{align}
+    I_a &= \sum_{ik} I_{iak}, \\
+    \lambda_a &= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
+\end{align}
+I then considered prioritisation individuals by age group $a$ according to the highest HIV incidence $\lambda_a$.
+By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
+As there are three age groups, the resulting function was piecewise linear with three segments.
+
+## Results
+
+### Model for risk group proportions
 
 #### Estimates
 
@@ -656,28 +724,35 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 
 The median national FSW proportion was `r fsw_age_Y015_019$median`\% (95\% CI `r fsw_age_Y015_019$lower`--`r fsw_age_Y015_019$upper`) for the 15-19 age group, `r fsw_age_Y020_024$median`\% (95\% CI `r fsw_age_Y020_024$lower`--`r fsw_age_Y020_024$upper`) for the 20-24 age group and `r fsw_age_Y025_029$median`\% (95\% CI `r fsw_age_Y025_029$lower`--`r fsw_age_Y025_029$upper`) for the 25-29 age group, in line with the results displayed in Figure \@ref(fig:age-disagg-fsw-line).
 
-(ref:age-variation) Figure caption.
-
-```{r age-variation, fig.cap="(ref:age-variation)"}
-knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-variation.png"))
-```
-
 In the 20-24 and 25-29 year age groups, the majority of women were either cohabiting or had non-regular or multiple partner(s).
 Countries in eastern and central Africa (Cameroon, Kenya, Malawi, Mozambique, Tanzania, Uganda, Zambia and Zimbabwe) had a higher proportion of women in these age groups cohabiting (`r dividing_border_above_sexcohab$median`\% [95\% CI `r dividing_border_above_sexcohab$lower`--`r dividing_border_above_sexcohab$upper`\%] compared with `r dividing_border_above_sexnonreg$median`\% [95\% CI `r dividing_border_above_sexnonreg$lower`--`r dividing_border_above_sexnonreg$upper`\%] with non-regular partner[s]).
 In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia and South Africa) had a higher proportion with non-regular or multiple partner(s) (`r dividing_border_below_sexnonreg$median`\% [95\% CI `r dividing_border_below_sexnonreg$lower`--`r dividing_border_below_sexnonreg$upper`\%], compared with `r dividing_border_below_sexcohab$median`\% [95\% CI `r dividing_border_below_sexcohab$lower`--`r dividing_border_below_sexcohab$upper`\%] cohabiting).
 This finding is the most notable feature of between-country variation shown in Figure \@ref(fig:3p1-within-between-country-variation).
 Figure \@ref(fig:3p1-continental-map) shows the geographic delineation to pass along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia.
+The bimodality of the 20-24 and 25-29 year age groups is shown in Figure \@ref(fig:age-variation).
 
 In most districts (`r round(district_Y015_019_nosex12m_quantiles$median, 1)`\%; 95\% credible interval [CI] `r round(district_Y015_019_nosex12m_quantiles$lower, 1)`--`r round(district_Y015_019_nosex12m_quantiles$upper, 1)`) adolescent girls aged 15-19 were not sexually active.
 The exception was Mozambique, where the majority (`r 100 - round(moz_Y015_019_nosex12m$estimate_smoothed, 2)`\%) were sexually active in the past year and close to a third (`r round(moz_Y015_019_sexcohab$estimate_smoothed, 2)`\%) were cohabiting with a partner.
 
-#### Variance decomposition {#variance-decomposition}
+#### Coverage assessment
 
-(ref:aaa-variance-proportions) Figure caption.
+To assess the calibration of the fitted model, I calculated the quantile $q$ of each observation within the posterior predictive distribution.
+For calibrated models, these quantiles, known as probability integral transform (PIT) values [@dawid1984present; @bosse2022scoringutils], should follow a uniform distribution $q \sim \mathcal{U}[0, 1]$.
+To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
+Using the PIT values, it is possible to calculate the empirical coverage of all $(1 - \alpha)100$\% equal-tailed posterior predictive credible intervals.
+These empirical coverages can be compared to the nominal coverage $(1 - \alpha)$ for each value of $\alpha \in [0, 1]$ to give empirical cumulative distribution function (ECDF) difference values.
+This approach has the advantage of considering all possible confidence values at once.
+To test for uniformity, I used the binomial distribution based simultaneous confidence bands for ECDF difference values developed by @sailynoja2022graphical.
+I found the only significant deviation from uniformity occurred in the right-hand tail of the one cohabiting partner risk group.
+That is to say, the proportion of the PIT values which were greater than 0.95 was significantly more than would be expected under a calibrated model.
 
-```{r aaa-variance-proportions, fig.cap="(ref:aaa-variance-proportions)"}
-knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/aaa-variance-proportions.png"))
+(ref:coverage) Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.
+
+```{r coverage, fig.cap="(ref:coverage)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/coverage.png"))
 ```
+
+#### Variance decomposition {#variance-decomposition}
 
 ```{r}
 variance_proportions <- readr::read_csv(paste0("resources/multi-agyw/", resource_version, "/depends/variance-proportions-uncertainty.csv"))
@@ -696,84 +771,7 @@ Country-level differences explained `r variance_proportions_iso3$mean`\% (95\% C
 Temporal changes only explained `r variance_proportions_year$mean`\% (95\% CI `r variance_proportions_year$lower`--`r variance_proportions_year$upper`\%) of variation, indicating very little change in risk group proportions over time.
 I found similar variance decomposition results fitting each country individually (Figure \@ref(fig:aaa-variance-proportions)) and using other model specifications.
 
-## Prevalence and incidence by risk group
-
-Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:
-
-1. HIV prevalence $\rho_{iak}$,
-2. the number of people living with HIV (PLHIV) $H_{iak}$,
-3. HIV incidence $\lambda_{iak}$, and
-4. the number of new HIV infections $I_{iak}$.
-
-To do so, I disaggregated district, age group specific Naomi estimates by risk group.
-
-### Disaggregation of Naomi prevalence estimates
-
-To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios $\log(\text{OR}_k)$ relative to the general population.
-To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
-I also included general population HIV prevalence data.
-The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
-The log odds ratios may then be easily obtained by taking the difference in odds ratios.
-
-To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
-I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.
-
-Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV $H_{ia}$ on the logit scale using numerical optimisation.
-I did this by by finding the values of $\theta_{ia}$ which minimise the equation
-\begin{equation}
-f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia},
-\end{equation}
-where
-\begin{equation}
-\text{logistic}(x) = \exp(x) / (1 + \exp(x)),
-\end{equation}
-such that
-\begin{equation}
-\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}.
-\end{equation}
-These values are given by
-\begin{equation}
-\hat \theta_{ia} = \arg\min_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2.
-\end{equation}
-The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{iak}$ is the risk group population size.
-
-### Disaggregation of Naomi incidence estimates
-
-I calculated the number of new HIV infections by risk group using linear disaggregation
-\begin{align}
-    I_{ia} &= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
-    &= 0 + \lambda_{ia2} (1 - \rho_{ia2}) N_{ia2} + \lambda_{ia3} (1 - \rho_{ia3}) {ia3} + \lambda_{ia4} (1 - \rho_{ia4}) N_{ia4} \\
-    &= \lambda_{ia2} \left((1 - \rho_{ia2}) N_{ia2}  + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{i4}) N_{ia4}  \right),
-\end{align}
-where $\text{RR}_{2}$, $\text{RR}_{3}$ and $\text{RR}_{4}(\cdot)$ are the HIV risk ratios given in Table \@ref(tab:risk-groups), and $(1 - \rho_{iak}) N_{iak}$ are the susceptible population sizes in each risk group.
-The risk ratio for FSW was defined as a function of district-level incidence in the general population $\lambda_{ia}$.
-
-Risk group specific HIV incidence estimates were then given by
-\begin{align}
-    \lambda_{ia1} &= 0, \\
-    \lambda_{ia2} &= I_{ia} / \left((1 - \rho_{ia2}) N_{ia2} + \text{RR}_{3} (1 - \rho_{ia3}) N_{ia3} + \text{RR}_4(\lambda_{ia}) (1 - \rho_{ia4}) N_{ia4}\right), \\
-    \lambda_{ia3} &= \text{RR}_{3} \lambda_{ia2}, \\
-    \lambda_{ia4} &= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
-\end{align}
-I evaluated these equations using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
-The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
-
-### Expected new infections reached
-
-I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population.
-That is, for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group. 
-
-To illustrate this approach, consider stratification by age.
-I first aggregated the number of new HIV infections and HIV incidence such that
-\begin{align}
-    I_a &= \sum_{ik} I_{iak}, \\
-    \lambda_a &= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
-\end{align}
-I then considered prioritisation individuals by age group $a$ according to the highest HIV incidence $\lambda_a$.
-By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
-As there are three age groups, the resulting function was piecewise linear with three segments.
-
-### Results
+### Prevalence and incidence by risk group
 
 ```{r results=FALSE}
 inf <- readr::read_csv(paste0("resources/multi-agyw/", resource_version, "/depends/infections-reached.csv"))
@@ -879,9 +877,9 @@ My work builds on @brugh2021characterizing by including more countries, integrat
 My modelled estimates of risk group proportions improve upon direct survey results for three reasons.
 First, by taking a modular modelling approach, I integrated all relevant survey information from multiple years, allowing estimation of the FSW proportion for surveys without a specific transactional sex question.
 Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing (Figure \@ref(fig:model-direct-benefits)).
-Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines such as my analysis of risk group specific prevalence and incidence (Figure \@ref(fig:model-direct-benefits)).
+Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines such as my analysis of risk group specific prevalence and incidence.
 
-(ref:model-direct-benefits) Figure caption.
+(ref:model-direct-benefits) The modelled estimates are more plausibly spatially smooth than the direct estimates, and do not have any missing values.
 
 ```{r model-direct-benefits, fig.cap="(ref:model-direct-benefits)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/model-direct-benefits.png"))
@@ -897,6 +895,7 @@ Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward 
 <!-- Phylogenetic results from BDI are about transmission rather than incidence. -->
 <!-- Only age-sex structured not age-sex-behaviour. -->
 <!-- Does not undermine my work. -->
+<!-- RE notes that it could be worth talking about the age patterns of sexual mixing, that I did not consider them, and how they might effect intervention planning. -->
 
 ### Limitations
 
@@ -925,8 +924,6 @@ In conducting this work, there was insufficient engagement with country experts 
 As a result, in early use of the risk group tool the FSW population size estimates were met with some disagreement in Malawi.
 In that instance, the cause of the disagreement was external model inputs used.
 In future, estimates should be generated and reviewed by country teams.
-
-<!-- RE notes that it could be worth talking about the age patterns of sexual mixing, that I did not consider them, and how they might effect intervention planning. -->
 
 ### Conclusion
 
