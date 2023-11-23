@@ -130,12 +130,11 @@ ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
 aghq_samples <- sample_marginal(quad, 100)
 
 # This is an overly specific function...
-random_field_simulation <- function(samples) {
-  u_samples <- samples$samps[c(1:190), ]
-  v_samples <- samples$samps[c(192:381), ]
-  beta_samples <- samples$samps[c(191, 382), ]
-  theta_samples <- samples$theta
-  
+random_field_simulation <- function(latent_samples, hyper_samples, nsim = 100) {
+  u_samples <- latent_samples[c(1:190), ]
+  v_samples <- latent_samples[c(192:381), ]
+  beta_samples <- latent_samples[c(191, 382), ]
+
   covariance_samples <- cbind(
     var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
     range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
@@ -144,9 +143,7 @@ random_field_simulation <- function(samples) {
   
   extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
   grid <- st_as_stars(extent, dx = 10000)
-  
-  nsim <- 100
-  
+
   phi_samples <- lapply(1:nsim, function(i) {
     vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
     u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
@@ -177,29 +174,33 @@ random_field_simulation <- function(samples) {
   return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
 }
 
-random_field_samples <- random_field_simulation(aghq_samples)
+random_field_samples <- random_field_simulation(latent_samples = aghq_samples$samps, hyper_samples = aghq_samples$theta)
 phi_samples <- random_field_samples$phi_samples
 rho_samples <- random_field_samples$rho_samples
 phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = random_field_samples$grid$geometry)
 rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = random_field_samples$grid$geometry)
 
-fig_suitability <- ggplot() +
-  geom_sf(data = sf::st_intersection(phi_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
-  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_sf)), fill = NA, col = "grey20", alpha = 0.8) +
-  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-  scale_fill_viridis_c(option = "A", direction = 1) +
-  theme_void() +
-  labs(fill = "Suitability", tag = "A")
+plot_suitability <- function(phi_sf) {
+  ggplot() +
+    geom_sf(data = sf::st_intersection(phi_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
+    geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+    geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+    scale_fill_viridis_c(option = "A", direction = 1) +
+    theme_void() +
+    labs(fill = "Suitability", tag = "A")
+}
 
-fig_prevalence <- ggplot() +
-  geom_sf(data = sf::st_intersection(rho_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
-  geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_sf)), fill = NA, col = "grey20", alpha = 0.8) +
-  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-  scale_fill_viridis_c(option = "D", direction = 1) +
-  theme_void() +
-  labs(fill = "Prevalence", tag = "B")
+plot_prevalence <- function(rho_sf) {
+  ggplot() +
+    geom_sf(data = sf::st_intersection(rho_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
+    geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+    geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+    scale_fill_viridis_c(option = "D", direction = 1) +
+    theme_void() +
+    labs(fill = "Prevalence", tag = "B")
+}
 
-fig_suitability / fig_prevalence
+plot_suitability(phi_sf) / plot_prevalence(rho_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
 
@@ -276,8 +277,12 @@ samples_adam <- lapply(1:5, sample_adam, M = 1000)
 
 #' Try running tmbstan
 nuts <- tmbstan::tmbstan(obj, chains = 1, warmup = 50, iter = 100)
-nuts_samples <- as.data.frame(nuts)
-u_samples <- t(nuts_samples[, c(1:190)])
-v_samples <- t(nuts_samples[, c(192:381)])
-beta_samples <- t(nuts_samples[, c(191, 382)])
-theta_samples <- nuts_samples[, c(383, 384)]
+
+nuts_random_field_samples <- random_field_simulation(t(as.data.frame(nuts)), as.data.frame(nuts)[, c(383, 384)], nsim = 50)
+nuts_phi_samples <- nuts_random_field_samples$phi_samples
+nuts_rho_samples <- nuts_random_field_samples$rho_samples
+nuts_phi_sf <- st_sf("phi" = rowMeans(nuts_phi_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+nuts_rho_sf <- st_sf("rho" = rowMeans(nuts_rho_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+
+plot_suitability(nuts_phi_sf)
+plot_prevalence(nuts_rho_sf)
