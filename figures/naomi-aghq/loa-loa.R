@@ -128,47 +128,60 @@ figA / figB + plot_layout(heights = c(1.5, 1))
 ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
 
 aghq_samples <- sample_marginal(quad, 100)
-u_samples <- aghq_samples$samps[c(1:190), ]
-v_samples <- aghq_samples$samps[c(192:381), ]
-beta_samples <- aghq_samples$samps[c(191, 382), ]
 
-theta_samples <- aghq_samples$theta
+# This is an overly specific function...
+random_field_simulation <- function(samples) {
+  u_samples <- samples$samps[c(1:190), ]
+  v_samples <- samples$samps[c(192:381), ]
+  beta_samples <- samples$samps[c(191, 382), ]
+  theta_samples <- samples$theta
+  
+  covariance_samples <- cbind(
+    var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
+    range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
+    shape = matern$nu
+  )
+  
+  extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
+  grid <- st_as_stars(extent, dx = 10000)
+  
+  nsim <- 100
+  
+  phi_samples <- lapply(1:nsim, function(i) {
+    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+    u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
+    u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = 1)
+    u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
+    u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
+    eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, i], each = nrow(u_kriging_samples))
+    apply(eta_phi_samples, 2, plogis)
+  })
+  
+  phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
+  names(phi_samples) <- paste0("sim", 1:nsim)
 
-covariance_samples <- cbind(
-  var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
-  range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
-  shape = matern$nu
-)
-
-extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
-grid <- st_as_stars(extent, dx = 10000)
-
-vgm <- gstat::vgm(model = "Mat", range = 60000, shape = 1, psill = 1)
-kriging_results <- gstat::krige(p ~ 1, loaloa_sf, grid, model = vgm)
-
-ggplot() +
-  geom_sf(data = areas, fill = NA) +
-  geom_stars(data = kriging_results, aes(fill = var1.pred, x = x, y = y)) +
-  geom_sf(data = loaloa_sf, shape = 4) +
-  scale_fill_viridis_c() +
-  theme_void() +
-  labs(fill = "Prevalence")
-
-nsim <- 100
-phi_samples <- list()
-
-for(i in 1:nsim) {
-  vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
-  u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
-  u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = 1)
-  u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
-  u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
-  eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, i], each = nrow(u_kriging_samples))
-  phi_samples[[i]] <- apply(eta_phi_samples, 2, plogis)
+  rho_samples <- lapply(1:nsim, function(i) {
+    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+    v_sf <- st_sf("v" = v_samples[, i], "geometry" = loaloa_sf$geometry)
+    v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = 1)
+    v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
+    v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
+    eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, i], each = nrow(v_kriging_samples))
+    apply(eta_rho_samples, 2, plogis)
+  })
+  
+  rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
+  names(rho_samples) <- paste0("sim", 1:nsim)
+  
+  # Samples from the phi and rho random fields on a grid
+  return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
 }
 
-phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
-phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = u_kriging_samples_sf$geometry)
+random_field_samples <- random_field_simulation(aghq_samples)
+phi_samples <- random_field_samples$phi_samples
+rho_samples <- random_field_samples$rho_samples
+phi_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = random_field_samples$grid$geometry)
+rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = random_field_samples$grid$geometry)
 
 fig_suitability <- ggplot() +
   geom_sf(data = sf::st_intersection(phi_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
@@ -177,21 +190,6 @@ fig_suitability <- ggplot() +
   scale_fill_viridis_c(option = "A", direction = 1) +
   theme_void() +
   labs(fill = "Suitability", tag = "A")
-
-rho_samples <- list()
-
-for(i in 1:nsim) {
-  vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
-  v_sf <- st_sf("v" = v_samples[, i], "geometry" = loaloa_sf$geometry)
-  v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = 1)
-  v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
-  v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
-  eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, i], each = nrow(v_kriging_samples))
-  rho_samples[[i]] <- apply(eta_rho_samples, 2, plogis)
-}
-
-rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
-rho_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = v_kriging_samples_sf$geometry)
 
 fig_prevalence <- ggplot() +
   geom_sf(data = sf::st_intersection(rho_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
@@ -206,6 +204,8 @@ fig_suitability / fig_prevalence
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
 
 # Laplace marginals
+set.seed(4564)
+
 random <- obj$env$random
 N <- length(random)
 W_names <- names(obj$env$par[random])
@@ -226,7 +226,7 @@ compute_laplace_marginal <- function(i, quad) {
     random = "W_minus_i",
     DLL = "loaloazip_modified",
     ADreport = FALSE,
-    silent = TRUE
+    silent = FALSE
   )
   
   random_i <- obj_i$env$random
@@ -256,23 +256,23 @@ compute_laplace_marginal <- function(i, quad) {
 }
 
 tictoc::tic()
-temp <- compute_laplace_marginal(i = 1, quad)
+test_laplace <- compute_laplace_marginal(i = 1, quad)
 time <- tictoc::toc()
 
 (time$toc - time$tic) * N / 60 / 60
 
-sample_adam <- function(M) {
+#' This would take around 3 hours to run
+quad_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad, .progress = TRUE)
+
+sample_adam <- function(i, M) {
   q <- runif(M)
-  pdf_and_cdf <- compute_pdf_and_cdf(nodes = temp$x, temp$lp_normalised)
+  pdf_and_cdf <- compute_pdf_and_cdf(nodes = quad_laplace_marginals[[i]]$x, quad_laplace_marginals[[i]]$lp_normalised)
   s <- numeric(length(q))
   for(j in 1:length(q)) s[j] <- pdf_and_cdf$x[max(which(pdf_and_cdf$cdf < q[j]))]
   return(s)
 }
 
-samples <- sample_adam(1000)
-
-ggplot(data.frame(samples), aes(x = samples)) +
-  geom_histogram()
+samples_adam <- lapply(1:5, sample_adam, M = 1000)
 
 #' Try running tmbstan
 nuts <- tmbstan::tmbstan(obj, chains = 1, warmup = 50, iter = 100)
