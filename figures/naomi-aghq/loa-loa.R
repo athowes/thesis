@@ -8,17 +8,23 @@ library(patchwork)
 
 source("figures/naomi-aghq/functions.R")
 
+#' The Loa loa data from geostatsp package
 data(loaloa, package = "geostatsp")
+
+#' It is useful to have it as sf for future
 loaloa <- terra::vect(loaloa)
 loaloa_sf <- sf::st_as_sf(loaloa)
 
+#' Area files for the countries containing the villages sampled
 cmr <- sf::st_read("figures/naomi-aghq/gadm41_CMR_2.json")
 nga <- sf::st_read("figures/naomi-aghq/gadm41_NGA_2.json")
 areas <- rbind(cmr, nga)
 areas <- st_transform(areas, crs = st_crs(loaloa_sf))
 
+#' Add column for the direct prevalence, and whether or not it's a zero
 loaloa_sf <- mutate(loaloa_sf, p = y / N, zero = p == 0)
 
+#' Initial EDA figure
 figA <- ggplot() +
   geom_sf(data = sf::st_crop(areas, sf::st_bbox(loaloa_sf)), col = "grey20") +
   geom_sf(data = loaloa_sf, aes(col = p, size = N, shape = zero), alpha = 0.7) +
@@ -51,6 +57,7 @@ figA / figB + plot_layout(heights = c(1.5, 1))
 
 ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
 
+#' TMB model
 compile("figures/naomi-aghq/TMB/loaloazip.cpp")
 dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip"))
 
@@ -125,20 +132,26 @@ obj <- MakeADFun(
   silent = TRUE
 )
 
+#' Run AGHQ
 quad <- aghq::marginal_laplace_tmb(obj, 3, startingvalue = c(param$logkappa, param$logtau))
 
 # Large number of samples here to estimate beta well for fixing later
 beta_samples <- sample_marginal(quad, 5000)
 beta_fixed <- round(rowMeans(beta_samples$samps[c(191, 382), ]), 2) # 2.95 -1.99
 
+#' NUTS can't run the whole model, so the approach is to run AGHQ, find beta, fix beta,
+#' then run all inference procedures (Gaussian, Laplace, NUTS) again with fixed beta
+
+#' The fixed beta version has a new TMB template
 compile("figures/naomi-aghq/TMB/loaloazip_fixed.cpp")
 dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_fixed"))
 
+#' The parameters and data need to be changed for the fixed template
 param_new <- with(param, list(
-  Uzi = W[1:190],
-  betazi = beta_fixed[1],
   Urisk = W[192:381],
+  Uzi = W[1:190],
   betarisk = beta_fixed[2],
+  betazi = beta_fixed[1],
   logkappa = log(get_kappa(starting_sig, starting_rho)),
   logtau = log(get_tau(starting_sig, starting_rho))
 ))
@@ -150,11 +163,12 @@ dat_new <- within(dat,{
 
 dat_new$design <- NULL
 
+#' The map option here fixes betazi and betarisk to their value in param_new
 obj_fixed <- MakeADFun(
   data = dat_new,
   parameters = param_new,
-  random = c("Uzi", "Urisk"),
-  map = list(betazi = factor(NA), betarisk = factor(NA)),
+  random = c("Urisk", "Uzi"),
+  map = list(betarisk = factor(NA), betazi = factor(NA)),
   DLL = "loaloazip_fixed",
   ADreport = FALSE,
   silent = TRUE
@@ -162,12 +176,13 @@ obj_fixed <- MakeADFun(
 
 quad_fixed <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
 
-summary(quad_fixed)
-summary(quad)
-
+#' Small number of samples
 aghq_samples <- sample_marginal(quad, 100)
 aghq_fixed_samples <- sample_marginal(quad_fixed, 100)
 
+#' Function to run conditional simulation of a random field. It is all done using
+#' samples, so each simulation uses one sample of u, v, beta and theta. This requires
+#' lapply over 1:sim and running gstat::krige for each iteration
 random_field_simulation <- function(u_samples, v_samples, beta_samples, theta_samples, nsim = 100) {
   covariance_samples <- cbind(
     var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
@@ -208,6 +223,7 @@ random_field_simulation <- function(u_samples, v_samples, beta_samples, theta_sa
   return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
 }
 
+#' Producing the output plot for AGHQ with no fixed beta
 random_field_samples <- random_field_simulation(
   u_samples = aghq_samples$samps[c(1:190), ],
   v_samples = aghq_samples$samps[c(192:381), ],
@@ -244,6 +260,7 @@ plot_suitability(phi_sf) / plot_prevalence(rho_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
 
+#' Doing the same as above for AGHQ with a fixed beta
 random_field_samples_fixed <- random_field_simulation(
   u_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Uzi"), ],
   v_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Urisk"), ],
@@ -263,7 +280,7 @@ ggsave("figures/naomi-aghq/conditional-simulation-fixed.png", h = 5, w = 6.25, b
 # Laplace marginals with fixed beta
 set.seed(4564)
 
-W_names <- names(param_new)[1:4]
+W_names <- names(param_new)[1:2]
 W_lengths <- lengths(param_new[unique(W_names)])
 N <- sum(W_lengths)
 W_starts <- cumsum(W_lengths) - W_lengths
@@ -271,9 +288,8 @@ W_starts <- cumsum(W_lengths) - W_lengths
 dat_new$W_starts <- as.numeric(W_starts)
 dat_new$W_lengths <- as.numeric(W_lengths)
 
+W_init <- c(param_new$Urisk, param_new$Uzi)
 param_new[unique(W_names)] <- NULL
-param_new$W_minus_i <- rnorm(N - 1)
-param_new$W_i <- rnorm(1)
 
 compile("figures/naomi-aghq/TMB/loaloazip_fixed_modified.cpp")
 dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_fixed_modified"))
@@ -281,21 +297,23 @@ dyn.load(dynlib("figures/naomi-aghq/TMB/loaloazip_fixed_modified"))
 compute_laplace_marginal <- function(i, quad) {
   dat_new$i <- i
   
-  # Need to set (W_minus_i, W_i) starts to the fixed values of beta
+  param_new$W_minus_i <- W_init[-i]
+  param_new$W_i <- W_init[i]
   
-  obj_i <- TMB::MakeADFun(
+  obj_fixed_i <- TMB::MakeADFun(
     data = dat_new,
     parameters = param_new,
     random = "W_minus_i",
+    map = list(betazi = factor(NA), betarisk = factor(NA)),
     DLL = "loaloazip_fixed_modified",
     ADreport = FALSE,
     silent = TRUE
   )
   
-  random_i <- obj_i$env$random
+  random_i <- obj_fixed_i$env$random
   mode_i <- quad$modesandhessians[["mode"]][[1]][-i]
   gg <- create_approx_grid(quad$modesandhessians, i = i, k = 5)
-  out <- data.frame(index = i, par = W_names[i], x = mvQuad::getNodes(gg), w = mvQuad::getWeights(gg))
+  out <- data.frame(index = i, par = "W", x = mvQuad::getNodes(gg), w = mvQuad::getWeights(gg))
   
   theta_names <- make.unique(names(obj$par), sep = "")
   
@@ -304,8 +322,8 @@ compute_laplace_marginal <- function(i, quad) {
     
     for(z in 1:nrow(quad$modesandhessians)) {
       theta <- as.numeric(quad$modesandhessians[z, theta_names])
-      obj_i$env$last.par[random_i] <- quad$modesandhessians[z, "mode"][[1]][-dat$i]
-      lp[z] <- as.numeric(- obj_i$fn(c(x, theta)))
+      obj_fixed_i$env$last.par[random_i] <- quad$modesandhessians[z, "mode"][[1]][-dat_new$i]
+      lp[z] <- as.numeric(- obj_fixed_i$fn(c(x, theta)))
     }
     
     return(logSumExpWeights(lp, w = quad$normalized_posterior$nodesandweights$weights))
@@ -318,15 +336,56 @@ compute_laplace_marginal <- function(i, quad) {
   return(out)
 }
 
+# i <- 1
+# dat_new$i <- i
+# 
+# param_new$W_minus_i <- W_init[-i]
+# param_new$W_i <- W_init[i]
+# 
+# obj_fixed_i <- TMB::MakeADFun(
+#   data = dat_new,
+#   parameters = param_new,
+#   random = "W_minus_i",
+#   map = list(betazi = factor(NA), betarisk = factor(NA)),
+#   DLL = "loaloazip_fixed_modified",
+#   ADreport = FALSE,
+#   silent = FALSE
+# )
+# 
+# random_i <- obj_fixed_i$env$random
+# mode_i <- quad_fixed$modesandhessians[["mode"]][[1]][-i]
+# gg <- create_approx_grid(quad_fixed$modesandhessians, i = i, k = 5)
+# out <- data.frame(index = i, par = "W", x = mvQuad::getNodes(gg), w = mvQuad::getWeights(gg))
+# 
+# theta_names <- make.unique(names(obj$par), sep = "")
+# 
+# .g <- function(x) {
+#   lp <- vector(mode = "numeric", length = nrow(quad_fixed$modesandhessians))
+#   
+#   for(z in 1:nrow(quad_fixed$modesandhessians)) {
+#     theta <- as.numeric(quad_fixed$modesandhessians[z, theta_names])
+#     obj_fixed_i$env$last.par[random_i] <- quad_fixed$modesandhessians[z, "mode"][[1]][-dat_new$i]
+#     lp[z] <- as.numeric(- obj_fixed_i$fn(c(x, theta)))
+#   }
+#   
+#   return(logSumExpWeights(lp, w = quad$normalized_posterior$nodesandweights$weights))
+# }
+
+#' It's saying it's doing the marginal for u[1] not v[1] (!?)
+#' #' v[1] is -3.21
+# .g(-0.242215130)
+# .g(-3)
+
 tictoc::tic()
-test_laplace <- compute_laplace_marginal(i = 1, quad)
+test_laplace <- compute_laplace_marginal(i = 1, quad = quad_fixed)
 time <- tictoc::toc()
 
 (time$toc - time$tic) * N / 60 / 60
 
 #' This would take around 3 hours to run
-quad_laplace_marginals <- purrr::map(.x = 1:5, .f = compute_laplace_marginal, quad = quad, .progress = TRUE)
+quad_fixed_laplace_marginals <- purrr::map(.x = 1:5, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
 
+#' Function to sample from the Laplace marginals using CDF inversion
 sample_adam <- function(i, M) {
   q <- runif(M)
   pdf_and_cdf <- compute_pdf_and_cdf(nodes = quad_laplace_marginals[[i]]$x, quad_laplace_marginals[[i]]$lp_normalised)
@@ -336,11 +395,11 @@ sample_adam <- function(i, M) {
 }
 
 samples_adam <- lapply(1:5, sample_adam, M = 1000)
-aghq_samples <- sample_marginal(quad, 1000)
+aghq_fixed_samples <- sample_marginal(quad_fixed, 1000)
 
 df <- bind_rows(
   data.frame(method = "laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:5),
-  data.frame(method = "gaussian", mean = apply(aghq_samples$samps[1:5, ], 1, mean), sd = apply(aghq_samples$samps[1:5, ], 1, sd), index = 1:5)
+  data.frame(method = "gaussian", mean = apply(aghq_fixed_samples$samps[1:5, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:5, ], 1, sd), index = 1:5)
 )
 
 df %>%
