@@ -264,14 +264,14 @@ ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "w
 random_field_samples_fixed <- random_field_simulation(
   u_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Uzi"), ],
   v_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Urisk"), ],
-  beta_samples = t(data.frame(rep(param_new$betarisk, 100), rep(param_new$betazi, 100))),
+  beta_samples = t(data.frame(rep(param_new$betazi, 100), rep(param_new$betarisk, 100))),
   theta_samples = aghq_fixed_samples$theta
 )
 
 phi_fixed_samples <- random_field_samples_fixed$phi_samples
 rho_fixed_samples <- random_field_samples_fixed$rho_samples
-phi_fixed_sf <- st_sf("phi" = rowMeans(phi_samples), "geometry" = random_field_samples_fixed$grid$geometry)
-rho_fixed_sf <- st_sf("rho" = rowMeans(rho_samples), "geometry" = random_field_samples_fixed$grid$geometry)
+phi_fixed_sf <- st_sf("phi" = rowMeans(phi_fixed_samples), "geometry" = random_field_samples_fixed$grid$geometry)
+rho_fixed_sf <- st_sf("rho" = rowMeans(rho_fixed_samples), "geometry" = random_field_samples_fixed$grid$geometry)
 
 plot_suitability(phi_fixed_sf) / plot_prevalence(rho_fixed_sf)
 
@@ -380,13 +380,26 @@ df %>%
 ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 3.5, w = 6.25, bg = "white")
 
 #' Try running tmbstan
-nuts <- tmbstan::tmbstan(obj, chains = 1, warmup = 50, iter = 100)
+#' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
+#' This takes 12.5 minutes
+tictoc::tic()
+nuts <- tmbstan::tmbstan(obj_fixed, chains = 1, warmup = 50, iter = 100)
+time <- tictoc::toc()
 
-nuts_random_field_samples <- random_field_simulation(t(as.data.frame(nuts)), as.data.frame(nuts)[, c(383, 384)], nsim = 50)
+saveRDS(nuts, file = "figures/naomi-aghq/nuts.rds")
+
+#' Check that indeed the values of beta were fixed
+nuts_random_field_samples <- random_field_simulation(
+  u_samples = t(as.data.frame(nuts)[, c(1:190)]),
+  v_samples = t(as.data.frame(nuts)[, c(191:380)]),
+  beta_samples = t(data.frame(rep(param_new$betazi, 50), rep(param_new$betarisk, 50))),
+  theta_samples = as.data.frame(nuts)[, c(381, 382)],
+  nsim = 50
+)
+
 nuts_phi_samples <- nuts_random_field_samples$phi_samples
 nuts_rho_samples <- nuts_random_field_samples$rho_samples
 nuts_phi_sf <- st_sf("phi" = rowMeans(nuts_phi_samples), "geometry" = nuts_random_field_samples$grid$geometry)
 nuts_rho_sf <- st_sf("rho" = rowMeans(nuts_rho_samples), "geometry" = nuts_random_field_samples$grid$geometry)
 
-plot_suitability(nuts_phi_sf)
-plot_prevalence(nuts_rho_sf)
+plot_suitability(nuts_phi_sf) / plot_prevalence(nuts_rho_sf)
