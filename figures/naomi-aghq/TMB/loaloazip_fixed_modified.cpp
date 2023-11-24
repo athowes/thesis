@@ -20,15 +20,18 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(sigma_alpha);
   DATA_SCALAR(betaprec);
   
-  DATA_IVECTOR(W_starts);
-  DATA_IVECTOR(W_lengths);
-  DATA_INTEGER(i);
-  
   DATA_MATRIX(D); // Distance matrix for calculating matern
   
   // Params
+  // PARAMETER_VECTOR(W); // W = (U,V,beta); eta = design * W
   PARAMETER_VECTOR(betarisk);
   PARAMETER_VECTOR(betazi);
+  PARAMETER(logkappa); // Transformed matern params
+  PARAMETER(logtau);
+  
+  DATA_IVECTOR(W_starts);  // Start index of each subvector of x
+  DATA_IVECTOR(W_lengths); // Length of each subvector of x
+  DATA_INTEGER(i);         // Index i
   
   PARAMETER(W_i);
   PARAMETER_VECTOR(W_minus_i);
@@ -44,12 +47,9 @@ Type objective_function<Type>::operator() ()
     }
   }
   
-  vector<Type> Urisk = W.segment(W_starts(0), W_lengths(1));
-  vector<Type> Uzi = W.segment(W_starts(1), W_lengths(2));
+  vector<Type> Urisk = W.segment(W_starts(0), W_lengths(0));
+  vector<Type> Uzi = W.segment(W_starts(1), W_lengths(1));
 
-  PARAMETER(logkappa); // Transformed matern params
-  PARAMETER(logtau);
-  
   // Constants
   int n = y.size();
   double pi = 3.141592653589793115998;
