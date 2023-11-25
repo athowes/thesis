@@ -364,21 +364,38 @@ df <- bind_rows(
   data.frame(method = "gaussian", mean = apply(aghq_fixed_samples$samps[1:N, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:N, ], 1, sd), index = 1:N)
 )
 
-df %>%
+df_plot <- df %>%
   pivot_longer(cols = c("mean", "sd"), names_to = "indicator", values_to = "value") %>%
   pivot_wider(id_cols = c("index", "indicator"), names_from = "method") %>%
   mutate(
-    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd")
+    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd"),
+    diff_abs = laplace - gaussian,
+    diff_pct = diff_abs / (sign(laplace) * pmax(0.25, abs(laplace)))
   ) %>%
-  ggplot(aes(x = gaussian, y = (laplace - gaussian) / laplace)) +
+  pivot_longer(cols = c("diff_abs", "diff_pct"), names_to = "metric", values_to = "value")
+
+fig_abs <- df_plot %>%
+  filter(metric == "diff_abs") %>%
+  ggplot(aes(x = gaussian, y = value)) +
+  geom_point(size = 1.5, shape = 1) +
+  facet_wrap(. ~ indicator) +
+  geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
+  labs(x = "", y = "Absolute difference to Laplace") +
+  theme_minimal()
+
+fig_pct <- df_plot %>%
+  filter(metric == "diff_pct") %>%
+  ggplot(aes(x = gaussian, y = value)) +
     geom_point(size = 1.5, shape = 1) +
-    facet_wrap(~ indicator, scales = "free_x") +
+    facet_wrap(. ~ indicator) +
     geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
     scale_y_continuous(labels = scales::percent) +
     labs(x = "Gaussian estimate", y = "Percentage difference to Laplace") +
     theme_minimal()
 
-ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 3.5, w = 6.25, bg = "white")
+fig_abs / fig_pct
+
+ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 6, w = 6.25, bg = "white")
 
 #' Try running tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
