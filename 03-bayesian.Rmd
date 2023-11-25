@@ -123,17 +123,19 @@ Many MCMC algorithms, including the Gibbs sampler [@geman1984stochastic], are sp
 Other notable classes of sampling algorithms include importance sampling [IS; @tokdar2010importance] methods in which the samples are weighted, sequential Monte Carlo [SMC; @chopin2020introduction] methods based on sampling from a sequence of distributions, and approximate Bayesian computation [ABC; @sisson2018handbook]
 Though these methods have found applications in specific domains, MCMC is currently more widely used because of its generality, theoretical reliability, as well as benefiting from more accessible software implementations.
 
-This thesis makes use of the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, as implemented in the `Stan` [@carpenter2017stan] probabilistic programming language (PPL).
+This thesis uses the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, as implemented in the `Stan` [@carpenter2017stan] probabilistic programming language (PPL).
 HMC uses derivatives of the posterior distribution to generate efficient MH proposal distributions based on Hamiltonian dynamics.
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 Figure \@ref(fig:stan) shows an example of using the NUTS MCMC algorithm to sample from a posterior distribution.
 
-After running an MCMC sampler, it is important to check diagnostics to evaluate convergence and assess whether the results of the Markov chain can be used to accurately compute posterior quantities.
-Panel B of Figure \@ref(fig:stan) shows a traceplot for a Markov chain which has converged.
-A wide range of convergence diagnostics have been developed for MCMC [@roy2020convergence].
+After running an MCMC sampler, it is important that diagnostic checks are used to evaluate convergence and assess whether the results of the Markov chain can be used to compute posterior quantities.
+It is never possible to be sure that results computed from MCMC will be accurate, though it is possible to know when they will be inaccurate.
+Panel \@ref(fig:stan)B shows the traceplot for a Markov chain which has converged, and moves freely through the range of plausible parameter values.
+A range of convergence diagnostics have been developed for MCMC [@roy2020convergence; @margossian2023many].
+Two widely used examples are the potential scale reduction factor $\hat R$ [@gelman1992inference], which compares the variance between and within parallel Markov chains, and the effective sample size (ESS), which measures the efficiency of samples drawn from MCMC.
 
-(ref:stan) NUTS can be used to sample from the posterior distribution in the example of Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain $\{\phi_i\}_{i = 1}^{1000}$ as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean $\frac{1}{i} \sum_{j \leq i} \phi_j$ to the true value of $\mathbb{E}(\phi)$ as more iterations of the Markov chain are included in the calculation.
+(ref:stan) NUTS can be used to sample from the posterior distribution described in Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain $\{\phi_i\}_{i = 1}^{1000}$ as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean $\frac{1}{i} \sum_{j \leq i} \phi_j$ to the true value of $\mathbb{E}(\phi)$ as more iterations of the Markov chain are included in the sum.
 
 ```{r stan, fig.cap="(ref:stan)"}
 knitr::include_graphics("figures/bayesian/stan.png")
@@ -141,76 +143,80 @@ knitr::include_graphics("figures/bayesian/stan.png")
 
 #### Deterministic approximations
 
-The Monte Carlo algorithms discussed in Section \@ref(monte-carlo) make use of stochasticity to generate samples from the posterior distribution.
-Alternatively, deterministic approximations can be used, which more directly approximate the posterior distribution or posterior normalising constant.
+Monte Carlo methods discussed in Section \@ref(monte-carlo) make use of stochasticity to generate samples from the posterior distribution.
+Deterministic approximations offer an alternative approach, which aims to more directly approximate the posterior distribution or posterior normalising constant.
+These approaches are often faster than Monte Carlo methods, especially for large datasets or models.
 
-The Laplace approximation involves approximating the posterior normalising constant using Laplace's method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
+One such deterministic approximation is the Laplace approximation.
+It involves approximating the posterior normalising constant using Laplace's method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
 The integrated nested Laplace approximation [INLA; @rue2009approximate] combines quadrature with the Laplace approximation.
-The Laplace approximation and INLA are used extensively throughout this thesis.
-A complete introduction is provided in Section \@ref(naomi-inference).
+These methods are used often in this thesis.
 
-Variational inference [VI; @blei2017variational] is another prominent deterministic apppraoch.
+Variational inference [VI; @blei2017variational] is another noteworthy deterministic approximation.
+The well-known expectation maximisation [EM; @dempster1977maximum] and expectation propagation [EP; @minka2001expectation] algorithms are closely related to VI.
 In VI, the approximate posterior distribution is assumed to belong to a particular family of functions.
 Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
-VI is often faster than Monte Carlo methods, especially for large datasets or models.
-However, it lacks theoretical guarantees and is known to often inaccurately estimate posterior variances [@giordano2018covariances].
+Though popular in some settings, VI lacks theoretical guarantees and is known to often inaccurately estimate posterior variances [@giordano2018covariances].
 Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research [@yao2018yes].
-The well-known expectation maximisation [EM; @dempster1977maximum] and expectation propagation [EP; @minka2001expectation] algorithms are closely related to VI.
 
 ### Interplay between modelling and computation
 
 Modern computational techniques and software like PPLs have succeeded in abstracting away calculation of the posterior distribution from the analyst for many models.
-However, computation remains intractable in arguably the majority of cases.
-The analyst need therefore not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior distribution is tractable in reasonable time.
+However, computation remains intractable in what can be argued to be the majority of cases.
+The analyst needs therefore not only to be concerned with choosing a model suitable for the data, but also with choosing a model for which the posterior distribution may tractably be calculated in reasonable time.
 As such, there is an important interplay between modelling and computation, wherein models are bound by the limits of computation.
-As computation improves, the space of models available to the analyst expands.
+As computational techniques and tools improve, the space of models available to the analyst expands.
 
 ## Spatio-temporal statistics {#st-statistics}
 
-Spatio-temporal statistics [@cressie2015statistics] concerns observations which are indexed by spatial or temporal location.
-In doing so, it unites the fields of spatial statistics [@bivand2008applied] and time series analysis [@shumway2017time].
+Space and time are important features of data related to HIV.
+The field of spatio-temporal statistics [@cressie2015statistics] is concerned with such observations indexed by spatial or temporal location.
+It unites the fields of spatial statistics [@bivand2008applied] and time series analysis [@shumway2017time].
 
 ### Properties of spatio-temporal data
 
-(ref:st) The spatial location of Cape Town in South Africa could be considered a point. The ZF Mgcawu District Municipality on the other hand is an example of an area. World AIDS Day, designated on the 1st of December every year, could be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
+Spatio-temporal data have important shared properties.
+ 
+#### Covariance structure
+
+In "The Design of Experiments" @fisher1936design observed that neighbouring crops were more likely to have similar yields than those far apart.
+This observation was later termed Tobler's first law of geography, that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
+
+This law can be formalised using spatial covariance functions.
+Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
+
+As well as space, Tobler's first law applies to time.
+Observations made close together in time tend to be similar.
+Temporal covariance structures are often periodic.
+
+The space-time covariance structure [@porcu202130] is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can't.
+A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured [@knorr2000bayesian].
+
+Because of their covariance structure, spatio-temporal data are not IID.
+Only one observation of a spatio-temporal process is realised.
+    
+#### Scales
+
+(ref:st) In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
 
 ```{r st, fig.cap="(ref:st)"}
 knitr::include_graphics("figures/bayesian/st.png")
 ```
 
-Spatio-temporal data have some important properties:
-
-1. **Covariance structure**:
-According to Tobler's first law of geography "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
-In "The Design of Experiments" @fisher1936design observed that neighbouring crops were more likely to have similar yields than those far apart.
-This law can be formalised using spatial covariance functions.
-Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
-
-    As well as space, Tobler's first law applies to time.
-    Observations made close together in time tend to be similar.
-    Temporal covariance structures are often periodic.
-
-    The space-time covariance structure [@porcu202130] is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can't.
-    A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured [@knorr2000bayesian].
-
-    Because of their covariance structure, spatio-temporal data are not IID.
-    Only one observation of a spatio-temporal process is realised.
-    
-
-2. **Scales**:
 In this thesis the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ is assumed to have two dimensions, corresponding to latitude and longitude.
 Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the study region.
 The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be on-dimensional.
 Together with time moving only in the forward direction, this feature is what distinguishes time from space.
 As with space, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
-Figure \@ref(fig:st) illustrates both types of observation for space and time.
+Figure \@ref(fig:st) illustrates both types of observation for space (Panel A\@ref(fig:st)) and time (Panel B\@ref(fig:st)).
 
-    Spatio-temporal observations can be made at various possible scales.
-    Sometimes, we may want to model data at a scale it was not observed at.
-    This is known as the change-of-support problem [@gelfand2001change] and includes as special cases the problems of downscaling, upscaling, and dealing with so-called misaligned data.
-    Closely related is the problem of jointly modelling data at different scales simultaneously.
+Spatio-temporal observations can be made at various possible scales.
+Sometimes, we may want to model data at a scale it was not observed at.
+This is known as the change-of-support problem [@gelfand2001change] and includes as special cases the problems of downscaling, upscaling, and dealing with so-called misaligned data.
+Closely related is the problem of jointly modelling data at different scales simultaneously.
 
-3. **Size**:
+#### Size
+
 Data with both spatial and temporal dimensions are often large, making storage and operations on spatio-temporal data potentially difficult.
 Furthermore, models for spatio-temporal data typically require many parameters.
 Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
@@ -228,6 +234,11 @@ In the spatio-temporal setting sharing of information occurs across space and ti
 The knowledge that observations in one spatio-temporal location are correlated with those at another can be used to improve estimates.
 Figures \@ref(fig:zmb-maps) and \@ref(fig:zmb-scatter) illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to overcome this limitation in part.
 
+More generally, SAE methods are useful when data are limited for subpopulations of interest.
+These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
+Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
+For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.
+
 (ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size $m = 5, 25, 125$ in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. The colour palette used in this figure is called viridis, as implemented by the `viridis` R package [@viridis], and was designed to be perceptually uniform and accessible to colourblind viewers [@smith2015better]. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids). Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally.
 
 ```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
@@ -239,11 +250,6 @@ knitr::include_graphics("figures/bayesian/zmb-maps.png")
 ```{r zmb-scatter, fig.cap="(ref:zmb-scatter)"}
 knitr::include_graphics("figures/bayesian/zmb-scatter.png")
 ```
-
-More generally, SAE methods are useful when data are limited for subpopulations of interest.
-These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
-Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
-For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.
 
 ## Model structure {#model-structure}
 

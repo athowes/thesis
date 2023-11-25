@@ -480,67 +480,63 @@ The Metropolis-Hastings [MH; <span class="citation">Metropolis et al. (<a href="
 Many MCMC algorithms, including the Gibbs sampler <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span>, are special cases of MH.</p>
 <p>Other notable classes of sampling algorithms include importance sampling [IS; <span class="citation">Tokdar and Kass (<a href="#ref-tokdar2010importance">2010</a>)</span>] methods in which the samples are weighted, sequential Monte Carlo [SMC; <span class="citation">Chopin, Papaspiliopoulos, et al. (<a href="#ref-chopin2020introduction">2020</a>)</span>] methods based on sampling from a sequence of distributions, and approximate Bayesian computation [ABC; <span class="citation">Sisson, Fan, and Beaumont (<a href="#ref-sisson2018handbook">2018</a>)</span>]
 Though these methods have found applications in specific domains, MCMC is currently more widely used because of its generality, theoretical reliability, as well as benefiting from more accessible software implementations.</p>
-<p>This thesis makes use of the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, as implemented in the <code>Stan</code> <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
+<p>This thesis uses the No-U-Turn sampler [NUTS; <span class="citation">Hoffman, Gelman, et al. (<a href="#ref-hoffman2014no">2014</a>)</span>], a Hamiltonian Monte Carlo [HMC; <span class="citation">Duane et al. (<a href="#ref-duane1987hybrid">1987</a>)</span>; <span class="citation">Neal et al. (<a href="#ref-neal2011mcmc">2011</a>)</span>] algorithm, as implemented in the <code>Stan</code> <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span> probabilistic programming language (PPL).
 HMC uses derivatives of the posterior distribution to generate efficient MH proposal distributions based on Hamiltonian dynamics.
 NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 Figure <a href="bayes-st.html#fig:stan">3.2</a> shows an example of using the NUTS MCMC algorithm to sample from a posterior distribution.</p>
-<p>After running an MCMC sampler, it is important to check diagnostics to evaluate convergence and assess whether the results of the Markov chain can be used to accurately compute posterior quantities.
-Panel B of Figure <a href="bayes-st.html#fig:stan">3.2</a> shows a traceplot for a Markov chain which has converged.
-A wide range of convergence diagnostics have been developed for MCMC <span class="citation">(<a href="#ref-roy2020convergence">Roy 2020</a>)</span>.</p>
+<p>After running an MCMC sampler, it is important that diagnostic checks are used to evaluate convergence and assess whether the results of the Markov chain can be used to compute posterior quantities.
+It is never possible to be sure that results computed from MCMC will be accurate, though it is possible to know when they will be inaccurate.
+Panel <a href="bayes-st.html#fig:stan">3.2</a>B shows the traceplot for a Markov chain which has converged, and moves freely through the range of plausible parameter values.
+A range of convergence diagnostics have been developed for MCMC <span class="citation">(<a href="#ref-roy2020convergence">Roy 2020</a>; <a href="#ref-margossian2023many">C. C. Margossian and Gelman 2023</a>)</span>.
+Two widely used examples are the potential scale reduction factor <span class="math inline">\(\hat R\)</span> <span class="citation">(<a href="#ref-gelman1992inference">Gelman and Rubin 1992</a>)</span>, which compares the variance between and within parallel Markov chains, and the effective sample size (ESS), which measures the efficiency of samples drawn from MCMC.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:stan"></span>
-<img src="figures/bayesian/stan.png" alt="NUTS can be used to sample from the posterior distribution in the example of Figure 3.1. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain \(\{\phi_i\}_{i = 1}^{1000}\) as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean \(\frac{1}{i} \sum_{j \leq i} \phi_j\) to the true value of \(\mathbb{E}(\phi)\) as more iterations of the Markov chain are included in the calculation." width="95%" />
+<img src="figures/bayesian/stan.png" alt="NUTS can be used to sample from the posterior distribution described in Figure 3.1. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain \(\{\phi_i\}_{i = 1}^{1000}\) as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean \(\frac{1}{i} \sum_{j \leq i} \phi_j\) to the true value of \(\mathbb{E}(\phi)\) as more iterations of the Markov chain are included in the sum." width="95%" />
 <p class="caption">
-Figure 3.2: NUTS can be used to sample from the posterior distribution in the example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain <span class="math inline">\(\{\phi_i\}_{i = 1}^{1000}\)</span> as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean <span class="math inline">\(\frac{1}{i} \sum_{j \leq i} \phi_j\)</span> to the true value of <span class="math inline">\(\mathbb{E}(\phi)\)</span> as more iterations of the Markov chain are included in the calculation.
+Figure 3.2: NUTS can be used to sample from the posterior distribution described in Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain <span class="math inline">\(\{\phi_i\}_{i = 1}^{1000}\)</span> as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean <span class="math inline">\(\frac{1}{i} \sum_{j \leq i} \phi_j\)</span> to the true value of <span class="math inline">\(\mathbb{E}(\phi)\)</span> as more iterations of the Markov chain are included in the sum.
 </p>
 </div>
 </div>
 <div id="deterministic-approximations" class="section level4 hasAnchor" number="3.1.2.2">
 <h4><span class="header-section-number">3.1.2.2</span> Deterministic approximations<a href="bayes-st.html#deterministic-approximations" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The Monte Carlo algorithms discussed in Section <a href="bayes-st.html#monte-carlo">3.1.2.1</a> make use of stochasticity to generate samples from the posterior distribution.
-Alternatively, deterministic approximations can be used, which more directly approximate the posterior distribution or posterior normalising constant.</p>
-<p>The Laplace approximation involves approximating the posterior normalising constant using Laplace’s method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
+<p>Monte Carlo methods discussed in Section <a href="bayes-st.html#monte-carlo">3.1.2.1</a> make use of stochasticity to generate samples from the posterior distribution.
+Deterministic approximations offer an alternative approach, which aims to more directly approximate the posterior distribution or posterior normalising constant.
+These approaches are often faster than Monte Carlo methods, especially for large datasets or models.</p>
+<p>One such deterministic approximation is the Laplace approximation.
+It involves approximating the posterior normalising constant using Laplace’s method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
 The integrated nested Laplace approximation [INLA; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] combines quadrature with the Laplace approximation.
-The Laplace approximation and INLA are used extensively throughout this thesis.
-A complete introduction is provided in Section <a href="naomi-aghq.html#naomi-inference">6.1</a>.</p>
-<p>Variational inference [VI; <span class="citation">Blei, Kucukelbir, and McAuliffe (<a href="#ref-blei2017variational">2017</a>)</span>] is another prominent deterministic apppraoch.
+These methods are used often in this thesis.</p>
+<p>Variational inference [VI; <span class="citation">Blei, Kucukelbir, and McAuliffe (<a href="#ref-blei2017variational">2017</a>)</span>] is another noteworthy deterministic approximation.
+The well-known expectation maximisation [EM; <span class="citation">Dempster, Laird, and Rubin (<a href="#ref-dempster1977maximum">1977</a>)</span>] and expectation propagation [EP; <span class="citation">Minka (<a href="#ref-minka2001expectation">2001</a>)</span>] algorithms are closely related to VI.
 In VI, the approximate posterior distribution is assumed to belong to a particular family of functions.
 Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
-VI is often faster than Monte Carlo methods, especially for large datasets or models.
-However, it lacks theoretical guarantees and is known to often inaccurately estimate posterior variances <span class="citation">(<a href="#ref-giordano2018covariances">Giordano, Broderick, and Jordan 2018</a>)</span>.
-Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span>.
-The well-known expectation maximisation [EM; <span class="citation">Dempster, Laird, and Rubin (<a href="#ref-dempster1977maximum">1977</a>)</span>] and expectation propagation [EP; <span class="citation">Minka (<a href="#ref-minka2001expectation">2001</a>)</span>] algorithms are closely related to VI.</p>
+Though popular in some settings, VI lacks theoretical guarantees and is known to often inaccurately estimate posterior variances <span class="citation">(<a href="#ref-giordano2018covariances">Giordano, Broderick, and Jordan 2018</a>)</span>.
+Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research <span class="citation">(<a href="#ref-yao2018yes">Yao et al. 2018</a>)</span>.</p>
 </div>
 </div>
 <div id="interplay-between-modelling-and-computation" class="section level3 hasAnchor" number="3.1.3">
 <h3><span class="header-section-number">3.1.3</span> Interplay between modelling and computation<a href="bayes-st.html#interplay-between-modelling-and-computation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Modern computational techniques and software like PPLs have succeeded in abstracting away calculation of the posterior distribution from the analyst for many models.
-However, computation remains intractable in arguably the majority of cases.
-The analyst need therefore not only to be concerned with choosing a model suitable for the data, but also choosing a model for which the posterior distribution is tractable in reasonable time.
+However, computation remains intractable in what can be argued to be the majority of cases.
+The analyst needs therefore not only to be concerned with choosing a model suitable for the data, but also with choosing a model for which the posterior distribution may tractably be calculated in reasonable time.
 As such, there is an important interplay between modelling and computation, wherein models are bound by the limits of computation.
-As computation improves, the space of models available to the analyst expands.</p>
+As computational techniques and tools improve, the space of models available to the analyst expands.</p>
 </div>
 </div>
 <div id="st-statistics" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Spatio-temporal statistics<a href="bayes-st.html#st-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> concerns observations which are indexed by spatial or temporal location.
-In doing so, it unites the fields of spatial statistics <span class="citation">(<a href="#ref-bivand2008applied">Bivand et al. 2008</a>)</span> and time series analysis <span class="citation">(<a href="#ref-shumway2017time">Shumway and Stoffer 2017</a>)</span>.</p>
+<p>Space and time are important features of data related to HIV.
+The field of spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> is concerned with such observations indexed by spatial or temporal location.
+It unites the fields of spatial statistics <span class="citation">(<a href="#ref-bivand2008applied">Bivand et al. 2008</a>)</span> and time series analysis <span class="citation">(<a href="#ref-shumway2017time">Shumway and Stoffer 2017</a>)</span>.</p>
 <div id="properties-of-spatio-temporal-data" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Properties of spatio-temporal data<a href="bayes-st.html#properties-of-spatio-temporal-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:st"></span>
-<img src="figures/bayesian/st.png" alt="The spatial location of Cape Town in South Africa could be considered a point. The ZF Mgcawu District Municipality on the other hand is an example of an area. World AIDS Day, designated on the 1st of December every year, could be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)" width="95%" />
-<p class="caption">
-Figure 3.3: The spatial location of Cape Town in South Africa could be considered a point. The ZF Mgcawu District Municipality on the other hand is an example of an area. World AIDS Day, designated on the 1st of December every year, could be considered a point in time. The second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
-</p>
-</div>
-<p>Spatio-temporal data have some important properties:</p>
-<ol style="list-style-type: decimal">
-<li><p><strong>Covariance structure</strong>:
-According to Tobler’s first law of geography “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.
-In “The Design of Experiments” <span class="citation">Fisher (<a href="#ref-fisher1936design">1936</a>)</span> observed that neighbouring crops were more likely to have similar yields than those far apart.
-This law can be formalised using spatial covariance functions.
+<p>Spatio-temporal data have important shared properties.</p>
+<div id="covariance-structure" class="section level4 hasAnchor" number="3.2.1.1">
+<h4><span class="header-section-number">3.2.1.1</span> Covariance structure<a href="bayes-st.html#covariance-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>In “The Design of Experiments” <span class="citation">Fisher (<a href="#ref-fisher1936design">1936</a>)</span> observed that neighbouring crops were more likely to have similar yields than those far apart.
+This observation was later termed Tobler’s first law of geography, that “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.</p>
+<p>This law can be formalised using spatial covariance functions.
 Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.</p>
 <p>As well as space, Tobler’s first law applies to time.
 Observations made close together in time tend to be similar.
@@ -548,24 +544,35 @@ Temporal covariance structures are often periodic.</p>
 <p>The space-time covariance structure <span class="citation">(<a href="#ref-porcu202130">Porcu, Furrer, and Nychka 2021</a>)</span> is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can’t.
 A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured <span class="citation">(<a href="#ref-knorr2000bayesian">Knorr-Held 2000</a>)</span>.</p>
 <p>Because of their covariance structure, spatio-temporal data are not IID.
-Only one observation of a spatio-temporal process is realised.</p></li>
-<li><p><strong>Scales</strong>:
-In this thesis the spatial study region <span class="math inline">\(\mathcal{S} \subseteq \mathbb{R}^2\)</span> is assumed to have two dimensions, corresponding to latitude and longitude.
+Only one observation of a spatio-temporal process is realised.</p>
+</div>
+<div id="scales" class="section level4 hasAnchor" number="3.2.1.2">
+<h4><span class="header-section-number">3.2.1.2</span> Scales<a href="bayes-st.html#scales" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:st"></span>
+<img src="figures/bayesian/st.png" alt="In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)" width="95%" />
+<p class="caption">
+Figure 3.3: In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
+</p>
+</div>
+<p>In this thesis the spatial study region <span class="math inline">\(\mathcal{S} \subseteq \mathbb{R}^2\)</span> is assumed to have two dimensions, corresponding to latitude and longitude.
 Observations may be associated to a point <span class="math inline">\(s \in \mathcal{S}\)</span> or area <span class="math inline">\(A \subseteq \mathcal{S}\)</span> in the study region.
 The temporal study period <span class="math inline">\(\mathcal{T} \subseteq \mathbb{R}\)</span> can more generally be assumed to be on-dimensional.
 Together with time moving only in the forward direction, this feature is what distinguishes time from space.
 As with space, observations may be associated to a point <span class="math inline">\(t \in \mathcal{T}\)</span> or period of time <span class="math inline">\(T \subseteq \mathcal{T}\)</span>.
-Figure <a href="bayes-st.html#fig:st">3.3</a> illustrates both types of observation for space and time.</p>
+Figure <a href="bayes-st.html#fig:st">3.3</a> illustrates both types of observation for space (Panel A<a href="bayes-st.html#fig:st">3.3</a>) and time (Panel B<a href="bayes-st.html#fig:st">3.3</a>).</p>
 <p>Spatio-temporal observations can be made at various possible scales.
 Sometimes, we may want to model data at a scale it was not observed at.
 This is known as the change-of-support problem <span class="citation">(<a href="#ref-gelfand2001change">Gelfand, Zhu, and Carlin 2001</a>)</span> and includes as special cases the problems of downscaling, upscaling, and dealing with so-called misaligned data.
-Closely related is the problem of jointly modelling data at different scales simultaneously.</p></li>
-<li><p><strong>Size</strong>:
-Data with both spatial and temporal dimensions are often large, making storage and operations on spatio-temporal data potentially difficult.
+Closely related is the problem of jointly modelling data at different scales simultaneously.</p>
+</div>
+<div id="size" class="section level4 hasAnchor" number="3.2.1.3">
+<h4><span class="header-section-number">3.2.1.3</span> Size<a href="bayes-st.html#size" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Data with both spatial and temporal dimensions are often large, making storage and operations on spatio-temporal data potentially difficult.
 Furthermore, models for spatio-temporal data typically require many parameters.
 Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
-Large data combined with large models make Bayesian inference challenging.</p></li>
-</ol>
+Large data combined with large models make Bayesian inference challenging.</p>
+</div>
 </div>
 <div id="small-area-estimation" class="section level3 hasAnchor" number="3.2.2">
 <h3><span class="header-section-number">3.2.2</span> Small-area estimation<a href="bayes-st.html#small-area-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -577,6 +584,10 @@ Direct estimates of indicators of interest are either impossible or inaccurate i
 In the spatio-temporal setting sharing of information occurs across space and time.
 The knowledge that observations in one spatio-temporal location are correlated with those at another can be used to improve estimates.
 Figures <a href="bayes-st.html#fig:zmb-maps">3.4</a> and <a href="bayes-st.html#fig:zmb-scatter">3.5</a> illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to overcome this limitation in part.</p>
+<p>More generally, SAE methods are useful when data are limited for subpopulations of interest.
+These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
+Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
+For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:zmb-maps"></span>
 <img src="figures/bayesian/zmb-maps.png" alt="Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size \(m = 5, 25, 125\) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. The colour palette used in this figure is called viridis, as implemented by the viridis R package (Garnier et al. 2023), and was designed to be perceptually uniform and accessible to colourblind viewers (Smith and Walt 2015). This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from https://github.com/athowes/zambia-unaids. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally." width="95%" />
@@ -591,10 +602,6 @@ Figure 3.4: Simulation of a simple random sample <span class="math inline">\(y_i
 Figure 3.5: The setting of this figure matches that of Figure <a href="bayes-st.html#fig:zmb-maps">3.4</a>. Estimates from surveys with higher sample size have higher Pearson correlation coefficient <span class="math inline">\(R\)</span> with the underlying truth, illustrating the benefit of collecting more data. For a fixed sample size however, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. For each sample size, using a spatial model increases the correlation between the estimates and underlying truth. The effect is more pronounced for lower sample sizes.
 </p>
 </div>
-<p>More generally, SAE methods are useful when data are limited for subpopulations of interest.
-These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
-Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
-For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.</p>
 </div>
 </div>
 <div id="model-structure" class="section level2 hasAnchor" number="3.3">
@@ -897,6 +904,9 @@ Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Don
 <div id="ref-gelman2014understanding" class="csl-entry">
 Gelman, Andrew, Jessica Hwang, and Aki Vehtari. 2014. <span>“<span class="nocase">Understanding predictive information criteria for Bayesian models</span>.”</span> <em>Statistics and Computing</em> 24 (6): 997–1016.
 </div>
+<div id="ref-gelman1992inference" class="csl-entry">
+Gelman, Andrew, and Donald B Rubin. 1992. <span>“<span class="nocase">Inference from iterative simulation using multiple sequences</span>.”</span> <em>Statistical Science</em>, 457–72.
+</div>
 <div id="ref-gelman2017prior" class="csl-entry">
 Gelman, Andrew, Daniel Simpson, and Michael Betancourt. 2017. <span>“<span class="nocase">The prior can often only be understood in the context of the likelihood</span>.”</span> <em>Entropy</em> 19 (10): 555.
 </div>
@@ -929,6 +939,9 @@ Hoffman, Matthew D, Andrew Gelman, et al. 2014. <span>“<span class="nocase">Th
 </div>
 <div id="ref-knorr2000bayesian" class="csl-entry">
 Knorr-Held, Leonhard. 2000. <span>“<span class="nocase">Bayesian modelling of inseparable space-time variation in disease risk</span>.”</span> <em>Statistics in Medicine</em> 19 (17-18): 2555–67.
+</div>
+<div id="ref-margossian2023many" class="csl-entry">
+Margossian, Charles C, and Andrew Gelman. 2023. <span>“For How Many Iterations Should We Run Markov Chain Monte Carlo?”</span> <em>arXiv Preprint arXiv:2311.02726</em>.
 </div>
 <div id="ref-martin2023computing" class="csl-entry">
 Martin, Gael M, David T Frazier, and Christian P Robert. 2023. <span>“<span class="nocase">Computing Bayes: From then ‘til now</span>.”</span> <em>Statistical Science</em> 1 (1): 1–17.
