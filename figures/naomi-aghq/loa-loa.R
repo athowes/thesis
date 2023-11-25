@@ -241,7 +241,7 @@ plot_suitability <- function(phi_sf) {
     geom_sf(data = sf::st_intersection(phi_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
     geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_sf)), fill = NA, col = "grey20", alpha = 0.8) +
     geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-    scale_fill_viridis_c(option = "A", direction = 1) +
+    scale_fill_viridis_c(option = "A", direction = 1, labels = scales::percent) +
     theme_void() +
     labs(fill = "Suitability", tag = "A")
 }
@@ -251,7 +251,7 @@ plot_prevalence <- function(rho_sf) {
     geom_sf(data = sf::st_intersection(rho_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
     geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_sf)), fill = NA, col = "grey20", alpha = 0.8) +
     geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-    scale_fill_viridis_c(option = "D", direction = 1) +
+    scale_fill_viridis_c(option = "D", direction = 1, labels = scales::percent) +
     theme_void() +
     labs(fill = "Prevalence", tag = "B")
 }
@@ -377,7 +377,7 @@ df_plot <- df %>%
 fig_abs <- df_plot %>%
   filter(metric == "diff_abs") %>%
   ggplot(aes(x = gaussian, y = value)) +
-  geom_point(size = 1.5, shape = 1) +
+  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
   facet_wrap(. ~ indicator) +
   geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
   labs(x = "", y = "Absolute difference to Laplace") +
@@ -386,7 +386,7 @@ fig_abs <- df_plot %>%
 fig_pct <- df_plot %>%
   filter(metric == "diff_pct") %>%
   ggplot(aes(x = gaussian, y = value)) +
-    geom_point(size = 1.5, shape = 1) +
+    geom_point(size = 1.5, shape = 1, alpha = 0.6) +
     facet_wrap(. ~ indicator) +
     geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
     scale_y_continuous(labels = scales::percent) +
@@ -396,6 +396,49 @@ fig_pct <- df_plot %>%
 fig_abs / fig_pct
 
 ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 6, w = 6.25, bg = "white")
+
+#' Difference on map plot
+samples_adam <- lapply(1:N, sample_adam, M = 100, quad = quad_fixed_laplace_marginals)
+samples_adam <- do.call(rbind, samples_adam)
+
+random_field_samples_fixed_adam <- random_field_simulation(
+  u_samples = samples_adam[c(191:380), ],
+  v_samples = samples_adam[c(1:190), ],
+  beta_samples = t(data.frame(rep(param_new$betazi, 100), rep(param_new$betarisk, 100))),
+  theta_samples = aghq_fixed_samples$theta
+)
+
+phi_fixed_adam_samples <- random_field_samples_fixed_adam$phi_samples
+rho_fixed_adam_samples <- random_field_samples_fixed_adam$rho_samples
+phi_fixed_adam_sf <- st_sf("phi" = rowMeans(phi_fixed_adam_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
+rho_fixed_adam_sf <- st_sf("rho" = rowMeans(rho_fixed_adam_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
+
+plot_suitability(phi_fixed_adam_sf) / plot_prevalence(rho_fixed_adam_sf)
+
+ggsave("figures/naomi-aghq/conditional-simulation-adam-fixed.png", h = 5, w = 6.25, bg = "white")
+
+phi_diff_sf <- st_sf("phi" = rowMeans(phi_fixed_adam_samples) - rowMeans(phi_fixed_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
+rho_diff_sf <- st_sf("rho" = rowMeans(rho_fixed_adam_samples) - rowMeans(rho_fixed_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
+
+fig_phi_diff <- ggplot() +
+  geom_sf(data = sf::st_intersection(phi_diff_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+  scale_fill_viridis_c(option = "E", direction = 1, labels = scales::percent, breaks = c(-0.05, 0, 0.05)) +
+  theme_void() +
+  labs(fill = "Suitability\ndifference", tag = "A")
+
+fig_rho_diff <- ggplot() +
+    geom_sf(data = sf::st_intersection(rho_diff_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
+    geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+    geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+    scale_fill_viridis_c(option = "G", direction = 1, labels = scales::percent, breaks = c(-0.05, 0, 0.05)) +
+    theme_void() +
+    labs(fill = "Prevalence\ndifference", tag = "B")
+
+fig_phi_diff / fig_rho_diff
+
+ggsave("figures/naomi-aghq/conditional-simulation-diff-fixed.png", h = 5, w = 6.25, bg = "white")
 
 #' Try running tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
