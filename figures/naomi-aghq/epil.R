@@ -24,11 +24,13 @@ ggsave("figures/naomi-aghq/epil.png", h = 3.5, w = 6.25)
 centre <- function(x) (x - mean(x))
 
 Epil <- Epil %>%
-  mutate(CTrt    = centre(Trt),
-         ClBase4 = centre(log(Base/4)),
-         CV4     = centre(V4),
-         ClAge   = centre(log(Age)),
-         CBT     = centre(Trt * log(Base/4)))
+  mutate(
+    CTrt    = centre(Trt),
+    ClBase4 = centre(log(Base/4)),
+    CV4     = centre(V4),
+    ClAge   = centre(log(Age)),
+    CBT     = centre(Trt * log(Base/4))
+  )
 
 N <- 59
 J <- 4
@@ -67,40 +69,34 @@ epil_inla <- function(strat, int_strat) {
   )
 }
 
-start <- Sys.time() 
+tictoc::tic()
 inla_g_eb <- epil_inla(strat = "gaussian", int_strat = "eb")
-end <- Sys.time()
-inla_g_eb_time <- end - start
+inla_g_eb_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 inla_sl_eb <- epil_inla(strat = "simplified.laplace", int_strat = "eb") 
-end <- Sys.time()
-inla_sl_eb_time <- end - start
+inla_sl_eb_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 inla_l_eb <- epil_inla(strat = "laplace", int_strat = "eb") 
-end <- Sys.time()
-inla_l_eb_time <- end - start
+inla_l_eb_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 inla_g_grid <- epil_inla(strat = "gaussian", int_strat = "grid")
-end <- Sys.time()
-inla_g_grid_time <- end - start
+inla_g_grid_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 inla_sl_grid <- epil_inla(strat = "simplified.laplace", int_strat = "grid") 
-end <- Sys.time()
-inla_sl_grid_time <- end - start
+inla_sl_grid_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 inla_l_grid <- epil_inla(strat = "laplace", int_strat = "grid") 
-end <- Sys.time()
-inla_l_grid_time <- end - start
+inla_l_grid_time <- tictoc::toc()
 
-start <- Sys.time() 
 compile("figures/naomi-aghq/TMB/epil.cpp")
 dyn.load(dynlib("figures/naomi-aghq/TMB/epil"))
 
+tictoc::tic()
 param <- list(
   beta = rep(0, K),
   epsilon = rep(0, N),
@@ -131,8 +127,8 @@ sd_out <- sdreport(
   par.fixed = opt$par,
   getJointPrecision = TRUE
 )
-end <- Sys.time()
-tmb_g_eb_time <- end - start
+
+tmb_g_eb_time <- tictoc::toc()
 
 sd_summary <- summary(sd_out)
 tab <- table(rownames(sd_summary))
@@ -162,10 +158,12 @@ reshape2::melt(H_small) %>%
       axis.text.y = element_text(color = "grey30", hjust = 1, vjust = 0.5, angle = 0, lineheight = 0.9, size = 8.8),
     )
 
-ggsave("figures/naomi-aghq/hessian-matrix.png", h = 2.5, w = 6.25)
+ggsave("figures/naomi-aghq/hessian-matrix.png", h = 1.5, w = 6.25)
 
+tictoc::tic()
 init <- c(param$l_tau_epsilon, param$l_tau_nu)
 aghq <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
+tmb_g_aghq_time <- tictoc::toc()
 
 aghq_samples <- aghq::sample_marginal(aghq, M = 4000)$samps %>%
   t() %>%
@@ -227,30 +225,33 @@ compute_laplace_marginal <- function(i, quad) {
   return(out)
 }
 
-# Laplace marginals and EB with TMB
+#' Laplace marginals and EB with TMB
 
+tictoc::tic()
 init <- c(param$l_tau_epsilon, param$l_tau_nu)
 eb <- aghq::marginal_laplace_tmb(obj, k = 1, startingvalue = init)
 eb_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = eb, .progress = TRUE)
 eb_laplace_marginals <- dplyr::bind_rows(eb_laplace_marginals)
+tmb_l_eb_time <- tictoc::toc()
 
-# Laplace marginals and AGHQ with TMB
+#' Laplace marginals and AGHQ with TMB
 
+tictoc::tic()
+aghq <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
 quad_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = aghq, .progress = TRUE)
+tmb_l_aghq_time <- tictoc::toc()
 
-# NUTS
+#' NUTS
 
-start <- Sys.time() 
+tictoc::tic()
 tmbstan <- tmbstan::tmbstan(obj = obj, chains = 4, refresh = 0)
-end <- Sys.time()
-tmbstan_time <- end - start
+tmbstan_time <- tictoc::toc()
 
-start <- Sys.time() 
+tictoc::tic()
 stan <- rstan::stan(file = "figures/naomi-aghq/epil.stan", data = dat, chains = 4, refresh = 0)
-end <- Sys.time()
-stan_time <- end - start
+stan_time <- tictoc::toc()
 
-# Means and SD
+#' Means and SD
 sample_adam <- function(i, M) {
   q <- runif(M)
   pdf_and_cdf <- compute_pdf_and_cdf(nodes = quad_laplace_marginals[[i]]$x, quad_laplace_marginals[[i]]$lp_normalised)
@@ -355,29 +356,54 @@ tmbstan_summary <- tmbstan_summary[1:(nrow(tmbstan_summary) - 1), ]
 tmbstan_rhats <- bayesplot::rhat(tmbstan)
 tmbstan_rhats <- tmbstan_rhats[1:(nrow(tmbstan_summary) - 1)]
 
+round(min(tmbstan_summary[, "n_eff"])) #' 377
+names(which.min(tmbstan_summary[, "n_eff"])) #' l_tau_nu
+
+max(tmbstan_rhats) #' 1.006
+names(which.max(tmbstan_rhats)) #' beta[3]
+
 bayesplot::mcmc_trace(tmbstan, pars = c(names(which.min(tmbstan_summary[, "n_eff"])), names(which.max(tmbstan_rhats)))) +
   theme_minimal()
 
 ggsave("figures/naomi-aghq/tmbstan-epil.png", h = 3, w = 6.25)
 
-stan_summary <- summary(stan)$summary
-stan_summary <- stan_summary[1:(nrow(stan_summary) - 1), ]
+stan_summary <- summary(stan)$summary %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("par")
+
+stan_summary <- stan_summary %>%
+  filter(par != "lp__")
+
 stan_rhats <- bayesplot::rhat(stan)
 stan_rhats <- stan_rhats[1:(nrow(stan_summary) - 1)]
 
-bayesplot::mcmc_trace(stan, pars = c(names(which.min(stan_summary[, "n_eff"])), names(which.max(tmbstan_rhats)))) +
+round(min(stan_summary[, "n_eff"])) #' 437
+stan_summary$par[which.min(stan_summary[, "n_eff"])] #' tau_nu
+
+stan_summary$Rhat[order(stan_summary$Rhat, decreasing = TRUE)[2]] #' 1.008
+stan_summary$par[order(stan_summary$Rhat, decreasing = TRUE)[2]] #' epsilon[18]
+
+#' tau_nu had Rhat 1.009
+
+bayesplot::mcmc_trace(stan, pars = c(stan_summary$par[which.min(stan_summary[, "n_eff"])], stan_summary$par[order(stan_summary$Rhat, decreasing = TRUE)[2]])) +
   theme_minimal()
 
 ggsave("figures/naomi-aghq/stan-epil.png", h = 3, w = 6.25)
 
-time_df <- data.frame(
-  time = c(tmb_g_eb_time, inla_g_eb_time, inla_l_eb_time, inla_g_grid_time, inla_l_grid_time, tmbstan_time, stan_time),
-  method = c(" Gaussian, EB", "Gaussian, EB", "Laplace, EB", "Gaussian, grid", "Laplace, grid", "NUTS", " NUTS"),
-  software = c("TMB", rep("R-INLA", times = 4), "tmbstan", "rstan")
-)
+
+get_time <- function(t) {
+  t$toc - t$tic
+}
+
+times <- list(tmb_g_eb_time, tmb_g_aghq_time, tmb_l_eb_time, tmb_l_aghq_time, inla_g_eb_time, inla_g_grid_time, inla_l_eb_time, inla_l_grid_time, tmbstan_time, stan_time)
+times <- sapply(times, get_time)
+methods <- c("Gaussian, EB", "Gaussian, AGHQ", "Laplace, EB", "Laplace, AGHQ", " Gaussian, EB", "Gaussian, grid", " Laplace, EB", "Laplace, grid", "NUTS", " NUTS")
+softwares <- c(rep("TMB", times = 4), rep("R-INLA", times = 4), "tmbstan", "rstan")
+
+time_df <- data.frame(time = times, method = methods, software = softwares)
 
 ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = software)) +
-  geom_col(shape = 1) +
+  geom_col() +
   theme_minimal() +
   scale_fill_manual(values = c("#0072B2", "#D55E00", "#E69F00", "#F0E442")) +
   labs(x = "", y = "Time taken (s)", fill = "Software") +

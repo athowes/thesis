@@ -860,17 +860,17 @@ Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
 #### Comparison {#epil-comparison}
 
 Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from the inference methods implemented in `TMB` (Section \@ref(epil-gauss-eb-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-laplace-aghq-tmb)) were highly similar to their `R-INLA` analogs in Section \@ref(epil-inla) (Figure \@ref(fig:beta-mean-sd)).
-Furthermore, the posterior distributions, not only point estimates, were also highly similar.
-Figure \@ref(fig:intercept-comparison) shows highly similar ECDF difference plots for Gaussian or Laplace marginals from `TMB` and `R-INLA` (as compared with results from NUTS implemented in `tmbstan`) for $\beta_0$.
-These results provide strong evidence that the approaches developed above to implement INLA in `TMB` are sound.
+Posterior distributions obtained were also similar.
+Figure \@ref(fig:intercept-comparison) shows ECDF difference plots for Gaussian or Laplace marginals from `TMB` and `R-INLA` (as compared with results from NUTS implemented in `tmbstan`) for $\beta_0$.
+These results provide evidence that the implementation of INLA in `TMB` is correct.
 
-(ref:beta-mean-sd) Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with `tmbstan`. Results from `R-INLA` and `TMB` are similar, especially for the posterior mean, but do differ in places.
+(ref:beta-mean-sd) Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with `tmbstan`. Results from `R-INLA` and `TMB` are similar, especially for the posterior mean, but do differ in places. Differences could be attributable to bias corrections used in `R-INLA`.
 
 ```{r beta-mean-sd, fig.cap="(ref:beta-mean-sd)"}
 knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 ```
 
-(ref:intercept-comparison) The ECDF and ECDF difference for the $\beta_0$ latent field parameter. For this parameter, the Gaussian results are inaccurate, and corrected by the Laplace. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Results obtained using `R-INLA` and `TMB` implementations are highly similar.
+(ref:intercept-comparison) The ECDF and ECDF difference for the $\beta_0$ latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Results obtained using `R-INLA` and `TMB` implementations are similar.
 
 ```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
 knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
