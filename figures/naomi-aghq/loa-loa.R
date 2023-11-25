@@ -344,7 +344,8 @@ time <- tictoc::toc()
 (time$toc - time$tic) * N / 60 / 60
 
 #' This would take around 3 hours to run for 1:N
-quad_fixed_laplace_marginals <- purrr::map(.x = 1:5, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
+quad_fixed_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
+saveRDS(quad_fixed_laplace_marginals, "figures/naomi-aghq/loa-loa_laplace.rds")
 
 #' Function to sample from the Laplace marginals using CDF inversion
 sample_adam <- function(i, quad, M) {
@@ -355,12 +356,12 @@ sample_adam <- function(i, quad, M) {
   return(s)
 }
 
-samples_adam <- lapply(1:5, sample_adam, M = 1000, quad = quad_fixed_laplace_marginals)
+samples_adam <- lapply(1:N, sample_adam, M = 1000, quad = quad_fixed_laplace_marginals)
 aghq_fixed_samples <- sample_marginal(quad_fixed, 1000)
 
 df <- bind_rows(
-  data.frame(method = "laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:5),
-  data.frame(method = "gaussian", mean = apply(aghq_fixed_samples$samps[1:5, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:5, ], 1, sd), index = 1:5)
+  data.frame(method = "laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:N),
+  data.frame(method = "gaussian", mean = apply(aghq_fixed_samples$samps[1:N, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:N, ], 1, sd), index = 1:N)
 )
 
 df %>%
