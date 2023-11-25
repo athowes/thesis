@@ -1240,12 +1240,11 @@ Gamma penalised complexity <span class="citation">(<a href="#ref-simpson2017pena
 \mathbb{P}(\sigma &lt; 4) &amp;= 0.975, \\
 \mathbb{P}(\rho &lt; 200\text{km}) &amp;= 0.975.
 \end{align}\]</span></p>
+<p>The zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>) is not compatible with <code>R-INLA</code>, so only approaches based on the more flexible <code>TMB</code> template were included.
+Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.</p>
 <p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented this model in <code>TMB</code>.
 Inference was performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
-After days of running the sampler, the Markov chain diagnostics were poor.</p>
-<p>This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>).
-The zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a>) is not compatible with <code>R-INLA</code>, so only approaches based on the more flexible <code>TMB</code> template were included.
-Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.</p>
+This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>), extending <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> by including AGHQ with Laplace marginals.</p>
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered.</caption>
 <thead>
@@ -1269,26 +1268,27 @@ Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015<
 </tr>
 </tbody>
 </table>
-<p>The <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12] passing in random effect and hyperparameter samples to create each simulation (Figure <a href="#fig:conditional-simulation"><strong>??</strong></a>).</p>
+<p>The <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12].
+Latent field and hyperparameter samples were used in each conditional simulation (Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-adam-fixed"></span>
-<img src="figures/naomi-aghq/conditional-simulation-adam-fixed.png" alt="Posterior mean of the suitability \(\mathbb{E}[\phi(s)]\) (Panel A) and prevalence \(\mathbb{E}[\rho(s)]\) (Panel B) random fields." width="95%" />
+<img src="figures/naomi-aghq/conditional-simulation-adam-fixed.png" alt="Posterior mean of the suitability \(\mathbb{E}[\phi_\texttt{LA}(s)]\) (Panel A) and prevalence \(\mathbb{E}[\rho_\texttt{LA}(s)]\) (Panel B) random fields computed using Laplace marginals." width="95%" />
 <p class="caption">
-Figure 6.11: Posterior mean of the suitability <span class="math inline">\(\mathbb{E}[\phi(s)]\)</span> (Panel A) and prevalence <span class="math inline">\(\mathbb{E}[\rho(s)]\)</span> (Panel B) random fields.
+Figure 6.11: Posterior mean of the suitability <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)]\)</span> (Panel A) and prevalence <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)]\)</span> (Panel B) random fields computed using Laplace marginals.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-diff-fixed"></span>
-<img src="figures/naomi-aghq/conditional-simulation-diff-fixed.png" alt="Figure caption." width="95%" />
+<img src="figures/naomi-aghq/conditional-simulation-diff-fixed.png" alt="Difference in suitability posterior means \(\mathbb{E}[\phi_\texttt{LA}(s)] - \mathbb{E}[\phi_\texttt{G}(s)]\) (Panel A) and prevalence posterior means \(\mathbb{E}[\rho_\texttt{LA}(s)] - \mathbb{E}[\rho_\texttt{G}(s)]\)(Panel B) between Laplace and Gaussian marginals. As \(\beta_\phi\) and \(\beta_\rho\) were fixed this difference is as a result in differences in estimation of \(u(s)\) and \(v(s)\)." width="95%" />
 <p class="caption">
-Figure 6.12: Figure caption.
+Figure 6.12: Difference in suitability posterior means <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)] - \mathbb{E}[\phi_\texttt{G}(s)]\)</span> (Panel A) and prevalence posterior means <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)] - \mathbb{E}[\rho_\texttt{G}(s)]\)</span>(Panel B) between Laplace and Gaussian marginals. As <span class="math inline">\(\beta_\phi\)</span> and <span class="math inline">\(\beta_\rho\)</span> were fixed this difference is as a result in differences in estimation of <span class="math inline">\(u(s)\)</span> and <span class="math inline">\(v(s)\)</span>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-mean-sd"></span>
-<img src="figures/naomi-aghq/loa-loa-mean-sd.png" alt="Figure caption." width="95%" />
+<img src="figures/naomi-aghq/loa-loa-mean-sd.png" alt="Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each \(u(s_i), v(s_i): i \in [190]\)." width="95%" />
 <p class="caption">
-Figure 6.13: Figure caption.
+Figure 6.13: Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>.
 </p>
 </div>
 </div>

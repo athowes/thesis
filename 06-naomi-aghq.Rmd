@@ -914,13 +914,12 @@ Gamma penalised complexity [@simpson2017penalising; @fuglstad2019constructing] p
 \mathbb{P}(\rho < 200\text{km}) &= 0.975.
 \end{align}
 
-@bilodeau2022stochastic implemented this model in `TMB`.
-Inference was performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
-After days of running the sampler, the Markov chain diagnostics were poor.
-
-This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)).
 The zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)) is not compatible with `R-INLA`, so only approaches based on the more flexible `TMB` template were included. 
 Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler LGM model which includes covariates.
+
+@bilodeau2022stochastic implemented this model in `TMB`.
+Inference was performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
+This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)), extending @bilodeau2022stochastic by including AGHQ with Laplace marginals.
 
 | Method         | Software      |
 |----------------|---------------|
@@ -930,21 +929,22 @@ Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler LGM
 
 Table: (\#tab:loaloa-approaches) The inference methods and software considered.
 
-The `gstat::krige` function [@pebesma2004gstat] was used to implement conditional Gaussian field simulation [@sds; Chapter 12] passing in random effect and hyperparameter samples to create each simulation (Figure \@ref(fig:conditional-simulation)).
+The `gstat::krige` function [@pebesma2004gstat] was used to implement conditional Gaussian field simulation [@sds; Chapter 12].
+Latent field and hyperparameter samples were used in each conditional simulation (Figure \@ref(fig:conditional-simulation-adam-fixed)).
 
-(ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho(s)]$ (Panel B) random fields.
+(ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi_\texttt{LA}(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho_\texttt{LA}(s)]$ (Panel B) random fields computed using Laplace marginals.
 
 ```{r conditional-simulation-adam-fixed, fig.cap="(ref:conditional-simulation-adam-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-adam-fixed.png")
 ```
 
-(ref:conditional-simulation-diff-fixed) Figure caption.
+(ref:conditional-simulation-diff-fixed) Difference in suitability posterior means $\mathbb{E}[\phi_\texttt{LA}(s)] - \mathbb{E}[\phi_\texttt{G}(s)]$ (Panel A) and prevalence posterior means $\mathbb{E}[\rho_\texttt{LA}(s)] - \mathbb{E}[\rho_\texttt{G}(s)]$(Panel B) between Laplace and Gaussian marginals. As $\beta_\phi$ and $\beta_\rho$ were fixed this difference is as a result in differences in estimation of $u(s)$ and $v(s)$.
 
 ```{r conditional-simulation-diff-fixed, fig.cap="(ref:conditional-simulation-diff-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-fixed.png")
 ```
 
-(ref:loa-loa-mean-sd) Figure caption.
+(ref:loa-loa-mean-sd) Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each $u(s_i), v(s_i): i \in [190]$.
 
 ```{r loa-loa-mean-sd, fig.cap="(ref:loa-loa-mean-sd)"}
 knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd.png")
