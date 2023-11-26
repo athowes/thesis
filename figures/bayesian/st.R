@@ -26,14 +26,14 @@ space <- ggplot() +
 
 time <- data.frame(
     x = c(5, 12),
-    y = c(2, 1),
+    y = c(1, 2),
     alpha = c(0, 1)
   ) %>%
   ggplot(aes(x = x, y = as.factor(y), alpha = alpha)) +
   geom_point(col = "#D55E00", size = 2) +
-  geom_segment(aes(x = 4, y = 2, xend = 7, yend = 2), col = "#0072B2", linewidth = 0.5, arrow = arrow(ends = "both", length = unit(0.1, "inches"))) +
+  geom_segment(aes(x = 4, y = 1, xend = 7, yend = 1), col = "#0072B2", linewidth = 0.5, arrow = arrow(ends = "both", length = unit(0.1, "inches"))) +
   scale_x_continuous(breaks = 1:12, labels = month.abb, limits = c(1, 12)) +
-  scale_y_discrete(labels = c("World AIDS\nDay (point)", "Q2 (period)")) +
+  scale_y_discrete(labels = c("Q2 (period)", "World AIDS\nDay (point)")) +
   scale_alpha(range = c(0, 1)) +
   guides(alpha = "none") +
   labs(x = "", y = "", tag = "B") +
