@@ -420,7 +420,7 @@ p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \m
 Equation \@ref(eq:lamarginal) is a mixture of the normalised Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
 As such, Equation \@ref(eq:lamarginal) may instead be represented by its evaluation at a number of nodes.
-The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid computation of the Laplace marginal mode and standard deviation.
+The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
 The probability density function of the marginal posterior may be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
@@ -663,24 +663,26 @@ This template specifies exactly the same model as `R-INLA` in Section \@ref(epil
 It is not trivial to do this, because each detail of the model must match.
 
 Lines with a `DATA` prefix specify the fixed data inputs to be passed to `TMB`.
+For example, the data $\mathbf{y}$ are passed via:
 
 ```C++
-DATA
+DATA_VECTOR(y);
 ```
 
-Examples of data inputs include the data $\mathbf{y}$ and the covariate design matrix.
 Lines with a `PARAMETER` prefix specify the parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$ to be estimated.
+For example, the regression coefficients $\boldsymbol{\mathbf{\beta}}$ are specified by:
 
 ```C++
-PARAMETER
+PARAMETER_VECTOR(beta);
 ```
 
 It is recommended to specify all parameters on the real scale to help performance of the optimisation procedure.
 More familiar versions of parameters, such as the precision rather than log precision, may be created outside the `PARAMETER` section.
-Lines of the form `nlp -= ddist(...)` increment the negative log-posterior, where `dist` is the name of a distribution.
+Lines of the form `nll -= ddist(...)` increment the negative log-posterior, where `dist` is the name of a distribution.
+For example, the Gaussian prior distributions on $\boldsymbol{\mathbf{\beta}}$ are implemented by:
 
 ```C++
-nlp -= ddist(...)
+nll -= dnorm(beta, Type(0), Type(100), true).sum();
 ```
 
 In R, the `TMB` user template may now be compiled and linked:
@@ -740,7 +742,7 @@ sd_out <- TMB::sdreport(
 knitr::include_graphics("figures/naomi-aghq/hessian-matrix.png")
 ```
 
-The epilepsy GLMM may also be succinctly fit in a frequentist setting (that is, using improper hyperparameter priors $p(\boldsymbol{\mathbf{\theta}}) \propto 1$) using the formula interface provided by `glmmTMB`:
+Note that the epilepsy GLMM may also be succinctly fit in a frequentist setting (that is, using improper hyperparameter priors $p(\boldsymbol{\mathbf{\theta}}) \propto 1$) using the formula interface provided by `glmmTMB`:
 
 ```r
 fit <- glmmTMB(
@@ -764,7 +766,7 @@ fit <- aghq::marginal_laplace_tmb(obj, k = 3, startingvalue = init)
 Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation \@ref(eq:mixgaussian)) can be obtained by:
 
 ```r
-samples <- aghq::sample_marginal(aghq, M = 4000)$samps
+samples <- aghq::sample_marginal(aghq, M = 1000)$samps
 ```
 
 For a more complete `aghq` vignette, see @stringer2021implementing.
@@ -875,6 +877,16 @@ knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 ```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
 knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
 ```
+
+Figures \@ref(fig:epil-time) shows the number of seconds taken to fit the epilespy GLMM model for each approach.
+Gaussian marginals with either EB or AGHQ via `TMB` were the fastest approach.
+All of the approaches using `R-INLA` took a similar amount of time.
+The approaches using `TMB` to implement Laplace marginals were slower than their equivalent in `R-INLA`.
+This is not suprising, as the `TMB` implementation is relatively naive, based on a simple for loop.
+
+For this problem, the `tmbstan` implementation of NUTS took around half the time of the `rstan` implementation.
+Diagnostics (Figures \@ref(fig:tmbstan-epil) and \@ref(fig:stan-epil)) show that both implementations converged.
+It is unclear what the difference in runtime might be attributable to. 
 
 (ref:epil-time) The amount of time taken (in seconds) to perform inference with each method and software implementation.
 
