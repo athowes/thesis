@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231124-211057-4b08b04f"
+resource_version <- "20231127-185348-7b50cb21"
 ```
 
 # Models for areal spatial structure {#beyond-borders}
@@ -441,15 +441,15 @@ knitr::include_graphics("figures/beyond-borders/geometries.png")
 ```
 
 Seven geometries were considered (Figure \@ref(fig:geometries)).
-These include the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
-Three more realistic geometries chosen to represent plausible variation over spatial regularity for the small-area estimation setting were also considered.
-From most to least spatially regular, these were:
+These included the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
+Three more realistic geometries were included to represent plausible variation over spatial regularity for the small-area estimation setting.
+From the most to the least spatially regular, these geometries were:
 
 * a $6 \times 6$ lattice grid;
 * the 33 districts of Côte d'Ivoire;
 * the 36 congressional districts of Texas.
 
-For each of the three spatial random effect models and seven geometries 100 simulations were generated, resulting in 2100 total synthetic data.
+For each of the three spatial random effect models and seven geometries 100 synthetic data were generated, resulting in a total of 2100 synthetic data.
 
 ### Inferential models
 
@@ -460,9 +460,9 @@ For each of the three spatial random effect models and seven geometries 100 simu
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
 | FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
-| CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
-| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = \cdots$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = \cdots$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ |
+| CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
+| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
 
 Table: (\#tab:inferential-models) The spatial random effect models used for inference. Each model is implemented in the `arealutils` package. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of @riebler2016intuitive.
 
@@ -506,8 +506,8 @@ Appendix \@ref(lengthscale-prior) analyses the sensitivity of the lengthscale po
 #### Inference
 
 Approximate Bayesian inference was conducted using adaptive Gauss-Hermite quadrature [AGHQ; @stringer2022fast] with $k = 3$ quadrature points over a marginal Laplace approximation via the `aghq` package [@stringer2021implementing].
-Models were implemented using a Template Model Builder C++ template for the log-posterior via the `TMB` R package [@kristensen2016tmb].
-Appendix \@ref(aghq-nuts) compares posterior mean and standard deviations to those obtained using the No-U-Turn Sampling (NUTS) Hamiltonian Monte Carlo (HMC) algorithm run using `Stan` [@carpenter2017stan] via the `tmbstan` package [@monnahan2018no].
+Models were implemented using a Template Model Builder C++ template for the log-posterior via the `TMB` package [@kristensen2016tmb].
+Appendix \@ref(aghq-nuts) compares posterior mean and standard deviations from AGHQ to those obtained using the No-U-Turn Sampling (NUTS) Hamiltonian Monte Carlo (HMC) algorithm run using `Stan` [@carpenter2017stan] via the `tmbstan` package [@monnahan2018no].
 
 ### Model assessment {#model-assessment}
 
@@ -539,11 +539,9 @@ A posterior marginal is calibrated if over repeated simulations the quantile of 
 F(\omega) \approx \frac{1}{S} \sum_{s = 1}^S \mathbb{I} \{\phi_i \geq \omega \} = q \sim \mathcal{U}[0, 1]. (\#eq:unif)
 \end{equation}
 If Equation \@ref(eq:unif) holds then at any given nominal coverage $1 - \alpha$ the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
-Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power] with simultaneous confidence bands [@sailynoja2022graphical].
+Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power] with simultaneous confidence bands as described in @sailynoja2022graphical.
 
 ### Results
-
-Computing!
 
 (ref:crps-mean-se-grid) The mean CRPS and its standard error for each inferential model and simulation model on the grid geometry (Panel \@ref(fig:geometries)E).
 
@@ -576,9 +574,10 @@ Discuss lengthscale to noise identifiability and posterior correlation.
 ## HIV prevalence study {#hiv-study}
 
 Simulation studies are a valuable tool for experimenting on models in controlled environments.
-However, it is difficult to capture the complexity of realistic applied scenarios.
+However, it is difficult to capture the complexity of a realistic applied scenario.
 Therefore, it is important to complement simulation studies with studies conducted on real data.
-To this end, model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49 using household survey data across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys)).
+To this end, model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49.
+Household survey data was used from across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys), Figure \@ref(fig:hiv-surveys)).
 
 | Country        | Survey    | Number of areas | Analysis level |
 |----------------|---------- |-----------------|-----------------|
@@ -598,14 +597,15 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/hiv-surv
 knitr::include_graphics(path)
 ```
 
-In each country, data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used.
+Data from the most recent publicly available Population Health Impact Assessment (PHIA) survey were used in each country.
 Let $y_{ij} \in \{0, 1\}$ be the survey response for individual $j$ in area $i$.
+The survey designs used were complex in that each individual had potentially unequal probabilities $\pi_{ij}$ of being included in the survey.
 Sampling weights
 \begin{equation}
 w_{ij} = \frac{1}{\pi_{ij}}
 \end{equation}
-were used to account for the complex survey design whereby an individual has probability $\pi_{ij}$ of being included in the survey.
-The weighted prevalence in area $i$ is
+were used to account for the complex survey design.
+The survey weighted prevalence in area $i$ is
 \begin{equation}
 \rho_i^\star = \frac{\sum_{j} w_{ij} y_{ij}}{\sum_{j} w_{ij}}.
 \end{equation}
@@ -641,21 +641,18 @@ Each model was assessed using (Figure \@ref(fig:cv)):
 
 At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
 
-To provide comparison, the DIC and WAIC measures of model fit were also computed.
+To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed.
 Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo].
 
 ### Results
 
-Computing!
+Figures \@ref(fig:ladder-civ2017phia), \@ref(fig:ladder-mwi2016phia), \@ref(fig:ladder-tza2017phia), and \@ref(fig:ladder-zwe2016phia) show the posterior mean and 95% credible interval obtained for each area for each inferential model.
 
 ## Discussion
 
-* Application of scoring rules to transformed versions of parameters [@bosse2023scoring].
-* The log-score was considered but requires a kernel density estimate.
-* Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model fit. @spiegelhalter2014deviance discuss the flaws of the DIC. The metrics used in this study were more theoretically suitable and enabled more precise findings.
+### Modelling
+
 * Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete.
-* This study was facilitated by all models being implemented in `TMB`. Inference was then conducted using AGHQ over the marginal Laplace approximation using the `aghq` package. The accuracy of inferences was compared to gold-standard results from NUTS obtained using the `tmbstan` package. `TMB` is a fast and flexible tool for spatial modelling [@osgood2023statistical]. Chapter \@ref(naomi-aghq) extends `TMB` to implement the INLA algorithm of `R-INLA`.
-* An earlier version of this study used `R-INLA`. Not all of the models were compatible with `R-INLA`, so `rstan` was used in some cases. However, this study design was flawed, as models cannot be directly compared when fit with differing inference methods. This problem was solved by using `TMB`. 
 * Aggregation via the integrated kernel occurs at the level of the latent field.
 However, most of the time we expect aggregation to occur at the level of the data.
 If the link function $g$ is the identity or linear then the two are equivalent.
@@ -664,6 +661,24 @@ On the other hand, for non-linear link functions $g$ such as the commonly used e
 * @li2012spatial and @li2012lgcp.
 * Discussion of non-stationarity [@paciorek2006spatial].
 * The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless].
+
+### Model selection
+
+* Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model fit. Use of the DIC is recommended against. The metrics used in this study were more theoretically suitable and enabled more precise findings.
+* Application of scoring rules to transformed versions of parameters [@bosse2023scoring].
+* The log-score was considered but requires a kernel density estimate.
+* How interpretable are the CRPS and MSE.
+
+### Inference
+
+All of the inferential models (Table \@ref(tab:inferential-models)) in this chapter were implemented in `TMB`.
+Inference was then conducted using AGHQ over the marginal Laplace approximation using the `aghq` package.
+The accuracy of inferences was compared to gold-standard results from NUTS obtained using the `tmbstan` package.
+An earlier version of this study used `R-INLA`.
+Not all of the inferential models were compatible with `R-INLA`, so `rstan` was used in some cases.
+However, due to the difference in inference algorithm, this study design did not allow for direct model comparison.
+Consistent use of `TMB`, a fast and flexible tool for spatial modelling [@osgood2023statistical], overcame this limitation.
+Chapter \@ref(naomi-aghq) extends `TMB` to implement the INLA algorithm of `R-INLA`.
 
 <!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
 <!-- Explain under what circumstances we believe this approximation to be acceptable. -->
