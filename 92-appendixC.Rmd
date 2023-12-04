@@ -1,7 +1,7 @@
 # Fast approximate Bayesian inference
 
 ```{r}
-resource_version <- "20230811-095752-5b8181d8"
+resource_version <- "20231204-150726-37fe2898"
 ```
 
 ## Epilepsy example
@@ -278,6 +278,28 @@ For further reference on the `TMB` software see @tmbdocumentation.
 
 Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the Naomi `TMB` template and the mathematical notation used in Appendix \@ref(naomi-math). The parameter type, either a hyperparameter or elements of the latent field, are given. All of the parameters are defined on the real-scale in some dimension. In the final three columns ($\rho, \alpha, \lambda$) indication is given as to which component of the model the parameter is primarily used in.
 
+## NUTS convergence and suitability
+
+```{r rhat, fig.cap="The potential scale reduction factor compares between- and within- estimates of univariate parameters. It is generally recommended only to use NUTS results if the potential scale reduction factor is less than 1.05. Here it is for all parameters."}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rhat.png"))
+```
+
+```{r ess, fig.cap="Figure caption."}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ess.png"))
+```
+
+```{r worst-trace, fig.cap="Figure caption."}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/worst-trace.png"))
+```
+
+```{r rho-a, fig.cap="Figure caption."}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rho_a.png"))
+```
+
+```{r alpha-x, fig.cap="Figure caption."}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/alpha_x.png"))
+```
+
 ## Model assessment
 
 ## AGHQ and PCA-AGHQ details
@@ -285,9 +307,3 @@ Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the N
 ## Normalising constant estimation
 
 ## Inference comparison
-
-## NUTS convergence and suitability
-
-```{r rhat, fig.cap="The potential scale reduction factor compares between- and within- estimates of univariate parameters. It is recommended only to use NUTS results if the value is less than 1.05, which it is for all parameters."}
-knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rhat.png"))
-```
