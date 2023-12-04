@@ -14,6 +14,27 @@ bibliography: references.bib
 
 ```{r}
 resource_version <- "20231204-150726-37fe2898"
+
+custom_numbers_to_words <- function(number) {
+  powers <- c(3, 6, 9, 12)
+  
+  if (number == 0) {
+    return("0")
+  }
+  
+  sign <- ifelse(number < 0, -1, 1)
+  number <- abs(number)
+  
+  for (power in powers) {
+    scaled_number <- number / 10^power
+    if (scaled_number >= 1 && scaled_number < 1000) {
+      suffix <- gsub("^one\\s", "", xfun::numbers_to_words(10^power))
+      return(paste0(sign * scaled_number, " ", suffix))
+    }
+  }
+  
+  return("Number out of range.")
+}
 ```
 
 # Fast approximate Bayesian inference {#naomi-aghq}
@@ -1296,10 +1317,10 @@ Four Bayesian inference approaches were considered:
 This approach was previously used in production for Naomi.
 As short-hand, this approach is referred to as GEB.
 2. Laplace marginals and EB with `TMB`.
-This is a novel approach, enabled by the implementation work of Section \@(universal).
+This is a novel approach, enabled by the implementation work of Section \@ref(universal).
 As short-hand, this approach is referred to as LEB.
 3. Gaussian marginals and PCA-AGHQ with `TMB`
-This is a novel approach, enabled by the methodological work of Section \@(pca-aghq).
+This is a novel approach, enabled by the methodological work of Section \@ref(pca-aghq).
 As short-hand, this approach is referred to as GPCA-AGHQ.
 4. NUTS with `tmbstan`.
 This represents a gold-standard.
@@ -1310,14 +1331,18 @@ For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulat
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
 Model outputs from GEB are illustrated in Figure \@ref(fig:naomi-output).
 
-### NUTS convergence
+### NUTS convergence and suitability
+
+```{r}
+naomi_nuts <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mcmc-out.rds"))
+```
 
 The Naomi model was difficult to efficiently sample from using NUTS.
-The effective sample size ratios were low.
-Four chains run in parallel for 100000 iterations were required to obtain acceptable NUTS diagnostics.
-For ease-of-storage, these samples were thinned by a factor of 20.
-There were no divergent transitions, and the largest potential scale reduction factor was $\hat R = 1.02$.
-These diagnostics were sufficient to treat results from NUTS as a gold-standard, though inaccuracies remain possible.
+Four chains run in parallel for `r custom_numbers_to_words(100000)` iterations each were required to obtain acceptable NUTS diagnostics.
+For ease-of-storage, the samples were thinned by a factor of 20, resulting in 5000 iterations kept per chain, with the first 2500 removed as burn-in.
+The effective sample size ratios were typically low (Figure \@ref(fig:ess)), and the lowest effective sample size was `r round(naomi_nuts$ess_min, 3)` (2.5% quantile `r round(naomi_nuts$ess_lower, 0)`, 50% quantile `r round(naomi_nuts$ess_median, 0)`, and 97.5% quantile `r round(naomi_nuts$ess_upper, 0)`; Panel \@ref(fig:worst-trace)A).
+The largest potential scale reduction factor was `r round(naomi_nuts$rhat_max, 3)` (2.5% quantile `r round(naomi_nuts$rhat_lower, 3)`, 50% quantile `r round(naomi_nuts$rhat_median, 3)`, and 97.5% quantile `r round(naomi_nuts$rhat_upper, 3)`; Panel \@ref(fig:worst-trace)B).
+Though inaccuracies remain possible, these diagnostics are sufficient to treat inferences obtained from NUTS as a gold-standard.
 
 ### Use of PCA-AGHQ
 
