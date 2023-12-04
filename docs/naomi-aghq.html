@@ -403,26 +403,30 @@ div.csl-indent {
 <div id="naomi-aghq" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">6</span> Fast approximate Bayesian inference<a href="naomi-aghq.html#naomi-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
-<p>This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">J. W. Eaton et al. 2021</a>)</span>, tackling both implementation and methological challenges.
+<p>This chapter describes the development of a novel deterministic Bayesian inference approach, motivated by the Naomi small-area estimation model <span class="citation">(<a href="#ref-eaton2021naomi">J. W. Eaton et al. 2021</a>)</span>.
+Development of the approach required meeting both methodological challenges and implementation difficulties.
 Over 35 countries <span class="citation">(<a href="#ref-unaids2023global">UNAIDS 2023b</a>)</span> have used the Naomi model web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a> to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.</p>
 <p>The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields <span class="citation">(<a href="#ref-rue2017bayesian">Håvard Rue et al. 2017</a>)</span>.
 The success of INLA is in large part due to its accessible implementation in the <code>R-INLA</code> software.
-Use of the INLA method and the <code>R-INLA</code> software are close to ubiquitous in applied settings.
-However, the Naomi model is not compatible with <code>R-INLA</code>, foremost because it is too complex to be expressed using a formula interface.
-As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; <span class="citation">Casella (<a href="#ref-casella1985introduction">1985</a>)</span>] approximation to full Bayesian inference, using a Laplace approximation implemented by the more flexible Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] R package.
-In the EB approximation hyperparameters are fixed by optimisation of the marginal posterior.
-This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.</p>
+Use of the INLA method and the <code>R-INLA</code> software are nearly ubiquitous in applied settings.
+However, the Naomi model is not compatible with <code>R-INLA</code>.
+The foremost reason is that Naomi is too complex to be expressed using a formula interface (of the form <code>y ~ ...</code>).
+Additionally, Naomi has more hyperparameters (moderate-dimensional, &gt;20) than can typically be handled using INLA (low-dimensional, certainly below 10).
+As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; <span class="citation">Casella (<a href="#ref-casella1985introduction">1985</a>)</span>] approximation to full Bayesian inference, with Laplace approximation implemented by the more flexible Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] R package.
+Under the EB approximation, the hyperparameters are fixed by optimising an approximation to the marginal posterior.
+This is undesirable as fixing the hyperparameters underestimates their uncertainty.
+Ultimately, the resulting overconfidence may lead to worse HIV prevention policy decisions.</p>
 <p>Most methodological work relating to INLA has taken place using the <code>R-INLA</code> software package.
 There are two notable exceptions.
-First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposed an fast Laplace approximation approach which does not rely on Markov structure of the latent field.
+First, the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>, implemented in the <code>mgcv</code> R package, proposed a fast Laplace approximation approach which does not rely on Markov structure of the latent field in the same way as <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.
 Second, <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy structured additive predictors.
 This enables the application of INLA to a wider class of extended latent Gaussian models, which includes Naomi.
 <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> refer to this as the “modern” formulation of the INLA method, as opposed to the “classic” formulation of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>, and it is now included in <code>R-INLA</code> using <code>inla.mode = "experimental"</code>.
-<span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> also propose use of the adaptive Gauss-Hermite quadrature [AGHQ; <span class="citation">Naylor and Smith (<a href="#ref-naylor1982applications">1982</a>)</span>] rule to perform integration with respect to the hyperparameters.</p>
-<p>The methodological contributions of this chapter extend <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> in two directions:</p>
+<span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> also propose use of the adaptive Gauss-Hermite quadrature [AGHQ; <span class="citation">Naylor and Smith (<a href="#ref-naylor1982applications">1982</a>)</span>] rule to perform integration with respect to the hyperparameters.
+The methodological contributions of this chapter extend <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> in two directions:</p>
 <ol style="list-style-type: decimal">
 <li>First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via <code>TMB</code> is used to obtain the derivatives required for the Laplace approximation.
 Section <a href="naomi-aghq.html#universal">6.2</a> demonstrates the implementation using two examples, one compatible with <code>R-INLA</code> and one incompatible.</li>
@@ -502,7 +506,7 @@ The Laplace approximation may be thought of as approximating the posterior distr
 <p>Calculation of the Laplace approximation requires obtaining the second derivative of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> (Equation <a href="naomi-aghq.html#eq:hessian">(6.3)</a>).
 Derivatives may also be used to improve the performance of the optimisation algorithm used to obtain the maxima of <span class="math inline">\(h\)</span> (Equation <a href="naomi-aghq.html#eq:posterior-mode">(6.2)</a>) by providing access to the gradient of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:laplace"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:laplace"></span>
 <img src="figures/naomi-aghq/laplace.png" alt="Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure 3.1. The unnormalised posterior is \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\), and can be recognised as the unnormalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)." width="95%" />
 <p class="caption">
 Figure 6.1: Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure <a href="bayes-st.html#fig:conjugate">3.1</a>. The unnormalised posterior is <span class="math inline">\(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\)</span>, and can be recognised as the unnormalised gamma distribution <span class="math inline">\(\text{Gamma}(9, 4)\)</span>. The true log normalising constant is <span class="math inline">\(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\)</span>, whereas the Laplace approximate log normalising constant is <span class="math inline">\(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\)</span>, resulting from the Gaussian approximation <span class="math inline">\(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)</span>.
@@ -580,7 +584,7 @@ The more quadrature nodes are used, the more accurate the estimate of the integr
 Under some regularity conditions on <span class="math inline">\(f\)</span>, as the spacing between quadrature nodes <span class="math inline">\(\epsilon \to 0\)</span> the estimate obtained using the trapezoid rule converges to the true value of the integral.
 Indeed, this approach was used by Riemann to provide the first rigorous definition of the integral.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:trapezoid"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:trapezoid"></span>
 <img src="figures/naomi-aghq/trapezoid.png" alt="The trapezoid rule with \(k = 5, 10, 20\) equally-spaced (\(\epsilon_i = \epsilon &gt; 0\)) quadrature nodes can be used to integrate the function \(f(z) = z \sin(z)\), shown in green, in the domain \([0, \pi]\). Here, the exact solution is \(\pi \approx 3.1416\). As \(k\) increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution. The trapezoid rule estimate is given by the sum of the areas of the grey trapezoids." width="95%" />
 <p class="caption">
 Figure 6.2: The trapezoid rule with <span class="math inline">\(k = 5, 10, 20\)</span> equally-spaced (<span class="math inline">\(\epsilon_i = \epsilon &gt; 0\)</span>) quadrature nodes can be used to integrate the function <span class="math inline">\(f(z) = z \sin(z)\)</span>, shown in green, in the domain <span class="math inline">\([0, \pi]\)</span>. Here, the exact solution is <span class="math inline">\(\pi \approx 3.1416\)</span>. As <span class="math inline">\(k\)</span> increases and more nodes are used in the computation, the quadrature estimate becomes closer to the exact solution. The trapezoid rule estimate is given by the sum of the areas of the grey trapezoids.
@@ -666,7 +670,7 @@ which corresponds to the Laplace approximation <span class="math inline">\(\tild
 This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than <span class="math inline">\(k = 1\)</span> is required.</p>
 <!-- For each quadrature rule, the estimate of the integral is given by... -->
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:aghq-demo"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:aghq-demo"></span>
 <img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\). The integral approximation \(I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2\) obtained by the quadrature rule in each panel are given." width="95%" />
 <p class="caption">
 Figure 6.3: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>. The integral approximation <span class="math inline">\(I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2\)</span> obtained by the quadrature rule in each panel are given.
@@ -795,21 +799,21 @@ Details are left to Section 3.2.3 of <span class="citation">Håvard Rue, Martino
 This work was motivated by the spline setting, which similar to the extended latent Gaussian models [ELGMs; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>] setting, results in precision matrices which are not as sparse.
 Details are left to <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.</p>
 </div>
-<div id="inclusion-of-the-structured-additive-predictor-in-the-latent-field" class="section level4 hasAnchor" number="6.1.3.5">
-<h4><span class="header-section-number">6.1.3.5</span> Inclusion of the structured additive predictor in the latent field<a href="naomi-aghq.html#inclusion-of-the-structured-additive-predictor-in-the-latent-field" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The discussion of INLA is concluded by briefly outlining the cause for and against inclusion of the structured additive predictor from the latent field.
-The issue relates to the sparsity structure of the Hessian matrix
+<div id="appending-the-noisy-structured-additive-predictor-to-the-latent-field" class="section level4 hasAnchor" number="6.1.3.5">
+<h4><span class="header-section-number">6.1.3.5</span> Appending the noisy structured additive predictor to the latent field<a href="naomi-aghq.html#appending-the-noisy-structured-additive-predictor-to-the-latent-field" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Discussion of INLA is concluded by outlining the cases for and against appending the noisy structured additive predictor to the latent field.
+The crux of the issue relates to the sparsity structure of the Hessian matrix
 <span class="math display">\[\begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}\]</span>
-where, as before, <span class="math inline">\(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.
-The modified model used by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> is
+As before, <span class="math inline">\(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.</p>
+<p>The modified model used by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> extends <span class="math inline">\(\mathbf{x}\)</span> to include a noisy structured additive predictor as follows
 <span class="math display">\[\begin{align}
 \boldsymbol{\mathbf{\eta}}^\star &amp;= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
 \boldsymbol{\mathbf{\epsilon}} &amp;\sim \mathcal{N}(\mathbf{0}, \tau^{-1} \mathbf{I}_n), \\
-\mathbf{x}^\star &amp;= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\cdots).
-\end{align}\]</span>
-<span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> note that this doesn’t work as well for ELGMs.
+\mathbf{x}^\star &amp;= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\mathbf{0}, \cdots).
+\end{align}\]</span></p>
+<p><span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> note that approach has several drawbacks in the case of ELGMs where the matrix <span class="math inline">\(\cdots\)</span> is no longer diagonal, and may be dense.
 Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span>.</p>
 </div>
 </div>
@@ -837,7 +841,7 @@ As well as a simplified syntax, <code>inlabru</code> provides capabilities for f
 These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.</p>
 <!-- Note: does the CCD need to have weights added? -->
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:inla-grid-demo"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
 <img src="figures/naomi-aghq/inla-grid-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the grid method as used in R-INLA and detailed in Section 3.1 of Håvard Rue, Martino, and Chopin (2009). Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size \(\delta_z\) along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold \(\delta_\pi\). Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set \(\delta_z = 0.75\) and \(\delta_\pi = 2\). Panel B shows a CCD as used in R-INLA and detailed in Section 6.5 of Håvard Rue, Martino, and Chopin (2009). The CCD was generated using the rsm R package (Lenth 2009), and is comprised of: one centre point; four factorial points, used to help estimate linear effects; and four star points, used to help estimate the curvature." width="95%" />
 <p class="caption">
 Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the grid method as used in <code>R-INLA</code> and detailed in Section 3.1 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>. Briefly, equally-weighted quadrature points are generated by starting at the mode and taking steps of size <span class="math inline">\(\delta_z\)</span> along each eigenvector of the inverse curvature at the mode, scaled by the eigenvalues, until the difference in log-scale function evaluations (compared to the mode) is below a threshold <span class="math inline">\(\delta_\pi\)</span>. Intermediate values are included if they have sufficient log-scale function evaluation. Here, I set <span class="math inline">\(\delta_z = 0.75\)</span> and <span class="math inline">\(\delta_\pi = 2\)</span>. Panel B shows a CCD as used in <code>R-INLA</code> and detailed in Section 6.5 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>. The CCD was generated using the <code>rsm</code> R package <span class="citation">(<a href="#ref-lenth2009rsm">Lenth 2009</a>)</span>, and is comprised of: one centre point; four factorial points, used to help estimate linear effects; and four star points, used to help estimate the curvature.
@@ -917,7 +921,7 @@ with structured additive predictor
 The prior distribution on each of the regression parameters, including the intercept <span class="math inline">\(\beta_0\)</span>, was <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span>.
 The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and patient-visit <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> random effects were IID with gamma precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:epil"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil"></span>
 <img src="figures/naomi-aghq/epil.png" alt="The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect." width="95%" />
 <p class="caption">
 Figure 6.5: The number of seizures in the treatment group was fewer, on average, than the number of seizures in the control group. This is not sufficient to conclude that the treatment was effective. The GLMM accounts for differences between the treatment and control group, including in baseline seizures and age, and so can be used to help estimate a causal treatment effect.
@@ -1092,7 +1096,7 @@ However, by setting <code>getJointPrecision = TRUE</code> the the full Hessian m
 <span id="cb13-4"><a href="naomi-aghq.html#cb13-4" tabindex="-1"></a>  <span class="at">getJointPrecision =</span> <span class="cn">TRUE</span></span>
 <span id="cb13-5"><a href="naomi-aghq.html#cb13-5" tabindex="-1"></a>)</span></code></pre></div>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:hessian-matrix"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:hessian-matrix"></span>
 <img src="figures/naomi-aghq/hessian-matrix.png" alt="A submatrix of the full parameter Hessian obtained from TMB::sdreport with getJointPrecision = TRUE on the log scale. Entries for the latent field parameters \(\boldsymbol{\mathbf{\epsilon}}\) and \(\boldsymbol{\mathbf{\nu}}\) are omitted due to their respective lengths of 56 and 236. Light grey entries correspond to zeros on the real scale, which cannot be log transformed." width="95%" />
 <p class="caption">
 Figure 6.6: A submatrix of the full parameter Hessian obtained from <code>TMB::sdreport</code> with <code>getJointPrecision = TRUE</code> on the log scale. Entries for the latent field parameters <span class="math inline">\(\boldsymbol{\mathbf{\epsilon}}\)</span> and <span class="math inline">\(\boldsymbol{\mathbf{\nu}}\)</span> are omitted due to their respective lengths of 56 and 236. Light grey entries correspond to zeros on the real scale, which cannot be log transformed.
@@ -1175,7 +1179,8 @@ Integration over the hyperparameters requires each of the <span class="math inli
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="naomi-aghq.html#cb19-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> tmbstan<span class="sc">::</span><span class="fu">tmbstan</span>(<span class="at">obj =</span> obj, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">laplace =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>As specified above, the objective function with no marginal Laplace approximation is used.
 To instead use the marginal Laplace approximation, set <code>laplace = TRUE</code>.
-Convergence diagnostics for NUTS with <code>tmbstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#tmbstan-epil">C.1.4.1</a>.</p>
+Four chains of 2000 iterations, with the first 1000 iterations from each chain discarded as warm-up, were run.
+Convergence diagnostics are in Appendix <a href="fast-approximate-bayesian-inference.html#tmbstan-epil">C.1.4.1</a>.</p>
 </div>
 <div id="epil-nuts-rstan" class="section level4 hasAnchor" number="6.2.1.7">
 <h4><span class="header-section-number">6.2.1.7</span> NUTS with <code>rstan</code><a href="naomi-aghq.html#epil-nuts-rstan" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1185,7 +1190,8 @@ This may be of interest to users familiar with <code>Stan</code> syntax, to help
 The <code>Stan</code> template was validated as be equivalent to the <code>TMB</code> template up to a constant of proportionality.
 Inferences from <code>Stan</code> may be obtained by</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="naomi-aghq.html#cb20-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> rstan<span class="sc">::</span><span class="fu">stan</span>(<span class="at">file =</span> <span class="st">&quot;epil.stan&quot;</span>, <span class="at">data =</span> dat, <span class="at">chains =</span> <span class="dv">4</span>)</span></code></pre></div>
-<p>Convergence diagnostics for NUTS with <code>rstan</code> are in Appendix <a href="fast-approximate-bayesian-inference.html#rstan-epil">C.1.4.2</a>.</p>
+<p>Like for <code>tmbstan</code>, four chains of 2000 iterations, with 1000 iterations of burn-in, were run.
+Convergence diagnostics are in Appendix <a href="fast-approximate-bayesian-inference.html#rstan-epil">C.1.4.2</a>.</p>
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
 <h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1194,32 +1200,33 @@ Posterior distributions obtained were also similar.
 Figure <a href="naomi-aghq.html#fig:intercept-comparison">6.8</a> shows ECDF difference plots for Gaussian or Laplace marginals from <code>TMB</code> and <code>R-INLA</code> (as compared with results from NUTS implemented in <code>tmbstan</code>) for <span class="math inline">\(\beta_0\)</span>.
 These results provide evidence that the implementation of INLA in <code>TMB</code> is correct.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:beta-mean-sd"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:beta-mean-sd"></span>
 <img src="figures/naomi-aghq/beta-mean-sd.png" alt="Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with tmbstan. Results from R-INLA and TMB are similar, especially for the posterior mean, but do differ in places. Differences could be attributable to bias corrections used in R-INLA." width="95%" />
 <p class="caption">
 Figure 6.7: Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with <code>tmbstan</code>. Results from <code>R-INLA</code> and <code>TMB</code> are similar, especially for the posterior mean, but do differ in places. Differences could be attributable to bias corrections used in <code>R-INLA</code>.
 </p>
 </div>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:intercept-comparison"></span>
-<img src="figures/naomi-aghq/intercept-comparison.png" alt="The ECDF and ECDF difference for the \(\beta_0\) latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Results obtained using R-INLA and TMB implementations are similar." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:intercept-comparison"></span>
+<img src="figures/naomi-aghq/intercept-comparison.png" alt="The ECDF and ECDF difference for the \(\beta_0\) latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected almost entirely by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Crucially, results obtained using R-INLA and TMB implementations are similar." width="95%" />
 <p class="caption">
-Figure 6.8: The ECDF and ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Results obtained using <code>R-INLA</code> and <code>TMB</code> implementations are similar.
+Figure 6.8: The ECDF and ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected almost entirely by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Crucially, results obtained using <code>R-INLA</code> and <code>TMB</code> implementations are similar.
 </p>
 </div>
 <p>Figures <a href="naomi-aghq.html#fig:epil-time">6.9</a> shows the number of seconds taken to fit the epilespy GLMM model for each approach.
 Gaussian marginals with either EB or AGHQ via <code>TMB</code> were the fastest approach.
 All of the approaches using <code>R-INLA</code> took a similar amount of time.
 The approaches using <code>TMB</code> to implement Laplace marginals were slower than their equivalent in <code>R-INLA</code>.
-This is not suprising, as the <code>TMB</code> implementation is relatively naive, based on a simple for loop.</p>
-<p>For this problem, the <code>tmbstan</code> implementation of NUTS took around half the time of the <code>rstan</code> implementation.
+The <code>TMB</code> implementation is relatively naive, based on a simple for loop, and does not use the more advanced approximations of <code>R-INLA</code>.
+Laplace marginals in <code>TMB</code> with AGHQ (<span class="math inline">\(k^2 = 3^2 = 9\)</span> quadrature nodes) took 3.9 times as long as Laplace marginals in <code>TMB</code> with EB (<span class="math inline">\(k^2 = 1^2 = 1\)</span> quadrature node).</p>
+<p>For this problem, the <code>tmbstan</code> implementation of NUTS took 50.2% of time of the <code>rstan</code> implementation.
 Diagnostics (Figures <a href="fast-approximate-bayesian-inference.html#fig:tmbstan-epil">C.1</a> and <a href="fast-approximate-bayesian-inference.html#fig:stan-epil">C.2</a>) show that both implementations converged.
-It is unclear what the difference in runtime might be attributable to.</p>
+<span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> (Supporting information) found runtime with <code>rstan</code> and <code>tmbstan</code> to be comparable, so the relatively large difference in this case is surprising.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:epil-time"></span>
-<img src="figures/naomi-aghq/epil-time.png" alt="The amount of time taken (in seconds) to perform inference with each method and software implementation." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
+<img src="figures/naomi-aghq/epil-time.png" alt="The number of seconds taken to perform inference with each method and software implementation." width="95%" />
 <p class="caption">
-Figure 6.9: The amount of time taken (in seconds) to perform inference with each method and software implementation.
+Figure 6.9: The number of seconds taken to perform inference with each method and software implementation.
 </p>
 </div>
 </div>
@@ -1227,7 +1234,7 @@ Figure 6.9: The amount of time taken (in seconds) to perform inference with each
 <div id="loaloa" class="section level3 hasAnchor" number="6.2.2">
 <h3><span class="header-section-number">6.2.2</span> Loa loa ELGM<a href="naomi-aghq.html#loaloa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:loa-loa-data"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-data"></span>
 <img src="figures/naomi-aghq/loa-loa-data.png" alt="Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros." width="95%" />
 <p class="caption">
 Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
@@ -1287,21 +1294,21 @@ This section considers inference using three approaches (Table <a href="naomi-ag
 <p>The <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12].
 Latent field and hyperparameter samples were used in each conditional simulation (Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a>).</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:conditional-simulation-adam-fixed"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-adam-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-adam-fixed.png" alt="Posterior mean of the suitability \(\mathbb{E}[\phi_\texttt{LA}(s)]\) (Panel A) and prevalence \(\mathbb{E}[\rho_\texttt{LA}(s)]\) (Panel B) random fields computed using Laplace marginals." width="95%" />
 <p class="caption">
 Figure 6.11: Posterior mean of the suitability <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)]\)</span> (Panel A) and prevalence <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)]\)</span> (Panel B) random fields computed using Laplace marginals.
 </p>
 </div>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:conditional-simulation-diff-fixed"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-diff-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-diff-fixed.png" alt="Difference in suitability posterior means \(\mathbb{E}[\phi_\texttt{LA}(s)] - \mathbb{E}[\phi_\texttt{G}(s)]\) (Panel A) and prevalence posterior means \(\mathbb{E}[\rho_\texttt{LA}(s)] - \mathbb{E}[\rho_\texttt{G}(s)]\)(Panel B) between Laplace and Gaussian marginals. As \(\beta_\phi\) and \(\beta_\rho\) were fixed this difference is as a result in differences in estimation of \(u(s)\) and \(v(s)\)." width="95%" />
 <p class="caption">
 Figure 6.12: Difference in suitability posterior means <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)] - \mathbb{E}[\phi_\texttt{G}(s)]\)</span> (Panel A) and prevalence posterior means <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)] - \mathbb{E}[\rho_\texttt{G}(s)]\)</span>(Panel B) between Laplace and Gaussian marginals. As <span class="math inline">\(\beta_\phi\)</span> and <span class="math inline">\(\beta_\rho\)</span> were fixed this difference is as a result in differences in estimation of <span class="math inline">\(u(s)\)</span> and <span class="math inline">\(v(s)\)</span>.
 </p>
 </div>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:loa-loa-mean-sd"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-mean-sd"></span>
 <img src="figures/naomi-aghq/loa-loa-mean-sd.png" alt="Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each \(u(s_i), v(s_i): i \in [190]\)." width="95%" />
 <p class="caption">
 Figure 6.13: Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>.
@@ -1312,12 +1319,12 @@ Figure 6.13: Absolute and relative differences between the Gaussian and Laplace 
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> The Naomi model<a href="naomi-aghq.html#naomi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">J. W. Eaton et al. 2021</a>)</span>.
-This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing of the simplified version of Naomi considered in this chapter.
+This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.
-However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
-As such, findings about inference for the simplified model are very likely transferable to the complete model.
-Some features of the simplified model are left to more exhaustive description in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.3</a>.
+These time points play a limited role in inference as they correspond to a small proportion of the total data.
+As such, findings about inference for the simplified model are likely transferable to the complete model.
+Description of some features of the simplified model is left to the more exhaustive Appendix <a href="fast-approximate-bayesian-inference.html#naomi-math">C.3</a>.
 After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span> rather than an LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>.</p>
 <div id="naomi-model" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1370,8 +1377,8 @@ The proportion recently infected among HIV positive persons is linked to HIV inc
 \kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.22}
 \end{equation}\]</span>
 where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are set based on informative priors for the particular HIV test used.</p>
-<p>These three (Equations <a href="naomi-aghq.html#eq:rho">(6.19)</a>, <a href="naomi-aghq.html#eq:alpha">(6.20)</a>, <a href="naomi-aghq.html#eq:lambda">(6.21)</a>) processes are each primarily informed by household survey data.
-Let <span class="math inline">\(j\)</span> denote a surveyed individual, in strata <span class="math inline">\(i(j)\)</span>.
+<p>The three processes in Equations <a href="naomi-aghq.html#eq:rho">(6.19)</a>, <a href="naomi-aghq.html#eq:alpha">(6.20)</a>, and <a href="naomi-aghq.html#eq:lambda">(6.21)</a> are each primarily informed by household survey data.
+Let <span class="math inline">\(j\)</span> denote a surveyed individual, in district-age-sex strata <span class="math inline">\(i(j)\)</span>.
 Weighted aggregate survey observations are calculated based on individual responses <span class="math inline">\(\theta_j \in \{0, 1\}\)</span> as
 <span class="math display" id="eq:survey-obs">\[\begin{equation}
 \hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, \tag{6.23}
@@ -1532,13 +1539,14 @@ The practical impossibility of meeting all feature requests motivates a more uni
 </div>
 <div id="pca-aghq" class="section level2 hasAnchor" number="6.4">
 <h2><span class="header-section-number">6.4</span> AGHQ in moderate dimensions<a href="naomi-aghq.html#pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Inference for the Naomi model has previously been conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using <code>TMB</code>.
-This approach is illustrated for the epilepsy example in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> and analogous for Naomi.
-It would be instead desirable to integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section <a href="naomi-aghq.html#inla">6.1.3</a>.</p>
-<p>Section <a href="naomi-aghq.html#universal">6.2</a> attends to this challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in <code>TMB</code>.
-However, the quadrature methods previously used are not directly applicable to Naomi.
-The reason is that Naomi has <span class="math inline">\(m = 24\)</span> hyperparameters.
-Although <span class="math inline">\(m = 24\)</span> cannot be described as high-dimensional, it is certainly more than the <span class="math inline">\(m &lt; 4\)</span> or so (low-dimensional) hyperparameters which are typical for use of INLA, and hence referred to here as moderate-dimensional.
+<p>Inference for the Naomi model was previously conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using <code>TMB</code>.
+This approach was illustrated for the epilepsy example in Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a> and is analogous for Naomi.
+It would be desirable to instead integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section <a href="naomi-aghq.html#inla">6.1.3</a>.</p>
+<p>Section <a href="naomi-aghq.html#universal">6.2</a> attends to part of the challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in <code>TMB</code>.
+However, naive quadrature methods are not directly applicable to Naomi.
+This is because Naomi has <span class="math inline">\(m = 24\)</span> hyperparameters.
+Although <span class="math inline">\(m = 24\)</span> cannot be described as high-dimensional, it is certainly more than the <span class="math inline">\(m &lt; 4\)</span> or so hyperparameters typical for use of INLA.
+Hence here the term moderate-dimensional is used.
 Naive use of AGHQ with the product rule requires evaluation of <span class="math inline">\(|\mathcal{Q}(m, k)| = k^m\)</span> quadrature points.
 This would be intractable for <span class="math inline">\(m = 24\)</span> and any <span class="math inline">\(k &gt; 1\)</span>.
 As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.</p>
@@ -1547,7 +1555,7 @@ Though the rule is to be applied within a nested Laplace approximation approach,
 <div id="aghq-with-variable-levels" class="section level3 hasAnchor" number="6.4.1">
 <h3><span class="header-section-number">6.4.1</span> AGHQ with variable levels<a href="naomi-aghq.html#aghq-with-variable-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Rather than having the same number of quadrature nodes for each dimension of <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span>, it is possible to use a variable number of nodes per dimension.
-In line with the terminology used in the <code>mvQuad</code> package, I refer to the number of nodes per dimension as levels.
+In line with the terminology used in the <code>mvQuad</code> package, the number of nodes per dimension are referred to as levels.
 Let <span class="math inline">\(\mathbf{k} = (k_1, \ldots, k_m)\)</span> be a vector of levels, where each <span class="math inline">\(k_j \in \mathbb{Z}^+\)</span>.
 A GHQ grid with (potentially) variable levels is then given by
 <span class="math display">\[\begin{equation}
@@ -1578,10 +1586,10 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 \omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^d \omega_1(z_j).
 \end{equation}\]</span></p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pca-demo"></span>
-<img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral \(I\)." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
+<img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.14: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral <span class="math inline">\(I\)</span>.
+Figure 6.14: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1589,40 +1597,41 @@ Figure 6.14: Consider the function <span class="math inline">\(f(z_1, z_2) = \te
 <div id="malawi" class="section level2 hasAnchor" number="6.5">
 <h2><span class="header-section-number">6.5</span> Malawi case-study<a href="naomi-aghq.html#malawi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:naomi-output"></span>
-<img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via TMB." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
+<img src="resources/naomi-aghq/20230811-095752-5b8181d8/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.15: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.15: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
-<p>This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
+<p>This section presents a case study of approximate Bayesian inference methods applied to the Naomi model in Malawi.
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the <code>naomi</code> R package vignette available from <a href="https://github.com/mrc-ide/naomi"><code>https://github.com/mrc-ide/naomi</code></a>.
-Malawi was chosen in part because it has a small number of districts, <span class="math inline">\(n = 30\)</span>, limiting the computational demand of the model.</p>
+Malawi was chosen for the vignette and this case-study in part because it has a small number of districts, <span class="math inline">\(n = 30\)</span>, limiting the computational demand of the model.</p>
 <p>Four Bayesian inference approaches were considered:</p>
 <ol style="list-style-type: decimal">
 <li>Gaussian marginals and EB with <code>TMB</code>.
-This is the method that has previously been used for Naomi.
-As short-hand, this method is referred to as GEB.</li>
+This approach was previously used in production for Naomi.
+As short-hand, this approach is referred to as GEB.</li>
 <li>Laplace marginals and EB with <code>TMB</code>.
-This is a novel method.
-As short-hand, this method is referred to as LEB.</li>
+This is a novel approach, enabled by the implementation work of Section @(universal).
+As short-hand, this approach is referred to as LEB.</li>
 <li>Gaussian marginals and PCA-AGHQ with <code>TMB</code>
-This is a novel method.
-As short-hand, this method is referred to as PCA-AGHQ.</li>
+This is a novel approach, enabled by the methodological work of Section @(pca-aghq).
+As short-hand, this approach is referred to as GPCA-AGHQ.</li>
 <li>NUTS with <code>tmbstan</code>.
 This represents a gold-standard.</li>
 </ol>
-<p>The <code>TMB</code> C++ user-template used to specify the log-posterior was the same for each approach, and described in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-implementation">C.3.4</a>.
+<p>The <code>TMB</code> C++ user-template used to specify the log-posterior, described in Appendix <a href="fast-approximate-bayesian-inference.html#naomi-implementation">C.3.4</a>, was the same for each approach.
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
-For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
+For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.15</a>.</p>
+Model outputs from GEB are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.15</a>.</p>
 <div id="nuts-convergence" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence<a href="naomi-aghq.html#nuts-convergence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The effective sample size ratios generated sampling with NUTS were low.
+<p>The Naomi model was difficult to efficiently sample from using NUTS.
+The effective sample size ratios were low.
 Four chains run in parallel for 100000 iterations were required to obtain acceptable NUTS diagnostics.
-For ease-of-storage, these samples were thinned by a factor of 20 .
-There were no divergent transitions, and the largest potential scale reduction factor <span class="citation">(<a href="#ref-gelman1992inference">Gelman and Rubin 1992</a>; <a href="#ref-vehtari2021rank">Vehtari et al. 2021</a>)</span> was <span class="math inline">\(\hat R = 1.02\)</span>.
+For ease-of-storage, these samples were thinned by a factor of 20.
+There were no divergent transitions, and the largest potential scale reduction factor was <span class="math inline">\(\hat R = 1.02\)</span>.
 These diagnostics were sufficient to treat results from NUTS as a gold-standard, though inaccuracies remain possible.</p>
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
@@ -1658,9 +1667,10 @@ Second, the PCA-AGHQ rule (Sections <a href="naomi-aghq.html#pca-aghq">6.4</a>) 
 This section discusses these contributions in turn, before outlining suggestions for future related work.</p>
 <div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
 <h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>“To our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly.” <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span>.
+Towards adding INLA.</p>
 <p>After requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.26)</a> to be included in <code>R-INLA</code> a prototype version was shortly made available.
-However, it is more sustainable to enable users to implement their own distributions and models.
-Discussion of Bayesian inference software in <span class="citation">Štrumbelj et al. (<a href="#ref-vstrumbelj2023past">2023</a>)</span>.</p>
+However, it is more sustainable to enable users to implement their own distributions and models.</p>
 </div>
 <div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
 <h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to INLA for Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1756,7 +1766,7 @@ For wider dissemination of this method, it is important that the user is not bur
 One possibility would be to change the <code>random</code> argument in <code>TMB::MakeADFun</code> to allow for indexing.
 Another (less desirable) option would be to algorithimically generate the modified <code>TMB</code> C++ template based on the original template.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:package-downloads"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
 Figure 6.16: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
@@ -1851,9 +1861,6 @@ Fuglstad, Geir-Arne, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2019. <span
 </div>
 <div id="ref-gaedke2023parallelized" class="csl-entry">
 Gaedke-Merzhäuser, Lisa, Janet van Niekerk, Olaf Schenk, and Håvard Rue. 2023. <span>“<span class="nocase">Parallelized integrated nested Laplace approximations for fast Bayesian inference</span>.”</span> <em>Statistics and Computing</em> 33 (1): 25.
-</div>
-<div id="ref-gelman1992inference" class="csl-entry">
-Gelman, Andrew, and Donald B Rubin. 1992. <span>“<span class="nocase">Inference from iterative simulation using multiple sequences</span>.”</span> <em>Statistical Science</em>, 457–72.
 </div>
 <div id="ref-geman1984stochastic" class="csl-entry">
 Geman, Stuart, and Donald Geman. 1984. <span>“<span class="nocase">Stochastic relaxation, Gibbs distributions, and the Bayesian restoration of images</span>.”</span> <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, no. 6: 721–41.
@@ -1966,9 +1973,6 @@ Stein, Michael L. 1999. <span>“<span class="nocase">Interpolation of spatial d
 <div id="ref-stringer2022fast" class="csl-entry">
 Stringer, Alex, Patrick Brown, and Jamie Stafford. 2022. <span>“<span class="nocase">Fast, scalable approximations to posterior distributions in extended latent Gaussian models</span>.”</span> <em>Journal of Computational and Graphical Statistics</em>, 1–15.
 </div>
-<div id="ref-vstrumbelj2023past" class="csl-entry">
-Štrumbelj, Erik, Alexandre Bouchard-Côté, Jukka Corander, Andrew Gelman, Håvard Rue, Lawrence Murray, Henri Pesonen, Martyn Plummer, and Aki Vehtari. 2023. <span>“<span class="nocase">Past, Present, and Future of Software for Bayesian Inference</span>.”</span>
-</div>
 <div id="ref-thall1990some" class="csl-entry">
 Thall, Peter F, and Stephen C Vail. 1990. <span>“<span class="nocase">Some covariance models for longitudinal count data with overdispersion</span>.”</span> <em>Biometrics</em>, 657–71.
 </div>
@@ -1983,9 +1987,6 @@ Valpine, Perry de, Daniel Turek, Christopher J Paciorek, Clifford Anderson-Bergm
 </div>
 <div id="ref-van2023new" class="csl-entry">
 Van Niekerk, Janet, Elias Krainski, Denis Rustand, and Håvard Rue. 2023. <span>“<span class="nocase">A new avenue for Bayesian inference with INLA</span>.”</span> <em>Computational Statistics &amp; Data Analysis</em> 181: 107692.
-</div>
-<div id="ref-vehtari2021rank" class="csl-entry">
-Vehtari, Aki, Andrew Gelman, Daniel Simpson, Bob Carpenter, and Paul-Christian Bürkner. 2021. <span>“<span class="nocase">Rank-normalization, folding, and localization: an improved R for assessing convergence of MCMC (with discussion)</span>.”</span> <em>Bayesian Analysis</em> 16 (2): 667–718.
 </div>
 <div id="ref-bridgestan" class="csl-entry">
 Ward, Brian. 2023. <em><span class="nocase">bridgestan: BridgeStan, Accessing Stan Model Functions in R</span></em>.

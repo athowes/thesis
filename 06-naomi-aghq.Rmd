@@ -21,7 +21,8 @@ resource_version <- "20230811-095752-5b8181d8"
 \markboth{Fast approximate Bayesian inference}{}
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
-This chapter describes the development of a novel Bayesian inference method, motivated by the Naomi small-area estimation model [@eaton2021naomi], tackling both implementation and methological challenges.
+This chapter describes the development of a novel deterministic Bayesian inference approach, motivated by the Naomi small-area estimation model [@eaton2021naomi].
+Development of the approach required meeting both methodological challenges and implementation difficulties.
 Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org) to produce subnational estimates of HIV indicators.
 Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
@@ -29,20 +30,22 @@ The complexity and size of the model makes obtaining fast and accurate Bayesian 
 The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
 The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
-Use of the INLA method and the `R-INLA` software are close to ubiquitous in applied settings.
-However, the Naomi model is not compatible with `R-INLA`, foremost because it is too complex to be expressed using a formula interface.
-As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, using a Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
-In the EB approximation hyperparameters are fixed by optimisation of the marginal posterior.
-This is undesirable as it results in underestimation of uncertainty, which may ultimately lead to worse policy decisions which stem from overconfidence.
+Use of the INLA method and the `R-INLA` software are nearly ubiquitous in applied settings.
+However, the Naomi model is not compatible with `R-INLA`.
+The foremost reason is that Naomi is too complex to be expressed using a formula interface (of the form `y ~ ...`).
+Additionally, Naomi has more hyperparameters (moderate-dimensional, >20) than can typically be handled using INLA (low-dimensional, certainly below 10).
+As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, with Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
+Under the EB approximation, the hyperparameters are fixed by optimising an approximation to the marginal posterior.
+This is undesirable as fixing the hyperparameters underestimates their uncertainty.
+Ultimately, the resulting overconfidence may lead to worse HIV prevention policy decisions.
 
 Most methodological work relating to INLA has taken place using the `R-INLA` software package.
 There are two notable exceptions.
-First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed an fast Laplace approximation approach which does not rely on Markov structure of the latent field.
+First, the simplified INLA approach of @wood2020simplified, implemented in the `mgcv` R package, proposed a fast Laplace approximation approach which does not rely on Markov structure of the latent field in the same way as @rue2009approximate.
 Second, @stringer2022fast extended the scope and scalability of INLA by avoiding augmenting the latent field with the noisy structured additive predictors.
 This enables the application of INLA to a wider class of extended latent Gaussian models, which includes Naomi.
 @van2023new refer to this as the "modern" formulation of the INLA method, as opposed to the "classic" formulation of @rue2009approximate, and it is now included in `R-INLA` using `inla.mode = "experimental"`.
 @stringer2022fast also propose use of the adaptive Gauss-Hermite quadrature [AGHQ; @naylor1982applications] rule to perform integration with respect to the hyperparameters.
-
 The methodological contributions of this chapter extend @stringer2022fast in two directions:
 
 1. First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
@@ -436,21 +439,23 @@ Details are left to Section 3.2.3 of @rue2009approximate.
 This work was motivated by the spline setting, which similar to the extended latent Gaussian models [ELGMs; @stringer2022fast] setting, results in precision matrices which are not as sparse.
 Details are left to @wood2020simplified.
 
-#### Inclusion of the structured additive predictor in the latent field
+#### Appending the noisy structured additive predictor to the latent field
 
-The discussion of INLA is concluded by briefly outlining the cause for and against inclusion of the structured additive predictor from the latent field.
-The issue relates to the sparsity structure of the Hessian matrix
+Discussion of INLA is concluded by outlining the cases for and against appending the noisy structured additive predictor to the latent field.
+The crux of the issue relates to the sparsity structure of the Hessian matrix
 \begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{equation}
-where, as before, $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
-The modified model used by @rue2009approximate is
+As before, $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
+
+The modified model used by @rue2009approximate extends $\mathbf{x}$ to include a noisy structured additive predictor as follows
 \begin{align}
 \boldsymbol{\mathbf{\eta}}^\star &= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
 \boldsymbol{\mathbf{\epsilon}} &\sim \mathcal{N}(\mathbf{0}, \tau^{-1} \mathbf{I}_n), \\
-\mathbf{x}^\star &= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\cdots).
+\mathbf{x}^\star &= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\mathbf{0}, \cdots).
 \end{align}
-@stringer2022fast note that this doesn't work as well for ELGMs.
+
+@stringer2022fast note that approach has several drawbacks in the case of ELGMs where the matrix $\cdots$ is no longer diagonal, and may be dense.
 Discussed in @van2023new.
 
 ### Software {#software}
@@ -843,7 +848,8 @@ fit <- tmbstan::tmbstan(obj = obj, chains = 4, laplace = FALSE)
 
 As specified above, the objective function with no marginal Laplace approximation is used.
 To instead use the marginal Laplace approximation, set `laplace = TRUE`.
-Convergence diagnostics for NUTS with `tmbstan` are in Appendix \@ref(tmbstan-epil).
+Four chains of 2000 iterations, with the first 1000 iterations from each chain discarded as warm-up, were run.
+Convergence diagnostics are in Appendix \@ref(tmbstan-epil).
 
 #### NUTS with `rstan` {#epil-nuts-rstan}
 
@@ -857,7 +863,8 @@ Inferences from `Stan` may be obtained by
 fit <- rstan::stan(file = "epil.stan", data = dat, chains = 4)
 ```
 
-Convergence diagnostics for NUTS with `rstan` are in Appendix \@ref(rstan-epil).
+Like for `tmbstan`, four chains of 2000 iterations, with 1000 iterations of burn-in, were run.
+Convergence diagnostics are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
@@ -872,23 +879,35 @@ These results provide evidence that the implementation of INLA in `TMB` is corre
 knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 ```
 
-(ref:intercept-comparison) The ECDF and ECDF difference for the $\beta_0$ latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Results obtained using `R-INLA` and `TMB` implementations are similar.
+(ref:intercept-comparison) The ECDF and ECDF difference for the $\beta_0$ latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected almost entirely by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Crucially, results obtained using `R-INLA` and `TMB` implementations are similar.
 
 ```{r intercept-comparison, fig.cap="(ref:intercept-comparison)"}
 knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
+```
+
+```{r}
+epil_time <- read_csv("figures/naomi-aghq/epil-time.csv")
+epil_time_laplace_eb <- filter(epil_time, method == "Laplace, EB", software == "TMB")
+epil_time_laplace_aghq <- filter(epil_time, method == "Laplace, AGHQ", software == "TMB")
+epil_eb_aghq_multiplier <- round(epil_time_laplace_aghq$time / epil_time_laplace_eb$time, digits = 1)
+
+epil_time_tmbstan <- filter(epil_time, method == "NUTS", software == "tmbstan")
+epil_time_rstan <- filter(epil_time, method == "NUTS", software == "rstan")
+epil_nuts_multiplier <- 100 * round(epil_time_tmbstan$time / epil_time_rstan$time, digits = 3)
 ```
 
 Figures \@ref(fig:epil-time) shows the number of seconds taken to fit the epilespy GLMM model for each approach.
 Gaussian marginals with either EB or AGHQ via `TMB` were the fastest approach.
 All of the approaches using `R-INLA` took a similar amount of time.
 The approaches using `TMB` to implement Laplace marginals were slower than their equivalent in `R-INLA`.
-This is not suprising, as the `TMB` implementation is relatively naive, based on a simple for loop.
+The `TMB` implementation is relatively naive, based on a simple for loop, and does not use the more advanced approximations of `R-INLA`.
+Laplace marginals in `TMB` with AGHQ ($k^2 = 3^2 = 9$ quadrature nodes) took `r epil_eb_aghq_multiplier` times as long as Laplace marginals in `TMB` with EB ($k^2 = 1^2 = 1$ quadrature node).
 
-For this problem, the `tmbstan` implementation of NUTS took around half the time of the `rstan` implementation.
+For this problem, the `tmbstan` implementation of NUTS took `r epil_nuts_multiplier`% of time of the `rstan` implementation.
 Diagnostics (Figures \@ref(fig:tmbstan-epil) and \@ref(fig:stan-epil)) show that both implementations converged.
-It is unclear what the difference in runtime might be attributable to. 
+@monnahan2018no (Supporting information) found runtime with `rstan` and `tmbstan` to be comparable, so the relatively large difference in this case is surprising.
 
-(ref:epil-time) The amount of time taken (in seconds) to perform inference with each method and software implementation.
+(ref:epil-time) The number of seconds taken to perform inference with each method and software implementation.
 
 ```{r epil-time, fig.cap="(ref:epil-time)"}
 knitr::include_graphics("figures/naomi-aghq/epil-time.png")
@@ -965,12 +984,12 @@ knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd.png")
 ## The Naomi model {#naomi}
 
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
-This section begins (Section \@ref(naomi-model)) by describing of the simplified version of Naomi considered in this chapter.
+This section begins (Section \@ref(naomi-model)) by describing a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.
-However, these time points play a limited role in inference as they correspond to a small proportion of the total data.
-As such, findings about inference for the simplified model are very likely transferable to the complete model.
-Some features of the simplified model are left to more exhaustive description in Appendix \@ref(naomi-math).
+These time points play a limited role in inference as they correspond to a small proportion of the total data.
+As such, findings about inference for the simplified model are likely transferable to the complete model.
+Description of some features of the simplified model is left to the more exhaustive Appendix \@ref(naomi-math).
 After outlining the model, Section \@ref(naomi-elgm) explains why it is an ELGM [@stringer2022fast] rather than an LGM [@rue2009approximate].
 
 ### Model structure {#naomi-model}
@@ -1027,8 +1046,8 @@ The proportion recently infected among HIV positive persons is linked to HIV inc
 \end{equation}
 where the mean duration of recent infection $\Omega_T$ and the proportion of long-term HIV infections misclassified as recent $\beta_T$ are set based on informative priors for the particular HIV test used.
 
-These three (Equations \@ref(eq:rho), \@ref(eq:alpha), \@ref(eq:lambda)) processes are each primarily informed by household survey data.
-Let $j$ denote a surveyed individual, in strata $i(j)$.
+The three processes in Equations \@ref(eq:rho), \@ref(eq:alpha), and \@ref(eq:lambda) are each primarily informed by household survey data.
+Let $j$ denote a surveyed individual, in district-age-sex strata $i(j)$.
 Weighted aggregate survey observations are calculated based on individual responses $\theta_j \in \{0, 1\}$ as
 \begin{equation}
 \hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, (\#eq:survey-obs)
@@ -1201,14 +1220,15 @@ The practical impossibility of meeting all feature requests motivates a more uni
 
 ## AGHQ in moderate dimensions {#pca-aghq}
 
-Inference for the Naomi model has previously been conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using `TMB`.
-This approach is illustrated for the epilepsy example in Section \@ref(epil-gauss-eb-tmb) and analogous for Naomi.
-It would be instead desirable to integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section \@ref(inla).
+Inference for the Naomi model was previously conducted using a marginal Laplace approximation, and optimisation over the hyperparameters, implemented using `TMB`.
+This approach was illustrated for the epilepsy example in Section \@ref(epil-gauss-eb-tmb) and is analogous for Naomi.
+It would be desirable to instead integrate with respect to the hyperparameters, taking an INLA-like approach as described in Section \@ref(inla).
 
-Section \@ref(universal) attends to this challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in `TMB`.
-However, the quadrature methods previously used are not directly applicable to Naomi.
-The reason is that Naomi has $m = 24$ hyperparameters.
-Although $m = 24$ cannot be described as high-dimensional, it is certainly more than the $m < 4$ or so (low-dimensional) hyperparameters which are typical for use of INLA, and hence referred to here as moderate-dimensional.
+Section \@ref(universal) attends to part of the challenge, by developing INLA methods which compatible with the Naomi model log-posterior as implemented in `TMB`.
+However, naive quadrature methods are not directly applicable to Naomi.
+This is because Naomi has $m = 24$ hyperparameters.
+Although $m = 24$ cannot be described as high-dimensional, it is certainly more than the $m < 4$ or so hyperparameters typical for use of INLA.
+Hence here the term moderate-dimensional is used.
 Naive use of AGHQ with the product rule requires evaluation of $|\mathcal{Q}(m, k)| = k^m$ quadrature points.
 This would be intractable for $m = 24$ and any $k > 1$.
 As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.
@@ -1219,7 +1239,7 @@ Though the rule is to be applied within a nested Laplace approximation approach,
 ### AGHQ with variable levels
 
 Rather than having the same number of quadrature nodes for each dimension of $\boldsymbol{\mathbf{\theta}}$, it is possible to use a variable number of nodes per dimension.
-In line with the terminology used in the `mvQuad` package, I refer to the number of nodes per dimension as levels.
+In line with the terminology used in the `mvQuad` package, the number of nodes per dimension are referred to as levels.
 Let $\mathbf{k} = (k_1, \ldots, k_m)$ be a vector of levels, where each $k_j \in \mathbb{Z}^+$.
 A GHQ grid with (potentially) variable levels is then given by 
 \begin{equation}
@@ -1252,7 +1272,7 @@ where $\hat{\mathbf{E}}_{\texttt{LA}, s}$ is an $m \times s$ matrix containing t
 \omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^d \omega_1(z_j).
 \end{equation}
 
-(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the AGHQ nodes with a spectral matrix decomposition, as usual. Panel B shows the adapted PCA-AGHQ nodes $\mathcal{Q}(2, 1, 3)$. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector. As before, each panel shows the quadrature estimate of the integral $I$.
+(ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes $\mathcal{Q}(2, 1, 3)$. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 
 ```{r pca-demo, fig.cap="(ref:pca-demo)"}
 knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
@@ -1260,42 +1280,43 @@ knitr::include_graphics("figures/naomi-aghq/pca-demo.png")
 
 ## Malawi case-study {#malawi}
 
-(ref:naomi-output) District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference conducted using a Gaussian approximation and EB via `TMB`.
+(ref:naomi-output) District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via `TMB`.
 
 ```{r naomi-output, fig.cap="(ref:naomi-output)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/figB.png"))
 ```
 
-This section presents a case study of Bayesian inference methods applied to the Naomi model in Malawi.
+This section presents a case study of approximate Bayesian inference methods applied to the Naomi model in Malawi.
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the `naomi` R package vignette available from [`https://github.com/mrc-ide/naomi`](https://github.com/mrc-ide/naomi).
-Malawi was chosen in part because it has a small number of districts, $n = 30$, limiting the computational demand of the model.
+Malawi was chosen for the vignette and this case-study in part because it has a small number of districts, $n = 30$, limiting the computational demand of the model.
 
 Four Bayesian inference approaches were considered:
 
 1. Gaussian marginals and EB with `TMB`.
-This is the method that has previously been used for Naomi.
-As short-hand, this method is referred to as GEB.
+This approach was previously used in production for Naomi.
+As short-hand, this approach is referred to as GEB.
 2. Laplace marginals and EB with `TMB`.
-This is a novel method.
-As short-hand, this method is referred to as LEB.
+This is a novel approach, enabled by the implementation work of Section \@(universal).
+As short-hand, this approach is referred to as LEB.
 3. Gaussian marginals and PCA-AGHQ with `TMB`
-This is a novel method.
-As short-hand, this method is referred to as PCA-AGHQ.
+This is a novel approach, enabled by the methodological work of Section \@(pca-aghq).
+As short-hand, this approach is referred to as GPCA-AGHQ.
 4. NUTS with `tmbstan`.
 This represents a gold-standard.
 
-The `TMB` C++ user-template used to specify the log-posterior was the same for each approach, and described in Appendix \@ref(naomi-implementation).
+The `TMB` C++ user-template used to specify the log-posterior, described in Appendix \@ref(naomi-implementation), was the same for each approach.
 The dimension of the latent field was $N = 467$ and the dimension of the hyperparameters was $m = 24$.
-For EB and PCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
+For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs are illustrated in Figure \@ref(fig:naomi-output).
+Model outputs from GEB are illustrated in Figure \@ref(fig:naomi-output).
 
 ### NUTS convergence
 
-The effective sample size ratios generated sampling with NUTS were low.
+The Naomi model was difficult to efficiently sample from using NUTS.
+The effective sample size ratios were low.
 Four chains run in parallel for 100000 iterations were required to obtain acceptable NUTS diagnostics.
-For ease-of-storage, these samples were thinned by a factor of 20 .
-There were no divergent transitions, and the largest potential scale reduction factor [@gelman1992inference; @vehtari2021rank] was $\hat R = 1.02$.
+For ease-of-storage, these samples were thinned by a factor of 20.
+There were no divergent transitions, and the largest potential scale reduction factor was $\hat R = 1.02$.
 These diagnostics were sufficient to treat results from NUTS as a gold-standard, though inaccuracies remain possible.
 
 ### Use of PCA-AGHQ
@@ -1328,9 +1349,11 @@ This section discusses these contributions in turn, before outlining suggestions
 
 ### A universal INLA implementation
 
+"To our knowledge, `TMB` is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly." [@monnahan2018no].
+Towards adding INLA.
+
 After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly made available.
 However, it is more sustainable to enable users to implement their own distributions and models.
-Discussion of Bayesian inference software in @vstrumbelj2023past.
 
 ### PCA-AGHQ with application to INLA for Naomi
 

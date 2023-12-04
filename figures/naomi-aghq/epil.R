@@ -410,3 +410,5 @@ ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = sof
   coord_flip()
 
 ggsave("figures/naomi-aghq/epil-time.png", h = 3.5, w = 6.25)
+
+write_csv(time_df, "figures/naomi-aghq/epil-time.csv")
