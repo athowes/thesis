@@ -403,7 +403,7 @@ This working likelihood is implemented by `family = "xPoisson"` in `R-INLA`.
 I selected the model including Besag spatial random effects and IID temporal random effects based on the conditional predictive ordinate (CPO) criterion [@pettit1990conditional].
 For comparison, I also computed the deviance information criterion (DIC) [@spiegelhalter2002bayesian] and widely applicable information criterion (WAIC) [@watanabe2013widely].
 Each of these criterion can be calculated in `R-INLA` without requiring model refitting.
-The results are presented in Figure \@ref(fig:model-comparison).
+The results are presented in Table \@ref(tab:model-comparison-multinomial) and Figure \@ref(fig:model-comparison).
 
 (ref:model-comparison) For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
 
@@ -417,7 +417,7 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 | DIC  | 100780 (300) | 101588 (317) | 100781 (300) | 101589 (317) |
 | WAIC | 103763 (358) | 105008 (383) | 103763 (358) | 105009 (383) |
 
-Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the multinomial logistic regression model specifications with corresponding standard errors.
+Table: (\#tab:model-comparison-multinomial) CPO, DIC, and WAIC values for the multinomial logistic regression model specifications with corresponding standard errors.
 
 ### Spatial logistic regression {#s-logistic}
 
@@ -467,7 +467,7 @@ This working likelihood is implemented by `family = "xBinomial"` in `R-INLA`.
 #### Model selection
 
 I selected the model including Besag spatial effects and `cfswrecent` covariates according to the CPO criterion.
-All results, including DIC and WAIC, are presented in Table and Figure \@ref(fig:fsw-logit-model-comparison).
+All results, including DIC and WAIC, are presented in Table \@ref(tab:model-comparison-logistic) and Figure \@ref(fig:fsw-logit-model-comparison).
 Inclusion of Besag spatial random effects, rather than IID, consistently improved performance.
 Benefits from inclusion of covariates were more marginal.
 As some countries had no suitable surveys, I nonetheless preferred to include covariate information so that estimates in these countries would be based on some country-specific data.
@@ -484,7 +484,7 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 | DIC  | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) | 4662 (110) | 4605 (111) |
 | WAIC | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) | 4692 (115) | 4624 (115) |
 
-Table: (\#tab:model-comparison) CPO, DIC, and WAIC values for the logistic regression model specifications with corresponding standard errors.
+Table: (\#tab:model-comparison-logistic) CPO, DIC, and WAIC values for the logistic regression model specifications with corresponding standard errors.
 
 <!-- ### Model combination -->
 
