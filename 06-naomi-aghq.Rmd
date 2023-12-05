@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231205-105348-411992f1"
+resource_version <- "20231205-200840-0d6320ff"
 
 custom_numbers_to_words <- function(number) {
   powers <- c(3, 6, 9, 12)
@@ -1351,23 +1351,27 @@ On the other hand, BYM2 (Figure \@ref(fig:alpha-x)).
 
 ### Use of PCA-AGHQ
 
+```{r}
+tv_df <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.csv"))
+```
+
 For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of $\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep (Figure \@ref(fig:total-variation)).
-Keeping $s = 8$ principal components was sufficient to explain some proportion of total variation.
+Keeping $s = 8$ principal components was sufficient to explain `r round(100 * tv_df$tv[8])`% of total variation.
 The reduced rank approximation to the inverse curvature with this choice of $s$ was visually similar to the full rank matrix (Figure \@ref(fig:reduced-rank)).
 
-(ref:total-variation) Figure caption.
+(ref:total-variation) Under PCA, the proportion of total variation explained is given by the sum of the first $s$ eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, `r round(100 * tv_df$tv[8])`% was considered sufficient.
 
 ```{r total-variation, fig.cap="(ref:total-variation)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.png"))
 ```
 
-(ref:reduced-rank) Figure caption.
+(ref:reduced-rank) With $s = 8$, the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A).
 
 ```{r reduced-rank, fig.cap="(ref:reduced-rank)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/reduced-rank.png"))
 ```
 
-(ref:pc-loadings) Figure caption.
+(ref:pc-loadings) The principal component loadings based on the eigendecomposition of the inverse curvature.
 
 ```{r pc-loadings, fig.cap="(ref:pc-loadings)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
@@ -1379,6 +1383,12 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/nodes-samples-comparison.png"))
 ```
 
+(ref:marginal-sd) Figure caption.
+
+```{r marginal-sd, fig.cap="(ref:marginal-sd)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/marginal-sd.png"))
+```
+
 ### Inference comparison
 
 ```{r}
@@ -1386,8 +1396,6 @@ time_taken <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, 
 ```
 
 ### Exceedance probabilities
-
-
 
 #### Meeting the second 90
 
@@ -1475,12 +1483,13 @@ Could be generalised?
 PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
 However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:
 
-1. The amount of variation explained in the Hessian matrix may not be of direct interest.
+1. Prerotation and pruning.
+2. The amount of variation explained in the Hessian matrix may not be of direct interest.
 For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
 As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indicies, could be preferable.
-2. Use of PCA is challenging when the dimensions have different scales. 
+3. Use of PCA is challenging when the dimensions have different scales. 
 For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
-3. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
+4. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
 This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficient.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
 This could be done if there were a cheap way to obtain posterior means, which could then be compared to posterior modes obtained using optimisation.

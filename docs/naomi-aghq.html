@@ -1596,7 +1596,7 @@ Figure 6.14: Consider the function <span class="math inline">\(f(z_1, z_2) = \te
 <h2><span class="header-section-number">6.5</span> Malawi case-study<a href="naomi-aghq.html#malawi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
-<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via TMB." width="95%" />
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
 Figure 6.15: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
@@ -1639,34 +1639,41 @@ On the other hand, BYM2 (Figure <a href="fast-approximate-bayesian-inference.htm
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.16</a>).
-Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain some proportion of total variation.
+Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain 87% of total variation.
 The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.17</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
-<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/total-variation.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
 <p class="caption">
-Figure 6.16: Figure caption.
+Figure 6.16: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:reduced-rank"></span>
-<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/reduced-rank.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/reduced-rank.png" alt="With \(s = 8\), the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A)." width="95%" />
 <p class="caption">
-Figure 6.17: Figure caption.
+Figure 6.17: With <span class="math inline">\(s = 8\)</span>, the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pc-loadings"></span>
-<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/pc-loadings.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/pc-loadings.png" alt="The principal component loadings based on the eigendecomposition of the inverse curvature." width="95%" />
 <p class="caption">
-Figure 6.18: Figure caption.
+Figure 6.18: The principal component loadings based on the eigendecomposition of the inverse curvature.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-samples-comparison"></span>
-<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/nodes-samples-comparison.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/nodes-samples-comparison.png" alt="Figure caption." width="95%" />
 <p class="caption">
 Figure 6.19: Figure caption.
+</p>
+</div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:marginal-sd"></span>
+<img src="resources/naomi-aghq/20231205-200840-0d6320ff/depends/marginal-sd.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.20: Figure caption.
 </p>
 </div>
 </div>
@@ -1757,6 +1764,7 @@ Could be generalised?</p>
 <p>PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
 However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:</p>
 <ol style="list-style-type: decimal">
+<li>Prerotation and pruning.</li>
 <li>The amount of variation explained in the Hessian matrix may not be of direct interest.
 For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
 As such, using alternative measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> or Sobol indicies, could be preferable.</li>
@@ -1804,10 +1812,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.20: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.21: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.20</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.21</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
