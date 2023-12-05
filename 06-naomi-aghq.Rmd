@@ -1351,11 +1351,27 @@ On the other hand, BYM2 (Figure \@ref(fig:alpha-x)).
 
 ### Use of PCA-AGHQ
 
-A Scree plot based on the spectral decomposition of $\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep.
+For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of $\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}$ was used to select the number of principal components to keep (Figure \@ref(fig:total-variation)).
 Keeping $s = 8$ principal components was sufficient to explain some proportion of total variation.
-The reduced rank approximation to the inverse curvature with this choice of $s$ was visually similar to the full rank matrix.
+The reduced rank approximation to the inverse curvature with this choice of $s$ was visually similar to the full rank matrix (Figure \@ref(fig:reduced-rank)).
 
-### Model assessment
+(ref:total-variation) Figure caption.
+
+```{r total-variation, fig.cap="(ref:total-variation)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.png"))
+```
+
+(ref:reduced-rank) Figure caption.
+
+```{r reduced-rank, fig.cap="(ref:reduced-rank)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/reduced-rank.png"))
+```
+
+(ref:pc-loadings) Figure caption.
+
+```{r pc-loadings, fig.cap="(ref:pc-loadings)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
+```
 
 ### Inference comparison
 
@@ -1374,31 +1390,33 @@ The Naomi model can be used to assess the probability of a strata having high in
 
 This chapter made two main contributions.
 First, the universal INLA implementation of Section \@ref(universal).
-Second, the PCA-AGHQ rule (Sections \@ref(pca-aghq)) with application to INLA for Naomi (Section \@ref(malawi)).
-This section discusses these contributions in turn, before outlining suggestions for future related work.
+Second, the PCA-AGHQ rule (Sections \@ref(pca-aghq)).
+Both were applied to the Naomi model in Malawi in Section \@ref(malawi).
+These contributions are discussed in turn, before outlining suggestions for future work.
 
 ### A universal INLA implementation
 
-"To our knowledge, `TMB` is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly." [@monnahan2018no].
-Towards adding INLA.
+@monnahan2018no write that "to our knowledge, `TMB` is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly".
+This chapter made important progress towards adding INLA to the integration tools easily accessible using `TMB`.
 
-After requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA` a prototype version was shortly made available.
-However, it is more sustainable to enable users to implement their own distributions and models.
+Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
+For example, after requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA`, a prototype version was shortly made available.
+That said, it is ultimately more sustainable to enable users to implement their own distributions and models.
 
 ### PCA-AGHQ with application to INLA for Naomi
 
-For the simplified Naomi model applied to data from Malawi, INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
+For the simplified Naomi model applied to data from Malawi, GPCA-AGHQ more accurately inferring latent field posterior marginal distributions than GEB.
 However, model output posterior marginals did not see the same improvements.
-The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.
-EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
+The approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
+GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
 
-The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy.
+The inaccuracies in model outputs from GEB and GPCA-AGHQ have the potential to meaningfully mislead policy.
 As such, where possible gold-standard NUTS results should be computed.
 Though NUTS is to slow too run during a workshop, it could be run afterwards.
 That said, Malawi is one of the countries with the fewest number of districts.
 As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may not be possible to run NUTS to convergence.
 
-PCA-AGHQ and NUTS could be added to the Naomi web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) as an alternative to EB.
+GPCA-AGHQ and NUTS could be added to the Naomi web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) as an alternative to GEB.
 Analysts would be able to quickly iterate over model options using EB, before switching to a more accurate approach once they are happy with the results.
 
 PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA $s$ and the number of points per dimension $k$.
@@ -1412,28 +1430,33 @@ Further strategies, such as gradually lowering $k$ over the principal components
 Finally, this section presents suggestions for future work based on this chapter.
 Some suggestions relate more to individual contributions, others take a broader view, or relate to multiple contributions.
 
-#### Further comparisons
+#### Further comparisons {#further-comparisons}
 
-Comparison to additional Bayesian inference methods could be included in Section \@ref(malawi). 
-Three further comparisons stand out as being particularly valuable:
+Comparison to further Bayesian inference methods could be included in Section \@ref(malawi). 
+Three possibilities stand out as being particularly valuable:
 
 1. There exist other quadrature rules for moderate dimension, such as the CCD.
 It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.
-2. NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
-Other MCMC algorithms, such as blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice], could be considered.
-Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the `NIMBLE` probabilistic programming language [@de2017programming].
-3. Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in `tmbstan` by setting `laplace = TRUE`, is to run HMC [@monnahan2018no; @margossian2020hamiltonian].
+2. Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach is to run HMC [@monnahan2018no; @margossian2020hamiltonian].
 When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.
+Preliminary testing of this approach, using `tmbstan` and setting `laplace = TRUE`, did not show immediate success but likely could be worked on.
+3. NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
+Other MCMC algorithms, such as blocked Gibbs sampling [@geman1984stochastic] or slice sampling [@neal2003slice], could be considered.
+It may be difficult to implement such algorithms using `TMB`.
+Many MCMC algorithms are implemented and customisable (including, for example, the choice of block structure) within the `NIMBLE` probabilistic programming language [@de2017programming].
+Requiring rewriting the Naomi model log-posterior outside of `TMB` would be a substantial downside.
 
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
 <!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 
 #### Investigation of quadrature grid
 
-Gaussian times polynomial kernel fit to the 24 dimensional NUTS hyperparameter samples.
-Assess whether PCA-AGHQ is suitable.
-Or whether AGHQ is suitable.
-Could be generalised.
+It may be possible to test the assumptions made by use of AGHQ grids. 
+This would allow assessment of their suitability.
+Specifically, AGHQ assumes that the integrand is closely approximated by a polynomial multiplied by a Gaussian density.
+Given NUTS hyperparameter samples (or better yet, hyperparameter samples from the Laplace NUTS hybrid discussed in Section \@ref(further-comparisons)) this assumption could be tested by fitting a model using a polynomial times Gaussian kernel.
+Furthermore, assess whether PCA-AGHQ is suitable.
+Could be generalised?
 
 #### Better quadrature grids
 
@@ -1476,7 +1499,7 @@ Among the ELGM-type structures of particular interest are aggregated Gaussian pr
 #### Methods dissemination
 
 The approach used to implement Laplace marginals with `TMB` was relatively ad-hoc, and involved modification of the `TMB` C++ template (Section \@ref(epil-laplace-eb-tmb)).
-For wider dissemination of this method, it is important that the user is not burdened with making these modifications themself.
+For wider dissemination of this method, it is important that the user is not burdened with making these modifications.
 One possibility would be to change the `random` argument in `TMB::MakeADFun` to allow for indexing.
 Another (less desirable) option would be to algorithimically generate the modified `TMB` C++ template based on the original template.
 

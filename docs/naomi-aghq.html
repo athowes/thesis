@@ -312,9 +312,8 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.5.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#nuts-convergence-and-suitability"><i class="fa fa-check"></i><b>6.5.1</b> NUTS convergence and suitability</a></li>
 <li class="chapter" data-level="6.5.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#use-of-pca-aghq"><i class="fa fa-check"></i><b>6.5.2</b> Use of PCA-AGHQ</a></li>
-<li class="chapter" data-level="6.5.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#model-assessment-1"><i class="fa fa-check"></i><b>6.5.3</b> Model assessment</a></li>
-<li class="chapter" data-level="6.5.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.5.4</b> Inference comparison</a></li>
-<li class="chapter" data-level="6.5.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.5.5</b> Exceedance probabilities</a></li>
+<li class="chapter" data-level="6.5.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.5.3</b> Inference comparison</a></li>
+<li class="chapter" data-level="6.5.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.5.4</b> Exceedance probabilities</a></li>
 </ul></li>
 <li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.6</b> Discussion</a>
 <ul>
@@ -378,10 +377,8 @@ div.csl-indent {
 <li class="chapter" data-level="C.3.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-implementation"><i class="fa fa-check"></i><b>C.3.4</b> Implementation</a></li>
 </ul></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-3"><i class="fa fa-check"></i><b>C.4</b> NUTS convergence and suitability</a></li>
-<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#model-assessment-2"><i class="fa fa-check"></i><b>C.5</b> Model assessment</a></li>
-<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#aghq-and-pca-aghq-details"><i class="fa fa-check"></i><b>C.6</b> AGHQ and PCA-AGHQ details</a></li>
-<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.7</b> Normalising constant estimation</a></li>
-<li class="chapter" data-level="C.8" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.8</b> Inference comparison</a></li>
+<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.5</b> Normalising constant estimation</a></li>
+<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.6</b> Inference comparison</a></li>
 </ul></li>
 </ul>
 
@@ -1640,24 +1637,42 @@ On the other hand, BYM2 (Figure <a href="fast-approximate-bayesian-inference.htm
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>A Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep.
+<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.16</a>).
 Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain some proportion of total variation.
-The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix.</p>
+The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.17</a>).</p>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
+<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/total-variation.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.16: Figure caption.
+</p>
 </div>
-<div id="model-assessment-1" class="section level3 hasAnchor" number="6.5.3">
-<h3><span class="header-section-number">6.5.3</span> Model assessment<a href="naomi-aghq.html#model-assessment-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:reduced-rank"></span>
+<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/reduced-rank.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.17: Figure caption.
+</p>
 </div>
-<div id="inference-comparison" class="section level3 hasAnchor" number="6.5.4">
-<h3><span class="header-section-number">6.5.4</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pc-loadings"></span>
+<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/pc-loadings.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.18: Figure caption.
+</p>
 </div>
-<div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.5">
-<h3><span class="header-section-number">6.5.5</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="meeting-the-second-90" class="section level4 hasAnchor" number="6.5.5.1">
-<h4><span class="header-section-number">6.5.5.1</span> Meeting the second 90<a href="naomi-aghq.html#meeting-the-second-90" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="inference-comparison" class="section level3 hasAnchor" number="6.5.3">
+<h3><span class="header-section-number">6.5.3</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.4">
+<h3><span class="header-section-number">6.5.4</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="meeting-the-second-90" class="section level4 hasAnchor" number="6.5.4.1">
+<h4><span class="header-section-number">6.5.4.1</span> Meeting the second 90<a href="naomi-aghq.html#meeting-the-second-90" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Ambitious fast-track targets for scaling up ART treatment have been developed by UNAIDS, with the goal of “ending the AIDS epidemic by 2030”.</p>
 </div>
-<div id="finding-strata-with-high-incidence" class="section level4 hasAnchor" number="6.5.5.2">
-<h4><span class="header-section-number">6.5.5.2</span> Finding strata with high incidence<a href="naomi-aghq.html#finding-strata-with-high-incidence" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="finding-strata-with-high-incidence" class="section level4 hasAnchor" number="6.5.4.2">
+<h4><span class="header-section-number">6.5.4.2</span> Finding strata with high incidence<a href="naomi-aghq.html#finding-strata-with-high-incidence" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
 The Naomi model can be used to assess the probability of a strata having high incidence by evaluating <span class="math inline">\(\mathbb{P}(\lambda_i &gt; 0.01)\)</span>.</p>
 </div>
@@ -1667,27 +1682,29 @@ The Naomi model can be used to assess the probability of a strata having high in
 <h2><span class="header-section-number">6.6</span> Discussion<a href="naomi-aghq.html#discussion-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This chapter made two main contributions.
 First, the universal INLA implementation of Section <a href="naomi-aghq.html#universal">6.2</a>.
-Second, the PCA-AGHQ rule (Sections <a href="naomi-aghq.html#pca-aghq">6.4</a>) with application to INLA for Naomi (Section <a href="naomi-aghq.html#malawi">6.5</a>).
-This section discusses these contributions in turn, before outlining suggestions for future related work.</p>
+Second, the PCA-AGHQ rule (Sections <a href="naomi-aghq.html#pca-aghq">6.4</a>).
+Both were applied to the Naomi model in Malawi in Section <a href="naomi-aghq.html#malawi">6.5</a>.
+These contributions are discussed in turn, before outlining suggestions for future work.</p>
 <div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
 <h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>“To our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly.” <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>)</span>.
-Towards adding INLA.</p>
-<p>After requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.26)</a> to be included in <code>R-INLA</code> a prototype version was shortly made available.
-However, it is more sustainable to enable users to implement their own distributions and models.</p>
+<p><span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> write that “to our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly”.
+This chapter made important progress towards adding INLA to the integration tools easily accessible using <code>TMB</code>.</p>
+<p>Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
+For example, after requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.26)</a> to be included in <code>R-INLA</code>, a prototype version was shortly made available.
+That said, it is ultimately more sustainable to enable users to implement their own distributions and models.</p>
 </div>
 <div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
 <h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to INLA for Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>For the simplified Naomi model applied to data from Malawi, INLA with Gaussian marginals and the PCA-AGHQ quadrature rule was more accurate at inferring latent field posterior marginal distributions than with an EB quadrature rule.
+<p>For the simplified Naomi model applied to data from Malawi, GPCA-AGHQ more accurately inferring latent field posterior marginal distributions than GEB.
 However, model output posterior marginals did not see the same improvements.
-The approximate posterior exceedance probabilities from both EB and PCA-AGHQ had systematic inaccuracies as compared with NUTS.
-EB and PCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.</p>
-<p>The inaccuracies in model outputs from EB and PCA-AGHQ have the potential to meaningfully mislead policy.
+The approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
+GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.</p>
+<p>The inaccuracies in model outputs from GEB and GPCA-AGHQ have the potential to meaningfully mislead policy.
 As such, where possible gold-standard NUTS results should be computed.
 Though NUTS is to slow too run during a workshop, it could be run afterwards.
 That said, Malawi is one of the countries with the fewest number of districts.
 As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may not be possible to run NUTS to convergence.</p>
-<p>PCA-AGHQ and NUTS could be added to the Naomi web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a>) as an alternative to EB.
+<p>GPCA-AGHQ and NUTS could be added to the Naomi web interface (<a href="https://naomi.unaids.org"><code>https://naomi.unaids.org</code></a>) as an alternative to GEB.
 Analysts would be able to quickly iterate over model options using EB, before switching to a more accurate approach once they are happy with the results.</p>
 <p>PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA <span class="math inline">\(s\)</span> and the number of points per dimension <span class="math inline">\(k\)</span>.
 The scree plot is a well established heuristic for choosing <span class="math inline">\(s\)</span>.
@@ -1701,26 +1718,31 @@ Further strategies, such as gradually lowering <span class="math inline">\(k\)</
 Some suggestions relate more to individual contributions, others take a broader view, or relate to multiple contributions.</p>
 <div id="further-comparisons" class="section level4 hasAnchor" number="6.6.3.1">
 <h4><span class="header-section-number">6.6.3.1</span> Further comparisons<a href="naomi-aghq.html#further-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Comparison to additional Bayesian inference methods could be included in Section <a href="naomi-aghq.html#malawi">6.5</a>.
-Three further comparisons stand out as being particularly valuable:</p>
+<p>Comparison to further Bayesian inference methods could be included in Section <a href="naomi-aghq.html#malawi">6.5</a>.
+Three possibilities stand out as being particularly valuable:</p>
 <ol style="list-style-type: decimal">
 <li>There exist other quadrature rules for moderate dimension, such as the CCD.
 It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.</li>
+<li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">C. Margossian et al. 2020</a>)</span>.
+When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.
+Preliminary testing of this approach, using <code>tmbstan</code> and setting <code>laplace = TRUE</code>, did not show immediate success but likely could be worked on.</li>
 <li>NUTS is not especially well suited to sampling from Gaussian latent field models like Naomi.
 Other MCMC algorithms, such as blocked Gibbs sampling <span class="citation">(<a href="#ref-geman1984stochastic">Geman and Geman 1984</a>)</span> or slice sampling <span class="citation">(<a href="#ref-neal2003slice">Neal 2003</a>)</span>, could be considered.
-Both of these MCMC algorithms are implemented and can be customised, including the choice of block structure, within the <code>NIMBLE</code> probabilistic programming language <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span>.</li>
-<li>Rather than use quadrature to integrate the marginal Laplace approximation, an alternative approach, implemented in <code>tmbstan</code> by setting <code>laplace = TRUE</code>, is to run HMC <span class="citation">(<a href="#ref-monnahan2018no">Monnahan and Kristensen 2018</a>; <a href="#ref-margossian2020hamiltonian">C. Margossian et al. 2020</a>)</span>.
-When run to convergence, inferential error of this method would solely be due to the Laplace approximation, helping to clarify the extent to which the inferential error of INLA is attributable to the quadrature grid.</li>
+It may be difficult to implement such algorithms using <code>TMB</code>.
+Many MCMC algorithms are implemented and customisable (including, for example, the choice of block structure) within the <code>NIMBLE</code> probabilistic programming language <span class="citation">(<a href="#ref-de2017programming">Valpine et al. 2017</a>)</span>.
+Requiring rewriting the Naomi model log-posterior outside of <code>TMB</code> would be a substantial downside.</li>
 </ol>
 <!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
 <!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
 </div>
 <div id="investigation-of-quadrature-grid" class="section level4 hasAnchor" number="6.6.3.2">
 <h4><span class="header-section-number">6.6.3.2</span> Investigation of quadrature grid<a href="naomi-aghq.html#investigation-of-quadrature-grid" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Gaussian times polynomial kernel fit to the 24 dimensional NUTS hyperparameter samples.
-Assess whether PCA-AGHQ is suitable.
-Or whether AGHQ is suitable.
-Could be generalised.</p>
+<p>It may be possible to test the assumptions made by use of AGHQ grids.
+This would allow assessment of their suitability.
+Specifically, AGHQ assumes that the integrand is closely approximated by a polynomial multiplied by a Gaussian density.
+Given NUTS hyperparameter samples (or better yet, hyperparameter samples from the Laplace NUTS hybrid discussed in Section <a href="naomi-aghq.html#further-comparisons">6.6.3.1</a>) this assumption could be tested by fitting a model using a polynomial times Gaussian kernel.
+Furthermore, assess whether PCA-AGHQ is suitable.
+Could be generalised?</p>
 </div>
 <div id="better-quadrature-grids" class="section level4 hasAnchor" number="6.6.3.3">
 <h4><span class="header-section-number">6.6.3.3</span> Better quadrature grids<a href="naomi-aghq.html#better-quadrature-grids" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1766,17 +1788,17 @@ Among the ELGM-type structures of particular interest are aggregated Gaussian pr
 <div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.7">
 <h4><span class="header-section-number">6.6.3.7</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The approach used to implement Laplace marginals with <code>TMB</code> was relatively ad-hoc, and involved modification of the <code>TMB</code> C++ template (Section <a href="naomi-aghq.html#epil-laplace-eb-tmb">6.2.1.4</a>).
-For wider dissemination of this method, it is important that the user is not burdened with making these modifications themself.
+For wider dissemination of this method, it is important that the user is not burdened with making these modifications.
 One possibility would be to change the <code>random</code> argument in <code>TMB::MakeADFun</code> to allow for indexing.
 Another (less desirable) option would be to algorithimically generate the modified <code>TMB</code> C++ template based on the original template.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.16: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.19: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.16</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.19</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
