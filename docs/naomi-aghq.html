@@ -377,8 +377,9 @@ div.csl-indent {
 <li class="chapter" data-level="C.3.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-implementation"><i class="fa fa-check"></i><b>C.3.4</b> Implementation</a></li>
 </ul></li>
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-3"><i class="fa fa-check"></i><b>C.4</b> NUTS convergence and suitability</a></li>
-<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.5</b> Normalising constant estimation</a></li>
-<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.6</b> Inference comparison</a></li>
+<li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#use-of-pca-aghq-1"><i class="fa fa-check"></i><b>C.5</b> Use of PCA-AGHQ</a></li>
+<li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.6</b> Normalising constant estimation</a></li>
+<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.7</b> Inference comparison</a></li>
 </ul></li>
 </ul>
 
@@ -1661,6 +1662,13 @@ Figure 6.17: Figure caption.
 Figure 6.18: Figure caption.
 </p>
 </div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-samples-comparison"></span>
+<img src="resources/naomi-aghq/20231205-105348-411992f1/depends/nodes-samples-comparison.png" alt="Figure caption." width="95%" />
+<p class="caption">
+Figure 6.19: Figure caption.
+</p>
+</div>
 </div>
 <div id="inference-comparison" class="section level3 hasAnchor" number="6.5.3">
 <h3><span class="header-section-number">6.5.3</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1782,8 +1790,9 @@ The challenge of connecting this theory to nested use of any quadrature rule, li
 </div>
 <div id="exploration-of-the-accuracy-of-inla-for-complex-models" class="section level4 hasAnchor" number="6.6.3.6">
 <h4><span class="header-section-number">6.6.3.6</span> Exploration of the accuracy of INLA for complex models<a href="naomi-aghq.html#exploration-of-the-accuracy-of-inla-for-complex-models" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>A universal INLA implementation could be used to assess the accuracy of INLA for a wider range of models.
-Among the ELGM-type structures of particular interest are aggregated Gaussian process models <span class="citation">(<a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span> and evidence synthesis models <span class="citation">(<a href="#ref-amoah2020geostatistical">Amoah, Diggle, and Giorgi 2020</a>)</span>.</p>
+<p>The universal INLA implementation can be used to assess the accuracy of INLA for a wider range of models than were previously possible.
+An important benefit of using <code>TMB</code> is that comparisons to NUTS can easily be made using exactly the same model template.
+Among the ELGM-type structures of particular interest for spatial epidemiology are aggregated likelihood models and evidence synthesis models.</p>
 </div>
 <div id="methods-dissemination" class="section level4 hasAnchor" number="6.6.3.7">
 <h4><span class="header-section-number">6.6.3.7</span> Methods dissemination<a href="naomi-aghq.html#methods-dissemination" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1795,10 +1804,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.19: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.20: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.19</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.20</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
@@ -1813,9 +1822,6 @@ Both <code>NIMBLE</code> and <code>Stan</code> developers are actively looking i
 </div>
 <h3>References</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-amoah2020geostatistical" class="csl-entry">
-Amoah, Benjamin, Peter J Diggle, and Emanuele Giorgi. 2020. <span>“<span class="nocase">A geostatistical framework for combining spatially referenced disease prevalence data from multiple diagnostics</span>.”</span> <em>Biometrics</em> 76 (1): 158–70.
-</div>
 <div id="ref-bachl2019inlabru" class="csl-entry">
 Bachl, Fabian E, Finn Lindgren, David L Borchers, and Janine B Illian. 2019. <span>“<span class="nocase">inlabru: an R package for Bayesian spatial modelling from ecological survey data</span>.”</span> <em>Methods in Ecology and Evolution</em> 10 (6): 760–66.
 </div>
@@ -1935,9 +1941,6 @@ Meng, Xiao-Li. 2018. <span>“<span class="nocase">Statistical paradises and par
 </div>
 <div id="ref-monnahan2018no" class="csl-entry">
 Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“<span class="nocase">No-U-turn sampling for fast Bayesian inference in ADMB and TMB: Introducing the adnuts and tmbstan R packages</span>.”</span> <em>PloS One</em> 13 (5): e0197954.
-</div>
-<div id="ref-nandi2023disaggregation" class="csl-entry">
-Nandi, Anita K, Tim CD Lucas, Rohan Arambepola, Peter Gething, and Daniel J Weiss. 2023. <span>“<span class="nocase">disaggregation: An R Package for Bayesian Spatial Disaggregation Modeling</span>.”</span> <em>Journal of Statistical Software</em> 106: 1–19.
 </div>
 <div id="ref-naylor1982applications" class="csl-entry">
 Naylor, John C, and Adrian FM Smith. 1982. <span>“<span class="nocase">Applications of a method for the efficient computation of posterior distributions</span>.”</span> <em>Journal of the Royal Statistical Society Series C: Applied Statistics</em> 31 (3): 214–25.
