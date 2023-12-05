@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231204-150726-37fe2898"
+resource_version <- "20231205-105348-411992f1"
 
 custom_numbers_to_words <- function(number) {
   powers <- c(3, 6, 9, 12)
@@ -1343,6 +1343,11 @@ For ease-of-storage, the samples were thinned by a factor of 20, resulting in 50
 The effective sample size ratios were typically low (Figure \@ref(fig:ess)), and the lowest effective sample size was `r round(naomi_nuts$ess_min, 3)` (2.5% quantile `r round(naomi_nuts$ess_lower, 0)`, 50% quantile `r round(naomi_nuts$ess_median, 0)`, and 97.5% quantile `r round(naomi_nuts$ess_upper, 0)`; Panel \@ref(fig:worst-trace)A).
 The largest potential scale reduction factor was `r round(naomi_nuts$rhat_max, 3)` (2.5% quantile `r round(naomi_nuts$rhat_lower, 3)`, 50% quantile `r round(naomi_nuts$rhat_median, 3)`, and 97.5% quantile `r round(naomi_nuts$rhat_upper, 3)`; Panel \@ref(fig:worst-trace)B).
 Though inaccuracies remain possible, these diagnostics are sufficient to treat inferences obtained from NUTS as a gold-standard.
+
+Correlation structure in the posterior can result in sampler inefficiency.
+The AR1 log standard deviation $\log(\sigma)$ and logit lag-one autocorrelation parameter $\text{logit}(\phi)$ posteriors were positively correlated (Figure \@ref(fig:rho-a)).
+These parameters are partially identifiable as variation can either be explained by high standard deviation and high autocorrelation or low standard deviation and low autocorrelation.
+On the other hand, BYM2 (Figure \@ref(fig:alpha-x)).
 
 ### Use of PCA-AGHQ
 

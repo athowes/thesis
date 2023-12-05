@@ -1,7 +1,7 @@
 # Fast approximate Bayesian inference
 
 ```{r}
-resource_version <- "20231204-150726-37fe2898"
+resource_version <- "20231205-105348-411992f1"
 ```
 
 ## Epilepsy example
@@ -25,7 +25,7 @@ resource_version <- "20231204-150726-37fe2898"
 
 #### `tmbstan` {#tmbstan-epil}
 
-(ref:tmbstan-epil) Traceplots for the `tmbstan` parameters with the worst effective sample size $\text{ESS}$ and potential scale reduction factor $\hat R$. These were `l_tau_nu` ($\text{ESS} = 377$) and `beta[3]` ($\hat R = 1.006$).
+(ref:tmbstan-epil) Traceplots for the `tmbstan` parameters with the worst effective sample size $\text{ESS}$ and potential scale reduction factor $\hat R$. These were `l_tau_nu` (an $\text{ESS}$ of 377) and `beta[3]` (an $\hat R$ of 1.006).
 
 ```{r tmbstan-epil, fig.cap="(ref:tmbstan-epil)"}
 knitr::include_graphics("figures/naomi-aghq/tmbstan-epil.png")
@@ -33,7 +33,7 @@ knitr::include_graphics("figures/naomi-aghq/tmbstan-epil.png")
 
 #### `rstan` {#rstan-epil}
 
-(ref:stan-epil) Traceplots for the `rstan` parameters with the worst effective sample size $\text{ESS}$ and potential scale reduction factor $\hat R$. These were `tau_nu` ($\text{ESS} = 437$) and `tau_nu` ($\hat R = 1.009$). Rather than plotting the traceplot for `tau_nu` twice, the parameter `epsilon[18]` is included, which had the second highest $\hat R$ of 1.008.
+(ref:stan-epil) Traceplots for the `rstan` parameters with the worst effective sample size $\text{ESS}$ (Panel A) and potential scale reduction factor $\hat R$. These were `tau_nu` (an $\text{ESS}$ of 437) and `tau_nu` (an $\hat R$ of 1.009). Rather than plotting the traceplot for `tau_nu` twice, the parameter `epsilon[18]` is included, which had the second highest $\hat R$ of 1.008.
 
 ```{r stan-epil, fig.cap="(ref:stan-epil)"}
 knitr::include_graphics("figures/naomi-aghq/stan-epil.png")
@@ -280,19 +280,23 @@ Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the N
 
 ## NUTS convergence and suitability
 
-(ref:rhat) The potential scale reduction factor $\hat R$ was less than 1.05 for all parameters.
+```{r}
+naomi_nuts <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mcmc-out.rds"))
+```
+
+(ref:rhat) The maximum potential scale reduction factor $\hat R$ was `r round(naomi_nuts$rhat_max, 3)`, below the value of 1.05 typically used as a cutoff for acceptable chain mixing. Additionally, the vast majority (`r round(100 * naomi_nuts$rhat_above_threshold, 1)`%) of $\hat R$ values were less than 1.1.
 
 ```{r rhat, fig.cap="(ref:rhat)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rhat.png"))
 ```
 
-(ref:ess) The efficiency of the NUTS was relatively low for most parameters, as measured by a ratio of effective sample size to iterations (Panel A). Many iterations were required for the the effective number of samples obtained to be satisfactory (Panel B). 
+(ref:ess) The efficiency of the NUTS, as measured by a ratio of effective sample size to iterations, was low for most parameters (Panel A). Many iterations were required for the the effective number of samples (mean `r round(naomi_nuts$ess_mean)`) obtained to be satisfactory (Panel B). 
 
 ```{r ess, fig.cap="(ref:ess)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ess.png"))
 ```
 
-(ref:worst-trace) Traceplots for the parameters with the worst effective sample size $\text{ESS}$ and potential scale reduction factor $\hat R$. These were `log_sigma_alpha_xs` and `ui_lambda_x[10]`. 
+(ref:worst-trace) Traceplots for the parameters with the worst effective sample size $\text{ESS}$ (Panel A) and potential scale reduction factor $\hat R$ (Panel B). These were `log_sigma_alpha_xs` (an $\text{ESS}$ of `r round(naomi_nuts$ess_min)`) and `ui_lambda_x[10]` (an $\hat R$ of `r round(naomi_nuts$rhat_max, 3)`). 
 
 ```{r worst-trace, fig.cap="(ref:worst-trace)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/worst-trace.png"))
