@@ -1361,9 +1361,9 @@ On the other hand, the BYM2 log standard deviation $\log(\sigma)$ and logit prop
 <!-- Which parameters had the lowest ESS? -->
 <!-- Other unidentifiablities in the model -->
 
-Informativeness of data about a parameter is summarised by the posterior contraction [@schad2021toward] which compares the prior variance $\sigma_\text{prior}^2(\psi)$ to posterior variance $\sigma_\text{posterior}^2(\psi)$ via
+The informativeness of data about a parameter can be summarised by the posterior contraction [@schad2021toward] which compares the prior variance $\mathbb{V}_\text{prior}(\psi)$ to posterior variance $\mathbb{V}_\text{post}(\psi)$ via
 \begin{equation}
-c(\psi) = 1 - (\sigma_\text{posterior}^2(\psi) / \sigma_\text{prior}^2(\psi)).
+c(\psi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\psi)}.
 \end{equation}
 Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.
 
@@ -1389,19 +1389,19 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/reduced-rank.png"))
 ```
 
-(ref:pc-loadings) The principal component loadings based on the eigendecomposition of the inverse curvature.
+(ref:pc-loadings) Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of `log_sigma_alpha_as` and `logit_phi_alpha_as`.
 
 ```{r pc-loadings, fig.cap="(ref:pc-loadings)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
 ```
 
-(ref:nodes-samples-comparison) Figure caption.
+(ref:nodes-samples-comparison) The $k^s = 3^8$ PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 
 ```{r nodes-samples-comparison, fig.cap="(ref:nodes-samples-comparison)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/nodes-samples-comparison.png"))
 ```
 
-(ref:marginal-sd) Figure caption.
+(ref:marginal-sd) The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic.
 
 ```{r marginal-sd, fig.cap="(ref:marginal-sd)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/marginal-sd.png"))
@@ -1417,12 +1417,14 @@ time_taken <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, 
 
 #### Meeting the second 90
 
-Ambitious fast-track targets for scaling up ART treatment have been developed by UNAIDS, with the goal of "ending the AIDS epidemic by 2030".
+Ambitious targets for scaling up ART treatment have been developed by UNAIDS, with the goal of ending the AIDS epidemic by 2030 [@unaids2014target].
+Meeting the 90-90-90 fast-track target requires that 90% of people living with HIV know their status, 90% of those are on ART, and 90% of those have a suppressed viral load.
+Inferences from Naomi can be used to identify treatment gaps by calculating the probability that the second 90 target has been met, that is $\mathbb{P}(\alpha_i > 0.9^2 = 0.81)$ for each strata $i$.
  
 #### Finding strata with high incidence
 
 Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
-The Naomi model can be used to assess the probability of a strata having high incidence by evaluating $\mathbb{P}(\lambda_i > 0.01)$.
+Inferences from Naomi can be used to assess the probability of a strata having high incidence by evaluating $\mathbb{P}(\lambda_i > 0.01)$.
 
 ## Discussion
 
