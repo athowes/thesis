@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231205-200840-0d6320ff"
+resource_version <- "20231206-143556-d6fbac86"
 
 custom_numbers_to_words <- function(number) {
   powers <- c(3, 6, 9, 12)
@@ -1323,7 +1323,7 @@ As short-hand, this approach is referred to as LEB.
 This is a novel approach, enabled by the methodological work of Section \@ref(pca-aghq).
 As short-hand, this approach is referred to as GPCA-AGHQ.
 4. NUTS with `tmbstan`.
-This represents a gold-standard.
+Conditional on assessing chain convergence and suitability, to be discussed in Section \@ref(naomi-nuts), inferences from NUTS represent a gold-standard.
 
 The `TMB` C++ user-template used to specify the log-posterior, described in Appendix \@ref(naomi-implementation), was the same for each approach.
 The dimension of the latent field was $N = 467$ and the dimension of the hyperparameters was $m = 24$.
@@ -1331,23 +1331,41 @@ For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulat
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
 Model outputs from GEB are illustrated in Figure \@ref(fig:naomi-output).
 
-### NUTS convergence and suitability
+### NUTS convergence and suitability {#naomi-nuts}
 
 ```{r}
 naomi_nuts <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mcmc-out.rds"))
 ```
 
-The Naomi model was difficult to efficiently sample from using NUTS.
+The Naomi model was difficult to efficiently sample from using NUTS via `tmbstan`.
 Four chains run in parallel for `r custom_numbers_to_words(100000)` iterations each were required to obtain acceptable NUTS diagnostics.
 For ease-of-storage, the samples were thinned by a factor of 20, resulting in 5000 iterations kept per chain, with the first 2500 removed as burn-in.
-The effective sample size ratios were typically low (Figure \@ref(fig:ess)), and the lowest effective sample size was `r round(naomi_nuts$ess_min, 3)` (2.5% quantile `r round(naomi_nuts$ess_lower, 0)`, 50% quantile `r round(naomi_nuts$ess_median, 0)`, and 97.5% quantile `r round(naomi_nuts$ess_upper, 0)`; Panel \@ref(fig:worst-trace)A).
+The effective sample size ratios were typically low (Figure \@ref(fig:ess)).
+The lowest effective sample size was `r round(naomi_nuts$ess_min, 0)` (2.5% quantile `r round(naomi_nuts$ess_lower, 0)`, 50% quantile `r round(naomi_nuts$ess_median, 0)`, and 97.5% quantile `r round(naomi_nuts$ess_upper, 0)`; Panel \@ref(fig:worst-trace)A).
 The largest potential scale reduction factor was `r round(naomi_nuts$rhat_max, 3)` (2.5% quantile `r round(naomi_nuts$rhat_lower, 3)`, 50% quantile `r round(naomi_nuts$rhat_median, 3)`, and 97.5% quantile `r round(naomi_nuts$rhat_upper, 3)`; Panel \@ref(fig:worst-trace)B).
 Though inaccuracies remain possible, these diagnostics are sufficient to treat inferences obtained from NUTS as a gold-standard.
 
+```{r}
+ar1_bym2_cor <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/ar1-bym2-cor.csv"))
+
+ar1_bym2_cor_grouped <- ar1_bym2_cor %>%
+  dplyr::group_by(type) %>%
+  dplyr::summarise(cor_mean = mean(abs(cor)))
+```
+
 Correlation structure in the posterior can result in sampler inefficiency.
-The AR1 log standard deviation $\log(\sigma)$ and logit lag-one autocorrelation parameter $\text{logit}(\phi)$ posteriors were positively correlated (Figure \@ref(fig:rho-a)).
+The each of the four pairs of AR1 log standard deviation $\log(\sigma)$ and logit lag-one autocorrelation parameter $\text{logit}(\phi)$ posteriors were positively correlated (mean absolute correlation `r round(ar1_bym2_cor_grouped$cor_mean[1], 2)`, Figure \@ref(fig:rho-a)).
 These parameters are partially identifiable as variation can either be explained by high standard deviation and high autocorrelation or low standard deviation and low autocorrelation.
-On the other hand, BYM2 (Figure \@ref(fig:alpha-x)).
+On the other hand, the BYM2 log standard deviation $\log(\sigma)$ and logit proportion parameter $\text{logit}(\phi)$ were, as designed, more orthogonal (mean absolute correlation `r round(ar1_bym2_cor_grouped$cor_mean[2], 2)`, Figure \@ref(fig:alpha-x)).
+
+<!-- Which parameters had the lowest ESS? -->
+<!-- Other unidentifiablities in the model -->
+
+Informativeness of data about a parameter is summarised by the posterior contraction [@schad2021toward] which compares the prior variance $\sigma_\text{prior}^2(\psi)$ to posterior variance $\sigma_\text{posterior}^2(\psi)$ via
+\begin{equation}
+c(\psi) = 1 - (\sigma_\text{posterior}^2(\psi) / \sigma_\text{prior}^2(\psi)).
+\end{equation}
+Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.
 
 ### Use of PCA-AGHQ
 
