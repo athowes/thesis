@@ -61,11 +61,12 @@ ggplot(infections_deaths, aes(x = Year, y = `All ages estimate`, ymax = `Upper E
   geom_ribbon(alpha = 0.25, colour = NA) +
   geom_line() +
   facet_grid(Indicator ~ .) +
-  scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6), limits = c(0, NA)) + 
+  scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6, sep = ""), limits = c(0, NA)) + 
   scale_fill_manual(values = cbpalette) +
   scale_color_manual(values = cbpalette) +
+  labs(y = "Estimate", caption = "Source: AIDSinfo, UNAIDS, 2023") +
   theme_minimal() +
-  labs(y = "Estimate")
+  theme(plot.caption = element_text(hjust = 1.75))
 
 ggsave("figures/hiv-aids/overall-picture.png", h = 4.25, w = 6.25)
 
