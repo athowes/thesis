@@ -455,6 +455,26 @@ ggsave("figures/naomi-aghq/conditional-simulation-diff-fixed.png", h = 5, w = 6.
 
 nuts <- readRDS("figures/naomi-aghq/nuts.rds")
 
+#' Diagnostics
+bayesplot::color_scheme_set(rev(c("#56B4E9", "#009E73", "#E69F00", "#F0E442", "#E69F00", "#E69F00")))
+
+nuts_summary <- summary(nuts)$summary
+nuts_summary <- tmbstan_summary[1:(nrow(nuts_summary) - 1), ]
+
+nuts_rhats <- bayesplot::rhat(nuts)
+nuts_rhats <- nuts_rhats[1:(nrow(nuts_summary) - 1)]
+
+round(min(nuts_summary[, "n_eff"])) #' 59
+names(which.min(nuts_summary[, "n_eff"])) #' Uzi[140]
+
+max(nuts_rhats) #' 1.038279
+names(which.max(nuts_rhats)) #' Uzi[70]
+
+bayesplot::mcmc_trace(nuts, pars = c(names(which.min(nuts_summary[, "n_eff"])), names(which.max(nuts_rhats)))) +
+  theme_minimal()
+
+ggsave("figures/naomi-aghq/nuts-loa-loa.png", h = 3, w = 6.25)
+
 #' Check that indeed the values of beta were fixed
 nuts_random_field_samples <- random_field_simulation(
   u_samples = t(as.data.frame(nuts)[, c(1:190)]),
