@@ -344,8 +344,10 @@ time <- tictoc::toc()
 (time$toc - time$tic) * N / 60 / 60
 
 #' This would take around 3 hours to run for 1:N
-quad_fixed_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
-saveRDS(quad_fixed_laplace_marginals, "figures/naomi-aghq/loa-loa_laplace.rds")
+# quad_fixed_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
+# saveRDS(quad_fixed_laplace_marginals, "figures/naomi-aghq/loa-loa_laplace.rds")
+
+quad_fixed_laplace_marginals <- readRDS("figures/naomi-aghq/loa-loa-laplace.rds")
 
 #' Function to sample from the Laplace marginals using CDF inversion
 sample_adam <- function(i, quad, M) {
@@ -442,12 +444,16 @@ ggsave("figures/naomi-aghq/conditional-simulation-diff-fixed.png", h = 5, w = 6.
 
 #' Try running tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
-#' This takes 12.5 minutes
-tictoc::tic()
-nuts <- tmbstan::tmbstan(obj_fixed, chains = 1, warmup = 50, iter = 100)
-time <- tictoc::toc()
+#' We will work towards that...
+# tictoc::tic()
+# nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 500)
+# time <- tictoc::toc()
+# 
+# (time$toc - time$tic) / 60 / 60 #' 3 hours
+# 
+# saveRDS(nuts, file = "figures/naomi-aghq/nuts.rds")
 
-saveRDS(nuts, file = "figures/naomi-aghq/nuts.rds")
+nuts <- readRDS("figures/naomi-aghq/nuts.rds")
 
 #' Check that indeed the values of beta were fixed
 nuts_random_field_samples <- random_field_simulation(
