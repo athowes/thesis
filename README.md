@@ -1,8 +1,10 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
+![](https://geps.dev/progress/94)<!-- -->
+
 > \[!WARNING\]  
-> Thesis under construction! Check back soon.
+> Thesis under construction! Check back soon. Currently 259 pages.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College

@@ -13,7 +13,7 @@ bibliography: references.bib
 ---
 
 ```{r}
-resource_version <- "20231208-174405-bcf2e5df"
+resource_version <- "20231209-123525-5024f43e"
 ```
 
 # Models for areal spatial structure {#beyond-borders}
@@ -645,6 +645,22 @@ To contrast approaches to model comparison, the DIC and WAIC measures of model f
 Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo].
 
 ### Results
+
+```{r cv-crps}
+gt_cv_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_cv-crps.rds"))
+
+gt_cv_crps <- gt_cv_crps %>%
+  gt::tab_caption(caption = 'Figure caption.')
+
+if(knitr::is_html_output()) {
+  gt_cv_crps
+}
+
+if(knitr::is_latex_output()) {
+  gt_cv_crps %>%
+    gt::as_latex()
+}
+```
 
 Figures \@ref(fig:ladder-civ2017phia), \@ref(fig:ladder-mwi2016phia), \@ref(fig:ladder-tza2017phia), and \@ref(fig:ladder-zwe2016phia) show the posterior mean and 95% credible interval obtained for each area for each inferential model.
 Figures \@ref(fig:crps-mean-se-civ2017phia), \@ref(fig:crps-mean-se-mwi2016phia), \@ref(fig:crps-mean-se-tza2017phia), and \@ref(fig:crps-mean-se-zwe2016phia).
