@@ -419,29 +419,6 @@ plot_suitability(phi_fixed_adam_sf) / plot_prevalence(rho_fixed_adam_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation-adam-fixed.png", h = 5, w = 6.25, bg = "white")
 
-phi_diff_sf <- st_sf("phi" = rowMeans(phi_fixed_adam_samples) - rowMeans(phi_fixed_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
-rho_diff_sf <- st_sf("rho" = rowMeans(rho_fixed_adam_samples) - rowMeans(rho_fixed_samples), "geometry" = random_field_samples_fixed_adam$grid$geometry)
-
-fig_phi_diff <- ggplot() +
-  geom_sf(data = sf::st_intersection(phi_diff_sf, areas), aes(fill = phi), alpha = 0.8, col = NA) +
-  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
-  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-  scale_fill_viridis_c(option = "E", direction = 1, labels = scales::percent, breaks = c(-0.05, 0, 0.05)) +
-  theme_void() +
-  labs(fill = "Suitability\ndifference", tag = "A")
-
-fig_rho_diff <- ggplot() +
-    geom_sf(data = sf::st_intersection(rho_diff_sf, areas), aes(fill = rho), alpha = 0.8, col = NA) +
-    geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
-    geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
-    scale_fill_viridis_c(option = "G", direction = 1, labels = scales::percent, breaks = c(-0.05, 0, 0.05)) +
-    theme_void() +
-    labs(fill = "Prevalence\ndifference", tag = "B")
-
-fig_phi_diff / fig_rho_diff
-
-ggsave("figures/naomi-aghq/conditional-simulation-diff-fixed.png", h = 5, w = 6.25, bg = "white")
-
 #' Try running tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
 #' We will work towards that...
@@ -459,7 +436,7 @@ nuts <- readRDS("figures/naomi-aghq/nuts.rds")
 bayesplot::color_scheme_set(rev(c("#56B4E9", "#009E73", "#E69F00", "#F0E442", "#E69F00", "#E69F00")))
 
 nuts_summary <- summary(nuts)$summary
-nuts_summary <- tmbstan_summary[1:(nrow(nuts_summary) - 1), ]
+nuts_summary <- nuts_summary[1:(nrow(nuts_summary) - 1), ]
 
 nuts_rhats <- bayesplot::rhat(nuts)
 nuts_rhats <- nuts_rhats[1:(nrow(nuts_summary) - 1)]
@@ -484,9 +461,49 @@ nuts_random_field_samples <- random_field_simulation(
   nsim = 50
 )
 
-nuts_phi_samples <- nuts_random_field_samples$phi_samples
-nuts_rho_samples <- nuts_random_field_samples$rho_samples
-nuts_phi_sf <- st_sf("phi" = rowMeans(nuts_phi_samples), "geometry" = nuts_random_field_samples$grid$geometry)
-nuts_rho_sf <- st_sf("rho" = rowMeans(nuts_rho_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+phi_nuts_samples <- nuts_random_field_samples$phi_samples 
+rho_nuts_samples <- nuts_random_field_samples$rho_samples
+phi_nuts_sf <- st_sf("phi" = rowMeans(nuts_phi_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+rho_nuts_sf <- st_sf("rho" = rowMeans(nuts_rho_samples), "geometry" = nuts_random_field_samples$grid$geometry)
 
 plot_suitability(nuts_phi_sf) / plot_prevalence(nuts_rho_sf)
+
+phi_diff_sf <- st_sf(
+  "Gaussian" = rowMeans(phi_fixed_samples) - rowMeans(phi_nuts_samples),
+  "Laplace" = rowMeans(phi_fixed_adam_samples) - rowMeans(phi_nuts_samples),
+  "geometry" = nuts_random_field_samples$grid$geometry
+) %>%
+  pivot_longer(cols = c("Gaussian", "Laplace"), names_to = "method", values_to = "value")
+
+rho_diff_sf <- st_sf(
+  "Gaussian" = rowMeans(rho_fixed_samples) - rowMeans(rho_nuts_samples),
+  "Laplace" = rowMeans(rho_fixed_adam_samples) - rowMeans(rho_nuts_samples),
+  "geometry" = nuts_random_field_samples$grid$geometry
+) %>%
+  pivot_longer(cols = c("Gaussian", "Laplace"), names_to = "method", values_to = "value")
+
+fig_phi_diff <- ggplot() +
+  geom_sf(data = sf::st_intersection(phi_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+  facet_wrap(~ method, ncol = 1) +
+  scale_fill_viridis_c(option = "E", direction = 1, labels = scales::percent) + # , breaks = c(-0.05, 0, 0.05)
+  theme_void() +
+  labs(fill = "Suitability\ndifference\nto NUTS")
+
+fig_phi_diff
+
+ggsave("figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png", h = 4, w = 6.25, bg = "white")
+
+fig_rho_diff <- ggplot() +
+  geom_sf(data = sf::st_intersection(rho_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+  facet_wrap(~ method, ncol = 1) +
+  scale_fill_viridis_c(option = "G", direction = 1, labels = scales::percent) + # , breaks = c(-0.05, 0, 0.05)
+  theme_void() +
+  labs(fill = "Prevalence\ndifference\nto NUTS")
+
+fig_rho_diff
+
+ggsave("figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png", h = 4, w = 6.25, bg = "white")
