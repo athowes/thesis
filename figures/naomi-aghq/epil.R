@@ -287,8 +287,8 @@ df <- bind_rows(
     by = c("index", "type")
   )
   
-ggplot(df, aes(x = as.factor(index), y = (gold - value) / gold, color = method)) +
-  geom_point(size = 1.5, shape = 1) +
+ggplot(df, aes(x = as.factor(index), y = (value - gold) / gold, color = method)) +
+  geom_point(size = 2, shape = 1) +
   facet_grid(type ~ software) +
   scale_color_manual(values = c("#56B4E9","#009E73")) +
   geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
@@ -405,7 +405,7 @@ time_df <- data.frame(time = times, method = methods, software = softwares)
 ggplot(time_df, aes(x = forcats::fct_reorder(method, time), y = time, fill = software)) +
   geom_col() +
   theme_minimal() +
-  scale_fill_manual(values = c("#0072B2", "#D55E00", "#E69F00", "#F0E442")) +
+  scale_fill_manual(values = c("#F0E442", "#0072B2", "#D55E00", "#CC79A7")) +
   labs(x = "", y = "Time taken (s)", fill = "Software") +
   coord_flip()
 
