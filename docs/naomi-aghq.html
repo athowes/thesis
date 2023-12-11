@@ -368,6 +368,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#loa-loa-example"><i class="fa fa-check"></i><b>C.2</b> Loa loa example</a>
 <ul>
 <li class="chapter" data-level="C.2.1" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-1"><i class="fa fa-check"></i><b>C.2.1</b> NUTS convergence and suitability</a></li>
+<li class="chapter" data-level="C.2.2" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.2.2</b> Inference comparison</a></li>
 </ul></li>
 <li class="chapter" data-level="C.3" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#naomi-math"><i class="fa fa-check"></i><b>C.3</b> Simplified Naomi model description</a>
 <ul>
@@ -379,7 +380,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.4" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#nuts-convergence-and-suitability-2"><i class="fa fa-check"></i><b>C.4</b> NUTS convergence and suitability</a></li>
 <li class="chapter" data-level="C.5" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#use-of-pca-aghq-1"><i class="fa fa-check"></i><b>C.5</b> Use of PCA-AGHQ</a></li>
 <li class="chapter" data-level="C.6" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#normalising-constant-estimation"><i class="fa fa-check"></i><b>C.6</b> Normalising constant estimation</a></li>
-<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.7</b> Inference comparison</a></li>
+<li class="chapter" data-level="C.7" data-path="fast-approximate-bayesian-inference.html"><a href="fast-approximate-bayesian-inference.html#inference-comparison-2"><i class="fa fa-check"></i><b>C.7</b> Inference comparison</a></li>
 </ul></li>
 </ul>
 
@@ -1313,10 +1314,10 @@ Figure 6.13: Difference between the prevalence posterior means with Gaussian mar
 </p>
 </div>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-mean-sd"></span>
-<img src="figures/naomi-aghq/loa-loa-mean-sd.png" alt="Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each \(u(s_i), v(s_i): i \in [190]\)." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-mean-sd-abs"></span>
+<img src="figures/naomi-aghq/loa-loa-mean-sd-abs.png" alt="Absolute difference between the Gaussian and Laplace marginal posterior means and standard deviations to NUTS results at each \(u(s_i), v(s_i): i \in [190]\). Relative differences are in Figure C.4." width="95%" />
 <p class="caption">
-Figure 6.14: Absolute and relative differences between the Gaussian and Laplace marginal posterior means and standard deviations at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>.
+Figure 6.14: Absolute difference between the Gaussian and Laplace marginal posterior means and standard deviations to NUTS results at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>. Relative differences are in Figure <a href="fast-approximate-bayesian-inference.html#fig:loa-loa-mean-sd-pct">C.4</a>.
 </p>
 </div>
 </div>
@@ -1635,14 +1636,14 @@ Model outputs from GEB are illustrated in Figure <a href="naomi-aghq.html#fig:na
 <p>The Naomi model was difficult to efficiently sample from using NUTS via <code>tmbstan</code>.
 Four chains run in parallel for 100 thousand iterations each were required to obtain acceptable NUTS diagnostics.
 For ease-of-storage, the samples were thinned by a factor of 20, resulting in 5000 iterations kept per chain, with the first 2500 removed as burn-in.
-The effective sample size ratios were typically low (Figure <a href="fast-approximate-bayesian-inference.html#fig:ess">C.5</a>).
-The lowest effective sample size was 208 (2.5% quantile 318, 50% quantile 1231, and 97.5% quantile 2776; Panel <a href="fast-approximate-bayesian-inference.html#fig:worst-trace">C.6</a>A).
-The largest potential scale reduction factor was 1.021 (2.5% quantile 1, 50% quantile 1.003, and 97.5% quantile 1.017; Panel <a href="fast-approximate-bayesian-inference.html#fig:worst-trace">C.6</a>B).
+The effective sample size ratios were typically low (Figure <a href="fast-approximate-bayesian-inference.html#fig:ess">C.6</a>).
+The lowest effective sample size was 208 (2.5% quantile 318, 50% quantile 1231, and 97.5% quantile 2776; Panel <a href="fast-approximate-bayesian-inference.html#fig:worst-trace">C.7</a>A).
+The largest potential scale reduction factor was 1.021 (2.5% quantile 1, 50% quantile 1.003, and 97.5% quantile 1.017; Panel <a href="fast-approximate-bayesian-inference.html#fig:worst-trace">C.7</a>B).
 Though inaccuracies remain possible, these diagnostics are sufficient to treat inferences obtained from NUTS as a gold-standard.</p>
 <p>Correlation structure in the posterior can result in sampler inefficiency.
-The each of the four pairs of AR1 log standard deviation <span class="math inline">\(\log(\sigma)\)</span> and logit lag-one autocorrelation parameter <span class="math inline">\(\text{logit}(\phi)\)</span> posteriors were positively correlated (mean absolute correlation 0.81, Figure <a href="fast-approximate-bayesian-inference.html#fig:rho-a">C.7</a>).
+The each of the four pairs of AR1 log standard deviation <span class="math inline">\(\log(\sigma)\)</span> and logit lag-one autocorrelation parameter <span class="math inline">\(\text{logit}(\phi)\)</span> posteriors were positively correlated (mean absolute correlation 0.81, Figure <a href="fast-approximate-bayesian-inference.html#fig:rho-a">C.8</a>).
 These parameters are partially identifiable as variation can either be explained by high standard deviation and high autocorrelation or low standard deviation and low autocorrelation.
-On the other hand, the BYM2 log standard deviation <span class="math inline">\(\log(\sigma)\)</span> and logit proportion parameter <span class="math inline">\(\text{logit}(\phi)\)</span> were, as designed, more orthogonal (mean absolute correlation 0.17, Figure <a href="fast-approximate-bayesian-inference.html#fig:alpha-x">C.8</a>).</p>
+On the other hand, the BYM2 log standard deviation <span class="math inline">\(\log(\sigma)\)</span> and logit proportion parameter <span class="math inline">\(\text{logit}(\phi)\)</span> were, as designed, more orthogonal (mean absolute correlation 0.17, Figure <a href="fast-approximate-bayesian-inference.html#fig:alpha-x">C.9</a>).</p>
 <!-- Which parameters had the lowest ESS? -->
 <!-- Other unidentifiablities in the model -->
 <p>The informativeness of data about a parameter can be summarised by the posterior contraction <span class="citation">(<a href="#ref-schad2021toward">Schad, Betancourt, and Vasishth 2021</a>)</span> which compares the prior variance <span class="math inline">\(\mathbb{V}_\text{prior}(\psi)\)</span> to posterior variance <span class="math inline">\(\mathbb{V}_\text{post}(\psi)\)</span> via

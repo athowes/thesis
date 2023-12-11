@@ -358,47 +358,6 @@ sample_adam <- function(i, quad, M) {
   return(s)
 }
 
-samples_adam <- lapply(1:N, sample_adam, M = 1000, quad = quad_fixed_laplace_marginals)
-aghq_fixed_samples <- sample_marginal(quad_fixed, 1000)
-
-df <- bind_rows(
-  data.frame(method = "laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:N),
-  data.frame(method = "gaussian", mean = apply(aghq_fixed_samples$samps[1:N, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:N, ], 1, sd), index = 1:N)
-)
-
-df_plot <- df %>%
-  pivot_longer(cols = c("mean", "sd"), names_to = "indicator", values_to = "value") %>%
-  pivot_wider(id_cols = c("index", "indicator"), names_from = "method") %>%
-  mutate(
-    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd"),
-    diff_abs = laplace - gaussian,
-    diff_pct = diff_abs / (sign(laplace) * pmax(0.25, abs(laplace)))
-  ) %>%
-  pivot_longer(cols = c("diff_abs", "diff_pct"), names_to = "metric", values_to = "value")
-
-fig_abs <- df_plot %>%
-  filter(metric == "diff_abs") %>%
-  ggplot(aes(x = gaussian, y = value)) +
-  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
-  facet_wrap(. ~ indicator) +
-  geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
-  labs(x = "", y = "Absolute difference to Laplace") +
-  theme_minimal()
-
-fig_pct <- df_plot %>%
-  filter(metric == "diff_pct") %>%
-  ggplot(aes(x = gaussian, y = value)) +
-    geom_point(size = 1.5, shape = 1, alpha = 0.6) +
-    facet_wrap(. ~ indicator) +
-    geom_abline(intercept = 0, slope = 0, col = "#009E73", linetype = "dashed") +
-    scale_y_continuous(labels = scales::percent) +
-    labs(x = "Gaussian estimate", y = "Percentage difference to Laplace") +
-    theme_minimal()
-
-fig_abs / fig_pct
-
-ggsave("figures/naomi-aghq/loa-loa-mean-sd.png", h = 6, w = 6.25, bg = "white")
-
 #' Difference on map plot
 samples_adam <- lapply(1:N, sample_adam, M = 100, quad = quad_fixed_laplace_marginals)
 samples_adam <- do.call(rbind, samples_adam)
@@ -507,3 +466,51 @@ fig_rho_diff <- ggplot() +
 fig_rho_diff
 
 ggsave("figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png", h = 4, w = 6.25, bg = "white")
+
+#' Point estimate differences
+samples_adam <- lapply(1:N, sample_adam, M = 1000, quad = quad_fixed_laplace_marginals)
+aghq_fixed_samples <- sample_marginal(quad_fixed, 1000)
+
+df <- bind_rows(
+  data.frame(method = "Laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:N),
+  data.frame(method = "Gaussian", mean = apply(aghq_fixed_samples$samps[1:N, ], 1, mean), sd = apply(aghq_fixed_samples$samps[1:N, ], 1, sd), index = 1:N),
+  data.frame(method = "NUTS", mean = nuts_summary[1:380, "mean"], sd = nuts_summary[1:380, "sd"], index = 1:N) %>% `rownames<-`(NULL)
+)
+
+df_plot <- df %>%
+  pivot_longer(cols = c("mean", "sd"), names_to = "indicator", values_to = "value") %>%
+  pivot_wider(id_cols = c("index", "indicator"), names_from = "method") %>%
+  pivot_longer(cols = c("Laplace", "Gaussian"), names_to = "method", values_to = "estimate") %>%
+  mutate(
+    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd"),
+    diff_abs = estimate - NUTS,
+    diff_pct = diff_abs / (sign(NUTS) * pmax(0.25, abs(NUTS)))
+  ) %>%
+  pivot_longer(cols = c("diff_abs", "diff_pct"), names_to = "metric", values_to = "value")
+
+fig_abs <- df_plot %>%
+  filter(metric == "diff_abs") %>%
+  ggplot(aes(x = estimate, y = value)) +
+  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
+  facet_grid(indicator ~ method) +
+  geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
+  labs(y = "Absolute difference to NUTS", x = "Estimate") +
+  theme_minimal()
+
+fig_abs
+
+ggsave("figures/naomi-aghq/loa-loa-mean-sd-abs.png", h = 6, w = 6.25, bg = "white")
+
+fig_pct <- df_plot %>%
+  filter(metric == "diff_pct") %>%
+  ggplot(aes(x = estimate, y = value)) +
+  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
+  facet_grid(indicator ~ method) +
+  geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Percent difference to NUTS", x = "Estimate") +
+  theme_minimal()
+
+fig_pct
+
+ggsave("figures/naomi-aghq/loa-loa-mean-sd-pct.png", h = 6, w = 6.25, bg = "white")
