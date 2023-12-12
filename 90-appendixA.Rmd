@@ -5,31 +5,42 @@
 <!-- If you feel it necessary to include an appendix, it goes here. The first appendix should include the commands above. -->
 
 ```{r}
-resource_version <- "20231211-152529-d4eac900"
+resource_version <- "20231212-153116-1996fc83"
 ```
 
 # Models for areal spatial structure
 
 ## Comparison of AGHQ to NUTS {#aghq-nuts}
 
-(ref:iid-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting an IID inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E).
+```{r}
+aghq_nuts_comparison_diagnostics <- readr::read_csv(paste0("resources/beyond-borders/", resource_version, "/depends/diagnostics.csv"))
+```
+
+(ref:iid-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting an IID inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E). For NUTS, the minimum ESS was `r round(aghq_nuts_comparison_diagnostics[1, "min_ess"])`, and the maximum value of the potential scale reduction factor was `r sprintf("%.2f", aghq_nuts_comparison_diagnostics[1, "max_rhat"])`.
 
 ```{r iid-aghq-nuts, fig.cap="(ref:iid-aghq-nuts)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/iid-aghq-nuts.png")
 knitr::include_graphics(path)
 ```
 
-(ref:besag-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting a Besag inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E).
+(ref:besag-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting a Besag inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E). For NUTS, the minimum ESS was `r round(aghq_nuts_comparison_diagnostics[2, "min_ess"])`, and the maximum value of the potential scale reduction factor was `r sprintf("%.2f", aghq_nuts_comparison_diagnostics[2, "max_rhat"])`.
 
 ```{r besag-aghq-nuts, fig.cap="(ref:besag-aghq-nuts)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/besag-aghq-nuts.png")
 knitr::include_graphics(path)
 ```
 
-(ref:bym2-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting a BYM2 inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E).
+(ref:bym2-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting a BYM2 inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E). For NUTS, the minimum ESS was `r round(aghq_nuts_comparison_diagnostics[3, "min_ess"])`, and the maximum value of the potential scale reduction factor was `r sprintf("%.2f", aghq_nuts_comparison_diagnostics[3, "max_rhat"])`.
 
 ```{r bym2-aghq-nuts, fig.cap="(ref:bym2-aghq-nuts)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/bym2-aghq-nuts.png")
+knitr::include_graphics(path)
+```
+
+(ref:fck-aghq-nuts) A comparison of the posterior means and standard deviations obtained with AGHQ via `aghq` as compared with NUTS via `tmbstan` fitting a FCK inferential model to IID synthetic data on the grid geometry (Panel \@ref(fig:geometries)E). For NUTS, the minimum ESS was `r round(aghq_nuts_comparison_diagnostics[4, "min_ess"])`, and the maximum value of the potential scale reduction factor was `r sprintf("%.2f", aghq_nuts_comparison_diagnostics[4, "max_rhat"])`.
+
+```{r fck-aghq-nuts, fig.cap="(ref:fck-aghq-nuts)"}
+path <- paste0("resources/beyond-borders/", resource_version, "/depends/fck-aghq-nuts.png")
 knitr::include_graphics(path)
 ```
 
