@@ -380,14 +380,13 @@ ggsave("figures/naomi-aghq/conditional-simulation-adam-fixed.png", h = 5, w = 6.
 
 #' Try running tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
-#' We will work towards that...
-# tictoc::tic()
-# nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 500)
-# time <- tictoc::toc()
-# 
-# (time$toc - time$tic) / 60 / 60 #' 3 hours
-# 
-# saveRDS(nuts, file = "figures/naomi-aghq/nuts.rds")
+tictoc::tic()
+nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 5000)
+time <- tictoc::toc()
+
+(time$toc - time$tic) / 60 / 60
+
+saveRDS(nuts, file = "figures/naomi-aghq/nuts-big.rds")
 
 nuts <- readRDS("figures/naomi-aghq/nuts.rds")
 
