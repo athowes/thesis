@@ -1,10 +1,10 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/96)<!-- -->
+![](https://geps.dev/progress/97)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Check back soon. Currently 265 pages.
+> Thesis under construction! Check back soon. Currently 266 pages.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -27,10 +27,10 @@ I developed a novel deterministic Bayesian inference method, combining
 adaptive Gauss-Hermite quadrature with principal component analysis,
 motivated by the Naomi district-level model of HIV indicators. In
 developing this method, I implemented integrated nested Laplace
-approximations using automatic differentiation, enabling inference for a
-wider class of models. Together, the contributions in this thesis help
-to guide precision HIV policy in sub-Saharan Africa, as well as
-advancing Bayesian methods for spatio-temporal data.
+approximations using automatic differentiation, enabling use of this
+algorithm for a wider class of models. Together, the contributions in
+this thesis help to guide precision HIV policy in sub-Saharan Africa, as
+well as advancing Bayesian methods for spatio-temporal data.
 
 ![](figures/hiv-aids/naomi-continent.png)
 

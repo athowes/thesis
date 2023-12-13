@@ -1236,25 +1236,25 @@ Figure 6.9: The number of seconds taken to perform inference with each method an
 <h3><span class="header-section-number">6.2.2</span> Loa loa ELGM<a href="naomi-aghq.html#loaloa" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-data"></span>
-<img src="figures/naomi-aghq/loa-loa-data.png" alt="Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros." width="95%" />
+<img src="figures/naomi-aghq/loa-loa-data.png" alt="Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are typically located in close proximity to each other. The histogram in Panel B shows the empirical prevalences, and high number of zeros." width="95%" />
 <p class="caption">
-Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
+Figure 6.10: Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are typically located in close proximity to each other. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
 </p>
 </div>
 <p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> considered a ELGM for the prevalence of the parasitic worm Loa loa.
 Counts of cases <span class="math inline">\(y_i \in \mathbb{N}^{+}\)</span> from a sample of size <span class="math inline">\(n_i \in \mathbb{N}^{+}\)</span> were obtained from field studies in <span class="math inline">\(n = 190\)</span> villages in Cameroon and Nigeria [<span class="citation">Schlüter et al. (<a href="#ref-schluter2016using">2016</a>)</span>; Figure <a href="naomi-aghq.html#fig:loa-loa-data">6.10</a>].
-Some areas are thought to be unsuitable for disease transmission, and there are relatively high number of villages with zero prevalence.
-Following <span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span> a zero-inflated binomial likelihood was used
+Some areas are thought to be unsuitable for disease transmission, and possibly as a result there are relatively high number of villages with zero prevalence.
+To account for the possibility of structural zeros, following <span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span>, a zero-inflated binomial likelihood was used
 <span class="math display" id="eq:loaloa-likelihood">\[\begin{equation}
 p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) \tag{6.18}
 \end{equation}\]</span>
-to account for the possibility of structural zeros via a suitability probability <span class="math inline">\(\phi(s_i) \in [0, 1]\)</span>, where <span class="math inline">\(s_i \in \mathbb{R}^2\)</span> is the village location and <span class="math inline">\(\rho(s_i) \in [0, 1]\)</span> is the disease prevalence.
-The prevalence and suitability were modelled jointly according to
+where <span class="math inline">\(s_i \in \mathbb{R}^2\)</span> is the village location, <span class="math inline">\(\phi(s_i) \in [0, 1]\)</span> is the suitability probability, and <span class="math inline">\(\rho(s_i) \in [0, 1]\)</span> is the disease prevalence.
+The prevalence and suitability were modelled jointly using logistic regressions
 <span class="math display">\[\begin{align}
   \text{logit}[\phi(s)] &amp;= \beta_\phi + u(s), \\
   \text{logit}[\rho(s)] &amp;= \beta_\rho + v(s).
 \end{align}\]</span>
-The regression coefficients were given diffuse Gaussian prior distributions
+The two regression coefficients <span class="math inline">\(\beta_\phi\)</span> and <span class="math inline">\(\beta_\rho\)</span> were given diffuse Gaussian prior distributions
 <span class="math display">\[\begin{equation}
 \beta_\phi, \beta_\rho \sim \mathcal{N}(0, 1000).
 \end{equation}\]</span>
@@ -1263,11 +1263,12 @@ Gamma penalised complexity <span class="citation">(<a href="#ref-simpson2017pena
 <span class="math display">\[\begin{align}
 \mathbb{P}(\sigma &lt; 4) &amp;= 0.975, \\
 \mathbb{P}(\rho &lt; 200\text{km}) &amp;= 0.975.
-\end{align}\]</span></p>
-<p>The zero-inflated likelihood (Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.18)</a>) is not compatible with <code>R-INLA</code>, so only approaches based on the more flexible <code>TMB</code> template were included.
-Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.</p>
-<p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented this model in <code>TMB</code>.
-Inference was performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
+\end{align}\]</span>
+The smoothness parameter <span class="math inline">\(\nu\)</span> was fixed to 1.</p>
+<p>The zero-inflated likelihood in Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.18)</a> is not compatible with <code>R-INLA</code>.
+Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.
+Instead, <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented this model in <code>TMB</code>.
+Inference was then performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
 This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>), extending <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> by including AGHQ with Laplace marginals.</p>
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered to fit the Loa loa ELGM.</caption>
@@ -1292,8 +1293,16 @@ This section considers inference using three approaches (Table <a href="naomi-ag
 </tr>
 </tbody>
 </table>
-<p>The <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12].
-Latent field and hyperparameter samples were used in each conditional simulation (Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a>).</p>
+<p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> found that NUTS did not converge for the full model, but did converge when the values of <span class="math inline">\(\beta_\phi\)</span> and <span class="math inline">\(\beta_\rho\)</span> were fixed at their posterior mode (obtained using AGHQ with Gaussian marginals).
+To allow for comparison between Gaussian and Laplace marginals, the same approach was taken here.</p>
+<p>After obtaining posterior inferences at each <span class="math inline">\(s_i\)</span>, the <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12] over a fine grid.
+In each conditional simulation independent latent field and hyperparameter samples were used.</p>
+<div id="results-3" class="section level4 hasAnchor" number="6.2.2.1">
+<h4><span class="header-section-number">6.2.2.1</span> Results<a href="naomi-aghq.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a> shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
+Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a> and <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a> show the difference in posterior means as compared with NUTS depending on use of either Gaussian or Laplace marginals.
+As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure <a href="naomi-aghq.html#fig:loa-loa-mean-sd-abs">6.14</a>.
+Comment about the time taken (Figure <a href="naomi-aghq.html#fig:loa-loa-time">6.15</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-adam-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-adam-fixed.png" alt="Posterior mean of the suitability \(\mathbb{E}[\phi_\texttt{LA}(s)]\) (Panel A) and prevalence \(\mathbb{E}[\rho_\texttt{LA}(s)]\) (Panel B) random fields computed using Laplace marginals." width="95%" />
@@ -1321,6 +1330,14 @@ Figure 6.13: Difference between the prevalence posterior means with Gaussian mar
 <p class="caption">
 Figure 6.14: Absolute difference between the Gaussian and Laplace marginal posterior means and standard deviations to NUTS results at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>. Relative differences are in Figure <a href="fast-approximate-bayesian-inference.html#fig:loa-loa-mean-sd-pct">C.4</a>.
 </p>
+</div>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-time"></span>
+<img src="figures/naomi-aghq/loa-loa-time.png" alt="Time taken placeholder." width="95%" />
+<p class="caption">
+Figure 6.15: Time taken placeholder.
+</p>
+</div>
 </div>
 </div>
 </div>
@@ -1582,7 +1599,7 @@ This expression is a product of the univariate weighting functions for the relev
 Denote <span class="math inline">\(\mathcal{Q}(m, s, k)\)</span> to be <span class="math inline">\(\mathcal{Q}(m, \mathbf{k})\)</span> with levels <span class="math inline">\(k_j = k, j \leq s\)</span> and <span class="math inline">\(k_j = 1, j &gt; s\)</span> for some <span class="math inline">\(s \leq m\)</span>.
 For example, for <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span> then <span class="math inline">\(\mathbf{k} = (k, 1)\)</span>.</p>
 <p>When the spectral decomposition is used to adapt the quadrature nodes, this choice of levels is analogous to principal components analysis (PCA).
-Figure <a href="naomi-aghq.html#fig:pca-demo">6.15</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
+Figure <a href="naomi-aghq.html#fig:pca-demo">6.16</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
 <p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.11)</a>) is given by
@@ -1597,7 +1614,7 @@ where <span class="math inline">\(\hat{\mathbf{E}}_{\texttt{LA}, s}\)</span> is 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pca-demo"></span>
 <img src="figures/naomi-aghq/pca-demo.png" alt="Consider the function \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\) as described in Figure 6.3. Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes \(\mathcal{Q}(2, 1, 3)\). These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector." width="95%" />
 <p class="caption">
-Figure 6.15: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
+Figure 6.16: Consider the function <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span> as described in Figure <a href="naomi-aghq.html#fig:aghq-demo">6.3</a>. Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes <span class="math inline">\(\mathcal{Q}(2, 1, 3)\)</span>. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
 </p>
 </div>
 </div>
@@ -1608,7 +1625,7 @@ Figure 6.15: Consider the function <span class="math inline">\(f(z_1, z_2) = \te
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-output"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/figB.png" alt="District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via TMB." width="95%" />
 <p class="caption">
-Figure 6.16: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via <code>TMB</code>.
+Figure 6.17: District-level HIV prevalence, ART coverage, and new HIV cases and HIV incidence for adults 15-49 in Malawi. Inference here was conducted using a Gaussian approximation and EB via <code>TMB</code>.
 </p>
 </div>
 <p>This section presents a case-study of approximate Bayesian inference methods applied to the Naomi model in Malawi.
@@ -1632,7 +1649,7 @@ Conditional on assessing chain convergence and suitability, to be discussed in S
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
 For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
-Model outputs from GEB are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.16</a>.</p>
+Model outputs from GEB are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.17</a>.</p>
 <div id="naomi-nuts" class="section level3 hasAnchor" number="6.5.1">
 <h3><span class="header-section-number">6.5.1</span> NUTS convergence and suitability<a href="naomi-aghq.html#naomi-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The Naomi model was difficult to efficiently sample from using NUTS via <code>tmbstan</code>.
@@ -1656,42 +1673,42 @@ Posterior variances can be extracted from NUTS results, and prior variances obta
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.17</a>).
+<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.18</a>).
 Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain 87% of total variation.
-The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.18</a>).</p>
+The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.19</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
 <p class="caption">
-Figure 6.17: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
+Figure 6.18: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:reduced-rank"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/reduced-rank.png" alt="With \(s = 8\), the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A)." width="95%" />
 <p class="caption">
-Figure 6.18: With <span class="math inline">\(s = 8\)</span>, the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A).
+Figure 6.19: With <span class="math inline">\(s = 8\)</span>, the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pc-loadings"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/pc-loadings.png" alt="Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of log_sigma_alpha_as and logit_phi_alpha_as." width="95%" />
 <p class="caption">
-Figure 6.19: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
+Figure 6.20: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-samples-comparison"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/nodes-samples-comparison.png" alt="The \(k^s = 3^8\) PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS." width="95%" />
 <p class="caption">
-Figure 6.20: The <span class="math inline">\(k^s = 3^8\)</span> PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
+Figure 6.21: The <span class="math inline">\(k^s = 3^8\)</span> PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:marginal-sd"></span>
 <img src="resources/naomi-aghq/20231206-143556-d6fbac86/depends/marginal-sd.png" alt="The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic." width="95%" />
 <p class="caption">
-Figure 6.21: The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic.
+Figure 6.22: The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic.
 </p>
 </div>
 </div>
@@ -1832,10 +1849,10 @@ Another (less desirable) option would be to algorithimically generate the modifi
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the Csárdi (2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN." width="95%" />
 <p class="caption">
-Figure 6.22: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
+Figure 6.23: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <span class="citation">Csárdi (<a href="#ref-cranlogs">2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.22</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.23</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.

@@ -936,7 +936,7 @@ knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 
 ### Loa loa ELGM {#loaloa}
 
-(ref:loa-loa-data) Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are located nearby. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
+(ref:loa-loa-data) Empirical prevalence of Loa loa in 190 sampled villages in Cameroon and Nigeria. The map in Panel A shows the village locations, empirical prevalences, presence of zeros, and sample sizes. The zeros are typically located in close proximity to each other. The histogram in Panel B shows the empirical prevalences, and high number of zeros.
 
 ```{r loa-loa-data, fig.cap="(ref:loa-loa-data)"}
 knitr::include_graphics("figures/naomi-aghq/loa-loa-data.png")
@@ -944,18 +944,18 @@ knitr::include_graphics("figures/naomi-aghq/loa-loa-data.png")
 
 @bilodeau2022stochastic considered a ELGM for the prevalence of the parasitic worm Loa loa.
 Counts of cases $y_i \in \mathbb{N}^{+}$ from a sample of size $n_i \in \mathbb{N}^{+}$ were obtained from field studies in $n = 190$ villages in Cameroon and Nigeria [@schluter2016using; Figure \@ref(fig:loa-loa-data)].
-Some areas are thought to be unsuitable for disease transmission, and there are relatively high number of villages with zero prevalence. 
-Following @diggle2016model a zero-inflated binomial likelihood was used
+Some areas are thought to be unsuitable for disease transmission, and possibly as a result there are relatively high number of villages with zero prevalence. 
+To account for the possibility of structural zeros, following @diggle2016model, a zero-inflated binomial likelihood was used
 \begin{equation}
 p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) (\#eq:loaloa-likelihood)
 \end{equation}
-to account for the possibility of structural zeros via a suitability probability $\phi(s_i) \in [0, 1]$, where $s_i \in \mathbb{R}^2$ is the village location and $\rho(s_i) \in [0, 1]$ is the disease prevalence.
-The prevalence and suitability were modelled jointly according to
+where $s_i \in \mathbb{R}^2$ is the village location, $\phi(s_i) \in [0, 1]$ is the suitability probability, and $\rho(s_i) \in [0, 1]$ is the disease prevalence.
+The prevalence and suitability were modelled jointly using logistic regressions
 \begin{align}
   \text{logit}[\phi(s)] &= \beta_\phi + u(s), \\
   \text{logit}[\rho(s)] &= \beta_\rho + v(s).
 \end{align}
-The regression coefficients were given diffuse Gaussian prior distributions
+The two regression coefficients $\beta_\phi$ and $\beta_\rho$ were given diffuse Gaussian prior distributions
 \begin{equation}
 \beta_\phi, \beta_\rho \sim \mathcal{N}(0, 1000).
 \end{equation}
@@ -965,12 +965,12 @@ Gamma penalised complexity [@simpson2017penalising; @fuglstad2019constructing] p
 \mathbb{P}(\sigma < 4) &= 0.975, \\
 \mathbb{P}(\rho < 200\text{km}) &= 0.975.
 \end{align}
+The smoothness parameter $\nu$ was fixed to 1.
 
-The zero-inflated likelihood (Equation \@ref(eq:loaloa-likelihood)) is not compatible with `R-INLA`, so only approaches based on the more flexible `TMB` template were included. 
+The zero-inflated likelihood in Equation \@ref(eq:loaloa-likelihood) is not compatible with `R-INLA`.
 Section 2.2 of @brown2015model demonstrates use of `R-INLA` to fit a simpler LGM model which includes covariates.
-
-@bilodeau2022stochastic implemented this model in `TMB`.
-Inference was performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
+Instead, @bilodeau2022stochastic implemented this model in `TMB`.
+Inference was then performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
 This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)), extending @bilodeau2022stochastic by including AGHQ with Laplace marginals.
 
 | Method         | Software      |
@@ -981,8 +981,18 @@ This section considers inference using three approaches (Table \@ref(tab:loaloa-
 
 Table: (\#tab:loaloa-approaches) The inference methods and software considered to fit the Loa loa ELGM.
 
-The `gstat::krige` function [@pebesma2004gstat] was used to implement conditional Gaussian field simulation [@sds; Chapter 12].
-Latent field and hyperparameter samples were used in each conditional simulation (Figure \@ref(fig:conditional-simulation-adam-fixed)).
+@bilodeau2022stochastic found that NUTS did not converge for the full model, but did converge when the values of $\beta_\phi$ and $\beta_\rho$ were fixed at their posterior mode (obtained using AGHQ with Gaussian marginals).
+To allow for comparison between Gaussian and Laplace marginals, the same approach was taken here.
+
+After obtaining posterior inferences at each $s_i$, the `gstat::krige` function [@pebesma2004gstat] was used to implement conditional Gaussian field simulation [@sds; Chapter 12] over a fine grid.
+In each conditional simulation independent latent field and hyperparameter samples were used.
+
+#### Results
+
+Figure \@ref(fig:conditional-simulation-adam-fixed) shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
+Figures \@ref(fig:conditional-simulation-phi-diff-fixed) and \@ref(fig:conditional-simulation-rho-diff-fixed) show the difference in posterior means as compared with NUTS depending on use of either Gaussian or Laplace marginals.
+As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure \@ref(fig:loa-loa-mean-sd-abs).
+Comment about the time taken (Figure \@ref(fig:loa-loa-time)).
 
 (ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi_\texttt{LA}(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho_\texttt{LA}(s)]$ (Panel B) random fields computed using Laplace marginals.
 
@@ -1006,6 +1016,26 @@ knitr::include_graphics("figures/naomi-aghq/conditional-simulation-rho-diff-fixe
 
 ```{r loa-loa-mean-sd-abs, fig.cap="(ref:loa-loa-mean-sd-abs)"}
 knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd-abs.png")
+```
+
+(ref:loa-loa-time) Time taken placeholder.
+
+```{r loa-loa-time, fig.cap="(ref:loa-loa-time)"}
+loa_loa_time_fig <- data.frame(
+  "time" = c(1, 180, 1440),
+  "method" = c("Gaussian, AGHQ", "Laplace, AGHQ", "NUTS"),
+  "software" = c("TMB", "TMB", "tmbstan")
+) %>%
+  ggplot(aes(x = method, y = time, fill = software)) +
+    geom_col() +
+    theme_minimal() +
+    scale_fill_manual(values = c("#D55E00", "#CC79A7")) +
+    labs(x = "", y = "Time taken (m)", fill = "Software") +
+    coord_flip()
+
+
+ggsave("figures/naomi-aghq/loa-loa-time.png", loa_loa_time_fig, h = 3, w = 6.25)
+knitr::include_graphics("figures/naomi-aghq/loa-loa-time.png")
 ```
 
 ## The Naomi model {#naomi}
