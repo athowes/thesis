@@ -5,6 +5,7 @@ library(tmbstan)
 library(stars)
 library(tidyverse)
 library(patchwork)
+library(pals)
 
 source("figures/naomi-aghq/functions.R")
 
@@ -176,9 +177,8 @@ obj_fixed <- MakeADFun(
 
 quad_fixed <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
 
-#' Small number of samples
+#' Small number of samples as illustration
 aghq_samples <- sample_marginal(quad, 100)
-aghq_fixed_samples <- sample_marginal(quad_fixed, 100)
 
 #' Function to run conditional simulation of a random field. It is all done using
 #' samples, so each simulation uses one sample of u, v, beta and theta. This requires
@@ -261,11 +261,18 @@ plot_suitability(phi_sf) / plot_prevalence(rho_sf)
 ggsave("figures/naomi-aghq/conditional-simulation.png", h = 5, w = 6.25, bg = "white")
 
 #' Doing the same as above for AGHQ with a fixed beta
+#' Use a larger number of samples, because this figure will be included in thesis
+#' It's relatively slow to do this!
+
+n_medium <- 500
+aghq_fixed_samples <- sample_marginal(quad_fixed, n_medium)
+
 random_field_samples_fixed <- random_field_simulation(
   u_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Uzi"), ],
   v_samples = aghq_fixed_samples$samps[which(rownames(aghq_fixed_samples$samps) == "Urisk"), ],
-  beta_samples = t(data.frame(rep(param_new$betazi, 100), rep(param_new$betarisk, 100))),
-  theta_samples = aghq_fixed_samples$theta
+  beta_samples = t(data.frame(rep(param_new$betazi, n_medium), rep(param_new$betarisk, n_medium))),
+  theta_samples = aghq_fixed_samples$theta,
+  nsim = n_medium
 )
 
 phi_fixed_samples <- random_field_samples_fixed$phi_samples
@@ -358,15 +365,18 @@ sample_adam <- function(i, quad, M) {
   return(s)
 }
 
-#' Difference on map plot
-samples_adam <- lapply(1:N, sample_adam, M = 100, quad = quad_fixed_laplace_marginals)
+#' Laplace marginals maps
+#' Also use n_medium simulations here 
+
+samples_adam <- lapply(1:N, sample_adam, M = n_medium, quad = quad_fixed_laplace_marginals)
 samples_adam <- do.call(rbind, samples_adam)
 
 random_field_samples_fixed_adam <- random_field_simulation(
   u_samples = samples_adam[c(191:380), ],
   v_samples = samples_adam[c(1:190), ],
-  beta_samples = t(data.frame(rep(param_new$betazi, 100), rep(param_new$betarisk, 100))),
-  theta_samples = aghq_fixed_samples$theta
+  beta_samples = t(data.frame(rep(param_new$betazi, n_medium), rep(param_new$betarisk, n_medium))),
+  theta_samples = aghq_fixed_samples$theta,
+  nsim = n_medium
 )
 
 phi_fixed_adam_samples <- random_field_samples_fixed_adam$phi_samples
@@ -378,53 +388,59 @@ plot_suitability(phi_fixed_adam_sf) / plot_prevalence(rho_fixed_adam_sf)
 
 ggsave("figures/naomi-aghq/conditional-simulation-adam-fixed.png", h = 5, w = 6.25, bg = "white")
 
-#' Try running tmbstan
+#' Run tmbstan
 #' Alex writes that "the sampler converged in just over 19 hours, for 10,000 iterations"
-tictoc::tic()
-nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 5000)
-time <- tictoc::toc()
+#' I found that getting 10,000 iterations (as below) required 23 hours, though I did use my laptop
 
-(time$toc - time$tic) / 60 / 60
+# tictoc::tic()
+# nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 5000)
+# time <- tictoc::toc()
+# 
+# (time$toc - time$tic) / 60 / 60
+# 
+# saveRDS(time, file = "figures/naomi-aghq/nuts-big-time.rds")
+# saveRDS(nuts, file = "figures/naomi-aghq/nuts-big.rds")
 
-saveRDS(nuts, file = "figures/naomi-aghq/nuts-big.rds")
+nuts <- readRDS("figures/naomi-aghq/nuts-big.rds")
 
-nuts <- readRDS("figures/naomi-aghq/nuts.rds")
-
-#' Diagnostics
+#' Diagnostics look good
 bayesplot::color_scheme_set(rev(c("#56B4E9", "#009E73", "#E69F00", "#F0E442", "#E69F00", "#E69F00")))
 
-nuts_summary <- summary(nuts)$summary
-nuts_summary <- nuts_summary[1:(nrow(nuts_summary) - 1), ]
+nuts_summary <- head(summary(nuts)$summary, -1)
+nuts_rhats <- head(bayesplot::rhat(nuts), -1)
 
-nuts_rhats <- bayesplot::rhat(nuts)
-nuts_rhats <- nuts_rhats[1:(nrow(nuts_summary) - 1)]
+round(min(nuts_summary[, "n_eff"])) #' 677
+names(which.min(nuts_summary[, "n_eff"])) #' Uzi[174]
 
-round(min(nuts_summary[, "n_eff"])) #' 59
-names(which.min(nuts_summary[, "n_eff"])) #' Uzi[140]
-
-max(nuts_rhats) #' 1.038279
-names(which.max(nuts_rhats)) #' Uzi[70]
+max(nuts_rhats) #' 1.004941
+names(which.max(nuts_rhats)) #' Uzi[88]
 
 bayesplot::mcmc_trace(nuts, pars = c(names(which.min(nuts_summary[, "n_eff"])), names(which.max(nuts_rhats)))) +
   theme_minimal()
 
 ggsave("figures/naomi-aghq/nuts-loa-loa.png", h = 3, w = 6.25)
 
-#' Check that indeed the values of beta were fixed
+nuts_df <- as.data.frame(nuts)
+
+#' I am going to thin the nuts_df so that there are 500 samples to pass into conditional simulation
+#' To do this, I'll take the final 5000 iterations, and keep every 10th one
+nuts_thin_df <- nuts_df[5001:10000, ]
+nuts_thin_df <- nuts_thin_df[seq(1, 5000, by = 10), ]
+
 nuts_random_field_samples <- random_field_simulation(
-  u_samples = t(as.data.frame(nuts)[, c(1:190)]),
-  v_samples = t(as.data.frame(nuts)[, c(191:380)]),
-  beta_samples = t(data.frame(rep(param_new$betazi, 50), rep(param_new$betarisk, 50))),
-  theta_samples = as.data.frame(nuts)[, c(381, 382)],
-  nsim = 50
+  u_samples = t(nuts_thin_df[, c(191:380)]),
+  v_samples = t(nuts_thin_df[, c(1:190)]),
+  beta_samples = t(data.frame(rep(param_new$betazi, n_medium), rep(param_new$betarisk, n_medium))),
+  theta_samples = nuts_thin_df[, c(381, 382)],
+  nsim = n_medium
 )
 
-phi_nuts_samples <- nuts_random_field_samples$phi_samples 
+phi_nuts_samples <- nuts_random_field_samples$phi_samples
 rho_nuts_samples <- nuts_random_field_samples$rho_samples
-phi_nuts_sf <- st_sf("phi" = rowMeans(nuts_phi_samples), "geometry" = nuts_random_field_samples$grid$geometry)
-rho_nuts_sf <- st_sf("rho" = rowMeans(nuts_rho_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+phi_nuts_sf <- st_sf("phi" = rowMeans(phi_nuts_samples), "geometry" = nuts_random_field_samples$grid$geometry)
+rho_nuts_sf <- st_sf("rho" = rowMeans(rho_nuts_samples), "geometry" = nuts_random_field_samples$grid$geometry)
 
-plot_suitability(nuts_phi_sf) / plot_prevalence(nuts_rho_sf)
+plot_suitability(phi_nuts_sf) / plot_prevalence(rho_nuts_sf)
 
 phi_diff_sf <- st_sf(
   "Gaussian" = rowMeans(phi_fixed_samples) - rowMeans(phi_nuts_samples),
@@ -440,12 +456,14 @@ rho_diff_sf <- st_sf(
 ) %>%
   pivot_longer(cols = c("Gaussian", "Laplace"), names_to = "method", values_to = "value")
 
+abs(phi_diff_sf$value) %>% max()
+
 fig_phi_diff <- ggplot() +
   geom_sf(data = sf::st_intersection(phi_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
   geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
   geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
   facet_wrap(~ method, ncol = 1) +
-  scale_fill_viridis_c(option = "E", direction = 1, labels = scales::percent) + # , breaks = c(-0.05, 0, 0.05)
+  scale_fill_gradientn(colours = pals::ocean.balance(100), labels = scales::percent, limits = c(-0.086, 0.086)) +
   theme_void() +
   labs(fill = "Suitability\ndifference\nto NUTS")
 
@@ -453,12 +471,14 @@ fig_phi_diff
 
 ggsave("figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png", h = 4, w = 6.25, bg = "white")
 
+abs(rho_diff_sf$value) %>% max()
+
 fig_rho_diff <- ggplot() +
   geom_sf(data = sf::st_intersection(rho_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
   geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
   geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
   facet_wrap(~ method, ncol = 1) +
-  scale_fill_viridis_c(option = "G", direction = 1, labels = scales::percent) + # , breaks = c(-0.05, 0, 0.05)
+  scale_fill_gradientn(colours = pals::ocean.curl(100), labels = scales::percent, limits = c(-0.066, 0.066)) +
   theme_void() +
   labs(fill = "Prevalence\ndifference\nto NUTS")
 
@@ -487,18 +507,25 @@ df_plot <- df %>%
   ) %>%
   pivot_longer(cols = c("diff_abs", "diff_pct"), names_to = "metric", values_to = "value")
 
-fig_abs <- df_plot %>%
-  filter(metric == "diff_abs") %>%
-  ggplot(aes(x = estimate, y = value)) +
-  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
-  facet_grid(indicator ~ method) +
-  geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
-  labs(y = "Absolute difference to NUTS", x = "Estimate") +
+node_diff_df <- df %>%
+  pivot_longer(cols = c("mean", "sd"), names_to = "indicator", values_to = "value") %>%
+  pivot_wider(id_cols = c("index", "indicator"), names_from = "method") %>%
+  mutate(
+    indicator = fct_recode(indicator, "Posterior mean" = "mean", "Posterior SD" = "sd"),
+    diff_laplace = abs(Laplace - NUTS),
+    diff_gaussian = abs(Gaussian - NUTS),
+    diff = diff_gaussian - diff_laplace,
+  )
+
+fig_abs_hist <- ggplot(node_diff_df, aes(x = diff)) +
+  geom_histogram(col = "grey60", fill = "grey80", bins = 30) +
+  facet_wrap(~ indicator, scales = "free") +
+  labs(x = "Difference between Laplace and Gaussian", y = "", tag = "B") +
   theme_minimal()
 
-fig_abs
-
-ggsave("figures/naomi-aghq/loa-loa-mean-sd-abs.png", h = 6, w = 6.25, bg = "white")
+fig_abs / fig_abs_hist + plot_layout(heights = c(1, 0.5))
+  
+ggsave("figures/naomi-aghq/loa-loa-mean-sd-abs.png", h = 7, w = 6.25, bg = "white")
 
 fig_pct <- df_plot %>%
   filter(metric == "diff_pct") %>%

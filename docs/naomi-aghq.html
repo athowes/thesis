@@ -326,8 +326,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="7" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>7</b> Conclusions</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#strengths"><i class="fa fa-check"></i><b>7.1</b> Strengths</a></li>
-<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#weaknesses"><i class="fa fa-check"></i><b>7.2</b> Weaknesses</a></li>
+<li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#contributions"><i class="fa fa-check"></i><b>7.1</b> Contributions</a></li>
+<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#limitations-1"><i class="fa fa-check"></i><b>7.2</b> Limitations</a></li>
 <li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.3</b> Future work</a></li>
 <li class="chapter" data-level="7.4" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.4</b> Conclusions</a></li>
 </ul></li>
@@ -1272,37 +1272,43 @@ Inference was then performed using Gaussian marginals and AGHQ via <code>aghq</c
 This section considers inference using three approaches (Table <a href="naomi-aghq.html#tab:loaloa-approaches">6.2</a>), extending <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> by including AGHQ with Laplace marginals.</p>
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered to fit the Loa loa ELGM.</caption>
+<colgroup>
+<col width="34%" />
+<col width="32%" />
+<col width="32%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Software</th>
+<th>Details</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Gaussian, AGHQ</td>
 <td><code>TMB</code> and <code>aghq</code></td>
+<td><span class="math inline">\(k = 3\)</span></td>
 </tr>
 <tr class="even">
 <td>Laplace, AGHQ</td>
 <td><code>TMB</code> and <code>aghq</code></td>
+<td><span class="math inline">\(k = 3\)</span></td>
 </tr>
 <tr class="odd">
 <td>NUTS</td>
 <td><code>tmbstan</code></td>
+<td>4 chains of 5000 iterations, default NUTS settings <span class="citation">(<a href="#ref-carpenter2017stan">Carpenter et al. 2017</a>)</span></td>
 </tr>
 </tbody>
 </table>
 <p><span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> found that NUTS did not converge for the full model, but did converge when the values of <span class="math inline">\(\beta_\phi\)</span> and <span class="math inline">\(\beta_\rho\)</span> were fixed at their posterior mode (obtained using AGHQ with Gaussian marginals).
 To allow for comparison between Gaussian and Laplace marginals, the same approach was taken here.</p>
 <p>After obtaining posterior inferences at each <span class="math inline">\(s_i\)</span>, the <code>gstat::krige</code> function <span class="citation">(<a href="#ref-pebesma2004gstat">E. J. Pebesma 2004</a>)</span> was used to implement conditional Gaussian field simulation [<span class="citation">E. Pebesma and Bivand (<a href="#ref-sds">2023</a>)</span>; Chapter 12] over a fine grid.
-In each conditional simulation independent latent field and hyperparameter samples were used.</p>
+In each conditional simulation independent latent field and hyperparameter samples were used.
+For each method, 500 conditional Gaussian field simulations were obtained.</p>
 <div id="results-3" class="section level4 hasAnchor" number="6.2.2.1">
 <h4><span class="header-section-number">6.2.2.1</span> Results<a href="naomi-aghq.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a> shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
-Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a> and <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a> show the difference in posterior means as compared with NUTS depending on use of either Gaussian or Laplace marginals.
-As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure <a href="naomi-aghq.html#fig:loa-loa-mean-sd-abs">6.14</a>.
-Comment about the time taken (Figure <a href="naomi-aghq.html#fig:loa-loa-time">6.15</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-adam-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-adam-fixed.png" alt="Posterior mean of the suitability \(\mathbb{E}[\phi_\texttt{LA}(s)]\) (Panel A) and prevalence \(\mathbb{E}[\rho_\texttt{LA}(s)]\) (Panel B) random fields computed using Laplace marginals." width="95%" />
@@ -1310,18 +1316,19 @@ Comment about the time taken (Figure <a href="naomi-aghq.html#fig:loa-loa-time">
 Figure 6.11: Posterior mean of the suitability <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)]\)</span> (Panel A) and prevalence <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)]\)</span> (Panel B) random fields computed using Laplace marginals.
 </p>
 </div>
+<p>Figure <a href="naomi-aghq.html#fig:conditional-simulation-adam-fixed">6.11</a> shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-phi-diff-fixed"></span>
-<img src="figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png" alt="Difference between the suitability posterior means with Gaussian marginals \(\mathbb{E}[\phi_\texttt{G}(s)]\) and Laplace marginals \(\mathbb{E}[\phi_\texttt{LA}(s)]\) to NUTS results. As \(\beta_\phi\) was fixed this difference is as a result in differences in estimation of \(u(s)\)." width="95%" />
+<img src="figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png" alt="Difference between the suitability posterior means with Gaussian marginals \(\mathbb{E}[\phi_\texttt{G}(s)]\) and Laplace marginals \(\mathbb{E}[\phi_\texttt{LA}(s)]\) to NUTS results. As \(\beta_\phi\) was fixed this difference is as a result in differences in estimation of \(u(s)\). The diverging colour palette used in this figure is from Thyng et al. (2016)." width="95%" />
 <p class="caption">
-Figure 6.12: Difference between the suitability posterior means with Gaussian marginals <span class="math inline">\(\mathbb{E}[\phi_\texttt{G}(s)]\)</span> and Laplace marginals <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)]\)</span> to NUTS results. As <span class="math inline">\(\beta_\phi\)</span> was fixed this difference is as a result in differences in estimation of <span class="math inline">\(u(s)\)</span>.
+Figure 6.12: Difference between the suitability posterior means with Gaussian marginals <span class="math inline">\(\mathbb{E}[\phi_\texttt{G}(s)]\)</span> and Laplace marginals <span class="math inline">\(\mathbb{E}[\phi_\texttt{LA}(s)]\)</span> to NUTS results. As <span class="math inline">\(\beta_\phi\)</span> was fixed this difference is as a result in differences in estimation of <span class="math inline">\(u(s)\)</span>. The diverging colour palette used in this figure is from <span class="citation">Thyng et al. (<a href="#ref-thyng2016true">2016</a>)</span>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-rho-diff-fixed"></span>
-<img src="figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png" alt="Difference between the prevalence posterior means with Gaussian marginals \(\mathbb{E}[\rho_\texttt{G}(s)]\) and Laplace marginals \(\mathbb{E}[\rho_\texttt{LA}(s)]\) to NUTS results. As \(\beta_\rho\) was fixed this difference is as a result in differences in estimation of \(v(s)\)." width="95%" />
+<img src="figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png" alt="Difference between the prevalence posterior means with Gaussian marginals \(\mathbb{E}[\rho_\texttt{G}(s)]\) and Laplace marginals \(\mathbb{E}[\rho_\texttt{LA}(s)]\) to NUTS results. As \(\beta_\rho\) was fixed this difference is as a result in differences in estimation of \(v(s)\). The diverging colour palette used in this figure is from Thyng et al. (2016)." width="95%" />
 <p class="caption">
-Figure 6.13: Difference between the prevalence posterior means with Gaussian marginals <span class="math inline">\(\mathbb{E}[\rho_\texttt{G}(s)]\)</span> and Laplace marginals <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)]\)</span> to NUTS results. As <span class="math inline">\(\beta_\rho\)</span> was fixed this difference is as a result in differences in estimation of <span class="math inline">\(v(s)\)</span>.
+Figure 6.13: Difference between the prevalence posterior means with Gaussian marginals <span class="math inline">\(\mathbb{E}[\rho_\texttt{G}(s)]\)</span> and Laplace marginals <span class="math inline">\(\mathbb{E}[\rho_\texttt{LA}(s)]\)</span> to NUTS results. As <span class="math inline">\(\beta_\rho\)</span> was fixed this difference is as a result in differences in estimation of <span class="math inline">\(v(s)\)</span>. The diverging colour palette used in this figure is from <span class="citation">Thyng et al. (<a href="#ref-thyng2016true">2016</a>)</span>.
 </p>
 </div>
 
@@ -1331,6 +1338,8 @@ Figure 6.13: Difference between the prevalence posterior means with Gaussian mar
 Figure 6.14: Absolute difference between the Gaussian and Laplace marginal posterior means and standard deviations to NUTS results at each <span class="math inline">\(u(s_i), v(s_i): i \in [190]\)</span>. Relative differences are in Figure <a href="fast-approximate-bayesian-inference.html#fig:loa-loa-mean-sd-pct">C.4</a>.
 </p>
 </div>
+<p>For both the suitability (Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a>) and prevalence (Figure <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a>) posterior mean, using Laplace marginals rather than Gaussian marginals substantially reduces the extent of error with respect to NUTS.
+As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure <a href="naomi-aghq.html#fig:loa-loa-mean-sd-abs">6.14</a>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-time"></span>
 <img src="figures/naomi-aghq/loa-loa-time.png" alt="Time taken placeholder." width="95%" />
@@ -1338,6 +1347,7 @@ Figure 6.14: Absolute difference between the Gaussian and Laplace marginal poste
 Figure 6.15: Time taken placeholder.
 </p>
 </div>
+<p>Comment about the time taken (Figure <a href="naomi-aghq.html#fig:loa-loa-time">6.15</a>).</p>
 </div>
 </div>
 </div>
@@ -1897,6 +1907,9 @@ Brooks, Mollie E, Kasper Kristensen, Koen J Van Benthem, Arni Magnusson, Casper 
 <div id="ref-brown2015model" class="csl-entry">
 Brown, Patrick E. 2015. <span>“<span class="nocase">Model-based geostatistics the easy way</span>.”</span> <em>Journal of Statistical Software</em> 63: 1–24.
 </div>
+<div id="ref-carpenter2017stan" class="csl-entry">
+Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).
+</div>
 <div id="ref-casella1985introduction" class="csl-entry">
 Casella, George. 1985. <span>“<span class="nocase">An introduction to empirical Bayes data analysis</span>.”</span> <em>The American Statistician</em> 39 (2): 83–87.
 </div>
@@ -2052,6 +2065,9 @@ Stringer, Alex, Patrick Brown, and Jamie Stafford. 2022. <span>“<span class="n
 </div>
 <div id="ref-thall1990some" class="csl-entry">
 Thall, Peter F, and Stephen C Vail. 1990. <span>“<span class="nocase">Some covariance models for longitudinal count data with overdispersion</span>.”</span> <em>Biometrics</em>, 657–71.
+</div>
+<div id="ref-thyng2016true" class="csl-entry">
+Thyng, Kristen M, Chad A Greene, Robert D Hetland, Heather M Zimmerle, and Steven F DiMarco. 2016. <span>“True Colors of Oceanography: Guidelines for Effective and Accurate Colormap Selection.”</span> <em>Oceanography</em> 29 (3): 9–13.
 </div>
 <div id="ref-tierney1986accurate" class="csl-entry">
 Tierney, Luke, and Joseph B Kadane. 1986. <span>“<span class="nocase">Accurate approximations for posterior moments and marginal densities</span>.”</span> <em>Journal of the American Statistical Association</em> 81 (393): 82–86.

@@ -19,34 +19,52 @@ bibliography: references.bib
 
 <!-- JWE: Minor corrections often involve (1) fixing typos, (2) clarifying things, (3) elaborating on the contributions to science and implications of the PhD in the conclusions chapter [by far the most common point of examiner feedback] -->
 
-## Strengths
+Finally, this thesis is concluded by discussing its most important contributions and limitations, as well as avenues for future work and broader conclusions.
 
-* Chapter \@ref(beyond-borders) conducted thorough experiments to compare models for spatial structure using tools for model assessment such as proper scoring rules and posterior predictive checks.
+## Contributions
 
-* Chapter \@ref(multi-agyw) estimated HIV risk group proportions for AGYW, facilitating countries in SSA to prioritise their delivery of HIV prevention services.
-The number of new infections that might be reached under a variety of risk stratification strategies were analyzed.
+This section discusses the contributions made by each chapter of this thesis in turn.
+
+Chapter \@ref(beyond-borders) conducted experiments to comprehensively compare models for spatial structure, using appropriate tools for model assessment such as proper scoring rules and posterior predictive checks.
+
+Chapter \@ref(multi-agyw) estimated HIV risk group proportions for AGYW, facilitating countries in SSA to prioritise their delivery of HIV prevention services.
+The number of new infections that might be reached under a variety of risk stratification strategies were also analyzed.
 The `R-INLA` software was used to specify multinomial spatio-temporal models via the Poisson-multinomial transformation, including complex two- and three-way Kronecker product interactions.
 
-* Chapter \@ref(naomi-aghq) developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV surveillance.
+Chapter \@ref(naomi-aghq) developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV surveillance.
 
-## Weaknesses
+## Limitations
+
+The most important limitations of the work done in this thesis are as follows.
 
 ## Future work
 
-Avenues for future work include:
+Promising avenues for future work include:
 
-* Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49. This may involve modelling of age-stratified sexual partnerships [@wolock2021evaluating].
-Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the methods discussed in Chapter \@ref(naomi-aghq).
+* Extending the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49.
+This could involve modelling of age-stratified sexual partnerships [@wolock2021evaluating].
+Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the methods advanced in Chapter \@ref(naomi-aghq).
 
 ## Conclusions
 
-* Modelling complex data often pushes on the boundaries of the available statistical toolkit.
+I am uncertain about this direct impact of this work.
+The methodological contributions of Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) could eventually lead to at best marginally more accurate indicator estimates.
+It is hard not to see these improvements as relatively inconsequential within the broader context of the HIV response and the challenges posed to it.
 
-* A challenge encountered while conducting this research was the difficulty of implementing identical models across multiple frameworks, looking to study inference methods. Or, of a similarly fraught nature, comparing different models implemented in different frameworks, looking to study model differences. The frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes that "the devil is in the details". I have resolved this challenge by using a given `TMB` model template to fit models using multiple inference methodologies. The benefits of such a ecosystem of packages are noted by @stringer2021fields. I particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
+Applied modelling and methodological research using complex data often pushes on the boundaries of the available statistical toolkit.
+During this research, I encountered difficulties trying to compare models implemented using different statistical tools.
+Similarly, I found it challenging, if not impossible, to implement precisely same model using different tooling, leading to conflation of models and inference methodologies.
+As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes, "the devil is in the details".
+Ultimately, I resolved these difficulties by implementing all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
+(And indeed for future development, I would recommend the model used in Chapters \@ref(multi-agyw) is implemented using `TMB`).
+`TMB` was sufficiently flexible to meet the requirements I had.
+The benefits of such an ecosystem of packages built using `TMB` are noted by @stringer2021fields.
+I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
 
-* To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
-I hope that doing so allows my work to be scrutinised, and optimistically built upon.
-This would not have been possible without a range of tools from the R ecosystem such as `rmarkdown` and `rticles`, as well as those developed within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
+To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
+I hope that doing so allows my work to be appropriately scrutinised, and optimistically built upon.
+This would not have been possible without a range of tools from the R ecosystem such as `rmarkdown` and `rticles` for reporting, `devtools` for R package development.
+I also used tools written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
 
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
 <!-- Greater reliance on routine health system data. -->

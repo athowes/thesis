@@ -973,11 +973,11 @@ Instead, @bilodeau2022stochastic implemented this model in `TMB`.
 Inference was then performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
 This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)), extending @bilodeau2022stochastic by including AGHQ with Laplace marginals.
 
-| Method         | Software      |
-|----------------|---------------|
-| Gaussian, AGHQ | `TMB` and `aghq` |
-| Laplace, AGHQ  | `TMB` and `aghq` |
-| NUTS           | `tmbstan`     |
+| Method         | Software      | Details |
+|----------------|---------------|---------------
+| Gaussian, AGHQ | `TMB` and `aghq` | $k = 3$ |
+| Laplace, AGHQ  | `TMB` and `aghq` | $k = 3$ |
+| NUTS           | `tmbstan`     | 4 chains of 5000 iterations, default NUTS settings [@carpenter2017stan] |
 
 Table: (\#tab:loaloa-approaches) The inference methods and software considered to fit the Loa loa ELGM.
 
@@ -986,13 +986,9 @@ To allow for comparison between Gaussian and Laplace marginals, the same approac
 
 After obtaining posterior inferences at each $s_i$, the `gstat::krige` function [@pebesma2004gstat] was used to implement conditional Gaussian field simulation [@sds; Chapter 12] over a fine grid.
 In each conditional simulation independent latent field and hyperparameter samples were used.
+For each method, 500 conditional Gaussian field simulations were obtained.
 
 #### Results
-
-Figure \@ref(fig:conditional-simulation-adam-fixed) shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
-Figures \@ref(fig:conditional-simulation-phi-diff-fixed) and \@ref(fig:conditional-simulation-rho-diff-fixed) show the difference in posterior means as compared with NUTS depending on use of either Gaussian or Laplace marginals.
-As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure \@ref(fig:loa-loa-mean-sd-abs).
-Comment about the time taken (Figure \@ref(fig:loa-loa-time)).
 
 (ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi_\texttt{LA}(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho_\texttt{LA}(s)]$ (Panel B) random fields computed using Laplace marginals.
 
@@ -1000,13 +996,15 @@ Comment about the time taken (Figure \@ref(fig:loa-loa-time)).
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-adam-fixed.png")
 ```
 
-(ref:conditional-simulation-phi-diff-fixed) Difference between the suitability posterior means with Gaussian marginals $\mathbb{E}[\phi_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\phi_\texttt{LA}(s)]$ to NUTS results. As $\beta_\phi$ was fixed this difference is as a result in differences in estimation of $u(s)$.
+Figure \@ref(fig:conditional-simulation-adam-fixed) shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
+
+(ref:conditional-simulation-phi-diff-fixed) Difference between the suitability posterior means with Gaussian marginals $\mathbb{E}[\phi_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\phi_\texttt{LA}(s)]$ to NUTS results. As $\beta_\phi$ was fixed this difference is as a result in differences in estimation of $u(s)$. The diverging colour palette used in this figure is from @thyng2016true.
 
 ```{r conditional-simulation-phi-diff-fixed, fig.cap="(ref:conditional-simulation-phi-diff-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png")
 ```
 
-(ref:conditional-simulation-rho-diff-fixed) Difference between the prevalence posterior means with Gaussian marginals $\mathbb{E}[\rho_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\rho_\texttt{LA}(s)]$ to NUTS results. As $\beta_\rho$ was fixed this difference is as a result in differences in estimation of $v(s)$.
+(ref:conditional-simulation-rho-diff-fixed) Difference between the prevalence posterior means with Gaussian marginals $\mathbb{E}[\rho_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\rho_\texttt{LA}(s)]$ to NUTS results. As $\beta_\rho$ was fixed this difference is as a result in differences in estimation of $v(s)$. The diverging colour palette used in this figure is from @thyng2016true.
 
 ```{r conditional-simulation-rho-diff-fixed, fig.cap="(ref:conditional-simulation-rho-diff-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png")
@@ -1017,6 +1015,9 @@ knitr::include_graphics("figures/naomi-aghq/conditional-simulation-rho-diff-fixe
 ```{r loa-loa-mean-sd-abs, fig.cap="(ref:loa-loa-mean-sd-abs)"}
 knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd-abs.png")
 ```
+
+For both the suitability (Figures \@ref(fig:conditional-simulation-phi-diff-fixed)) and prevalence (Figure \@ref(fig:conditional-simulation-rho-diff-fixed)) posterior mean, using Laplace marginals rather than Gaussian marginals substantially reduces the extent of error with respect to NUTS.
+As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure \@ref(fig:loa-loa-mean-sd-abs).
 
 (ref:loa-loa-time) Time taken placeholder.
 
@@ -1037,6 +1038,8 @@ loa_loa_time_fig <- data.frame(
 ggsave("figures/naomi-aghq/loa-loa-time.png", loa_loa_time_fig, h = 3, w = 6.25)
 knitr::include_graphics("figures/naomi-aghq/loa-loa-time.png")
 ```
+
+Comment about the time taken (Figure \@ref(fig:loa-loa-time)).
 
 ## The Naomi model {#naomi}
 

@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/97)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Check back soon. Currently 266 pages.
+> Thesis under construction! Check back soon. Currently 268 pages.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -75,7 +75,7 @@ Thanks for being interested! You can read either the
 [PDF](https://athowes.github.io/thesis/main.pdf) version. I know, an
 overwhelming choice. It’s still a work in progress at the moment though,
 so I’d recommend checking back in January 2024 (post-submission) or
-March 2024 (post-defence) unless you love non-sequiturs.
+March 2024 (post-defense) unless you love non-sequiturs.
 
 > How did you format this thesis?
 
