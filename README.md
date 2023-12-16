@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/99)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Check back soon. Currently 271 pages.
+> Thesis under construction! Check back soon. Currently 272 pages.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
