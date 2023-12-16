@@ -175,7 +175,9 @@ obj_fixed <- MakeADFun(
   silent = TRUE
 )
 
+tictoc::tic()
 quad_fixed <- aghq::marginal_laplace_tmb(obj_fixed, 3, startingvalue = c(param$logkappa, param$logtau))
+time_aghq <- tictoc::toc()
 
 #' Small number of samples as illustration
 aghq_samples <- sample_marginal(quad, 100)
@@ -346,12 +348,13 @@ compute_laplace_marginal <- function(i, quad) {
 
 tictoc::tic()
 test_laplace <- compute_laplace_marginal(i = 1, quad = quad_fixed)
-time <- tictoc::toc()
-
-(time$toc - time$tic) * N / 60 / 60
+time_test <- tictoc::toc()
 
 #' This would take around 3 hours to run for 1:N
+# tictoc::tic()
 # quad_fixed_laplace_marginals <- purrr::map(.x = 1:N, .f = compute_laplace_marginal, quad = quad_fixed, .progress = TRUE)
+# time_laplace <- tictoc::toc()
+#
 # saveRDS(quad_fixed_laplace_marginals, "figures/naomi-aghq/loa-loa_laplace.rds")
 
 quad_fixed_laplace_marginals <- readRDS("figures/naomi-aghq/loa-loa-laplace.rds")
@@ -394,11 +397,11 @@ ggsave("figures/naomi-aghq/conditional-simulation-adam-fixed.png", h = 5, w = 6.
 
 # tictoc::tic()
 # nuts <- tmbstan::tmbstan(obj_fixed, chains = 4, iter = 5000)
-# time <- tictoc::toc()
+# time_nuts <- tictoc::toc()
 # 
 # (time$toc - time$tic) / 60 / 60
 # 
-# saveRDS(time, file = "figures/naomi-aghq/nuts-big-time.rds")
+# saveRDS(time_nuts, file = "figures/naomi-aghq/nuts-big-time.rds")
 # saveRDS(nuts, file = "figures/naomi-aghq/nuts-big.rds")
 
 nuts <- readRDS("figures/naomi-aghq/nuts-big.rds")
@@ -540,3 +543,20 @@ fig_pct <- df_plot %>%
 fig_pct
 
 ggsave("figures/naomi-aghq/loa-loa-mean-sd-pct.png", h = 6, w = 6.25, bg = "white")
+
+time_nuts <- readRDS(file = "figures/naomi-aghq/nuts-big-time.rds")
+
+data.frame(
+  "time" = c(time_aghq$toc - time_aghq$tic, (time_test$toc - time_test$tic) * N, time_nuts$toc - time_nuts$tic),
+  "method" = c("Gaussian, AGHQ", "Laplace, AGHQ", "NUTS"),
+  "software" = c("TMB", "TMB", "tmbstan")
+) %>%
+  mutate(mins = time / 60) %>%
+  ggplot(aes(x = method, y = mins, fill = software)) +
+  geom_col() +
+  theme_minimal() +
+  scale_fill_manual(values = c("#D55E00", "#CC79A7")) +
+  labs(x = "", y = "Time taken (m)", fill = "Software") +
+  coord_flip()
+
+ggsave("figures/naomi-aghq/loa-loa-time.png", h = 3, w = 6.25)
