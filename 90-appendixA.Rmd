@@ -3,7 +3,7 @@
 `r if(!knitr:::is_latex_output()) '# (APPENDIX) Appendix {-}'` 
 
 ```{r}
-resource_version <- "20231215-152213-ba7bef73"
+resource_version <- "20231216-114240-f49579e4"
 ```
 
 # Models for areal spatial structure
@@ -252,6 +252,26 @@ knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/
 ```
 
 ### Cross-validation
+
+#### Mean squared error
+
+```{r cv-mse}
+gt_cv_mse <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_cv-mse.rds"))
+
+gt_cv_mse <- gt_cv_mse %>%
+  gt::tab_caption(caption = 'The mean pointwise leave-one-out and spatial leave-one-out MSE, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table around thousandths.')
+
+if(knitr::is_html_output()) {
+  gt_cv_mse
+}
+
+if(knitr::is_latex_output()) {
+  gt_cv_mse %>%
+    gt::as_latex()
+}
+```
+
+#### Continuous ranked probability score
 
 (ref:crps-mean-se-civ2017phia) The pointwise CRPS for $\rho_i$ using either leave-one-out or spatial leave-one-out cross-validation, with mean and 95% credible interval for the Côte d’Ivoire 2017 PHIA survey (Panel \@ref(fig:hiv-surveys)A).
 
