@@ -520,6 +520,15 @@ node_diff_df <- df %>%
     diff = diff_gaussian - diff_laplace,
   )
 
+fig_abs <- df_plot %>%
+  filter(metric == "diff_abs") %>%
+  ggplot(aes(x = estimate, y = value)) +
+  geom_point(size = 1.5, shape = 1, alpha = 0.6) +
+  facet_grid(indicator ~ method) +
+  geom_abline(intercept = 0, slope = 0, col = "#E69F00", linetype = "dashed") +
+  labs(y = "Absolute difference to NUTS", x = "Estimate", tag = "A") +
+  theme_minimal()
+
 fig_abs_hist <- ggplot(node_diff_df, aes(x = diff)) +
   geom_histogram(col = "grey60", fill = "grey80", bins = 30) +
   facet_wrap(~ indicator, scales = "free") +
@@ -543,6 +552,15 @@ fig_pct <- df_plot %>%
 fig_pct
 
 ggsave("figures/naomi-aghq/loa-loa-mean-sd-pct.png", h = 6, w = 6.25, bg = "white")
+
+#' Index 184 has the largest difference in mean comparing Laplace and Gaussian marginals
+node_diff_df %>%
+  arrange(-diff)
+
+#' Make ECDF difference plot using these samples:
+samples_adam[[184]]
+aghq_fixed_samples$samps[184, ]
+rstan::extract(nuts)
 
 time_nuts <- readRDS(file = "figures/naomi-aghq/nuts-big-time.rds")
 
