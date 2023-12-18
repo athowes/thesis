@@ -490,8 +490,8 @@ fig_rho_diff
 ggsave("figures/naomi-aghq/conditional-simulation-rho-diff-fixed.png", h = 4, w = 6.25, bg = "white")
 
 #' Point estimate differences
-samples_adam <- lapply(1:N, sample_adam, M = 1000, quad = quad_fixed_laplace_marginals)
-aghq_fixed_samples <- sample_marginal(quad_fixed, 1000)
+samples_adam <- lapply(1:N, sample_adam, M = 5000, quad = quad_fixed_laplace_marginals)
+aghq_fixed_samples <- sample_marginal(quad_fixed, 5000)
 
 df <- bind_rows(
   data.frame(method = "Laplace", mean = sapply(samples_adam, mean), sd = sapply(samples_adam, sd), index = 1:N),
@@ -557,10 +557,38 @@ ggsave("figures/naomi-aghq/loa-loa-mean-sd-pct.png", h = 6, w = 6.25, bg = "whit
 node_diff_df %>%
   arrange(-diff)
 
-#' Make ECDF difference plot using these samples:
-samples_adam[[184]]
-aghq_fixed_samples$samps[184, ]
-rstan::extract(nuts)
+grid <- seq(
+  from = round(min(rstan::extract(nuts, pars = "Urisk[184]")[[1]]) - 0.1, digits = 2),
+  to = round(max(rstan::extract(nuts, pars = "Urisk[184]")[[1]]) + 0.1, digits = 2),
+  length.out = 1000
+)
+
+gaussian_ecdf <- stats::ecdf(aghq_fixed_samples$samps[184, ])
+gaussian_ecdf_df <- data.frame(x = grid, ecdf = aghq_ecdf(grid), method = "Gaussian")
+
+laplace_ecdf <- stats::ecdf(samples_adam[[184]])
+laplace_ecdf_df <- data.frame(x = grid, ecdf = laplace_ecdf(grid), method = "Laplace")
+
+nuts_ecdf <- stats::ecdf(rstan::extract(nuts, pars = "Urisk[184]")[[1]])
+nuts_ecdf_df <- data.frame(x = grid, ecdf = nuts_ecdf(grid), method = "NUTS")
+
+gaussian_ecdf_df$ecdf_diff <- nuts_ecdf_df$ecdf - gaussian_ecdf_df$ecdf
+laplace_ecdf_df$ecdf_diff <- nuts_ecdf_df$ecdf - laplace_ecdf_df$ecdf
+nuts_ecdf_df$ecdf_diff <- 0
+
+ecdf_df <- bind_rows(gaussian_ecdf_df, laplace_ecdf_df, nuts_ecdf_df)
+
+ecdf_df %>%
+  rename("ECDF" = "ecdf", "ECDF difference to NUTS" = "ecdf_diff") %>%
+  pivot_longer(cols = c("ECDF", "ECDF difference to NUTS"), names_to = "indicator", values_to = "value") %>%
+  ggplot(aes(x = x, y = value, col = method)) +
+  geom_line() +
+  facet_wrap(~ indicator, scales = "free", ncol = 2) +
+  labs(x = "", y = "", col = "Method") +
+  scale_color_manual(values = c("#56B4E9","#009E73", "#E69F00")) +
+  theme_minimal()
+
+ggsave("figures/naomi-aghq/loa-loa-worst-node.png", h = 3.5, w = 6.25, bg = "white")
 
 time_nuts <- readRDS(file = "figures/naomi-aghq/nuts-big-time.rds")
 
