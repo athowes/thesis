@@ -51,14 +51,25 @@ knitr::include_graphics(path)
 
 ## Lengthscale prior sensitivity {#lengthscale-prior}
 
-(ref:lengthscale-prior) Six lengthscale prior distributions were considered. These were: $l \sim \text{Gamma}(1, 1)$; $l \sim \text{IG}(a, b)$; $l \sim \mathcal{N}^{+}(0, \sigma)$; $l \sim \text{Log-normal}(0, 1)$; $p(l) = 1$; and $l \sim \mathcal{N}(2.5, 1)$.
+| Description | Prior | Additional details  |
+|:------------|:------|:--------------------|
+| Gamma | $l \sim \text{Gamma}(1, 1)$ ||
+| Geometry-informed inverse-gamma | $l \sim \text{IG}(a, b)$ | |
+| Geometry-informed normal | $l \sim \mathcal{N}^{+}(0, \sigma)$ | |
+| Log-normal | $l \sim \text{Log-normal}(0, 1)$ | |
+| Non-informative | $p(l) = 1$ | |
+| Oracle normal | $l \sim \mathcal{N}(2.5, 1)$ | |
+
+Table: (\#tab:lengthscale-prior) Six lengthscale prior distributions were considered for use.
+
+(ref:lengthscale-prior) The density for each lengthscale prior distributions as given in Table \@ref(tab:lengthscale-prior).
 
 ```{r lengthscale-prior, fig.cap="(ref:lengthscale-prior)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthscale-prior.png")
 knitr::include_graphics(path)
 ```
 
-(ref:lengthscale-posterior) Lengthscale posterior distributions obtained using NUTS to fit a centroid kernel model to integrated kernel data, with six different lengthscale prior distributions as described in Figure \@ref(fig:lengthscale-prior).
+(ref:lengthscale-posterior) Lengthscale posterior distributions obtained using NUTS to fit a centroid kernel model to integrated kernel data grid on geometry (Panel \@ref(fig:geometries)E), with six different lengthscale prior distributions as given in Table \@ref(tab:lengthscale-prior).
 
 ```{r lengthscale-posterior, fig.cap="(ref:lengthscale-posterior)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthscale-posterior.png")
@@ -69,7 +80,7 @@ knitr::include_graphics(path)
 
 ### Lengthscale hyperparameter recovery {#lengthscale}
 
-(ref:lengthscale-recovery) Figure caption.
+(ref:lengthscale-recovery) The lengthscale posterior mean and 95% credible interval obtained using the centroid kernel model on integrated kernel data for the first 40 simulation replicates on each geometry. The true lengthscale, and lengthscale obtained using the heuristic method of @best1999bayesian are shown as dashed lines.
 
 ```{r lengthscale-recovery, fig.cap="(ref:lengthscale-recovery)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthscale-recovery.png")
