@@ -41,12 +41,18 @@ Second, a quadrature rule which naturally extends the applicability of INLA meth
 
 The most important limitations of the work done in this thesis are as follows.
 
+1. In conducting Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) too little effort was dedicated to understanding the theoretical properties of methods, in favour of empirical computational work.
+
+2. In working most tangibly with real world data, Chapter \@ref(multi-agyw) inherits a wide range of limitations.
+To highlight a few:
+the external validity of risk ratios derived from cohort studies across all settings.
+
 ## Future work
 
 Promising avenues for future work that I would prioritise include:
 
-1. AGYW account for $x$% of all new HIV infections in SSA. 
-As such, it would be valuable to extend the risk group model described in Chapter \@ref(multi-agyw) to include all adults 15-49.
+1. Although AGYW are disproportionately at risk of HIV infection, 56% of new infections still occur in other demographic groups.
+As such, it would be valuable to extend the risk group model developed in Chapter \@ref(multi-agyw) to include all adults 15-49.
 This might involve modelling of age-stratified sexual partnerships [@wolock2021evaluating].
 Such a model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the inference methods advanced in Chapter \@ref(naomi-aghq).
 
@@ -55,29 +61,30 @@ The most important speed improvement would likely come from using the simplified
 Usability would be enhanced greatly by integrating the methods into statistical software, first and foremost via the `aghq` package.
 The primary difficulty, as it appears now, which would have to be overcome is that the `random` argument of `TMB::MakeADFun` does not allow indexing.
 
-3. The universal INLA implementation developed in this thesis enables methodological research which was prohibitively difficult before.
-Loa loa and Naomi ELGMs.
-One `TMB` template many inference methods, including gold-standard NUTS via `tmbstan`.
+3. The universal INLA implementation developed in Chapter \@ref(naomi-aghq) is enabling of methodological research.
+For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections \@ref(loaloa) and \@ref(malawi)).
+For this purpose, it is particularly important that the `TMB` C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via `tmbstan`.
+In complement to empirical computational work, unabridged specification of the algorithm used for inference could enable theoretical work.
 
 ## Broader reflections
 
-I am uncertain about this direct impact of this work.
-The methodological contributions of Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) could eventually lead to at best marginally more accurate indicator estimates.
-It is hard not to see these improvements as relatively inconsequential within the broader context of the HIV response and the challenges posed to it.
+I found conducting the work in this thesis tested the boundaries of available statistical software.
+For example, I found it challenging, if not impossible, to implement a common model in different software for inference.
+As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes: "the devil is in the details".
+Similarly, I encountered difficulties implementing a desired range of different models in a common software for inference.
+These difficulties resulted in conflation of statistical models and inference methodologies, limiting the validity of any findings.
+Ultimately, I resolved these issues by implementing all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
+(I would recommend implementing the model used in Chapter \@ref(multi-agyw) in `TMB` for future development.)
+Alongside being sufficiently flexible to meet my model specification requirements, `TMB` is compatible with a range of inference methodologies.
+As such, it remains [@osgood2023statistical] an under-rated statistical tool.
 
-I found that the applied modelling and methodological research in this thesis pushed on the boundaries of available statistical software.
-For example, during the course of this research I encountered difficulties comparing models implemented using different software for inference.
-I found it challenging, if not impossible, to implement precisely same model using different software.
-As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes, "the devil is in the details".
-This led to conflation of statistical models and inference methodologies.
-Ultimately, I resolved these difficulties by implementing all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
-(And indeed for future development, I would recommend the model used in Chapters \@ref(multi-agyw) is implemented using `TMB`).
-`TMB` was sufficiently flexible to meet the requirements I had.
-The benefits of such an ecosystem of packages built using `TMB` are noted by @stringer2021fields.
-I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.
+There are various paths to impact for the work in this thesis.
+First, the methodological contributions of Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) could eventually lead to marginally more accurate indicator estimates.
+However, in the broader context of the  of the HIV response effectiveness these improvements seem of limited consequence.
+The applied contributions of Chapter \@ref(multi-agyw) have a more promising case for direct impact.
 
-To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
-I hope that doing so allows my work to be scrutinised, and, more optimistically, built upon.
+This thesis, and the work described within it, was written in keeping with the principles of open science to the best of my abilities.
+I hope doing so facilitates my work to be scrutinised, and more optimistically, built upon.
 This was made possible tools from the R ecosystem such as `rmarkdown` and `rticles` for reporting, `devtools` for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
 
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
