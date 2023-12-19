@@ -329,7 +329,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#contributions"><i class="fa fa-check"></i><b>7.1</b> Contributions</a></li>
 <li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#limitations-1"><i class="fa fa-check"></i><b>7.2</b> Limitations</a></li>
 <li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.3</b> Future work</a></li>
-<li class="chapter" data-level="7.4" data-path="conclusions.html"><a href="conclusions.html#conclusions-1"><i class="fa fa-check"></i><b>7.4</b> Conclusions</a></li>
+<li class="chapter" data-level="7.4" data-path="conclusions.html"><a href="conclusions.html#broader-reflections"><i class="fa fa-check"></i><b>7.4</b> Broader reflections</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="models-for-areal-spatial-structure.html"><a href="models-for-areal-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for areal spatial structure</a>
@@ -405,15 +405,20 @@ div.csl-indent {
 <h1><span class="header-section-number">7</span> Conclusions<a href="conclusions.html#conclusions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <!-- JWE: Minor corrections often involve (1) fixing typos, (2) clarifying things, (3) elaborating on the contributions to science and implications of the PhD in the conclusions chapter [by far the most common point of examiner feedback] -->
-<p>Finally, this thesis is concluded by discussing its most important contributions and limitations, as well as avenues for future work and broader conclusions.</p>
+<p>To conclude the thesis, this chapter discusses in turn its most important contributions and limitations, the most promising avenues for future work, and broader reflections about the work.</p>
 <div id="contributions" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Contributions<a href="conclusions.html#contributions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>This section discusses the contributions made by each chapter of this thesis in turn.</p>
-<p>Chapter <a href="beyond-borders.html#beyond-borders">4</a> conducted experiments to comprehensively compare models for spatial structure, using appropriate tools for model assessment such as proper scoring rules and posterior predictive checks.</p>
-<p>Chapter <a href="multi-agyw.html#multi-agyw">5</a> estimated HIV risk group proportions for AGYW, facilitating countries in SSA to prioritise their delivery of HIV prevention services.
-The number of new infections that might be reached under a variety of risk stratification strategies were also analyzed.
-The <code>R-INLA</code> software was used to specify multinomial spatio-temporal models via the Poisson-multinomial transformation, including complex two- and three-way Kronecker product interactions.</p>
-<p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed a novel Bayesian inference method, motivated by a challenging and practically important problem in HIV surveillance.</p>
+<p>Chapter <a href="beyond-borders.html#beyond-borders">4</a> used tools for model assessment such as proper scoring rules and posterior predictive checks to comprehensively compare models for spatial structure.
+Useful data for practitioners.
+Useful to base methodological developments on.</p>
+<p>Chapter <a href="multi-agyw.html#multi-agyw">5</a> estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy.
+The risk group proportions were used to disaggregate HIV prevalence and incidence estimates by behaviour, and assess the benefits of a variety of risk stratification strategies.
+Estimates from this work are the basis for a tool used by countries in SSA to prioritise their delivery of HIV prevention services.
+Alongside this applied contribution, Chapter <a href="multi-agyw.html#multi-agyw">5</a> exemplified specification of complex multinomial spatio-temporal models in <code>R-INLA</code> using the Poisson-multinomial transformation.</p>
+<p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by a challenging and practically important problem in evidene synthesis for small-area estimation of HIV indicators.
+Its most important contributions are two-fold.
+First, an implementation of INLA which is compatible with any model specified using a <code>TMB</code> C++ template.
+Second, a quadrature rule which naturally extends the applicability of INLA methods to moderate hyperparameter dimension.</p>
 </div>
 <div id="limitations-1" class="section level2 hasAnchor" number="7.2">
 <h2><span class="header-section-number">7.2</span> Limitations<a href="conclusions.html#limitations-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -421,31 +426,39 @@ The <code>R-INLA</code> software was used to specify multinomial spatio-temporal
 </div>
 <div id="future-work" class="section level2 hasAnchor" number="7.3">
 <h2><span class="header-section-number">7.3</span> Future work<a href="conclusions.html#future-work" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Promising avenues for future work include:</p>
-<ul>
-<li>Extending the risk group model described in Chapter <a href="multi-agyw.html#multi-agyw">5</a> to include all adults 15-49.
-This could involve modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span>.
-Such a model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</li>
-</ul>
+<p>Promising avenues for future work that I would prioritise include:</p>
+<ol style="list-style-type: decimal">
+<li><p>AGYW account for <span class="math inline">\(x\)</span>% of all new HIV infections in SSA.
+As such, it would be valuable to extend the risk group model described in Chapter <a href="multi-agyw.html#multi-agyw">5</a> to include all adults 15-49.
+This might involve modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span>.
+Such a model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
+<li><p>For practical use of the INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> it is crucial that the speed and usability are improved.
+The most important speed improvement would likely come from using the simplified approximation to the Laplace marginals developed by <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.
+Usability would be enhanced greatly by integrating the methods into statistical software, first and foremost via the <code>aghq</code> package.
+The primary difficulty, as it appears now, which would have to be overcome is that the <code>random</code> argument of <code>TMB::MakeADFun</code> does not allow indexing.</p></li>
+<li><p>The universal INLA implementation developed in this thesis enables methodological research which was prohibitively difficult before.
+Loa loa and Naomi ELGMs.
+One <code>TMB</code> template many inference methods, including gold-standard NUTS via <code>tmbstan</code>.</p></li>
+</ol>
 </div>
-<div id="conclusions-1" class="section level2 hasAnchor" number="7.4">
-<h2><span class="header-section-number">7.4</span> Conclusions<a href="conclusions.html#conclusions-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="broader-reflections" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Broader reflections<a href="conclusions.html#broader-reflections" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>I am uncertain about this direct impact of this work.
 The methodological contributions of Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> could eventually lead to at best marginally more accurate indicator estimates.
 It is hard not to see these improvements as relatively inconsequential within the broader context of the HIV response and the challenges posed to it.</p>
-<p>Applied modelling and methodological research using complex data often pushes on the boundaries of the available statistical toolkit.
-During this research, I encountered difficulties trying to compare models implemented using different statistical tools.
-Similarly, I found it challenging, if not impossible, to implement precisely same model using different tooling, leading to conflation of models and inference methodologies.
+<p>I found that the applied modelling and methodological research in this thesis pushed on the boundaries of available statistical software.
+For example, during the course of this research I encountered difficulties comparing models implemented using different software for inference.
+I found it challenging, if not impossible, to implement precisely same model using different software.
 As the frequently asked questions section of the <code>R-INLA</code> website <span class="citation">(<a href="#ref-rinla2023faq">Havard Rue 2023</a>)</span> notes, “the devil is in the details”.
+This led to conflation of statistical models and inference methodologies.
 Ultimately, I resolved these difficulties by implementing all models in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> using <code>TMB</code> model templates.
 (And indeed for future development, I would recommend the model used in Chapters <a href="multi-agyw.html#multi-agyw">5</a> is implemented using <code>TMB</code>).
 <code>TMB</code> was sufficiently flexible to meet the requirements I had.
 The benefits of such an ecosystem of packages built using <code>TMB</code> are noted by <span class="citation">Stringer (<a href="#ref-stringer2021fields">2021a</a>)</span>.
 I would particularly highlight the benefit of enabling analysts to easily vary their choice of inference method based on the stage of model development that they are in.</p>
 <p>To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
-I hope that doing so allows my work to be appropriately scrutinised, and optimistically built upon.
-This would not have been possible without a range of tools from the R ecosystem such as <code>rmarkdown</code> and <code>rticles</code> for reporting, <code>devtools</code> for R package development.
-I also used tools written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as <code>orderly</code> and <code>didehpc</code>.</p>
+I hope that doing so allows my work to be scrutinised, and, more optimistically, built upon.
+This was made possible tools from the R ecosystem such as <code>rmarkdown</code> and <code>rticles</code> for reporting, <code>devtools</code> for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as <code>orderly</code> and <code>didehpc</code>.</p>
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
 <!-- Greater reliance on routine health system data. -->
 <!-- It is not recommended to include HIV testing in nationally representative household surveys in low (<2%) HIV prevalence settings [@world2005guidelines]. -->
@@ -467,6 +480,9 @@ Stringer, Alex. 2021a. <span>“<span>Implementing Approximate Bayesian Inferenc
 </div>
 <div id="ref-wolock2021evaluating" class="csl-entry">
 Wolock, Timothy M, Seth Flaxman, Kathryn A Risher, Tawanda Dadirai, Simon Gregson, and Jeffrey W Eaton. 2021. <span>“<span class="nocase">Evaluating distributional regression strategies for modelling self-reported sexual age-mixing</span>.”</span> Edited by Eduardo Franco, Talía Malagón, and Adam Akullian. <em>eLife</em> 10 (June): e68318. <a href="https://doi.org/10.7554/eLife.68318">https://doi.org/10.7554/eLife.68318</a>.
+</div>
+<div id="ref-wood2020simplified" class="csl-entry">
+———. 2020. <span>“<span class="nocase">Simplified integrated nested Laplace approximation</span>.”</span> <em>Biometrika</em> 107 (1): 223–30.
 </div>
 </div>
             </section>
