@@ -3,7 +3,7 @@
 `r if(!knitr:::is_latex_output()) '# (APPENDIX) Appendix {-}'` 
 
 ```{r}
-resource_version <- "20231218-195551-0129f3b4"
+resource_version <- list.files("resources/beyond-borders")
 ```
 
 # Models for areal spatial structure
@@ -69,7 +69,7 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthsc
 knitr::include_graphics(path)
 ```
 
-(ref:lengthscale-posterior) Lengthscale posterior distributions obtained using NUTS to fit a centroid kernel model to integrated kernel data grid on geometry (Panel \@ref(fig:geometries)E), with six different lengthscale prior distributions as given in Table \@ref(tab:lengthscale-prior).
+(ref:lengthscale-posterior) Lengthscale posterior distributions obtained using NUTS to fit a centroid kernel model to integrated kernel data. Six different lengthscale prior distributions were considered \@ref(tab:lengthscale-prior). The geometry used was the grid (Panel \@ref(fig:geometries)E). 
 
 ```{r lengthscale-posterior, fig.cap="(ref:lengthscale-posterior)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthscale-posterior.png")
@@ -80,7 +80,7 @@ knitr::include_graphics(path)
 
 ### Lengthscale hyperparameter recovery {#lengthscale}
 
-(ref:lengthscale-recovery) The lengthscale posterior mean and 95% credible interval obtained using the centroid kernel model on integrated kernel data for the first 40 simulation replicates on each geometry. The true lengthscale, and lengthscale obtained using the heuristic method of @best1999bayesian are shown as dashed lines.
+(ref:lengthscale-recovery) The lengthscale posterior mean and 95% credible interval obtained using the centroid kernel model on integrated kernel data for the first 40 simulation replicates on each geometry. The true lengthscale, and lengthscale obtained using the heuristic method of @best1999bayesian, are shown as dashed horizontal lines.
 
 ```{r lengthscale-recovery, fig.cap="(ref:lengthscale-recovery)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/lengthscale-recovery.png")
@@ -89,7 +89,7 @@ knitr::include_graphics(path)
 
 ### BYM2 proportion hyperparameter {#bym2-proportion}
 
-(ref:proportion-recovery) Figure caption.
+(ref:proportion-recovery) The BYM2 proportion parameter posterior mean and 95% credible interval obtained for the first 40 simulation replicates for the realistic geometries. When the simulated data is IID, the BYM2 proportion parameter is in the majority of cases below 0.5, corresponding to mostly IID (spatially unstructured) noise. When the simulated data is either Besag or IK, the BYM2 proportion parameter is in the majority of cases above 0.5, corresponding to mostly Besag (spatially structured) noise.
 
 ```{r proportion-recovery, fig.cap="(ref:proportion-recovery)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/proportion-recovery.png")
@@ -102,7 +102,7 @@ knitr::include_graphics(path)
 gt_mse <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_mse.rds"))
 
 gt_mse <- gt_mse %>%
-  gt::tab_caption(caption = "The average mean squared error (MSE) of each inferential model, under different simulation and geometry settings.")
+  gt::tab_caption(caption = "The average mean squared error (MSE) of each inferential model, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case.")
 
 if(knitr::is_html_output()) gt_mse
 if(knitr::is_latex_output()) gt::as_latex(gt_mse)
@@ -114,34 +114,34 @@ if(knitr::is_latex_output()) gt::as_latex(gt_mse)
 gt_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_crps.rds"))
 
 gt_crps <- gt_crps %>%
-  gt::tab_caption(caption = "The average continuous ranked probability score (CRPS) of each inferential model, under different simulation and geometry settings.")
+  gt::tab_caption(caption = "The average continuous ranked probability score (CRPS) of each inferential model, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case.")
 
 if(knitr::is_html_output()) gt_crps
 if(knitr::is_latex_output()) gt::as_latex(gt_crps)
 ```
 
-(ref:crps-mean-se-1) The mean CRPS with 95% credible interval (generated using 1.96 times the standard error) in estimating $\rho$ using each inferential model and simulation model on the first vignette geometry (Panel \@ref(fig:geometries)A).
+(ref:crps-mean-se-1) The mean CRPS with 95% credible interval in estimating $\rho$ using each inferential model and simulation model on the first vignette geometry (Panel \@ref(fig:geometries)A). Credible intervals were generated using 1.96 times the standard error.
 
 ```{r crps-mean-se-1, fig.cap="(ref:crps-mean-se-1)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-1.png")
 knitr::include_graphics(path)
 ```
 
-(ref:crps-mean-se-2) The mean CRPS with 95% credible interval (generated using 1.96 times the standard error) in estimating $\rho$ using each inferential model and simulation model on the second vignette geometry (Panel \@ref(fig:geometries)B).
+(ref:crps-mean-se-2) The mean CRPS with 95% credible interval in estimating $\rho$ using each inferential model and simulation model on the second vignette geometry (Panel \@ref(fig:geometries)B). Credible intervals were generated using 1.96 times the standard error.
 
 ```{r crps-mean-se-2, fig.cap="(ref:crps-mean-se-2)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-2.png")
 knitr::include_graphics(path)
 ```
 
-(ref:crps-mean-se-3) The mean CRPS with 95% credible interval (generated using 1.96 times the standard error) in estimating $\rho$ using each inferential model and simulation model on third vignette geometry (Panel \@ref(fig:geometries)C).
+(ref:crps-mean-se-3) The mean CRPS with 95% credible interval in estimating $\rho$ using each inferential model and simulation model on third vignette geometry (Panel \@ref(fig:geometries)C). Credible intervals were generated using 1.96 times the standard error.
 
 ```{r crps-mean-se-3, fig.cap="(ref:crps-mean-se-3)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-3.png")
 knitr::include_graphics(path)
 ```
 
-(ref:crps-mean-se-4) The mean CRPS with 95% credible interval (generated using 1.96 times the standard error) in estimating $\rho$ using each inferential model and simulation model on the fourth vignette geometry (Panel \@ref(fig:geometries)D).
+(ref:crps-mean-se-4) The mean CRPS with 95% credible interval in estimating $\rho$ using each inferential model and simulation model on the fourth vignette geometry (Panel \@ref(fig:geometries)D). Credible intervals were generated using 1.96 times the standard error.
 
 ```{r crps-mean-se-4, fig.cap="(ref:crps-mean-se-4)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-4.png")
@@ -322,25 +322,25 @@ knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-zwe2016phia.png"))
 ```
 
-(ref:map-civ2017phia) Côte d’Ivoire 2017 PHIA survey \@ref(fig:hiv-surveys)A.
+(ref:map-civ2017phia) Cloropleth showing the pointwise CRPS in estimating $\rho_i$ for the Côte d’Ivoire 2017 PHIA survey (Panel \@ref(fig:hiv-surveys)A).
 
 ```{r map-civ2017phia, fig.cap="(ref:map-civ2017phia)"}
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/map-civ2017phia.png"))
 ```
 
-(ref:map-mwi2016phia) Malawi 2016 PHIA survey \@ref(fig:hiv-surveys)B.
+(ref:map-mwi2016phia) Cloropleth showing the pointwise CRPS in estimating $\rho_i$ for the Malawi 2016 PHIA survey (Panel \@ref(fig:hiv-surveys)B).
 
 ```{r map-mwi2016phia, fig.cap="(ref:map-mwi2016phia)"}
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/map-mwi2016phia.png"))
 ```
 
-(ref:map-tza2017phia) Tanzania 2017 PHIA survey \@ref(fig:hiv-surveys)C.
+(ref:map-tza2017phia) Cloropleth showing the pointwise CRPS in estimating $\rho_i$ for the Tanzania 2017 PHIA survey (Panel \@ref(fig:hiv-surveys)C).
 
 ```{r map-tza2017phia, fig.cap="(ref:map-tza2017phia)"}
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/map-tza2017phia.png"))
 ```
 
-(ref:map-zwe2016phia) Zimbabwe 2016 PHIA survey \@ref(fig:hiv-surveys)D.
+(ref:map-zwe2016phia) Cloropleth showing the pointwise CRPS in estimating $\rho_i$ for the Zimbabwe 2016 PHIA survey (Panel \@ref(fig:hiv-surveys)D).
 
 ```{r map-zwe2016phia, fig.cap="(ref:map-zwe2016phia)"}
 knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/depends/map-zwe2016phia.png"))
