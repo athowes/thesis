@@ -21,6 +21,12 @@ spell_check <- function(filename) {
   return(sort(misspelled_words))
 }
 
+spell_check("front-and-back-matter/_welcome-ebook.Rmd")
+spell_check("front-and-back-matter/_originality.Rmd")
+spell_check("front-and-back-matter/_copyright.Rmd")
+spell_check("front-and-back-matter/_acknowledgements.Rmd")
+spell_check("front-and-back-matter/_abstract.Rmd")
+
 spell_check("01-introduction.Rmd")
 spell_check("02-hiv-aids.Rmd")
 spell_check("03-bayesian.Rmd")
