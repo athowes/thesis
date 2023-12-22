@@ -137,6 +137,9 @@ small-area estimation model to data from Malawi.
 
 ## Enhancements
 
+Here are some enhancements I think could improve the thesis, given more
+time to work on it:
+
 - In Chapter 2, the sections about challenges and statistical approaches
   used to overcome those challenges could be 1) better connected to the
   work done in the thesis, and 2) better integrated with existing
@@ -173,3 +176,23 @@ small-area estimation model to data from Malawi.
   cases. All the more so zooming into single areas. It would be
   relatively simple to increase the sample size here, but this wasn’t
   done in the interests of time.
+- For the simulation study on the four vignette geometries, the
+  lengthscale priors are mis-specified with respect to the true
+  lengthscale. This seems like an odd choice. Likely these experiments
+  should be rerun simulating data from a more suitable lengthscale than
+  the value 2.5 used currently.
+- In Chapter 5, too little emphasis is placed on the HIV prevalence and
+  HIV incidence results as compared to the HIV risk group results. For
+  example, continental chloropleths could be produced for the these
+  epidemiological quantities as well.
+- Although the epilepsy example shows that the INLA results from `TMB`
+  are highly comparable to `R-INLA`, they are not exactly the same. As
+  such it would be valuable to provide an explanation for the possible
+  causes. The best source of information about this is [Osgood-Zimmerman
+  and Wakefield
+  (2022)](https://onlinelibrary.wiley.com/doi/abs/10.1111/insr.12534).
+- In Chapter 4, it would be useful to frame the Besag model (and BYM2,
+  if possible) in terms of an equivalent kernel. I believe that the
+  technical vignette [Paciorek
+  (2008)](https://www.stat.berkeley.edu/users/paciorek/research/techVignettes/techVignette2.pdf)
+  does this.
