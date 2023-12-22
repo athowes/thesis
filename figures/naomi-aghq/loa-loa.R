@@ -182,49 +182,6 @@ time_aghq <- tictoc::toc()
 #' Small number of samples as illustration
 aghq_samples <- sample_marginal(quad, 100)
 
-#' Function to run conditional simulation of a random field. It is all done using
-#' samples, so each simulation uses one sample of u, v, beta and theta. This requires
-#' lapply over 1:sim and running gstat::krige for each iteration
-random_field_simulation <- function(u_samples, v_samples, beta_samples, theta_samples, nsim = 100) {
-  covariance_samples <- cbind(
-    var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
-    range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
-    shape = matern$nu
-  )
-  
-  extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
-  grid <- st_as_stars(extent, dx = 10000)
-
-  phi_samples <- lapply(1:nsim, function(i) {
-    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
-    u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
-    u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = 1)
-    u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
-    u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
-    eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, i], each = nrow(u_kriging_samples))
-    apply(eta_phi_samples, 2, plogis)
-  })
-  
-  phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
-  names(phi_samples) <- paste0("sim", 1:nsim)
-
-  rho_samples <- lapply(1:nsim, function(i) {
-    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
-    v_sf <- st_sf("v" = v_samples[, i], "geometry" = loaloa_sf$geometry)
-    v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = 1)
-    v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
-    v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
-    eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, i], each = nrow(v_kriging_samples))
-    apply(eta_rho_samples, 2, plogis)
-  })
-  
-  rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
-  names(rho_samples) <- paste0("sim", 1:nsim)
-  
-  # Samples from the phi and rho random fields on a grid
-  return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
-}
-
 #' Producing the output plot for AGHQ with no fixed beta
 random_field_samples <- random_field_simulation(
   u_samples = aghq_samples$samps[c(1:190), ],
@@ -606,3 +563,70 @@ data.frame(
   coord_flip()
 
 ggsave("figures/naomi-aghq/loa-loa-time.png", h = 3, w = 6.25)
+
+
+#' Section in conclusions about using a bigger grid being possibly better than more accurate marginals
+#' Comparison between k = 3 AGHQ with Gaussian marginals and k = 7 AGHQ with Gaussian marginals
+
+tictoc::tic()
+big_quad_fixed <- aghq::marginal_laplace_tmb(obj_fixed, 7, startingvalue = c(param$logkappa, param$logtau))
+time_big_aghq <- tictoc::toc()
+
+aghq_big_fixed_samples <- sample_marginal(big_quad_fixed, n_medium)
+
+random_field_samples_big_fixed <- random_field_simulation(
+  u_samples = aghq_big_fixed_samples$samps[which(rownames(aghq_big_fixed_samples$samps) == "Uzi"), ],
+  v_samples = aghq_big_fixed_samples$samps[which(rownames(aghq_big_fixed_samples$samps) == "Urisk"), ],
+  beta_samples = t(data.frame(rep(param_new$betazi, n_medium), rep(param_new$betarisk, n_medium))),
+  theta_samples = aghq_big_fixed_samples$theta,
+  nsim = n_medium
+)
+
+phi_big_fixed_samples <- random_field_samples_big_fixed$phi_samples
+rho_big_fixed_samples <- random_field_samples_big_fixed$rho_samples
+phi_big_fixed_sf <- st_sf("phi" = rowMeans(phi_big_fixed_samples), "geometry" = random_field_samples_big_fixed$grid$geometry)
+rho_big_fixed_sf <- st_sf("rho" = rowMeans(rho_big_fixed_samples), "geometry" = random_field_samples_big_fixed$grid$geometry)
+
+phi_diff_sf <- st_sf(
+  "3" = rowMeans(phi_fixed_samples) - rowMeans(phi_nuts_samples),
+  "7" = rowMeans(phi_big_fixed_samples) - rowMeans(phi_nuts_samples),
+  "geometry" = nuts_random_field_samples$grid$geometry
+) %>%
+  pivot_longer(cols = c("3", "7"), names_to = "method", values_to = "value")
+
+rho_diff_sf <- st_sf(
+  "3" = rowMeans(rho_fixed_samples) - rowMeans(rho_nuts_samples),
+  "7" = rowMeans(rho_big_fixed_samples) - rowMeans(rho_nuts_samples),
+  "geometry" = nuts_random_field_samples$grid$geometry
+) %>%
+  pivot_longer(cols = c("3", "7"), names_to = "method", values_to = "value")
+
+abs(phi_diff_sf$value) %>% max()
+
+fig_phi_diff_k <- ggplot() +
+  geom_sf(data = sf::st_intersection(phi_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(phi_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+  facet_wrap(~ method, ncol = 1) +
+  scale_fill_gradientn(colours = pals::ocean.balance(100), labels = scales::percent, limits = c(-0.096, 0.096)) +
+  theme_void() +
+  labs(fill = "Suitability\ndifference\nto NUTS", tag = "A") +
+  theme(
+    legend.position = "bottom"
+  )
+
+fig_rho_diff_k <- ggplot() +
+  geom_sf(data = sf::st_intersection(rho_diff_sf, areas), aes(fill = value), alpha = 0.8, col = NA) +
+  geom_sf(data = sf::st_crop(areas, sf::st_bbox(rho_diff_sf)), fill = NA, col = "grey20", alpha = 0.8) +
+  geom_sf(data = loaloa_sf, shape = 4, size = 0.5, col = "grey30") +
+  facet_wrap(~ method, ncol = 1) +
+  scale_fill_gradientn(colours = pals::ocean.curl(100), labels = scales::percent, limits = c(-0.053, 0.053), breaks = c(-0.05, 0, 0.05)) +
+  theme_void() +
+  labs(fill = "Prevalence\ndifference\nto NUTS", tag = "B") +
+  theme(
+    legend.position = "bottom"
+  )
+
+fig_phi_diff_k + fig_rho_diff_k
+
+ggsave("figures/naomi-aghq/conditional-simulation-diff-k-fixed.png", h = 4, w = 6.25, bg = "white")

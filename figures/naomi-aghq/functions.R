@@ -86,3 +86,46 @@ trapezoid_rule_log <- function(x, spacing) {
   w[length(x)] <- w[length(x)] / 2
   matrixStats::logSumExp(log(w) + x)
 }
+
+#' Function to run conditional simulation of a random field. It is all done using
+#' samples, so each simulation uses one sample of u, v, beta and theta. This requires
+#' lapply over 1:sim and running gstat::krige for each iteration
+random_field_simulation <- function(u_samples, v_samples, beta_samples, theta_samples, nsim = 100) {
+  covariance_samples <- cbind(
+    var = get_sigma(exp(theta_samples$logkappa), exp(theta_samples$logtau))^2,
+    range = get_rho(exp(theta_samples$logkappa), exp(theta_samples$logtau)),
+    shape = matern$nu
+  )
+  
+  extent <- st_bbox(loaloa_sf) + 10000 * c(-1, -1, 1, 1)
+  grid <- st_as_stars(extent, dx = 10000)
+  
+  phi_samples <- lapply(1:nsim, function(i) {
+    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+    u_sf <- st_sf("u" = u_samples[, i], "geometry" = loaloa_sf$geometry)
+    u_kriging_stars <- gstat::krige(u ~ 1, u_sf, grid, nmax = 30, model = vgm, nsim = 1)
+    u_kriging_samples_sf <- st_as_sf(u_kriging_stars)
+    u_kriging_samples <- st_drop_geometry(u_kriging_samples_sf)
+    eta_phi_samples <- u_kriging_samples + rep(beta_samples[1, i], each = nrow(u_kriging_samples))
+    apply(eta_phi_samples, 2, plogis)
+  })
+  
+  phi_samples <- data.frame(dplyr::bind_cols(phi_samples))
+  names(phi_samples) <- paste0("sim", 1:nsim)
+  
+  rho_samples <- lapply(1:nsim, function(i) {
+    vgm <- gstat::vgm(model = "Mat", range = covariance_samples[i, "range"], shape = 1, psill = covariance_samples[i, "var"])
+    v_sf <- st_sf("v" = v_samples[, i], "geometry" = loaloa_sf$geometry)
+    v_kriging_stars <- gstat::krige(v ~ 1, v_sf, grid, nmax = 30, model = vgm, nsim = 1)
+    v_kriging_samples_sf <- st_as_sf(v_kriging_stars)
+    v_kriging_samples <- st_drop_geometry(v_kriging_samples_sf)
+    eta_rho_samples <- v_kriging_samples + rep(beta_samples[2, i], each = nrow(v_kriging_samples))
+    apply(eta_rho_samples, 2, plogis)
+  })
+  
+  rho_samples <- data.frame(dplyr::bind_cols(rho_samples))
+  names(rho_samples) <- paste0("sim", 1:nsim)
+  
+  # Samples from the phi and rho random fields on a grid
+  return(list("phi_samples" = phi_samples, "rho_samples" = rho_samples, "grid" = st_as_sf(grid)))
+}
