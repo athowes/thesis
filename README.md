@@ -148,3 +148,12 @@ small-area estimation model to data from Malawi.
   (2020)](https://academic.oup.com/biomet/article-abstract/107/1/223/5572662).
   It would be instructive to implement these approximations for a simple
   example.
+- For all figures showing the use of a quadrature rule, it could be
+  informative to compute and display the resulting integral estimate.
+  When compared to a known truth, this would make demonstrate the value
+  of e.g. adaption.
+- Inclusion of some broader discussion of the value of automatic
+  differentiation for INLA-like inference strategies. See the
+  conversation I began
+  [here](https://groups.google.com/g/r-inla-discussion-group/c/avPWD5ED0NM/m/b94kaaUVAgAJ)
+  on the `R-INLA` Google group.
