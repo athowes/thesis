@@ -57,6 +57,11 @@ Slides for my thesis defense are available
 [here](https://athowes.github.io/thesis/slides.pdf). They may be useful
 to provide a brief overview of the research.
 
+<p align="center">
+<a href="https://athowes.github.io/thesis/slides.pdf">
+<img src="slide-1.png" alt="The title slide!" height="300"/> </a>
+</p>
+
 ## Citation
 
 If you would like to cite this work, please use:
