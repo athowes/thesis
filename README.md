@@ -59,7 +59,7 @@ to provide a brief overview of the research.
 
 <p align="center">
 <a href="https://athowes.github.io/thesis/slides.pdf">
-<img src="slide-1.png" alt="The title slide!" height="300"/> </a>
+<img src="docs/slide-1.png" alt="The title slide!" height="300"/> </a>
 </p>
 
 ## Citation
