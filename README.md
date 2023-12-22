@@ -167,3 +167,9 @@ small-area estimation model to data from Malawi.
   [“symbolic differentaition in a few lines of
   code”](https://reside-ic.github.io/blog/symbolic-differentiation-in-a-few-lines-of-code/)
   by Rich FitzJohn.
+- The simulation study in Chapter 4 was run using 250 replicates. As you
+  can see from the plots showing the mean and standard errors, this
+  sample size was insufficient to distinguish between models in some
+  cases. All the more so zooming into single areas. It would be
+  relatively simple to increase the sample size here, but this wasn’t
+  done in the interests of time.
