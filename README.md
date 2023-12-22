@@ -162,3 +162,8 @@ small-area estimation model to data from Malawi.
   conversation I began
   [here](https://groups.google.com/g/r-inla-discussion-group/c/avPWD5ED0NM/m/b94kaaUVAgAJ)
   on the `R-INLA` Google group.
+- Further detail about how automatic differentation works might be
+  helpful. This could include a simple example. See this nice blog post
+  [“symbolic differentaition in a few lines of
+  code”](https://reside-ic.github.io/blog/symbolic-differentiation-in-a-few-lines-of-code/)
+  by Rich FitzJohn.
