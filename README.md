@@ -4,7 +4,9 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Check back soon. Currently 280 pages.
+> Thesis under construction! Currently 280 pages. There are various
+> [enhancements](#enhancements) I would ideally like to make, but as
+> they say “a good thesis is a done thesis”.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
@@ -127,3 +129,22 @@ which risk varies by age, behaviour, and geographic area. You might also
 be interested in the analysis in [Chapter
 6](https://athowes.github.io/thesis/naomi-aghq.html) applying the Naomi
 small-area estimation model to data from Malawi.
+
+## Enhancements
+
+- In Chapter 2, the sections about challenges and statistical approaches
+  used to overcome those challenges could be 1) better connected to the
+  work done in the thesis, and 2) better integrated with existing
+  literature. Doing so is relatively challenging 1) because this chapter
+  precedes proper introduction of the methods used in this thesis, and
+  is instead meant to provide a high-level overview, and 2) because the
+  statistical approaches described e.g. “borrowing information” are
+  relatively general and would be difficult, though not impossible, to
+  credit to any particular works.
+- A more thorough description of the approximations to the Laplace
+  approximation used by [Rue, Martino, and Chopin
+  (2009)](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2008.00700.x)
+  and [Wood
+  (2020)](https://academic.oup.com/biomet/article-abstract/107/1/223/5572662).
+  It would be instructive to implement these approximations for a simple
+  example.
