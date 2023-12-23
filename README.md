@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 280 pages. There are various
+> Thesis under construction! Currently 285 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -197,4 +197,6 @@ time to work on it:
   (2008)](https://www.stat.berkeley.edu/users/paciorek/research/techVignettes/techVignette2.pdf)
   does this.
 - The writing throughout Chapter 3 is somewhat weak. Particularly the
-  sections on 1) properties of spatio-temporal data.
+  sections on 1) deterministic Bayesian inference methods (difficult to
+  know how much to say given focus of later chapters on this
+  material) 2) properties of spatio-temporal data.
