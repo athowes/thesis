@@ -519,7 +519,7 @@ These approaches are often faster than Monte Carlo methods, especially for large
 <p>One such deterministic approximation is the Laplace approximation.
 It involves approximating the posterior normalising constant using Laplace’s method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
 The integrated nested Laplace approximation [INLA; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] combines quadrature with the Laplace approximation.
-These methods are used often in this thesis.</p>
+These methods are used throughout this thesis, and are discussed in greater detail in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p>
 <p>Variational inference [VI; <span class="citation">Blei, Kucukelbir, and McAuliffe (<a href="#ref-blei2017variational">2017</a>)</span>] is another noteworthy deterministic approximation.
 The well-known expectation maximisation [EM; <span class="citation">Dempster, Laird, and Rubin (<a href="#ref-dempster1977maximum">1977</a>)</span>] and expectation propagation [EP; <span class="citation">Minka (<a href="#ref-minka2001expectation">2001</a>)</span>] algorithms are closely related to VI.
 In VI, the approximate posterior distribution is assumed to belong to a particular family of functions.
@@ -540,32 +540,32 @@ As computational techniques and tools improve, the space of models available to 
 <div id="st-statistics" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Spatio-temporal statistics<a href="bayes-st.html#st-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Space and time are important features of infectious disease data, including those related to HIV.
-The field of spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> is concerned with such observations indexed by spatial or temporal location.
-It unifies the fields of spatial statistics <span class="citation">(<a href="#ref-bivand2008applied">Bivand et al. 2008</a>)</span>, concerned with observations indexed by space, and time series analysis <span class="citation">(<a href="#ref-shumway2017time">Shumway and Stoffer 2017</a>)</span>, concerned with observations index by time.</p>
-<p>Section <a href="bayes-st.html#properties">3.2.1</a> characterises the shared properties of spatio-temporal data.
-Section <a href="bayes-st.html#small-area-estimation">3.2.2</a> describes how these properties facilitate the class of methods called small-area estimation that the work in this thesis falls under.</p>
+The field of spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> is concerned with such observations, which are indexed by spatial and temporal location.
+It unifies the fields of spatial statistics <span class="citation">(<a href="#ref-bivand2008applied">Bivand et al. 2008</a>)</span>, concerned with observations indexed by space, and time series analysis <span class="citation">(<a href="#ref-shumway2017time">Shumway and Stoffer 2017</a>)</span>, concerned with observations indexed by time.
+First, Section <a href="bayes-st.html#properties">3.2.1</a> characterises the shared properties of spatio-temporal data.
+Then, Section <a href="bayes-st.html#small-area-estimation">3.2.2</a> describes how these properties facilitate the class of small-area estimation methods that the work in this thesis falls into.</p>
 <div id="properties" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Properties of spatio-temporal data<a href="bayes-st.html#properties" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="scales" class="section level4 hasAnchor" number="3.2.1.1">
 <h4><span class="header-section-number">3.2.1.1</span> Scales<a href="bayes-st.html#scales" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:st"></span>
-<img src="figures/bayesian/st.png" alt="In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)" width="95%" />
+<img src="figures/bayesian/st.png" alt="In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life, outside of mathematical abstraction, are rare." width="95%" />
 <p class="caption">
-Figure 3.3: In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
+Figure 3.3: In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life, outside of mathematical abstraction, are rare.
 </p>
 </div>
 <p>The scale of spatio-temporal data refers to its extent and resolution.
-Its extent is the length of time and the size of the spatial study region over which data was collected.
+Its extent is the size of the spatial study region and length of time over which data was collected.
 Its resolution is how fine-grained those observations were.</p>
-<p>The spatial study region <span class="math inline">\(\mathcal{S} \subseteq \mathbb{R}^2\)</span> used in this thesis is typically a country or collection of countries, and assumed to have two dimensions, corresponding to latitude and longitude.
-Observations may be associated to a point <span class="math inline">\(s \in \mathcal{S}\)</span> or area <span class="math inline">\(A \subseteq \mathcal{S}\)</span> in the spatial study region.
-Panel A<a href="bayes-st.html#fig:st">3.3</a>) illustrates a spatial point and area.</p>
-<p>The temporal study period <span class="math inline">\(\mathcal{T} \subseteq \mathbb{R}\)</span> can more generally be assumed to be one-dimensional.
-This feature, and the fact that time moves only in the forward direction, is what distinguishes time from space.
-As with space, observations may be associated to a point <span class="math inline">\(t \in \mathcal{T}\)</span> or period of time <span class="math inline">\(T \subseteq \mathcal{T}\)</span>.
-Panel B<a href="bayes-st.html#fig:st">3.3</a>) illustrates a temporal point and period.</p>
+<p>In this thesis, the spatial study region <span class="math inline">\(\mathcal{S} \subseteq \mathbb{R}^2\)</span> used is typically a country or collection of countries.
+It is assumed to have two dimensions, corresponding to latitude and longitude.
+Observations may be associated to a point <span class="math inline">\(s \in \mathcal{S}\)</span> or area <span class="math inline">\(A \subseteq \mathcal{S}\)</span> in the spatial study region, illustrated in Panel A<a href="bayes-st.html#fig:st">3.3</a>.
+The temporal study period <span class="math inline">\(\mathcal{T} \subseteq \mathbb{R}\)</span> can more generally be assumed to be one-dimensional.
+This feature, together with the fact that time only moves forward, is what distinguishes space and time.
+As with space, observations may be associated to a point <span class="math inline">\(t \in \mathcal{T}\)</span> or period of time <span class="math inline">\(T \subseteq \mathcal{T}\)</span>, illustrated in Panel B<a href="bayes-st.html#fig:st">3.3</a>.</p>
 <p>The change-of-support problem <span class="citation">(<a href="#ref-gelfand2001change">Gelfand, Zhu, and Carlin 2001</a>)</span> occurs when data is modelled at a scale different to the one it was observed at.
+For example, in this thesis, particularly Chapter <a href="beyond-borders.html#beyond-borders">4</a>, point data is modelled at an area-level.
 Special cases of the change-of-support problem include downscaling, upscaling, and dealing with so-called misaligned data.
 It is also possible that spatio-temporal observations of the same process are made at multiple scales.
 Jointly modelling data at different scales simultaneously is another closely related challenge to the change-of-support problem.</p>
@@ -573,16 +573,15 @@ Jointly modelling data at different scales simultaneously is another closely rel
 <div id="correlation-structure" class="section level4 hasAnchor" number="3.2.1.2">
 <h4><span class="header-section-number">3.2.1.2</span> Covariance structure<a href="bayes-st.html#correlation-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>In “The Design of Experiments” <span class="citation">Fisher (<a href="#ref-fisher1936design">1936</a>)</span> observed that neighbouring crops were more likely to have similar yields than those far apart.
-This observation was later termed Tobler’s first law of geography, that “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.
-As well as space, Tobler’s first law applies to time.
-Observations made close together in time tend to be similar.</p>
+This observation was later termed Tobler’s first law of geography: “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.
+As well as space, Tobler’s first law applies to time, in that observations made close together in time tend to be similar.</p>
 <p>This law can be formalised using space-time covariance functions.
 A space-time covariance structure <span class="citation">(<a href="#ref-porcu202130">Porcu, Furrer, and Nychka 2021</a>)</span> is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can’t.
 A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured <span class="citation">(<a href="#ref-knorr2000bayesian">Knorr-Held 2000</a>)</span>.
 Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
-Temporal covariance structures are often periodic.
-Because of their covariance structure, spatio-temporal data are not IID.
-Only one observation of a spatio-temporal process is realised.</p>
+Temporal covariance structures are often periodic.</p>
+<p>Because of their covariance structure, spatio-temporal data are not IID.
+Only one observation of a spatio-temporal process can typically be realised.</p>
 </div>
 <div id="size" class="section level4 hasAnchor" number="3.2.1.3">
 <h4><span class="header-section-number">3.2.1.3</span> Size<a href="bayes-st.html#size" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -590,7 +589,7 @@ Only one observation of a spatio-temporal process is realised.</p>
 This makes storage and mathematical operations on spatio-temporal data potentially challenging.
 Furthermore, models for spatio-temporal data typically require many parameters.
 Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
-Large data combined with large models make Bayesian inference challenging.</p>
+Large data combined with large models make the particular mathematical operation of Bayesian inference challenging for spatio-temporal data.</p>
 </div>
 </div>
 <div id="small-area-estimation" class="section level3 hasAnchor" number="3.2.2">
@@ -601,17 +600,17 @@ As a result, given the large number of possible locations in space and time, oft
 Direct estimates of indicators of interest are either impossible or inaccurate in this setting.</p>
 <p>Small-area estimation [SAE; <span class="citation">Pfeffermann et al. (<a href="#ref-pfeffermann2013new">2013</a>)</span>] methods aim to overcome the limitations of small data by sharing information.
 In the spatio-temporal setting sharing of information occurs across space and time.
-Prior knowledge that observations in one spatio-temporal location are correlated with those at another can be used to improve estimates.
-Figures <a href="bayes-st.html#fig:zmb-maps">3.4</a> and <a href="bayes-st.html#fig:zmb-scatter">3.5</a> illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to overcome this limitation in part.</p>
+Prior knowledge that observations in one spatio-temporal location are correlated with those at another (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>) can be used to improve estimates.
+Figures <a href="bayes-st.html#fig:zmb-maps">3.4</a> and <a href="bayes-st.html#fig:zmb-scatter">3.5</a> illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to partially overcome this limitation.</p>
 <p>SAE methods are more generally useful when data are limited for subpopulations of interest.
 These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
 Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
 For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:zmb-maps"></span>
-<img src="figures/bayesian/zmb-maps.png" alt="Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size \(m = 5, 25, 125\) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from https://github.com/athowes/zambia-unaids. The viridis colour palette used in this figure, as implemented by the viridis R package (Garnier et al. 2023), was designed to be perceptually uniform and accessible to colourblind viewers (Smith and Walt 2015)." width="95%" />
+<img src="figures/bayesian/zmb-maps.png" alt="Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size \(m = 5, 25, 125\) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the viridis R package (Garnier et al. 2023), used in this figure, and often throughout this thesis, was designed to be perceptually uniform and accessible to colourblind viewers (Smith and Walt 2015). This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from https://github.com/athowes/zambia-unaids." width="95%" />
 <p class="caption">
-Figure 3.4: Simulation of a simple random sample <span class="math inline">\(y_i \sim \text{Bin}(m, p_i)\)</span> with varying sample size <span class="math inline">\(m = 5, 25, 125\)</span> in each of the <span class="math inline">\(i = 1, \ldots, 156\)</span> constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from <a href="https://github.com/athowes/zambia-unaids"><code>https://github.com/athowes/zambia-unaids</code></a>. The viridis colour palette used in this figure, as implemented by the <code>viridis</code> R package <span class="citation">(<a href="#ref-viridis">Garnier et al. 2023</a>)</span>, was designed to be perceptually uniform and accessible to colourblind viewers <span class="citation">(<a href="#ref-smith2015better">Smith and Walt 2015</a>)</span>.
+Figure 3.4: Simulation of a simple random sample <span class="math inline">\(y_i \sim \text{Bin}(m, p_i)\)</span> with varying sample size <span class="math inline">\(m = 5, 25, 125\)</span> in each of the <span class="math inline">\(i = 1, \ldots, 156\)</span> constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the <code>viridis</code> R package <span class="citation">(<a href="#ref-viridis">Garnier et al. 2023</a>)</span>, used in this figure, and often throughout this thesis, was designed to be perceptually uniform and accessible to colourblind viewers <span class="citation">(<a href="#ref-smith2015better">Smith and Walt 2015</a>)</span>. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from <a href="https://github.com/athowes/zambia-unaids"><code>https://github.com/athowes/zambia-unaids</code></a>.
 </p>
 </div>
 

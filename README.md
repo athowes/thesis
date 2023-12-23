@@ -196,3 +196,5 @@ time to work on it:
   technical vignette [Paciorek
   (2008)](https://www.stat.berkeley.edu/users/paciorek/research/techVignettes/techVignette2.pdf)
   does this.
+- The writing throughout Chapter 3 is somewhat weak. Particularly the
+  sections on 1) properties of spatio-temporal data.

@@ -150,7 +150,7 @@ These approaches are often faster than Monte Carlo methods, especially for large
 One such deterministic approximation is the Laplace approximation.
 It involves approximating the posterior normalising constant using Laplace's method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
 The integrated nested Laplace approximation [INLA; @rue2009approximate] combines quadrature with the Laplace approximation.
-These methods are used often in this thesis.
+These methods are used throughout this thesis, and are discussed in greater detail in Chapter \@ref(naomi-aghq).
 
 Variational inference [VI; @blei2017variational] is another noteworthy deterministic approximation.
 The well-known expectation maximisation [EM; @dempster1977maximum] and expectation propagation [EP; @minka2001expectation] algorithms are closely related to VI.
@@ -170,36 +170,34 @@ As computational techniques and tools improve, the space of models available to 
 ## Spatio-temporal statistics {#st-statistics}
 
 Space and time are important features of infectious disease data, including those related to HIV.
-The field of spatio-temporal statistics [@cressie2015statistics] is concerned with such observations indexed by spatial or temporal location.
-It unifies the fields of spatial statistics [@bivand2008applied], concerned with observations indexed by space, and time series analysis [@shumway2017time], concerned with observations index by time.
-
-Section \@ref(properties) characterises the shared properties of spatio-temporal data.
-Section \@ref(small-area-estimation) describes how these properties facilitate the class of methods called small-area estimation that the work in this thesis falls under.
+The field of spatio-temporal statistics [@cressie2015statistics] is concerned with such observations, which are indexed by spatial and temporal location.
+It unifies the fields of spatial statistics [@bivand2008applied], concerned with observations indexed by space, and time series analysis [@shumway2017time], concerned with observations indexed by time.
+First, Section \@ref(properties) characterises the shared properties of spatio-temporal data.
+Then, Section \@ref(small-area-estimation) describes how these properties facilitate the class of small-area estimation methods that the work in this thesis falls into.
 
 ### Properties of spatio-temporal data {#properties}
 
 #### Scales
 
-(ref:st) In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. (In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life are rare.)
+(ref:st) In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life, outside of mathematical abstraction, are rare.
 
 ```{r st, fig.cap="(ref:st)"}
 knitr::include_graphics("figures/bayesian/st.png")
 ```
 
 The scale of spatio-temporal data refers to its extent and resolution.
-Its extent is the length of time and the size of the spatial study region over which data was collected.
+Its extent is the size of the spatial study region and length of time over which data was collected.
 Its resolution is how fine-grained those observations were.
 
-The spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ used in this thesis is typically a country or collection of countries, and assumed to have two dimensions, corresponding to latitude and longitude.
-Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the spatial study region.
-Panel A\@ref(fig:st)) illustrates a spatial point and area.
-
+In this thesis, the spatial study region $\mathcal{S} \subseteq \mathbb{R}^2$ used is typically a country or collection of countries.
+It is assumed to have two dimensions, corresponding to latitude and longitude.
+Observations may be associated to a point $s \in \mathcal{S}$ or area $A \subseteq \mathcal{S}$ in the spatial study region, illustrated in Panel A\@ref(fig:st).
 The temporal study period $\mathcal{T} \subseteq \mathbb{R}$ can more generally be assumed to be one-dimensional.
-This feature, and the fact that time moves only in the forward direction, is what distinguishes time from space.
-As with space, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$.
-Panel B\@ref(fig:st)) illustrates a temporal point and period.
+This feature, together with the fact that time only moves forward, is what distinguishes space and time. 
+As with space, observations may be associated to a point $t \in \mathcal{T}$ or period of time $T \subseteq \mathcal{T}$, illustrated in Panel B\@ref(fig:st).
 
 The change-of-support problem [@gelfand2001change] occurs when data is modelled at a scale different to the one it was observed at.
+For example, in this thesis, particularly Chapter \@ref(beyond-borders), point data is modelled at an area-level.
 Special cases of the change-of-support problem include downscaling, upscaling, and dealing with so-called misaligned data.
 It is also possible that spatio-temporal observations of the same process are made at multiple scales.
 Jointly modelling data at different scales simultaneously is another closely related challenge to the change-of-support problem.
@@ -207,17 +205,17 @@ Jointly modelling data at different scales simultaneously is another closely rel
 #### Covariance structure {#correlation-structure}
 
 In "The Design of Experiments" @fisher1936design observed that neighbouring crops were more likely to have similar yields than those far apart.
-This observation was later termed Tobler's first law of geography, that "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
-As well as space, Tobler's first law applies to time.
-Observations made close together in time tend to be similar.
+This observation was later termed Tobler's first law of geography: "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
+As well as space, Tobler's first law applies to time, in that observations made close together in time tend to be similar.
 
 This law can be formalised using space-time covariance functions.
 A space-time covariance structure [@porcu202130] is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can't.
 A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured [@knorr2000bayesian].
 Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
 Temporal covariance structures are often periodic.
+
 Because of their covariance structure, spatio-temporal data are not IID.
-Only one observation of a spatio-temporal process is realised.
+Only one observation of a spatio-temporal process can typically be realised.
 
 #### Size
 
@@ -225,7 +223,7 @@ Data with both spatial and temporal dimensions are often large.
 This makes storage and mathematical operations on spatio-temporal data potentially challenging.
 Furthermore, models for spatio-temporal data typically require many parameters.
 Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
-Large data combined with large models make Bayesian inference challenging.
+Large data combined with large models make the particular mathematical operation of Bayesian inference challenging for spatio-temporal data.
 
 ### Small-area estimation {#small-area-estimation}
 
@@ -236,15 +234,15 @@ Direct estimates of indicators of interest are either impossible or inaccurate i
 
 Small-area estimation [SAE; @pfeffermann2013new] methods aim to overcome the limitations of small data by sharing information.
 In the spatio-temporal setting sharing of information occurs across space and time.
-Prior knowledge that observations in one spatio-temporal location are correlated with those at another can be used to improve estimates.
-Figures \@ref(fig:zmb-maps) and \@ref(fig:zmb-scatter) illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to overcome this limitation in part.
+Prior knowledge that observations in one spatio-temporal location are correlated with those at another (Section \@ref(correlation-structure)) can be used to improve estimates.
+Figures \@ref(fig:zmb-maps) and \@ref(fig:zmb-scatter) illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to partially overcome this limitation.
 
 SAE methods are more generally useful when data are limited for subpopulations of interest.
 These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
 Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
 For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.
 
-(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size $m = 5, 25, 125$ in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids). The viridis colour palette used in this figure, as implemented by the `viridis` R package [@viridis], was designed to be perceptually uniform and accessible to colourblind viewers [@smith2015better].
+(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size $m = 5, 25, 125$ in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the `viridis` R package [@viridis], used in this figure, and often throughout this thesis, was designed to be perceptually uniform and accessible to colourblind viewers [@smith2015better]. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
 
 ```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
 knitr::include_graphics("figures/bayesian/zmb-maps.png")
