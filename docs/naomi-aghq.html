@@ -790,8 +790,8 @@ p(x_i \, | \, \mathbf{y}) &amp;= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \
 <p>Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> is a mixture of the normalised Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample each Laplace approximation.
 As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> may instead be represented by its evaluation at a number of nodes.
-The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
-The probability density function of the marginal posterior may be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.</p>
+One approach is to chose these nodes based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
+The probability density function of the marginal posterior may then be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -803,7 +803,7 @@ Details are left to Section 3.2.3 of <span class="citation">Håvard Rue, Martino
 <div id="simplified-inla" class="section level4 hasAnchor" number="6.1.3.4">
 <h4><span class="header-section-number">6.1.3.4</span> Simplified INLA<a href="naomi-aghq.html#simplified-inla" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> describe a method for approximating the Laplace marginals without depending on the Markov structure, while still achieving equivalent efficiency.
-This work was motivated by the spline setting, which similar to the extended latent Gaussian models [ELGMs; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>] setting, results in precision matrices which are not as sparse.
+This work was motivated by a setting in which, which similar to extended latent Gaussian models [ELGMs; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>], precision matrices are not typically as sparse as GMRFs.
 Details are left to <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.</p>
 </div>
 <div id="appending-the-noisy-structured-additive-predictor-to-the-latent-field" class="section level4 hasAnchor" number="6.1.3.5">
@@ -878,7 +878,7 @@ It is also possible to extract the <code>TMB</code> objective function used by <
 <div id="other-software" class="section level4 hasAnchor" number="6.1.4.3">
 <h4><span class="header-section-number">6.1.4.3</span> Other software<a href="naomi-aghq.html#other-software" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The <code>mgcv</code> [Mixed GAM computation vehicle; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>] R package estimates generalised additive models (GAMs) specified using a formula interface.
-This package is briefly mentioned so as to note that the function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> as described in Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>.</p>
+This package is briefly mentioned so as to note that the function <code>mgcv::ginla</code> implements the simplified INLA approach of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> (Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>).</p>
 </div>
 </div>
 </div>

@@ -444,8 +444,8 @@ p(x_i \, | \, \mathbf{y}) &= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \m
 Equation \@ref(eq:lamarginal) is a mixture of the normalised Laplace approximations $\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})$ over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section \@ref(gaussian-marginals)) it is not easy to directly sample each Laplace approximation.
 As such, Equation \@ref(eq:lamarginal) may instead be represented by its evaluation at a number of nodes.
-The nodes may be based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
-The probability density function of the marginal posterior may be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.
+One approach is to chose these nodes based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
+The probability density function of the marginal posterior may then be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.
 
 #### Simplified Laplace marginals {#simplified-laplace-marginals}
 
@@ -457,7 +457,7 @@ Details are left to Section 3.2.3 of @rue2009approximate.
 #### Simplified INLA {#simplified-inla}
 
 @wood2020simplified describe a method for approximating the Laplace marginals without depending on the Markov structure, while still achieving equivalent efficiency.
-This work was motivated by the spline setting, which similar to the extended latent Gaussian models [ELGMs; @stringer2022fast] setting, results in precision matrices which are not as sparse.
+This work was motivated by a setting in which, which similar to extended latent Gaussian models [ELGMs; @stringer2022fast], precision matrices are not typically as sparse as GMRFs.
 Details are left to @wood2020simplified.
 
 #### Appending the noisy structured additive predictor to the latent field
@@ -538,7 +538,7 @@ A review of the use of `TMB` for spatial modelling, including comparison to `R-I
 #### Other software
 
 The `mgcv` [Mixed GAM computation vehicle; @wood2017generalized] R package estimates generalised additive models (GAMs) specified using a formula interface.
-This package is briefly mentioned so as to note that the function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified as described in Section \@ref(simplified-inla).
+This package is briefly mentioned so as to note that the function `mgcv::ginla` implements the simplified INLA approach of @wood2020simplified (Section \@ref(simplified-inla)).
 
 ## A universal INLA implementation {#universal}
 
