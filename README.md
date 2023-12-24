@@ -238,3 +238,10 @@ time to work on it:
   the weights. There is a section in [Rue, Martino, and Chopin
   (2009)](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2008.00700.x)
   which could be useful.
+- In Chapter 4, calculating the DIC and WAIC values for each of the
+  fitted models would be informative as to the possible benefits of the
+  other model comparison techniques used in the chapter. This would
+  require writing a function to take a model fitted using `TMB` or
+  `aghq` and output the model comparison criteria. Likely the best
+  approach would be to use samples, as this is the most transferable
+  way.
