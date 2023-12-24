@@ -27,10 +27,16 @@ Chapter \@ref(beyond-borders) used tools for model assessment such as proper sco
 Useful data for practitioners.
 Useful to base methodological developments on.
 
+(ref:global-update) Panel A shows the front page of @unaids2023global. Panel B shows the page containing text and a figure based on the work done in Chapter \@ref(multi-agyw). In this figure, 30 countries are included.
+
+```{r global-update, fig.cap="(ref:global-update)"}
+knitr::include_graphics("figures/conclusions/global-update.png")
+```
+
 Chapter \@ref(multi-agyw) estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy [@unaids2021global].
 Risk group proportion estimates were used to disaggregate HIV prevalence and incidence estimates by behaviour, and assess the benefits of a variety of risk stratification strategies.
 This work forms the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
-At least 30 countries have now been included in the tool, extending from the 13 intially included [Figure 2.1; @unaids2023global].
+At least 30 countries have now been included in the tool, extending from the 13 initially included [Figure \@ref(fig:global-update); @unaids2023global].
 The models informing the tool will be rerun each year with updated data as a part of UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter \@ref(multi-agyw) exemplified specification of complex multinomial spatio-temporal models in `R-INLA` using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.
 
@@ -66,12 +72,18 @@ The most important speed enhancement would likely come from using the simplified
 Usability would be improved by integration of the method into statistical software, first and foremost via the `aghq` package.
 The primary difficulty, as it appears now, which would have to be overcome is that the `random` argument of `TMB::MakeADFun` does not allow indexing.
 
+(ref:conditional-simulation-diff-k-fixed) For the Loa loa ELGM, increasing the number of quadrature nodes per hyperparameter dimension from $k = 3$ to $k = 7$ did little to improve accuracy. On the other hand, using Laplace marginals with $k = 3$ rather than Gaussian marginals did have a substantial effect (Figures \@ref(fig:conditional-simulation-phi-diff-fixed) and \@ref(fig:conditional-simulation-rho-diff-fixed)).
+
+```{r conditional-simulation-diff-k-fixed, fig.cap="(ref:conditional-simulation-diff-k-fixed)"}
+knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-k-fixed.png")
+```
+
 3. The universal INLA implementation developed in Chapter \@ref(naomi-aghq) is enabling of methodological research.
 For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections \@ref(loaloa) and \@ref(malawi)).
 For this purpose, it is particularly important that the `TMB` C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via `tmbstan`.
 Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
 How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
-For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than increasing the number of AGHQ nodes per dimension from $k = 3$ to $k = 7$ (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
+For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
 Additional theoretical work could be conducted to complement the empirical work described above.
 This work could be benefited by the exhaustive specification of the INLA-like algorithms used in this thesis.
 
@@ -95,6 +107,7 @@ The applied contributions of Chapter \@ref(multi-agyw) have a more promising cas
 
 To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
 I hope that having done so facilitates my work to be scrutinised, and more optimistically, built upon.
+For example, with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter \@ref(multi-agyw) to include additional countries (Panel \@ref(fig:global-update)B).
 This would not have been possible without tools from the R ecosystem such as `rmarkdown` and `rticles` for reporting, `devtools` for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
 
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
