@@ -461,8 +461,8 @@ For each of the three spatial random effect models and seven geometries 100 synt
 | BYM2  | $\mathbf{u} = \tau_u^{-1} ( \sqrt{1 - \pi} \, \mathbf{v} + \sqrt{\pi} \, \mathbf{w}^\star)$ as in Section \@ref(bym2) with $\pi \sim \text{Beta}(0.5, 0.5)$ |
 | FCK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with fixed length-scale $l$ |
 | CK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = k(c_i, c_j)$ as in Section \@ref(centroid-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
-| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with fixed length-scale $l$ |
-| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
+| FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with hexagonal points (Panel \@ref(fig:integration-strategy)C), $L_i = 10$, and fixed length-scale $l$ |
+| IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with hexagonal points (Panel \@ref(fig:integration-strategy)C), $L_i = 10$, and length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
 
 Table: (\#tab:inferential-models) The spatial random effect models used for inference. Each model is implemented in the `arealutils` package. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of @riebler2016intuitive.
 
@@ -564,17 +564,18 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mea
 knitr::include_graphics(path)
 ```
 
-The BYM2 model performed similarly to the IID model on IID synthetic data, and similarly to the Besag model on Besag data.
-The BYM2 proportion parameter was learnt (Appendix \@ref(bym2-proportion)).
+For IID synthetic data, the IID, BYM2, CK and IK models perform well.
+The BYM2, CK and IK models have ways to learn the extent of spatial structure.
+For example, Appendix \@ref(bym2-proportion) shows recovery of the BYM2 proportion parameter.
+Models with fixed spatial structure performed particularly poorly on the geometry interiors.
 
-The kernel models with a prior distribution on the lengthscale performed better than those which fixed the lengthscale based on a heuristic.
+For both Besag and IK synthetic data, the IID model performed poorly.
+Analogously, the BYM2 model was able to infer the proportion parameter for the most part, and as a result performed only somewhat worse than the Besag model.
+
+Across all synthetic data, the CK and IK models with a prior distribution on the lengthscale performed better than the FCK and FIK models where the lengthscale was fixed.
 These models were able to successfully infer the lengthscale (Appendix \@ref(lengthscale)).
-Discuss lengthscale to noise identifiability and posterior correlation.
 
-Learning a lengthscale allowed the kernel models to perform well even for IID synthetic data.
-
-For IID synthetic data, the spatial models performed worse on the interior of the geometry.
-For spatial synthetic data, the spatial models perormed better on the interior of the geometry.
+<!-- Discuss lengthscale to noise identifiability and posterior correlation. -->
 
 ## HIV prevalence study {#hiv-study}
 
@@ -646,8 +647,8 @@ Each model was assessed using (Figure \@ref(fig:cv)):
 
 At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
 
-To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed.
-Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo].
+<!-- To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed. -->
+<!-- Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo]. -->
 
 ### Results
 
@@ -674,27 +675,26 @@ if(knitr::is_latex_output()) {
 }
 ```
 
-The results for each survey were as follows:
+The results (Figure \@ref(fig:crps-mean-se-surveys) and Table \@ref(tab:cv-crps)) for each survey were as follows:
 
-1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly.
-Name of the city.
-Investigate BYM2 hypothesis here.
+1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO and SLOO cross-validation (Figures \@ref(fig:crps-mean-se-civ2017phia))
+The pointwise CRPS value was high at certain district.
 Suggestion to include some type of covariates to overcome this challenge.
 
-2. For the 2017 PHIA survey in Malawi...
+2. For the 2017 PHIA survey in Malawi (Figures \@ref(fig:crps-mean-se-mwi2016phia)).
 
-3. For the 2017 PHIA survey in Tanzania...
+3. For the 2017 PHIA survey in Tanzania (Figures  \@ref(fig:crps-mean-se-tza2017phia)).
 
-4. Finally, for the 2016 PHIA survey in Zimbabwe
+4. Finally, for the 2016 PHIA survey in Zimbabwe (Figures \@ref(fig:crps-mean-se-zwe2016phia)).
 
-Figure \@ref(fig:crps-mean-se-surveys) and Table \@ref(tab:cv-crps).
 Figures \@ref(fig:ladder-civ2017phia), \@ref(fig:ladder-mwi2016phia), \@ref(fig:ladder-tza2017phia), and \@ref(fig:ladder-zwe2016phia) show the posterior mean and 95% credible interval obtained for each area for each inferential model.
-Figures \@ref(fig:crps-mean-se-civ2017phia), \@ref(fig:crps-mean-se-mwi2016phia), \@ref(fig:crps-mean-se-tza2017phia), and \@ref(fig:crps-mean-se-zwe2016phia).
 
 ## Discussion
 
 ### Modelling
 
+* What are my recommendations with respect to which spatial model to use
+* What are my suggestions for new models to develop on the basis of this work
 * Kernel with long lengthscale looks like IID
 * GMRFs perform smoothing more locally
 * Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete.
@@ -707,6 +707,7 @@ On the other hand, for non-linear link functions $g$ such as the commonly used e
 * Discussion of non-stationarity [@paciorek2006spatial].
 * The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless].
 * BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian.
+* How does the weighted GMRF connect?
 
 ### Model selection
 

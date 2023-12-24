@@ -889,11 +889,11 @@ From the most to the least spatially regular, these geometries were:</p>
 </tr>
 <tr class="odd">
 <td>FIK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with fixed length-scale <span class="math inline">\(l\)</span></td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with hexagonal points (Panel <a href="beyond-borders.html#fig:integration-strategy">4.5</a>C), <span class="math inline">\(L_i = 10\)</span>, and fixed length-scale <span class="math inline">\(l\)</span></td>
 </tr>
 <tr class="even">
 <td>IK</td>
-<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span> with <span class="math inline">\(a, b\)</span> set based on the geometry</td>
+<td><span class="math inline">\(\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})\)</span> with <span class="math inline">\(K_{ij} = K(A_i, A_j)\)</span> as in Section <a href="beyond-borders.html#integrated-kernel">4.2.2</a> with hexagonal points (Panel <a href="beyond-borders.html#fig:integration-strategy">4.5</a>C), <span class="math inline">\(L_i = 10\)</span>, and length-scale prior distribution <span class="math inline">\(l \sim \mathrm{Inv{\text-}Gamma}(a, b)\)</span> with <span class="math inline">\(a, b\)</span> set based on the geometry</td>
 </tr>
 </tbody>
 </table>
@@ -989,14 +989,15 @@ Figure 4.8: The mean CRPS and its standard error for each inferential model and 
 Figure 4.9: The mean CRPS and its standard error for each inferential model and simulation model on the Texas geometry (Panel <a href="beyond-borders.html#fig:geometries">4.6</a>G).
 </p>
 </div>
-<p>The BYM2 model performed similarly to the IID model on IID synthetic data, and similarly to the Besag model on Besag data.
-The BYM2 proportion parameter was learnt (Appendix <a href="models-for-areal-spatial-structure.html#bym2-proportion">A.3.2</a>).</p>
-<p>The kernel models with a prior distribution on the lengthscale performed better than those which fixed the lengthscale based on a heuristic.
-These models were able to successfully infer the lengthscale (Appendix <a href="models-for-areal-spatial-structure.html#lengthscale">A.3.1</a>).
-Discuss lengthscale to noise identifiability and posterior correlation.</p>
-<p>Learning a lengthscale allowed the kernel models to perform well even for IID synthetic data.</p>
-<p>For IID synthetic data, the spatial models performed worse on the interior of the geometry.
-For spatial synthetic data, the spatial models perormed better on the interior of the geometry.</p>
+<p>For IID synthetic data, the IID, BYM2, CK and IK models perform well.
+The BYM2, CK and IK models have ways to learn the extent of spatial structure.
+For example, Appendix <a href="models-for-areal-spatial-structure.html#bym2-proportion">A.3.2</a> shows recovery of the BYM2 proportion parameter.
+Models with fixed spatial structure performed particularly poorly on the geometry interiors.</p>
+<p>For both Besag and IK synthetic data, the IID model performed poorly.
+Analogously, the BYM2 model was able to infer the proportion parameter for the most part, and as a result performed only somewhat worse than the Besag model.</p>
+<p>Across all synthetic data, the CK and IK models with a prior distribution on the lengthscale performed better than the FCK and FIK models where the lengthscale was fixed.
+These models were able to successfully infer the lengthscale (Appendix <a href="models-for-areal-spatial-structure.html#lengthscale">A.3.1</a>).</p>
+<!-- Discuss lengthscale to noise identifiability and posterior correlation. -->
 </div>
 </div>
 <div id="hiv-study" class="section level2 hasAnchor" number="4.4">
@@ -1102,8 +1103,8 @@ Figure 4.11: In leave-one-out (LOO) cross-validation, in each fold one observati
 <li>a spatial leave-one-out cross-validation (SLOO-CV).</li>
 </ol>
 <p>At each fold the CRPS, MSE and quantile (as in Section <a href="beyond-borders.html#model-assessment">4.3.3</a>) of posterior predictive samples as compared with the observed data were computed.</p>
-<p>To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed.
-Given pointwise log-likelihood evaluations, these measures were obtained via the <code>loo</code> R package <span class="citation">(<a href="#ref-loo">Vehtari et al. 2023</a>)</span>.</p>
+<!-- To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed. -->
+<!-- Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo]. -->
 </div>
 <div id="results-1" class="section level3 hasAnchor" number="4.4.4">
 <h3><span class="header-section-number">4.4.4</span> Results<a href="beyond-borders.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1621,19 +1622,16 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   
 </table>
 </div>
-<p>The results for each survey were as follows:</p>
+<p>The results (Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a> and Table <a href="beyond-borders.html#tab:cv-crps">4.4</a>) for each survey were as follows:</p>
 <ol style="list-style-type: decimal">
-<li><p>For the 2017 PHIA survey in Côte d’Ivoire, all of the models performed similarly.
-Name of the city.
-Investigate BYM2 hypothesis here.
+<li><p>For the 2017 PHIA survey in Côte d’Ivoire, all of the models performed similarly, using both LOO and SLOO cross-validation (Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ2017phia">A.37</a>)
+The pointwise CRPS value was high at certain district.
 Suggestion to include some type of covariates to overcome this challenge.</p></li>
-<li><p>For the 2017 PHIA survey in Malawi…</p></li>
-<li><p>For the 2017 PHIA survey in Tanzania…</p></li>
-<li><p>Finally, for the 2016 PHIA survey in Zimbabwe</p></li>
+<li><p>For the 2017 PHIA survey in Malawi (Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-mwi2016phia">A.38</a>).</p></li>
+<li><p>For the 2017 PHIA survey in Tanzania (Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-tza2017phia">A.39</a>).</p></li>
+<li><p>Finally, for the 2016 PHIA survey in Zimbabwe (Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-zwe2016phia">A.40</a>).</p></li>
 </ol>
-<p>Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a> and Table <a href="beyond-borders.html#tab:cv-crps">4.4</a>.
-Figures <a href="models-for-areal-spatial-structure.html#fig:ladder-civ2017phia">A.33</a>, <a href="models-for-areal-spatial-structure.html#fig:ladder-mwi2016phia">A.34</a>, <a href="models-for-areal-spatial-structure.html#fig:ladder-tza2017phia">A.35</a>, and <a href="models-for-areal-spatial-structure.html#fig:ladder-zwe2016phia">A.36</a> show the posterior mean and 95% credible interval obtained for each area for each inferential model.
-Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ2017phia">A.37</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-mwi2016phia">A.38</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-tza2017phia">A.39</a>, and <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-zwe2016phia">A.40</a>.</p>
+<p>Figures <a href="models-for-areal-spatial-structure.html#fig:ladder-civ2017phia">A.33</a>, <a href="models-for-areal-spatial-structure.html#fig:ladder-mwi2016phia">A.34</a>, <a href="models-for-areal-spatial-structure.html#fig:ladder-tza2017phia">A.35</a>, and <a href="models-for-areal-spatial-structure.html#fig:ladder-zwe2016phia">A.36</a> show the posterior mean and 95% credible interval obtained for each area for each inferential model.</p>
 </div>
 </div>
 <div id="discussion" class="section level2 hasAnchor" number="4.5">
@@ -1641,6 +1639,8 @@ Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ201
 <div id="modelling" class="section level3 hasAnchor" number="4.5.1">
 <h3><span class="header-section-number">4.5.1</span> Modelling<a href="beyond-borders.html#modelling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
+<li>What are my recommendations with respect to which spatial model to use</li>
+<li>What are my suggestions for new models to develop on the basis of this work</li>
 <li>Kernel with long lengthscale looks like IID</li>
 <li>GMRFs perform smoothing more locally</li>
 <li>Related work to discuss includes <span class="citation">Follestad and Rue (<a href="#ref-follestad2003modelling">2003</a>)</span> and <span class="citation">Konstantinoudis et al. (<a href="#ref-konstantinoudis2020discrete">2020</a>)</span>.</li>
@@ -1653,6 +1653,7 @@ On the other hand, for non-linear link functions <span class="math inline">\(g\)
 <li>Discussion of non-stationarity <span class="citation">(<a href="#ref-paciorek2006spatial">Christopher J. Paciorek and Schervish 2006</a>)</span>.</li>
 <li>The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels <span class="citation">(<a href="#ref-wilson2018pointless">Wilson and Wakefield 2018</a>)</span>.</li>
 <li>BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian.</li>
+<li>How does the weighted GMRF connect?</li>
 </ul>
 </div>
 <div id="model-selection" class="section level3 hasAnchor" number="4.5.2">
@@ -1888,9 +1889,6 @@ Teh, Yee Whye, Bryn Elesedy, Bobby He, Michael Hutchinson, Sheheryar Zaidi, Avis
 </div>
 <div id="ref-utazi2019spatial" class="csl-entry">
 Utazi, C Edson, Julia Thorley, VA Alegana, MJ Ferrari, Kristine Nilsen, Saki Takahashi, CJE Metcalf, Justin Lessler, and AJ Tatem. 2019. <span>“<span class="nocase">A spatial regression model for the disaggregation of areal unit based data to high-resolution grids with application to vaccination coverage mapping</span>.”</span> <em>Statistical Methods in Medical Research</em> 28 (10-11): 3226–41.
-</div>
-<div id="ref-loo" class="csl-entry">
-Vehtari, Aki, Jonah Gabry, Mans Magnusson, Yuling Yao, Paul-Christian Bürkner, Topi Paananen, and Andrew Gelman. 2023. <span>“Loo: Efficient Leave-One-Out Cross-Validation and WAIC for Bayesian Models.”</span> <a href="https://mc-stan.org/loo/">https://mc-stan.org/loo/</a>.
 </div>
 <div id="ref-wakefield1999spatial" class="csl-entry">
 Wakefield, J, and S Morris. 1999. <span>“<span class="nocase">Spatial dependence and errors-in-variables in environmental epidemiology</span>.”</span> <em>Bayesian Statistics</em> 6: 657–84.

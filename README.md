@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 287 pages. There are various
+> Thesis under construction! Currently 288 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -200,3 +200,41 @@ time to work on it:
   sections on 1) deterministic Bayesian inference methods (difficult to
   know how much to say given focus of later chapters on this
   material) 2) properties of spatio-temporal data.
+- Writing of the results and conclusions sections for Chapters 4 and 6
+  was relatively rushed. As such, it’s likely that a more thorough job
+  could be done interpreting the results and connecting them to key
+  takeaways.
+- Chapter 5 could benefit from more discussion of the statistical
+  results and conclusions from the work. Some of this work is already
+  done in my [retrospective blog
+  post](https://athowes.github.io/posts/2023-04-21-risk-group-retrospective/)
+  about the work.
+- Running NUTS via `tmbstan` for Appendix A I found that some of the
+  chains hung for a very long time. This is suggestive of the posterior
+  geometries being tricky. In part this is confusing because I have
+  previously run some of these models, implemented in `rstan` directly,
+  without trouble. (See the `tmbstan` implementations
+  [here](https://github.com/athowes/arealutils/blob/main/R/tmbstan.R),
+  and the `rstan` implementations
+  [here](https://github.com/athowes/arealutils/tree/main/dev/tempstan),
+  all as part of the `arealutils` R package). It could be beneficial
+  to 1) try to understand why it is that sometimes the chains hang 2)
+  repeat the comparison using `rstan` versions of the models. The
+  challenge in doing 2) is that then the guarantee that the models are
+  the same is lost. That said, I have previously overcome this by taking
+  parameters, evaluating their log-posterior under the `TMB` and `rstan`
+  C++ templates, and making sure that they are identical up to a
+  additive constant (this is on the log-scale, remember). For example, I
+  did this in the case of the epilepsy GLM. Thinking about it more, this
+  would be a valuable exercise in any case, to ensure that the
+  implementations in the package are consistent. (I don’t think there is
+  a way to evaluate the objective function corresponding to an `R-INLA`
+  model, but if there were that would be great to do too.)
+- For the figure in Chapter 6 showing the CCD grid, I think that these
+  points
+  ([produced](https://github.com/athowes/thesis/blob/master/figures/naomi-aghq/inla-grid-demo.R)
+  using `rsm::ccd`) should have associated weights (and therefore be
+  different `(aes(size = ...))`) but I am unsure as to how to generate
+  the weights. There is a section in [Rue, Martino, and Chopin
+  (2009)](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2008.00700.x)
+  which could be useful.
