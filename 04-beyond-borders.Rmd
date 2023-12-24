@@ -37,12 +37,7 @@ These models combine a Gaussian distribution with Markov conditional independenc
 Observations in areas close together are assumed to be related, with more distant relationships not directly accounted for.
 Perhaps the simplest GMRF model is that of @besag1991bayesian in which information is borrowed equally from each adjacent area, based on a binary relationship.
 The Besag model is attractive as it requires minimal additional modelling choices and is accessibly implemented in software such as `R-INLA` [@blangiardo2013spatial], `rstan` [@morris2019bayesian; @conegan2022geostan], `NIMBLE` [Chapter 9; @nimblemanual] and `PyMC` [@saunders2023pymc], among others.
-As a result, it has been widely used, including:
-
-* to model bird population dynamics from capture-recapture data [@saracco2010modeling];
-* for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian];
-* to map mortality from cancers [@rashid2023inequalities], injuries [@parks2020anomalously] and air pollution [@bennett2019particulate];
-* to model alcohol use patterns [@dwyer2015drinking].
+As a result, it has been widely used, including to model bird population dynamics from capture-recapture data [@saracco2010modeling]; for the analysis of magnetic resonance images [@gossl2001bayesian; @schmid2006bayesian]; to map mortality from cancers [@rashid2023inequalities], injuries [@parks2020anomalously], and air pollution [@bennett2019particulate]; and to model alcohol use patterns [@dwyer2015drinking].
 
 The Besag model was designed for image analysis, on a regular grid.
 However, for more irregular geometries, the assumptions made are unrealistic and appear to be violated.
@@ -449,7 +444,7 @@ From the most to the least spatially regular, these geometries were:
 * the 33 districts of Côte d'Ivoire;
 * the 36 congressional districts of Texas.
 
-For each of the three spatial random effect models and seven geometries 100 synthetic data were generated, resulting in a total of 2100 synthetic data.
+For each of the three spatial random effect models and seven geometries 250 synthetic data were generated, resulting in a total of `r 3 * 7 * 250` synthetic data.
 
 ### Inferential models
 
@@ -501,7 +496,7 @@ A weakly informative $\mathcal{N}(-2, 1)$ prior was placed on $\beta_0$, setting
 
 In cases where the length-scale $l$ was fixed, it was set based on the geometry such that points an average distance apart had 1\% correlation [@best1999bayesian].
 In cases where a prior distribution was set on the length-scale it was $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$, with $a$ and $b$ chosen for each geometry such that 1\% of the prior mass was below 0.1 and 1\% of the prior mass was above the maximum distance between points [@betancourt2017robust].
-Appendix \@ref(lengthscale-prior) illustrates the sensitivity of the lengthscale posterior distribution (Figure \@ref(fig:lengthscale-posterior)) to choice of six possible lengthscale prior distributions (Figure \@ref(fig:lengthscale-prior)).
+The sensitivity analysis in Appendix \@ref(lengthscale-prior) illustrates the extent to which six possible lengthscale prior distributions (Figure \@ref(fig:lengthscale-prior)) effect the lengthscale posterior distribution (Figure \@ref(fig:lengthscale-posterior)).
 
 #### Inference
 
@@ -564,23 +559,36 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mea
 knitr::include_graphics(path)
 ```
 
-For IID synthetic data, the IID, BYM2, CK and IK models perform well.
+Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) present the mean CRPS for the three realistic geometries.
+Results for the four vignette geometries are provided in Appendix \@ref(simulation-appendix).
+The most important findings from the simulation study are as follows:
+
+* The difficulty of the inference problem varied across spatial random effect model used to generate synthetic data.
+Namely, IID structure is harder to predict than either Besag or IK.
+To a lesser extent, Besag structure is harder to predict than IK.
+As would be expected, the greater amount of correlation structure, the easier the problem.
+
+* For IID synthetic data, the IID, BYM2, CK and IK models perform well.
 The BYM2, CK and IK models have ways to learn the extent of spatial structure.
-For example, Appendix \@ref(bym2-proportion) shows recovery of the BYM2 proportion parameter.
+For example, Appendix \@ref(bym2-proportion) shows successful recovery of the BYM2 proportion parameter.
 Models with fixed spatial structure performed particularly poorly on the geometry interiors.
 
-For both Besag and IK synthetic data, the IID model performed poorly.
-Analogously, the BYM2 model was able to infer the proportion parameter for the most part, and as a result performed only somewhat worse than the Besag model.
+* For both Besag and IK synthetic data, the IID model performed poorly.
+As with the IID case, the BYM2 proportion parameter enabled learning spatial structure, and as such the BYM2 model performed only modestly worse than the Besag model.
 
-Across all synthetic data, the CK and IK models with a prior distribution on the lengthscale performed better than the FCK and FIK models where the lengthscale was fixed.
+* Across all synthetic data, the CK and IK models with a prior distribution on the lengthscale performed better than the FCK and FIK models where the lengthscale was fixed.
 These models were able to successfully infer the lengthscale (Appendix \@ref(lengthscale)).
 
-<!-- Discuss lengthscale to noise identifiability and posterior correlation. -->
+* Although there were differences in the performance of the FCK and FIK models, the CK and IK models were hard to distinguish, even for geometries designed to be spatially irregular.
+This is somewhat a puzzle.
+
+* The lengthscale and the noise.
+I wonder if kernel models might be defined where there hyperparameters are orthogonal.
 
 ## HIV prevalence study {#hiv-study}
 
 Simulation studies are a valuable tool for experimenting on models in controlled environments.
-However, it is difficult to capture the complexity of a realistic applied scenario.
+However, it is difficult to capture the complexity of a realistic applied scenario using simulation.
 Therefore, it is important to complement simulation studies with studies conducted on real data.
 To this end, model performance was compared in estimating district-level HIV prevalence $\rho_i \in [0, 1]$ in adults aged 15-49.
 Household survey data was used from across four countries in sub-Saharan Africa (Table \@ref(tab:hiv-surveys), Figure \@ref(fig:hiv-surveys)).
@@ -678,8 +686,8 @@ if(knitr::is_latex_output()) {
 The results (Figure \@ref(fig:crps-mean-se-surveys) and Table \@ref(tab:cv-crps)) for each survey were as follows:
 
 1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO and SLOO cross-validation (Figures \@ref(fig:crps-mean-se-civ2017phia))
-The pointwise CRPS value was high at certain district.
-Suggestion to include some type of covariates to overcome this challenge.
+The pointwise CRPS value was especially high at the one outlying district in the survey, Grand-Ponts.
+Though there are ways that this error possibly could be mitigated, such as using a distribution with wider tails than a Gaussian, it is difficult to see how any spatial model could have performed well in this case without additional covariates.
 
 2. For the 2017 PHIA survey in Malawi (Figures \@ref(fig:crps-mean-se-mwi2016phia)).
 
