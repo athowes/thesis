@@ -551,10 +551,10 @@ Exactly the focus of Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> is on ex
 <div id="st-statistics" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Spatio-temporal statistics<a href="bayes-st.html#st-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Space and time are important features of infectious disease data, including those related to HIV.
-The field of spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> is concerned with such observations, which are indexed by spatial and temporal location.
+The field of spatio-temporal statistics <span class="citation">(<a href="#ref-cressie2015statistics">Cressie and Wikle 2015</a>)</span> is concerned with such observations, indexed by spatial and temporal location.
 It unifies the fields of spatial statistics <span class="citation">(<a href="#ref-bivand2008applied">Bivand et al. 2008</a>)</span>, concerned with observations indexed by space, and time series analysis <span class="citation">(<a href="#ref-shumway2017time">Shumway and Stoffer 2017</a>)</span>, concerned with observations indexed by time.
 First, Section <a href="bayes-st.html#properties">3.2.1</a> characterises the shared properties of spatio-temporal data.
-Then, Section <a href="bayes-st.html#small-area-estimation">3.2.2</a> describes how these properties facilitate the class of small-area estimation methods that the work in this thesis falls into.</p>
+Then, Section <a href="bayes-st.html#small-area-estimation">3.2.2</a> describes how these properties facilitate the class of small-area estimation methods used in this thesis.</p>
 <div id="properties" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Properties of spatio-temporal data<a href="bayes-st.html#properties" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="scales" class="section level4 hasAnchor" number="3.2.1.1">
@@ -586,37 +586,32 @@ Jointly modelling data at different scales simultaneously is another closely rel
 <p>In “The Design of Experiments” <span class="citation">Fisher (<a href="#ref-fisher1936design">1936</a>)</span> observed that neighbouring crops were more likely to have similar yields than those far apart.
 This observation was later termed Tobler’s first law of geography: “everything is related to everything else, but near things are more related than distant things” <span class="citation">(<a href="#ref-tobler1970computer">Tobler 1970</a>)</span>.
 As well as space, Tobler’s first law applies to time, in that observations made close together in time tend to be similar.</p>
-<p>This law can be formalised using space-time covariance functions.
+<p>This law can be formalised using space-time covariance functions, measuring the dependence of observations across their spatial and temporal dimensions.
 A space-time covariance structure <span class="citation">(<a href="#ref-porcu202130">Porcu, Furrer, and Nychka 2021</a>)</span> is said to be separable when it can be factorised as a product of individual spatial and temporal covariances, and nonseparable when it can’t.
 A separable space-time covariance could have spatial and temporal components which are either independent and identically distributed (IID) or structured <span class="citation">(<a href="#ref-knorr2000bayesian">Knorr-Held 2000</a>)</span>.
 Spatial covariance functions are called isotropic when they apply equally in all directions, and stationary when they are invariant over space.
-Temporal covariance structures are often periodic.</p>
-<p>Because of their covariance structure, spatio-temporal data are not IID.
-Only one observation of a spatio-temporal process can typically be realised.</p>
+Temporal covariance structures are often periodic, corresponding to daily, weekly, monthly, quarterly, or yearly cycles.</p>
+<p>That spatio-temporal data are rarely IID is a statistically important point.
+The consequence is that it is rare to have true replicates available.
+Typically, only a single instance of a spatio-temporal can ever be realised.</p>
 </div>
 <div id="size" class="section level4 hasAnchor" number="3.2.1.3">
 <h4><span class="header-section-number">3.2.1.3</span> Size<a href="bayes-st.html#size" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Data with both spatial and temporal dimensions are often large.
-This makes storage and mathematical operations on spatio-temporal data potentially challenging.
-Furthermore, models for spatio-temporal data typically require many parameters.
+For example, observations collected every week across a number of sites in a country can easily number in the thousands.
+Storage and mathematical operations with large spatio-temporal data can be challenging.</p>
+<p>Further, models for spatio-temporal data typically require many parameters.
 Whereas large IID data can be modelled using a small number of parameters, each observation in a spatio-temporal dataset may need to be characterised by its own parameters.
-Large data combined with large models make the particular mathematical operation of Bayesian inference challenging for spatio-temporal data.</p>
+In combination, large data (big <span class="math inline">\(n\)</span>) and models with a large number of parameters (big <span class="math inline">\(d\)</span>) make Bayesian inference, and other complex mathematical operations, challenging for spatio-temporal data.</p>
 </div>
 </div>
 <div id="small-area-estimation" class="section level3 hasAnchor" number="3.2.2">
 <h3><span class="header-section-number">3.2.2</span> Small-area estimation<a href="bayes-st.html#small-area-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Data always has some cost to collect.
 This cost can be significant and prohibitive, especially for data relating to people where collection is difficult to automate.
-As a result, given the large number of possible locations in space and time, often no or limited direct observations may be available for any given space-time location.
+In spatio-temporal statistics, there are a large number of possible locations in space and time.
+Given the cost of data collection, often no or limited direct observations may be available for any given space-time location.
 Direct estimates of indicators of interest are either impossible or inaccurate in this setting.</p>
-<p>Small-area estimation [SAE; <span class="citation">Pfeffermann et al. (<a href="#ref-pfeffermann2013new">2013</a>)</span>] methods aim to overcome the limitations of small data by sharing information.
-In the spatio-temporal setting sharing of information occurs across space and time.
-Prior knowledge that observations in one spatio-temporal location are correlated with those at another (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>) can be used to improve estimates.
-Figures <a href="bayes-st.html#fig:zmb-maps">3.4</a> and <a href="bayes-st.html#fig:zmb-scatter">3.5</a> illustrate the unreliability of direct estimates from small sample sizes, as well as the way in which a spatial model may be used to partially overcome this limitation.</p>
-<p>SAE methods are more generally useful when data are limited for subpopulations of interest.
-These subpopulations could be generated by spatio-temporal variables, as well as by other variables such as demographics.
-Just as we expect there to be spatio-temporal correlation structure, we also can expect there to be demographic correlation structure.
-For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:zmb-maps"></span>
 <img src="figures/bayesian/zmb-maps.png" alt="Simulation of a simple random sample \(y_i \sim \text{Bin}(m, p_i)\) with varying sample size \(m = 5, 25, 125\) in each of the \(i = 1, \ldots, 156\) constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the viridis R package (Garnier et al. 2023), used in this figure, and often throughout this thesis, was designed to be perceptually uniform and accessible to colourblind viewers (Smith and Walt 2015). This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from https://github.com/athowes/zambia-unaids." width="95%" />
@@ -631,13 +626,25 @@ Figure 3.4: Simulation of a simple random sample <span class="math inline">\(y_i
 Figure 3.5: The setting of this figure matches that of Figure <a href="bayes-st.html#fig:zmb-maps">3.4</a>. Estimates from surveys with higher sample size have higher sample Pearson correlation coefficient <span class="math inline">\(R\)</span> with the underlying truth, illustrating the benefit of collecting more data. For a fixed sample size however, correlation can be improved by using modelled estimates to borrow information across spatial units, rather than using the higher variance direct estimates. Points along the dashed diagonal line correspond to agreement between the estimate obtained from the survey and the underlying truth used to generate the data. For each sample size, using a spatial model increases the correlation between the estimates and underlying truth. The effect is more pronounced for lower sample sizes.
 </p>
 </div>
+<p>Small-area estimation [SAE; <span class="citation">Pfeffermann et al. (<a href="#ref-pfeffermann2013new">2013</a>)</span>] methods aim to overcome the limitations of small data by sharing information.
+In the spatio-temporal setting sharing of information occurs across space and time.
+Prior knowledge that observations in one spatio-temporal location are correlated with those at another (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>) can be used to improve estimates.</p>
+<p>Figures <a href="bayes-st.html#fig:zmb-maps">3.4</a> and <a href="bayes-st.html#fig:zmb-scatter">3.5</a> illustrate the unreliability of direct estimates from small sample sizes, and the benefit of using a spatial model to overcome this limitation.
+The effect is most pronounced for the sample size of 5, where the only possible direct estimates are 0, 0.2, 0.4, 0.6, 0.8 and 1.
+Using a spatial model to borrow information across space in this case results in improvement of the Pearson correlation coefficient between the estimates and the true underlying values from 0.34 to 0.53.</p>
+<p>SAE methods are not only useful in the spatio-temporal setting.
+More generally, they apply in any situation where data are limited for subpopulations of interest.
+Just as these subpopulations can be generated by spatio-temporal variables, they can be generated by other variables.
+One such example is demographic variables.
+Analogous to spatio-temporal correlation structure, we also can often expect there to be demographic correlation structure.
+For example, those of the same sex are more likely to be similar, as are those of similar ages or socio-economic strata.</p>
 </div>
 </div>
 <div id="model-structure" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Model structure<a href="bayes-st.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a> described that in spatio-temporal statistics observations are related to each other, and it is inappropriate to treat data as IID.
-This section discusses ways to encode relations between observations mathematically via statistical models.
-First, simple structures are discussed such as the linear model, before moving on to more expressive structures.</p>
+<p>The spatio-temporal data used in this thesis is not IID (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>).
+This section discusses ways to use statistical models to encode more complex relations between observations mathematically.
+Simple structures are discussed first, such as the linear model, before moving on to the more expressive structures used throughout the thesis.</p>
 <div id="linear-model" class="section level3 hasAnchor" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Linear model<a href="bayes-st.html#linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In a linear model, each observation <span class="math inline">\(i \in [n]\)</span> is modelled using a Gaussian distribution
