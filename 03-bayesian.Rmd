@@ -395,9 +395,9 @@ This section focuses on measuring suitability via the model's predictive perform
 ### Information criteria {#information-criteria}
 
 Consider new data $\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)$ drawn from the true data generating process.
-The expected log predictive density for new data (ELPD) is [@gelman2014understanding]
+The expected log predictive density for new data (ELPD) [@gelman2014understanding] measures the out-of-sample predictive performance and is given by
 \begin{equation}
-\sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
+\text{elpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
 \end{equation}
 
 Information criteria can be constructed to approximate the ELPD.
@@ -410,13 +410,13 @@ The widely applicable information criteria [WAIC; @watanabe2013widely] improves 
 \begin{align}
   \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). (\#eq:waic-elpd)
 \end{align}
-Both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, and so overestimate \@ref(eq:elpd).
-Therefore, these information criteria are adjusted downward by varying complexity penalties $p_{\texttt{IC}}$.
+Both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, and so overestimate the ELPD.
+As such, the information criteria are adjusted downward by a complexity penalty $p_{\texttt{IC}}$.
 
 ### Cross-validation
 
 Cross-validation is an alternative way to estimate the ELPD.
-Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust within-sample estimates of ELPD, cross-validation operates by leaving out data.
+Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust within-sample estimates of ELPD, cross-validation uses left out data.
 
 <!-- Leave-one-out (LOO) cross-validation. -->
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
@@ -425,14 +425,14 @@ Rather than use a complexity penalty, as in Section \@ref(information-criteria),
 
 ### Bayes factors
 
-The evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence), can be used as a measure of model fit.
+Another measure of model performance is provided by the evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence).
 Let $\mathcal{M}_0$ and $\mathcal{M}_1$ be two competing models.
 Then the Bayes factor comparing $\mathcal{M}_0$ to $\mathcal{M_1}$ is
 \begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)},
 \end{equation}
 where $p(\mathbf{y} \, | \, \ \mathcal{M})$ denotes the evidence under model $\mathcal{M}$.
-If $B_{01} > 1$ then support is provided for $\mathcal{M_0}$ and if $B_{01} < 1$ then support is provided for $\mathcal{M_1}$.
+If $B_{01} > 1$ then support is provided for $\mathcal{M}_0$ and if $B_{01} < 1$ then support is provided for $\mathcal{M}_1$.
 Bayes factors can be framed as predictive criterion as follows.
 
 ### Scoring rules

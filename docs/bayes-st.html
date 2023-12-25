@@ -756,9 +756,9 @@ This section focuses on measuring suitability via the model’s predictive perfo
 <div id="information-criteria" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Consider new data <span class="math inline">\(\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)\)</span> drawn from the true data generating process.
-The expected log predictive density for new data (ELPD) is <span class="citation">(<a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span>
+The expected log predictive density for new data (ELPD) <span class="citation">(<a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span> measures the out-of-sample predictive performance and is given by
 <span class="math display" id="eq:elpd">\[\begin{equation}
-\sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. \tag{3.6}
+\text{elpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. \tag{3.6}
 \end{equation}\]</span></p>
 <p>Information criteria can be constructed to approximate the ELPD.
 The Akaike [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>] and deviance [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] information criteria estimate ELPD by
@@ -770,13 +770,13 @@ The widely applicable information criteria [WAIC; <span class="citation">Watanab
 <span class="math display" id="eq:waic-elpd">\[\begin{align}
   \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). \tag{3.8}
 \end{align}\]</span>
-Both Equations <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> and <a href="bayes-st.html#eq:waic-elpd">(3.8)</a> are based on within-sample measures, and so overestimate <a href="bayes-st.html#eq:elpd">(3.6)</a>.
-Therefore, these information criteria are adjusted downward by varying complexity penalties <span class="math inline">\(p_{\texttt{IC}}\)</span>.</p>
+Both Equations <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> and <a href="bayes-st.html#eq:waic-elpd">(3.8)</a> are based on within-sample measures, and so overestimate the ELPD.
+As such, the information criteria are adjusted downward by a complexity penalty <span class="math inline">\(p_{\texttt{IC}}\)</span>.</p>
 </div>
 <div id="cross-validation" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Cross-validation<a href="bayes-st.html#cross-validation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Cross-validation is an alternative way to estimate the ELPD.
-Rather than use a complexity penalty, as in Section <a href="bayes-st.html#information-criteria">3.4.1</a>, to adjust within-sample estimates of ELPD, cross-validation operates by leaving out data.</p>
+Rather than use a complexity penalty, as in Section <a href="bayes-st.html#information-criteria">3.4.1</a>, to adjust within-sample estimates of ELPD, cross-validation uses left out data.</p>
 <!-- Leave-one-out (LOO) cross-validation. -->
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validiation schemes for specific settings. -->
@@ -784,14 +784,14 @@ Rather than use a complexity penalty, as in Section <a href="bayes-st.html#infor
 </div>
 <div id="bayes-factors" class="section level3 hasAnchor" number="3.4.3">
 <h3><span class="header-section-number">3.4.3</span> Bayes factors<a href="bayes-st.html#bayes-factors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The evidence <span class="math inline">\(p(\mathbf{y})\)</span>, given in Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>, can be used as a measure of model fit.
+<p>Another measure of model performance is provided by the evidence <span class="math inline">\(p(\mathbf{y})\)</span>, given in Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>.
 Let <span class="math inline">\(\mathcal{M}_0\)</span> and <span class="math inline">\(\mathcal{M}_1\)</span> be two competing models.
 Then the Bayes factor comparing <span class="math inline">\(\mathcal{M}_0\)</span> to <span class="math inline">\(\mathcal{M_1}\)</span> is
 <span class="math display">\[\begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)},
 \end{equation}\]</span>
 where <span class="math inline">\(p(\mathbf{y} \, | \, \ \mathcal{M})\)</span> denotes the evidence under model <span class="math inline">\(\mathcal{M}\)</span>.
-If <span class="math inline">\(B_{01} &gt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M_0}\)</span> and if <span class="math inline">\(B_{01} &lt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M_1}\)</span>.
+If <span class="math inline">\(B_{01} &gt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M}_0\)</span> and if <span class="math inline">\(B_{01} &lt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M}_1\)</span>.
 Bayes factors can be framed as predictive criterion as follows.</p>
 </div>
 <div id="scoring-rules" class="section level3 hasAnchor" number="3.4.4">
