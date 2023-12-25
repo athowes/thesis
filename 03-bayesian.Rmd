@@ -34,20 +34,20 @@ knitr::opts_chunk$set(
 ## Bayesian statistics
 
 Bayesian statistics is a mathematical paradigm for learning from data.
-It is especially well suited to facing the challenges presented in Section \@ref(surveillance) for the following reasons.
-First, because it allows for principled and flexible integration of prior domain knowledge.
-Second, because uncertainty over all unknown quantities is handled as an integral part of the Bayesian paradigm.
-This section provides a brief and at times opinionated overview of Bayesian statistics.
+Two reasons stand out as to why it is especially well suited to facing the challenges presented in Section \@ref(surveillance).
+First, it allows for principled and flexible integration of prior domain knowledge.
+Second, uncertainty over all unknown quantities is handled as an integral part of the Bayesian paradigm.
+This section provides a brief, and at times opinionated, overview of Bayesian statistics.
 For a more complete introduction, I recommend @gelman2013bayesian, @mcelreath2020statistical or @gelman2020bayesian.
 
 ### Bayesian modelling
 
 The Bayesian approach to data analysis is based on construction of a probability model for the observed data $\mathbf{y} = (y_1, \ldots, y_n)$.
 Parameters $\boldsymbol{\mathbf{\phi}} = (\phi_1, \ldots, \phi_d)$ are used to describe features of the data.
-Both the data and parameters are assumed to be random variables, with joint probability distribution written as $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
-Subsequent calculations, and the conclusions to follow, are made by manipulating the model using probability theory.
+Both the data and parameters are assumed to be random variables, and their joint probability distribution is written as $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
+Subsequent calculations, and the conclusions which follow from them, are made based on manipulating the model using probability theory.
 
-Models are most naturally constructed from two parts known as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
+Models are most naturally constructed from two parts, known as the likelihood $p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}})$ and the prior distribution $p(\boldsymbol{\mathbf{\phi}})$.
 The joint distribution is obtained by the product of these two parts
 \begin{equation}
 p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) = p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}). (\#eq:joint)
@@ -56,20 +56,20 @@ The likelihood, as a function of $\boldsymbol{\mathbf{\phi}}$ with $\mathbf{y}$ 
 The prior distribution encapsulates beliefs about the parameters $\boldsymbol{\mathbf{\phi}}$ before the data are observed.
 
 Recommendations for specifying prior distributions vary.
-A central issue is the extent to which subjective information should be incorporated into the prior distribution.
+The extent to which subjective information should be incorporated into the prior distribution is a central issue.
 Proponents of the objective Bayesian paradigm [@berger2006case] put forward that the prior distribution should be non-informative, so as not to introduce subjectivity into the analysis.
 Others see subjectivity as fundamental to scientific inquiry, with no viable alternative [@goldstein2006subjective].
-Though subjectivity typically discussed with regard to the prior distribution, we shall see in Section \@ref(model-structure) that the distinction between prior distribution and likelihood is not always clear.
-As such, it may be argued that issues of subjectivity are not unique to prior distribution specification, and ultimately that the challenge of specifying the data generating process is better thought of more holistically [@gelman2017prior].
+Though subjectivity typically discussed with regard to the prior distribution, as we will in Section \@ref(model-structure), the distinction between prior distribution and likelihood is not always clear.
+As such, it may be argued that issues of subjectivity are not unique to prior distribution specification, and ultimately that the challenge of specifying the data generating process -- that is, $p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$ -- is better thought of more holistically [@gelman2017prior].
 
 The probability model can be simulated from to obtain samples $(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \sim p(\mathbf{y}, \boldsymbol{\mathbf{\phi}})$.
-If the samples of the data $\mathbf{y}$ differ too greatly from what the analyst would expect to see in reality, then the model does not capture their prior scientific understanding.
+If samples of the data $\mathbf{y}$ differ too greatly from what the analyst would expect to see in reality, then the model fails to capture their prior scientific understanding.
 Models which do not produce plausible data samples can be refined.
 Checks of this kind [@gelman2013bayesian; Chapter 6] can be used to help iteratively build models, gradually adding complexity as required.
 
 ### Bayesian computation
 
-(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and prior distribution on the rate parameter $\phi > 0$ is $\phi \sim \text{Gamma}(3, 1)$. Observed data $\mathbf{y} = (1, 2, 3)$ was simulated from the distribution $\text{Poisson}(2.5)$. The true data generating process is within the space of models being considered. (This situation is sometimes known [@bernardo2001bayesian] as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified.) Furthermore, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family of probability distributions as the prior distribution. Models of this kind are described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, they will typically be more computationally demanding. The posterior distribution here is more tightly peaked than the prior distribution. This contraction is typically, but not always, the case.
+(ref:conjugate) An example of Bayesian modelling and computation for a simple one parameter model. Here the likelihood is $y_i \sim \text{Poisson}(\phi)$ for $i = 1, 2, 3$ and the prior distribution on the rate parameter $\phi > 0$ is $\phi \sim \text{Gamma}(3, 1)$. Observed data $\mathbf{y} = (1, 2, 3)$ was simulated from the distribution $\text{Poisson}(2.5)$. As such, the true data generating process is within the space of models being considered. This situation is sometimes known [@bernardo2001bayesian] as the $\mathcal{M}$-closed world, in contrast to the $\mathcal{M}$-open world where the model is said to be misspecified. Further, the posterior distribution is available in closed form as $\text{Gamma}(9, 4)$. This is because the posterior distribution is in the same family of probability distributions as the prior distribution. Models of this kind are described as being conjugate. Conjugate models are often used because of their convenience. Though other models may be more suitable, Bayesian inference will typically be more computationally demanding than for conjugate models. The posterior distribution here is more tightly peaked than the prior distribution. Contraction of this kind is typical, but not always the case.
 
 ```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("figures/bayesian/conjugate.png")
@@ -99,33 +99,38 @@ it is typically difficult to evaluate the posterior distribution itself.
 The difficulty in performing Bayesian inference may be thought of as analogous to the difficulty in calculating integrals.
 As with integration, in specific cases closed form analytic solutions are available.
 Figure \@ref(fig:conjugate) illustrates one such case, where the prior distribution and posterior distribution are in the same family of probability distributions.
-In the more general case no analytic solution is available, and computational methods must be relied on.
-Computational strategies for approximating the posterior distribution [@martin2023computing] may broadly be divided into Monte Carlo algorithms and deterministic approximations.
+In the more general case, no analytic solution is available, and computational methods must be relied on.
+Broadly, computational strategies for approximating the posterior distribution [@martin2023computing] may be divided into Monte Carlo algorithms and deterministic approximations.
 
 #### Monte Carlo algorithms {#monte-carlo}
 
 Monte Carlo algorithms [@robert2005monte] aim to generate samples from the posterior distribution 
 \begin{equation}
-\boldsymbol{\mathbf{\phi}}_s \sim p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}), \quad s \in 1, \ldots S.
+\boldsymbol{\mathbf{\phi}}_s \sim p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}), \quad s \in 1, \ldots S. (\#eq:posterior-samples)
 \end{equation}
-These samples may be used in any future computations involving functions of the posterior distribution.
-For example, if $G = G(\boldsymbol{\mathbf{\phi}})$ then the expectation of $G$ with respect to the posterior distribution can be approximated by
+These samples may be used in any future computations involving the posterior distribution or functions of it.
+For example, if $G = G(\boldsymbol{\mathbf{\phi}})$ is a function, then the expectation of $G$ with respect to the posterior distribution can be approximated by
 \begin{equation}
-\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \frac{1}{S} \sum_{s = 1}^S G(\boldsymbol{\mathbf{\phi}}_s).
+\mathbb{E}(G \, | \, \mathbf{y}) = \int G(\boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\phi}} \approx \frac{1}{S} \sum_{s = 1}^S G(\boldsymbol{\mathbf{\phi}}_s),
 \end{equation}
-Most quantities of interest can be cast as posterior expectations which can then be approximated empirically using samples in this way.
+using the samples from the posterior distribution in Equation \@ref(eq:posterior-samples).
+Most quantities of interest can be cast as posterior expectations, which may then be approximated empirically using samples in this way.
+Of course, it remains to discuss how the samples are obtained.
 
 Markov chain Monte Carlo (MCMC) methods [@roberts2004general] are the most popular class of sampling algorithms.
 Using MCMC, samples are generated from by simulating from an ergodic Markov chain with the posterior distribution as its stationary distribution.
 The Metropolis-Hastings [MH; @metropolis1953equation; @hastings1970monte] algorithm uses a proposal distribution $q(\boldsymbol{\mathbf{\phi}}_{s + 1} \, | \, \boldsymbol{\mathbf{\phi}}_s)$ to generate candidate parameters for the next step in the Markov chain.
-Many MCMC algorithms, including the Gibbs sampler [@geman1984stochastic], are special cases of MH.
+These candidate parameters are then accepted or rejected with some probability determined based on their log-posterior evaluation.
+Many MCMC algorithms, including the Gibbs sampler [@geman1984stochastic], can be thought of as special cases of MH.
 
-Other notable classes of sampling algorithms include importance sampling [IS; @tokdar2010importance] methods in which the samples are weighted, sequential Monte Carlo [SMC; @chopin2020introduction] methods based on sampling from a sequence of distributions, and approximate Bayesian computation [ABC; @sisson2018handbook]
-Though these methods have found applications in specific domains, MCMC is currently more widely used because of its generality, theoretical reliability, as well as benefiting from more accessible software implementations.
+Other notable classes of sampling algorithms include importance sampling [IS; @tokdar2010importance] methods, which uses weighted samples, sequential Monte Carlo [SMC; @chopin2020introduction] methods, which are based on sampling from a sequence of distributions, and approximate Bayesian computation [ABC; @sisson2018handbook], which works by comparing simulated data to observed data, and does not require evaluation of the log-posterior.
+Though these methods have found applications in specific domains, MCMC is currently more widely used.
+The most important benefits of MCMC are its generality, theoretical reliability, and implementation in accessible software packages.
 
-This thesis uses the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, as implemented in the `Stan` [@carpenter2017stan] probabilistic programming language (PPL).
+Illustrating the use of MCMC being supported by software, this thesis uses the No-U-Turn sampler [NUTS; @hoffman2014no], a Hamiltonian Monte Carlo [HMC; @duane1987hybrid; @neal2011mcmc] algorithm, as implemented in the `Stan` [@carpenter2017stan] probabilistic programming language (PPL).
 HMC uses derivatives of the posterior distribution to generate efficient MH proposal distributions based on Hamiltonian dynamics.
-NUTS automatically adapts the tuning parameters of HMC based local properties of the posterior distribution.
+Three tuning parameters control the behaviour of the HMC algorithm [Section 15.2; @stan2023reference].
+NUTS automatically adapts these parameters based local properties of the posterior distribution.
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 Figure \@ref(fig:stan) shows an example of using the NUTS MCMC algorithm to sample from a posterior distribution.
 
@@ -135,7 +140,7 @@ Panel \@ref(fig:stan)B shows the traceplot for a Markov chain which has converge
 A range of convergence diagnostics have been developed for MCMC [@roy2020convergence; @margossian2023many].
 Two widely used examples are the potential scale reduction factor $\hat R$ [@gelman1992inference], which compares the variance between and within parallel Markov chains, and the effective sample size (ESS), which measures the efficiency of samples drawn from MCMC.
 
-(ref:stan) NUTS can be used to sample from the posterior distribution described in Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributinal sample comparisons. Panel B is a traceplot showing the path of the Markov chain $\{\phi_s\}_{s = 1}^{1000}$ as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows the convergence of the empirical posterior mean $\frac{1}{s} \sum_{l \leq s} \phi_l$ to the true value of $\mathbb{E}(\phi)$ as more iterations of the Markov chain are included in the sum.
+(ref:stan) NUTS can be used to sample from the posterior distribution described in Figure \@ref(fig:conjugate). Panel A shows a histogram of the NUTS samples as compared to the true posterior. The visual appearance of a histogram depends highly on the number of bins chosen, though it does not depend on tuning parameters like kernel density estimation. Other visualisations, such as empirical cumulative difference function plots, though less initially intuitive, are preferred for accurate distributional sample comparisons. Panel B is a traceplot showing the path of the Markov chain $\{\phi_s\}_{s = 1}^{1000}$ as it explores the posterior distribution. In this case, the Markov chain moves freely throughout the posterior distribution, without getting stuck in any one location for long, indicating good performance of the sampler. Panel C shows convergence of the empirical posterior mean $\frac{1}{s} \sum_{l \leq s} \phi_l$ to the true value of $\mathbb{E}(\phi)$ as more iterations of the Markov chain are included in the sum. In this case, the samples from NUTS are highly accurate in estimating this posterior expectation.
 
 ```{r stan, fig.cap="(ref:stan)"}
 knitr::include_graphics("figures/bayesian/stan.png")
@@ -143,29 +148,35 @@ knitr::include_graphics("figures/bayesian/stan.png")
 
 #### Deterministic approximations
 
-Monte Carlo methods discussed in Section \@ref(monte-carlo) make use of stochasticity to generate samples from the posterior distribution.
-Deterministic approximations offer an alternative approach, which aims to more directly approximate the posterior distribution or posterior normalising constant.
-These approaches are often faster than Monte Carlo methods, especially for large datasets or models.
+The Monte Carlo methods discussed in Section \@ref(monte-carlo) make use of stochasticity to generate samples from the posterior distribution.
+Deterministic approximations offer an alternative approach, often focused more directly on approximating the posterior distribution or posterior normalising constant.
+These approaches can be faster than Monte Carlo methods, especially for large datasets or models.
+That said, they lack strong theoretical guaruntees of accuracy.
 
-One such deterministic approximation is the Laplace approximation.
-It involves approximating the posterior normalising constant using Laplace's method of integration, and is equivalent to approximating the posterior distribution by a Gaussian distribution.
+One prominent deterministic approximation is the Laplace approximation.
+It involves approximating the posterior normalising constant using Laplace's method of integration.
+This is equivalent to approximating the posterior distribution by a Gaussian distribution.
+Numerical integration, or quadrature, is another deterministic approach in which the posterior normalising constant is approximated using a weighted sum of evaluations of the unnormalised posterior distribution.
 The integrated nested Laplace approximation [INLA; @rue2009approximate] combines quadrature with the Laplace approximation.
-These methods are used throughout this thesis, and are discussed in greater detail in Chapter \@ref(naomi-aghq).
+These methods are used throughout this thesis.
+In depth discussion is left to Chapter \@ref(naomi-aghq).
 
-Variational inference [VI; @blei2017variational] is another noteworthy deterministic approximation.
+Variational inference [VI; @blei2017variational] is another important deterministic approximation.
 The well-known expectation maximisation [EM; @dempster1977maximum] and expectation propagation [EP; @minka2001expectation] algorithms are closely related to VI.
 In VI, the approximate posterior distribution is assumed to belong to a particular family of functions.
 Optimisation algorithms are then used to choose the best member of that family, typically by minimising the Kullback-Leibler divergence to the posterior distribution.
-Though popular in some settings, VI lacks theoretical guarantees and is known to often inaccurately estimate posterior variances [@giordano2018covariances].
+VI lacks theoretical guarantees and is known to often inaccurately estimate posterior variances [@giordano2018covariances].
+As such, statisticians tend to approach VI with caution, despite its relative widespread acceptance within the machine learning community.
 Developing diagnostics to evaluate the accuracy of VI is an important area of ongoing research [@yao2018yes].
 
 ### Interplay between modelling and computation
 
 Modern computational techniques and software like PPLs have succeeded in abstracting away calculation of the posterior distribution from the analyst for many models.
-However, computation remains intractable in what can be argued to be the majority of cases.
-The analyst needs therefore not only to be concerned with choosing a model suitable for the data, but also with choosing a model for which the posterior distribution may tractably be calculated in reasonable time.
+However, computation remains intractable in, depending on the measure used, what can be argued to be the majority of cases.
+The analyst needs therefore not only to be concerned with choosing a model suitable for the data, but with choosing a model for which the posterior distribution may tractably be calculated in reasonable time.
 As such, there is an important interplay between modelling and computation, wherein models are bound by the limits of computation.
 As computational techniques and tools improve, the space of models available to the analyst expands.
+Exactly the focus of Chapter \@ref(naomi-aghq) is on expanding the space of models practically available to analysts.
 
 ## Spatio-temporal statistics {#st-statistics}
 
