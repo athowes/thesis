@@ -207,9 +207,9 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="bayes-st.html"><a href="bayes-st.html#model-comparison"><i class="fa fa-check"></i><b>3.4</b> Model comparison</a>
 <ul>
-<li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#bayes-factors"><i class="fa fa-check"></i><b>3.4.1</b> Bayes factors</a></li>
-<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#information-criteria"><i class="fa fa-check"></i><b>3.4.2</b> Information criteria</a></li>
-<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#cross-validation"><i class="fa fa-check"></i><b>3.4.3</b> Cross-validation</a></li>
+<li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#information-criteria"><i class="fa fa-check"></i><b>3.4.1</b> Information criteria</a></li>
+<li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#cross-validation"><i class="fa fa-check"></i><b>3.4.2</b> Cross-validation</a></li>
+<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#bayes-factors"><i class="fa fa-check"></i><b>3.4.3</b> Bayes factors</a></li>
 <li class="chapter" data-level="3.4.4" data-path="bayes-st.html"><a href="bayes-st.html#scoring-rules"><i class="fa fa-check"></i><b>3.4.4</b> Scoring rules</a></li>
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.5</b> Survey methods</a>
@@ -644,31 +644,38 @@ For example, those of the same sex are more likely to be similar, as are those o
 <h2><span class="header-section-number">3.3</span> Model structure<a href="bayes-st.html#model-structure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The spatio-temporal data used in this thesis is not IID (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>).
 This section discusses ways to use statistical models to encode more complex relations between observations mathematically.
-Simple structures are discussed first, such as the linear model, before moving on to the more expressive structures used throughout the thesis.</p>
+Simple structures are discussed first, beginning with the linear model.
+Extensions are introduced one at a time, culminating in the model structures used throughout the thesis.</p>
 <div id="linear-model" class="section level3 hasAnchor" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Linear model<a href="bayes-st.html#linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>In a linear model, each observation <span class="math inline">\(i \in [n]\)</span> is modelled using a Gaussian distribution
+<p>In a linear model, each observation <span class="math inline">\(y_i\)</span> with <span class="math inline">\(i \in [n]\)</span> is modelled using a Gaussian distribution
 <span class="math display">\[\begin{equation}
 y_i \sim \mathcal{N}(\mu_i, \sigma).
 \end{equation}\]</span>
-The conditional mean <span class="math inline">\(\mu_i\)</span> is assumed to be linearly related to a collection of <span class="math inline">\(l\)</span> covariates
+The conditional mean <span class="math inline">\(\mu_i\)</span> is assumed to be linearly related to a collection of <span class="math inline">\(p\)</span> covariates <span class="math inline">\(z_{1i}, \ldots, z_{pi}\)</span>
 <span class="math display" id="eq:linear-model">\[\begin{align}
 \mu_i &amp;= \eta_i \\
 \eta_i &amp;= \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li}. \tag{3.5}
 \end{align}\]</span>
-Priors may be placed on the regression coefficients <span class="math inline">\(\beta_l \sim p(\beta_l)\)</span> for <span class="math inline">\(l = 0, \ldots, p\)</span> as well as the observation standard deviation <span class="math inline">\(\sigma \sim p(\sigma)\)</span>.</p>
+Priors may be placed on the regression coefficients, as well as the observation standard deviation
+<span class="math display">\[\begin{align}
+\beta_l &amp;\sim p(\beta_l), \quad l = 0, \ldots, p, \\
+\sigma &amp;\sim p(\sigma).
+\end{align}\]</span>
+While the linear model provides a useful foundation, its strong assumptions and limited flexibility call for careful use.</p>
 </div>
 <div id="generalised-linear-model" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Generalised linear model<a href="bayes-st.html#generalised-linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Generalised linear models (GLMs) extend the linear model by allowing the conditional mean <span class="math inline">\(\mu_i\)</span> to be connected to the linear predictor <span class="math inline">\(\eta_i\)</span> via a link function <span class="math inline">\(g\)</span>.
+<p>Generalised linear models (GLMs) extend the linear model by allowing the conditional mean <span class="math inline">\(\mu_i\)</span> to be connected to the linear predictor <span class="math inline">\(\eta_i\)</span> via a link function <span class="math inline">\(g\)</span> as follows
 <span class="math display">\[\begin{align}
 y_i &amp;\sim p(y_i \, | \, \eta_i), \\
 \mu_i &amp;= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i).
 \end{align}\]</span>
 The logistic function <span class="math inline">\(g(\eta) = \exp(\eta) / (1 + \exp(\eta))\)</span> is commonly used as a link function to ensure that the conditional mean is in the range <span class="math inline">\([0, 1]\)</span>.
 Similarly, the exponential function <span class="math inline">\(g(\eta) = \exp(\eta)\)</span> can be used to ensure the conditional mean is positive.
-GLMs admit a wider range of likelihoods <span class="math inline">\(p(y_i \, | \, \eta_i)\)</span> than linear models, typically restricted to the so-called exponential family of distributions.
-The equation for the linear predictor is the same as in the linear model case (Equation <a href="bayes-st.html#eq:linear-model">(3.5)</a>).</p>
+The linear model is a special case of a GLM where the link function <span class="math inline">\(g\)</span> is the identity.
+As well, GLMs admit a wider range of likelihoods <span class="math inline">\(p(y_i \, | \, \eta_i)\)</span> than linear models, typically restricted to the so-called exponential family of distributions.
+The equation for the linear predictor is the same as the linear model case in Equation <a href="bayes-st.html#eq:linear-model">(3.5)</a>.</p>
 </div>
 <div id="generalised-linear-mixed-effects-model" class="section level3 hasAnchor" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Generalised linear mixed effects model<a href="bayes-st.html#generalised-linear-mixed-effects-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -676,34 +683,36 @@ The equation for the linear predictor is the same as in the linear model case (E
 <span class="math display">\[\begin{equation}
 \eta_i = \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li} + \sum_{k = 1}^{r} u_k(w_{ki}).
 \end{equation}\]</span>
-The terms <span class="math inline">\(u_k\)</span> are called random effects, of additional covariates <span class="math inline">\(w_{ki}\)</span>.
 The terms <span class="math inline">\(\beta_l\)</span> are referred to as fixed effects.
-These terms have notoriously many different and incompatible definitions which unfortunately can cause confusion <span class="citation">(<a href="#ref-gelman2005analysis">Gelman 2005</a>)</span>.</p>
+The terms <span class="math inline">\(u_k\)</span> are called random effects, of additional covariates <span class="math inline">\(w_{ki}\)</span>.
+The words fixed and random effects have notoriously many different and incompatible definitions which unfortunately can cause confusion <span class="citation">(<a href="#ref-gelman2005analysis">Gelman 2005</a>)</span>.</p>
 <p>Random effects allow for more complex sharing of information between observations.
-To demonstrate this fact, consider the model
+To demonstrate this fact, first consider the model
 <span class="math display">\[\begin{equation}
 \eta_i = \beta_0.
 \end{equation}\]</span>
-In this model, known as the complete pooling model, all observations are assumed to be equivalent.
-Alternatively, consider the so-called no pooling model
+In this model all observations are assumed to be equivalent, and as such information is said to be completely pooled together.
+Second, consider the so-called no pooling model
 <span class="math display">\[\begin{equation}
 \eta_i = \beta_0 + \beta_1 z_i,
 \end{equation}\]</span>
 with <span class="math inline">\(z_i \in \{0, 1\}\)</span> a binary covariate.
-Now, there are two groups of observations, each of which with its own mean, <span class="math inline">\(\beta_0\)</span> for the first group and <span class="math inline">\(\beta_0 + \beta_1\)</span> for the second.
+Now, there are two groups of observations, each of which with its own mean: <span class="math inline">\(\beta_0\)</span> for the first group and <span class="math inline">\(\beta_0 + \beta_1\)</span> for the second.
+No amount of information is shared between the two groups.
 Finally, consider an intermediate between these two extremes, known as the partial pooling model.
-In the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed at the outset, as with the complete or no pooling models.
+In the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed to either extreme at the outset, as with the complete or no pooling models.
 The parameter <span class="math inline">\(\beta_0\)</span> applies to all groups, and each group is differentiated by a specific value of the random effects <span class="math inline">\(u_i\)</span>.</p>
 <p>Random effects can be structured to share information between some observations more than others.
-In spatio-temporal statistics, structured spatial and temporal random effects are often used to encode smoothness in space or time.</p>
-<p>Generalised additive models [GAMs; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>; <span class="citation">Hastie and Tibshirani (<a href="#ref-hastie1987generalized">1987</a>)</span>] can be cast to fit into the GLMM framework.
-GAMs place more of a focus on using <span class="math inline">\(u_k\)</span> to do something.</p>
+In spatio-temporal statistics, structured spatial and temporal random effects are often used to encode smoothness in space or time.
+In contrast, unstructured random effects treat groups of observations as being exchangeable.</p>
+<p>Generalised additive models [GAMs; <span class="citation">Wood (<a href="#ref-wood2017generalized">2017</a>)</span>; <span class="citation">Hastie and Tibshirani (<a href="#ref-hastie1987generalized">1987</a>)</span>] are another class of models which extend GLMs.
+Though GAMs place more of a focus on using <span class="math inline">\(u_k\)</span> to model non-linear relationships between covariates and the response variable, they can also be cast to fit into the GLMM framework.</p>
 </div>
 <div id="lgm" class="section level3 hasAnchor" number="3.3.4">
 <h3><span class="header-section-number">3.3.4</span> Latent Gaussian model<a href="bayes-st.html#lgm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Latent Gaussian models [LGMs; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] are a type of GLMMs in which Gaussian priors are used for specific parameters of the model.
-These parameters are <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\{\beta_j\}\)</span>, <span class="math inline">\(\{u_k(\cdot)\}\)</span>, and can be collected into a vector <span class="math inline">\(\mathbf{x} \in \mathbb{R}^N\)</span> called the latent field.
-The Gaussian prior distribution is
+<p>Latent Gaussian models [LGMs; <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>] are a type of GLMMs in which Gaussian priors are used for many of the models parameters.
+More specifically, these parameters are <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\{\beta_j\}\)</span>, <span class="math inline">\(\{u_k(\cdot)\}\)</span>, and can be collected into a vector <span class="math inline">\(\mathbf{x} \in \mathbb{R}^N\)</span> called the latent field.
+The Gaussian prior distribution is then
 <span class="math display">\[\begin{equation}
 \mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1}),
 \end{equation}\]</span>
@@ -714,7 +723,7 @@ The posterior distribution under an LGM in then
 <span class="math display">\[\begin{equation}
 p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}}),
 \end{equation}\]</span>
-with the complete set of parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.</p>
+with the complete set of parameters <span class="math inline">\(\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>, and <span class="math inline">\(N + m = d\)</span>.</p>
 </div>
 <div id="elgm" class="section level3 hasAnchor" number="3.3.5">
 <h3><span class="header-section-number">3.3.5</span> Extended latent Gaussian model<a href="bayes-st.html#elgm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -734,60 +743,65 @@ y_i &amp;\sim p(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}, \boldsym
 \eta_j &amp;= \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li} + \sum_{k = 1}^{r} u_k(w_{ki}), \quad j \in [N_n].
 \end{align*}\]</span>
 The latent field and hyperparameter prior distributions are equivalent to the LGM case.</p>
-<p>The ELGM class is well suited to small-area estimation of HIV.
-While it can be transformed to an LGM using the Poisson-multinomial transformation <span class="citation">(<a href="#ref-baker1994multinomial">Baker 1994</a>)</span> the multinomial logistic regression model used in Chapter <a href="multi-agyw.html#multi-agyw">5</a> is most naturally written as an ELGM, where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
-In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.</p>
+<p>Though the ELGM model class was only introduced recently, it connects much of the work done in this thesis.
+While it can be transformed to an LGM using the Poisson-multinomial transformation <span class="citation">(<a href="#ref-baker1994multinomial">Baker 1994</a>)</span>, the multinomial logistic regression model used in Chapter <a href="multi-agyw.html#multi-agyw">5</a> is most naturally written as an ELGM, where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
+In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area estimation model used to produce estimates of HIV indicators is shown have ELGM-like features.</p>
 </div>
 </div>
 <div id="model-comparison" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Model comparison<a href="bayes-st.html#model-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Many models can be formulated and fit to data during the course of an analysis.
-Model comparison methods look to determine which models are most suitable to use, based on actualisation of suitability.</p>
-<div id="bayes-factors" class="section level3 hasAnchor" number="3.4.1">
-<h3><span class="header-section-number">3.4.1</span> Bayes factors<a href="bayes-st.html#bayes-factors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The evidence <span class="math inline">\(p(\mathbf{y})\)</span> (Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>) can be used as a measure of model fit
+<p>During the course of an analysis, many different models can be fit to the same data.
+Model comparison methods are used to determine which model is the most suitable to use.
+This section focuses on measuring suitability via the model’s predictive performance.</p>
+<div id="information-criteria" class="section level3 hasAnchor" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider new data <span class="math inline">\(\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)\)</span> drawn from the true data generating process.
+The expected log predictive density for new data (ELPD) is <span class="citation">(<a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span>
+<span class="math display" id="eq:elpd">\[\begin{equation}
+\sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. \tag{3.6}
+\end{equation}\]</span></p>
+<p>Information criteria can be constructed to approximate the ELPD.
+The Akaike [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>] and deviance [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] information criteria estimate ELPD by
+<span class="math display" id="eq:aic-elpd">\[\begin{equation}
+\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}), \tag{3.7}
+\end{equation}\]</span>
+where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is a maximum likelihood estimate (AIC) or Bayesian point estimate (DIC).
+The widely applicable information criteria [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon Equation <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> by instead using the predictive density of the data
+<span class="math display" id="eq:waic-elpd">\[\begin{align}
+  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). \tag{3.8}
+\end{align}\]</span>
+Both Equations <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> and <a href="bayes-st.html#eq:waic-elpd">(3.8)</a> are based on within-sample measures, and so overestimate <a href="bayes-st.html#eq:elpd">(3.6)</a>.
+Therefore, these information criteria are adjusted downward by varying complexity penalties <span class="math inline">\(p_{\texttt{IC}}\)</span>.</p>
+</div>
+<div id="cross-validation" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Cross-validation<a href="bayes-st.html#cross-validation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Cross-validation is an alternative way to estimate the ELPD.
+Rather than use a complexity penalty, as in Section <a href="bayes-st.html#information-criteria">3.4.1</a>, to adjust within-sample estimates of ELPD, cross-validation operates by leaving out data.</p>
+<!-- Leave-one-out (LOO) cross-validation. -->
+<!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
+<!-- Other cross-validiation schemes for specific settings. -->
+<!-- Importance sampling less likely to work in some settings, like the spatial. -->
+</div>
+<div id="bayes-factors" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Bayes factors<a href="bayes-st.html#bayes-factors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The evidence <span class="math inline">\(p(\mathbf{y})\)</span>, given in Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>, can be used as a measure of model fit.
 Let <span class="math inline">\(\mathcal{M}_0\)</span> and <span class="math inline">\(\mathcal{M}_1\)</span> be two competing models.
 Then the Bayes factor comparing <span class="math inline">\(\mathcal{M}_0\)</span> to <span class="math inline">\(\mathcal{M_1}\)</span> is
 <span class="math display">\[\begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)},
 \end{equation}\]</span>
 where <span class="math inline">\(p(\mathbf{y} \, | \, \ \mathcal{M})\)</span> denotes the evidence under model <span class="math inline">\(\mathcal{M}\)</span>.
-If <span class="math inline">\(B_{01} &gt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M_0}\)</span> and if <span class="math inline">\(B_{01} &lt; 1\)</span> the support is provided for <span class="math inline">\(\mathcal{M_1}\)</span>.</p>
-</div>
-<div id="information-criteria" class="section level3 hasAnchor" number="3.4.2">
-<h3><span class="header-section-number">3.4.2</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The log pointwise predictive density (LPPD) is
-<span class="math display">\[\begin{equation}
-\text{lppd} = \log \left( \prod_{i = 1}^n p(y_i) \right) = \sum_{i = 1}^n \log \int p(y_i \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}) \text{d} \boldsymbol{\mathbf{\phi}}.
-\end{equation}\]</span>
-The expected log pointwise predictive density for new data (ELPPD) is
-<span class="math display">\[\begin{equation}
-\text{elppd} = \log \left( \prod_{i = 1}^n p(\tilde y_i) \right).
-\end{equation}\]</span></p>
-<p>Information criteria such as the Akaike information criterion [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>], deviance information criterion [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>], and widely applicable information criterion [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>], are constructed using 1) an approximation to the ELPD given by <span class="math inline">\(\text{elpd}_{\texttt{IC}}\)</span> 2) a complexity penalty <span class="math inline">\(p_{\texttt{IC}}\)</span>.
-For the AIC and DIC, the ELPD approximation is
-<span class="math display">\[\begin{equation}
-\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}),
-\end{equation}\]</span>
-where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is a maximum likelihood estimate (AIC) or a alternative Bayesian point estimate (DIC).
-The WAIC improves upon this limitaiton <span class="citation">(<a href="#ref-spiegelhalter2014deviance">D. J. Spiegelhalter et al. 2014</a>)</span> of the AIC and DIC by using the predictive density of the data
-<span class="math display">\[\begin{align}
-  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}).
-\end{align}\]</span></p>
-<p>For a more complete review of these information criteria from a Bayesian perspective, see <span class="citation">Gelman, Hwang, and Vehtari (<a href="#ref-gelman2014understanding">2014</a>)</span>.</p>
-</div>
-<div id="cross-validation" class="section level3 hasAnchor" number="3.4.3">
-<h3><span class="header-section-number">3.4.3</span> Cross-validation<a href="bayes-st.html#cross-validation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The information criteria in Section <a href="bayes-st.html#information-criteria">3.4.2</a> can be viewed as approximations to cross-validation.
-There are three parts of a cross-validation: the way the data is divided, the scoring rule used, the computational method used <span class="citation">(<a href="#ref-vehtari2020cross">Vehtari 2020</a>)</span>.</p>
+If <span class="math inline">\(B_{01} &gt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M_0}\)</span> and if <span class="math inline">\(B_{01} &lt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M_1}\)</span>.
+Bayes factors can be framed as predictive criterion as follows.</p>
 </div>
 <div id="scoring-rules" class="section level3 hasAnchor" number="3.4.4">
 <h3><span class="header-section-number">3.4.4</span> Scoring rules<a href="bayes-st.html#scoring-rules" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Scoring rules [SR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] measure the quality of probabilistic forecasts.
-The log score, used above in the LPPD and ELPPD, is one example of a scoring rule.</p>
-<p>A scoring rule is called proper when such and such.
-A scoring rule is called strictly proper when such and such.</p>
-<p>The log score (LS) is a strictly proper scoring rule (SPSR).
+The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
+In fact, any information criterion or cross-validation strategy can be adapted to use a different scoring rule.</p>
+<p>The log score (LS) is an example of a strictly proper scoring rule (SPSR).
+A scoring rule is called proper when such and such.
+A scoring rule is called strictly proper when such and such.
 Another example of a SPSR is the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], which generalises the Brier score <span class="citation">(<a href="#ref-brier1950verification">Brier 1950</a>)</span> beyond binary classification.</p>
 </div>
 </div>
@@ -1038,9 +1052,6 @@ Smith, Nathaniel, and Stéfan van der Walt. 2015. <span>“<span class="nocase">
 <div id="ref-spiegelhalter2002bayesian" class="csl-entry">
 Spiegelhalter, David J, Nicola G Best, Bradley P Carlin, and Angelika Van Der Linde. 2002. <span>“<span class="nocase">Bayesian measures of model complexity and fit</span>.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 64 (4): 583–639.
 </div>
-<div id="ref-spiegelhalter2014deviance" class="csl-entry">
-Spiegelhalter, David J, Nicola G Best, Bradley P Carlin, and Angelika Van der Linde. 2014. <span>“<span class="nocase">The deviance information criterion: 12 years on</span>.”</span> <em>Journal of the Royal Statistical Society: Series B: Statistical Methodology</em>, 485–93.
-</div>
 <div id="ref-stan2023reference" class="csl-entry">
 Stan Development Team. 2023. <em><span>Stan</span> Reference Manual</em>. <a href="https://mc-stan.org/docs/reference-manual/index.html">https://mc-stan.org/docs/reference-manual/index.html</a>.
 </div>
@@ -1055,9 +1066,6 @@ Tokdar, Surya T, and Robert E Kass. 2010. <span>“<span class="nocase">Importan
 </div>
 <div id="ref-measure2012sampling" class="csl-entry">
 USAID. 2012. <span>“<span class="nocase">Sampling and Household Listing Manual: Demographic and Health Surveys Methodology</span>.”</span> <a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf">https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf</a>.
-</div>
-<div id="ref-vehtari2020cross" class="csl-entry">
-Vehtari, Aki. 2020. <span>“Cross-Validation FAQ.”</span> <em>Model Selection Tutorials and Talks</em>.
 </div>
 <div id="ref-watanabe2013widely" class="csl-entry">
 Watanabe, Sumio. 2013. <span>“<span class="nocase">A widely applicable Bayesian information criterion</span>.”</span> <em>Journal of Machine Learning Research</em> 14 (Mar): 867–97.

@@ -278,32 +278,39 @@ For example, those of the same sex are more likely to be similar, as are those o
 
 The spatio-temporal data used in this thesis is not IID (Section \@ref(correlation-structure)).
 This section discusses ways to use statistical models to encode more complex relations between observations mathematically.
-Simple structures are discussed first, such as the linear model, before moving on to the more expressive structures used throughout the thesis.
+Simple structures are discussed first, beginning with the linear model.
+Extensions are introduced one at a time, culminating in the model structures used throughout the thesis.
 
 ### Linear model
 
-In a linear model, each observation $i \in [n]$ is modelled using a Gaussian distribution
+In a linear model, each observation $y_i$ with $i \in [n]$ is modelled using a Gaussian distribution
 \begin{equation}
 y_i \sim \mathcal{N}(\mu_i, \sigma).
 \end{equation}
-The conditional mean $\mu_i$ is assumed to be linearly related to a collection of $l$ covariates
+The conditional mean $\mu_i$ is assumed to be linearly related to a collection of $p$ covariates $z_{1i}, \ldots, z_{pi}$
 \begin{align}
 \mu_i &= \eta_i \\
 \eta_i &= \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li}. (\#eq:linear-model)
 \end{align}
-Priors may be placed on the regression coefficients $\beta_l \sim p(\beta_l)$ for $l = 0, \ldots, p$ as well as the observation standard deviation $\sigma \sim p(\sigma)$.
+Priors may be placed on the regression coefficients, as well as the observation standard deviation
+\begin{align}
+\beta_l &\sim p(\beta_l), \quad l = 0, \ldots, p, \\
+\sigma &\sim p(\sigma).
+\end{align}
+While the linear model provides a useful foundation, its strong assumptions and limited flexibility call for careful use.
 
 ### Generalised linear model
 
-Generalised linear models (GLMs) extend the linear model by allowing the conditional mean $\mu_i$ to be connected to the linear predictor $\eta_i$ via a link function $g$.
+Generalised linear models (GLMs) extend the linear model by allowing the conditional mean $\mu_i$ to be connected to the linear predictor $\eta_i$ via a link function $g$ as follows
 \begin{align}
 y_i &\sim p(y_i \, | \, \eta_i), \\
 \mu_i &= \mathbb{E}(y_i \, | \, \eta_i) = g(\eta_i). 
 \end{align}
 The logistic function $g(\eta) = \exp(\eta) / (1 + \exp(\eta))$ is commonly used as a link function to ensure that the conditional mean is in the range $[0, 1]$.
 Similarly, the exponential function $g(\eta) = \exp(\eta)$ can be used to ensure the conditional mean is positive.
-GLMs admit a wider range of likelihoods $p(y_i \, | \, \eta_i)$ than linear models, typically restricted to the so-called exponential family of distributions.
-The equation for the linear predictor is the same as in the linear model case (Equation \@ref(eq:linear-model)).
+The linear model is a special case of a GLM where the link function $g$ is the identity.
+As well, GLMs admit a wider range of likelihoods $p(y_i \, | \, \eta_i)$ than linear models, typically restricted to the so-called exponential family of distributions.
+The equation for the linear predictor is the same as the linear model case in Equation \@ref(eq:linear-model).
 
 ### Generalised linear mixed effects model
 
@@ -311,37 +318,39 @@ In a generalised linear mixed effects model (GLMM) the linear predictor of the G
 \begin{equation}
 \eta_i = \beta_0 + \sum_{l = 1}^{p} \beta_l z_{li} + \sum_{k = 1}^{r} u_k(w_{ki}).
 \end{equation}
-The terms $u_k$ are called random effects, of additional covariates $w_{ki}$.
 The terms $\beta_l$ are referred to as fixed effects.
-These terms have notoriously many different and incompatible definitions which unfortunately can cause confusion [@gelman2005analysis].
+The terms $u_k$ are called random effects, of additional covariates $w_{ki}$.
+The words fixed and random effects have notoriously many different and incompatible definitions which unfortunately can cause confusion [@gelman2005analysis].
 
 Random effects allow for more complex sharing of information between observations.
-To demonstrate this fact, consider the model
+To demonstrate this fact, first consider the model
 \begin{equation}
 \eta_i = \beta_0.
 \end{equation}
-In this model, known as the complete pooling model, all observations are assumed to be equivalent.
-Alternatively, consider the so-called no pooling model
+In this model all observations are assumed to be equivalent, and as such information is said to be completely pooled together.
+Second, consider the so-called no pooling model
 \begin{equation}
 \eta_i = \beta_0 + \beta_1 z_i,
 \end{equation}
 with $z_i \in \{0, 1\}$ a binary covariate.
-Now, there are two groups of observations, each of which with its own mean, $\beta_0$ for the first group and $\beta_0 + \beta_1$ for the second.
+Now, there are two groups of observations, each of which with its own mean: $\beta_0$ for the first group and $\beta_0 + \beta_1$ for the second.
+No amount of information is shared between the two groups.
 Finally, consider an intermediate between these two extremes, known as the partial pooling model.
-In the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed at the outset, as with the complete or no pooling models.
+In the partial pooling model, the extent to which information is shared between groups is learnt rather than fixed to either extreme at the outset, as with the complete or no pooling models.
 The parameter $\beta_0$ applies to all groups, and each group is differentiated by a specific value of the random effects $u_i$.
 
 Random effects can be structured to share information between some observations more than others.
 In spatio-temporal statistics, structured spatial and temporal random effects are often used to encode smoothness in space or time.
+In contrast, unstructured random effects treat groups of observations as being exchangeable.
 
-Generalised additive models [GAMs; @wood2017generalized; @hastie1987generalized] can be cast to fit into the GLMM framework.
-GAMs place more of a focus on using $u_k$ to do something.
+Generalised additive models [GAMs; @wood2017generalized; @hastie1987generalized] are another class of models which extend GLMs.
+Though GAMs place more of a focus on using $u_k$ to model non-linear relationships between covariates and the response variable, they can also be cast to fit into the GLMM framework.
 
 ### Latent Gaussian model {#lgm}
 
-Latent Gaussian models [LGMs; @rue2009approximate] are a type of GLMMs in which Gaussian priors are used for specific parameters of the model.
-These parameters are $\beta_0$, $\{\beta_j\}$, $\{u_k(\cdot)\}$, and can be collected into a vector $\mathbf{x} \in \mathbb{R}^N$ called the latent field.
-The Gaussian prior distribution is
+Latent Gaussian models [LGMs; @rue2009approximate] are a type of GLMMs in which Gaussian priors are used for many of the models parameters.
+More specifically, these parameters are $\beta_0$, $\{\beta_j\}$, $\{u_k(\cdot)\}$, and can be collected into a vector $\mathbf{x} \in \mathbb{R}^N$ called the latent field.
+The Gaussian prior distribution is then
 \begin{equation}
 \mathbf{x} \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}(\boldsymbol{\mathbf{\theta}}_2)^{-1}),
 \end{equation}
@@ -352,7 +361,7 @@ The posterior distribution under an LGM in then
 \begin{equation}
 p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}}),
 \end{equation}
-with the complete set of parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
+with the complete set of parameters $\boldsymbol{\mathbf{\phi}} = (\mathbf{x}, \boldsymbol{\mathbf{\theta}})$, and $N + m = d$.
 
 ### Extended latent Gaussian model {#elgm}
 
@@ -373,64 +382,68 @@ y_i &\sim p(y_i \, | \, \boldsymbol{\mathbf{\eta}}_{\mathcal{J}_i}, \boldsymbol{
 \end{align*}
 The latent field and hyperparameter prior distributions are equivalent to the LGM case.
 
-The ELGM class is well suited to small-area estimation of HIV.
-While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial] the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is most naturally written as an ELGM, where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
-In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators is shown to have the features of an ELGM.
+Though the ELGM model class was only introduced recently, it connects much of the work done in this thesis.
+While it can be transformed to an LGM using the Poisson-multinomial transformation [@baker1994multinomial], the multinomial logistic regression model used in Chapter \@ref(multi-agyw) is most naturally written as an ELGM, where each observation depends on the set of structured additive predictors corresponding to the set of multinomial observations.
+In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to produce estimates of HIV indicators is shown have ELGM-like features.
 
 ## Model comparison {#model-comparison}
 
-Many models can be formulated and fit to data during the course of an analysis.
-Model comparison methods look to determine which models are most suitable to use, based on actualisation of suitability.
+During the course of an analysis, many different models can be fit to the same data.
+Model comparison methods are used to determine which model is the most suitable to use.
+This section focuses on measuring suitability via the model's predictive performance.
+
+### Information criteria {#information-criteria}
+
+Consider new data $\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)$ drawn from the true data generating process.
+The expected log predictive density for new data (ELPD) is [@gelman2014understanding]
+\begin{equation}
+\sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
+\end{equation}
+
+Information criteria can be constructed to approximate the ELPD.
+The Akaike [AIC; @akaike1973information] and deviance [DIC; @spiegelhalter2002bayesian] information criteria estimate ELPD by
+\begin{equation}
+\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}), (\#eq:aic-elpd)
+\end{equation}
+where $\hat{\boldsymbol{\mathbf{\phi}}}$ is a maximum likelihood estimate (AIC) or Bayesian point estimate (DIC).
+The widely applicable information criteria [WAIC; @watanabe2013widely] improves upon Equation \@ref(eq:aic-elpd) by instead using the predictive density of the data
+\begin{align}
+  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). (\#eq:waic-elpd)
+\end{align}
+Both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, and so overestimate \@ref(eq:elpd).
+Therefore, these information criteria are adjusted downward by varying complexity penalties $p_{\texttt{IC}}$.
+
+### Cross-validation
+
+Cross-validation is an alternative way to estimate the ELPD.
+Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust within-sample estimates of ELPD, cross-validation operates by leaving out data.
+
+<!-- Leave-one-out (LOO) cross-validation. -->
+<!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
+<!-- Other cross-validiation schemes for specific settings. -->
+<!-- Importance sampling less likely to work in some settings, like the spatial. -->
 
 ### Bayes factors
 
-The evidence $p(\mathbf{y})$ (Equation \@ref(eq:evidence)) can be used as a measure of model fit
+The evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence), can be used as a measure of model fit.
 Let $\mathcal{M}_0$ and $\mathcal{M}_1$ be two competing models.
 Then the Bayes factor comparing $\mathcal{M}_0$ to $\mathcal{M_1}$ is
 \begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)},
 \end{equation}
 where $p(\mathbf{y} \, | \, \ \mathcal{M})$ denotes the evidence under model $\mathcal{M}$.
-If $B_{01} > 1$ then support is provided for $\mathcal{M_0}$ and if $B_{01} < 1$ the support is provided for $\mathcal{M_1}$.
-
-### Information criteria {#information-criteria}
-
-The log pointwise predictive density (LPPD) is
-\begin{equation}
-\text{lppd} = \log \left( \prod_{i = 1}^n p(y_i) \right) = \sum_{i = 1}^n \log \int p(y_i \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}) \text{d} \boldsymbol{\mathbf{\phi}}.
-\end{equation}
-The expected log pointwise predictive density for new data (ELPPD) is
-\begin{equation}
-\text{elppd} = \log \left( \prod_{i = 1}^n p(\tilde y_i) \right).
-\end{equation}
-
-Information criteria such as the Akaike information criterion [AIC; @akaike1973information], deviance information criterion [DIC; @spiegelhalter2002bayesian], and widely applicable information criterion [WAIC; @watanabe2013widely], are constructed using 1) an approximation to the ELPD given by $\text{elpd}_{\texttt{IC}}$ 2) a complexity penalty $p_{\texttt{IC}}$.
-For the AIC and DIC, the ELPD approximation is
-\begin{equation}
-\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}),
-\end{equation}
-where $\hat{\boldsymbol{\mathbf{\phi}}}$ is a maximum likelihood estimate (AIC) or a alternative Bayesian point estimate (DIC).
-The WAIC improves upon this limitaiton [@spiegelhalter2014deviance] of the AIC and DIC by using the predictive density of the data
-\begin{align}
-  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}).
-\end{align}
-
-For a more complete review of these information criteria from a Bayesian perspective, see @gelman2014understanding.
-
-### Cross-validation
-
-The information criteria in Section \@ref(information-criteria) can be viewed as approximations to cross-validation.
-There are three parts of a cross-validation: the way the data is divided, the scoring rule used, the computational method used [@vehtari2020cross].
+If $B_{01} > 1$ then support is provided for $\mathcal{M_0}$ and if $B_{01} < 1$ then support is provided for $\mathcal{M_1}$.
+Bayes factors can be framed as predictive criterion as follows.
 
 ### Scoring rules
 
 Scoring rules [SR; @gneiting2007strictly] measure the quality of probabilistic forecasts.
-The log score, used above in the LPPD and ELPPD, is one example of a scoring rule.
+The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
+In fact, any information criterion or cross-validation strategy can be adapted to use a different scoring rule.
 
+The log score (LS) is an example of a strictly proper scoring rule (SPSR).
 A scoring rule is called proper when such and such.
 A scoring rule is called strictly proper when such and such.
-
-The log score (LS) is a strictly proper scoring rule (SPSR).
 Another example of a SPSR is the continuous ranked probability score [CRPS; @matheson1976scoring], which generalises the Brier score [@brier1950verification] beyond binary classification.
 
 ## Survey methods {#survey}
