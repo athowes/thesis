@@ -392,15 +392,19 @@ During the course of an analysis, many different models can be fit to the same d
 Model comparison methods are used to determine which model is the most suitable to use.
 This section focuses on measuring suitability via the model's predictive performance.
 
-### Information criteria {#information-criteria}
-
 Consider new data $\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)$ drawn from the true data generating process.
-The expected log predictive density for new data (ELPD) [@gelman2014understanding] measures the out-of-sample predictive performance and is given by
+The log predictive density for new data (LPD) [@gelman2014understanding] measures the out-of-sample predictive performance and is given by
 \begin{equation}
-\text{elpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
+\text{lpd} = \sum_{i = 1}^n \log p(\tilde y_i \, | \, \mathbf{y}). (\#eq:lpd)
+\end{equation}
+The expected LPD (ELPD) integrates the LPD over the data generating process to give a measure of expected performance
+\begin{equation}
+\text{lpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
 \end{equation}
 
-Information criteria can be constructed to approximate the ELPD.
+### Information criteria {#information-criteria}
+
+Information criteria can be constructed to approximate the ELPD using adjusted within-sample predictive performance.
 The Akaike [AIC; @akaike1973information] and deviance [DIC; @spiegelhalter2002bayesian] information criteria estimate ELPD by
 \begin{equation}
 \text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}), (\#eq:aic-elpd)
@@ -410,22 +414,38 @@ The widely applicable information criteria [WAIC; @watanabe2013widely] improves 
 \begin{align}
   \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). (\#eq:waic-elpd)
 \end{align}
-Both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, and so overestimate the ELPD.
-As such, the information criteria are adjusted downward by a complexity penalty $p_{\texttt{IC}}$.
+As both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, they overestimate the ELPD.
+As such, they are adjusted downward by a complexity penalty $p_{\texttt{IC}}$, which varies depending on the particular information criteria.
 
-### Cross-validation
+### Cross-validation {#cross-validation}
 
 Cross-validation is an alternative way to estimate the ELPD.
-Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust within-sample estimates of ELPD, cross-validation uses left out data.
+Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust a within-sample estimate, cross-validation (CV) partitions the data into training and held-out sets of data.
+In a leave-out-out (LOO) CV there are $n$ partitions, where each held-out set is a single obsevation.
+The LOO-CV estimate of ELPD is
+\begin{align}
+  \text{elpd}_\texttt{LOO-CV} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}_i). (\#eq:loo-cv-elpd)
+\end{align}
+Naively, computing $\text{elpd}_\texttt{LOO-CV}$ requires refitting the model $n$ times.
+As such, computational approximations have been developed, most notably importance sampling methods using the the full posterior as a proposal [@vehtari2017practical].
 
-<!-- Leave-one-out (LOO) cross-validation. -->
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validiation schemes for specific settings. -->
 <!-- Importance sampling less likely to work in some settings, like the spatial. -->
 
+### Scoring rules
+
+Scoring rules [SR; @gneiting2007strictly] measure the quality of probabilistic forecasts.
+The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
+In fact, any information criterion (Section \@ref(information-criteria)) or cross-validation strategy (Section \@ref(cross-validation)) can be redefined using a different scoring rule.
+
+One reason the log score (LS) is popular is that it is an example of a strictly proper scoring rule (SPSR).
+A scoring rule is called strictly proper when the forecaster gains maximum expected reward by reporting their true probability distribution, and discourages any manipulation.
+Another example of a SPSR is the continuous ranked probability score [CRPS; @matheson1976scoring], which generalises the Brier score [@brier1950verification] beyond binary classification.
+
 ### Bayes factors
 
-Another measure of model performance is provided by the evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence).
+Finally, I mention that the evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence), can also be used as a measure of model performance.
 Let $\mathcal{M}_0$ and $\mathcal{M}_1$ be two competing models.
 Then the Bayes factor comparing $\mathcal{M}_0$ to $\mathcal{M_1}$ is
 \begin{equation}
@@ -434,17 +454,6 @@ B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \ma
 where $p(\mathbf{y} \, | \, \ \mathcal{M})$ denotes the evidence under model $\mathcal{M}$.
 If $B_{01} > 1$ then support is provided for $\mathcal{M}_0$ and if $B_{01} < 1$ then support is provided for $\mathcal{M}_1$.
 Bayes factors can be framed as predictive criterion as follows.
-
-### Scoring rules
-
-Scoring rules [SR; @gneiting2007strictly] measure the quality of probabilistic forecasts.
-The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
-In fact, any information criterion or cross-validation strategy can be adapted to use a different scoring rule.
-
-The log score (LS) is an example of a strictly proper scoring rule (SPSR).
-A scoring rule is called proper when such and such.
-A scoring rule is called strictly proper when such and such.
-Another example of a SPSR is the continuous ranked probability score [CRPS; @matheson1976scoring], which generalises the Brier score [@brier1950verification] beyond binary classification.
 
 ## Survey methods {#survey}
 

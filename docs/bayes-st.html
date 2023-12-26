@@ -209,8 +209,8 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="3.4.1" data-path="bayes-st.html"><a href="bayes-st.html#information-criteria"><i class="fa fa-check"></i><b>3.4.1</b> Information criteria</a></li>
 <li class="chapter" data-level="3.4.2" data-path="bayes-st.html"><a href="bayes-st.html#cross-validation"><i class="fa fa-check"></i><b>3.4.2</b> Cross-validation</a></li>
-<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#bayes-factors"><i class="fa fa-check"></i><b>3.4.3</b> Bayes factors</a></li>
-<li class="chapter" data-level="3.4.4" data-path="bayes-st.html"><a href="bayes-st.html#scoring-rules"><i class="fa fa-check"></i><b>3.4.4</b> Scoring rules</a></li>
+<li class="chapter" data-level="3.4.3" data-path="bayes-st.html"><a href="bayes-st.html#scoring-rules"><i class="fa fa-check"></i><b>3.4.3</b> Scoring rules</a></li>
+<li class="chapter" data-level="3.4.4" data-path="bayes-st.html"><a href="bayes-st.html#bayes-factors"><i class="fa fa-check"></i><b>3.4.4</b> Bayes factors</a></li>
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.5</b> Survey methods</a>
 <ul>
@@ -753,38 +753,57 @@ In Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>, the Naomi small-area esti
 <p>During the course of an analysis, many different models can be fit to the same data.
 Model comparison methods are used to determine which model is the most suitable to use.
 This section focuses on measuring suitability via the model’s predictive performance.</p>
+<p>Consider new data <span class="math inline">\(\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)\)</span> drawn from the true data generating process.
+The log predictive density for new data (LPD) <span class="citation">(<a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span> measures the out-of-sample predictive performance and is given by
+<span class="math display" id="eq:lpd">\[\begin{equation}
+\text{lpd} = \sum_{i = 1}^n \log p(\tilde y_i \, | \, \mathbf{y}). \tag{3.6}
+\end{equation}\]</span>
+The expected LPD (ELPD) integrates the LPD over the data generating process to give a measure of expected performance
+<span class="math display" id="eq:elpd">\[\begin{equation}
+\text{lpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. \tag{3.7}
+\end{equation}\]</span></p>
 <div id="information-criteria" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Information criteria<a href="bayes-st.html#information-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Consider new data <span class="math inline">\(\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)\)</span> drawn from the true data generating process.
-The expected log predictive density for new data (ELPD) <span class="citation">(<a href="#ref-gelman2014understanding">Gelman, Hwang, and Vehtari 2014</a>)</span> measures the out-of-sample predictive performance and is given by
-<span class="math display" id="eq:elpd">\[\begin{equation}
-\text{elpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. \tag{3.6}
-\end{equation}\]</span></p>
-<p>Information criteria can be constructed to approximate the ELPD.
+<p>Information criteria can be constructed to approximate the ELPD using adjusted within-sample predictive performance.
 The Akaike [AIC; <span class="citation">Akaike (<a href="#ref-akaike1973information">1973</a>)</span>] and deviance [DIC; <span class="citation">D. J. Spiegelhalter et al. (<a href="#ref-spiegelhalter2002bayesian">2002</a>)</span>] information criteria estimate ELPD by
 <span class="math display" id="eq:aic-elpd">\[\begin{equation}
-\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}), \tag{3.7}
+\text{elpd}_\texttt{IC} = \log p(\mathbf{y} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}), \tag{3.8}
 \end{equation}\]</span>
 where <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> is a maximum likelihood estimate (AIC) or Bayesian point estimate (DIC).
-The widely applicable information criteria [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon Equation <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> by instead using the predictive density of the data
+The widely applicable information criteria [WAIC; <span class="citation">Watanabe (<a href="#ref-watanabe2013widely">2013</a>)</span>] improves upon Equation <a href="bayes-st.html#eq:aic-elpd">(3.8)</a> by instead using the predictive density of the data
 <span class="math display" id="eq:waic-elpd">\[\begin{align}
-  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). \tag{3.8}
+  \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). \tag{3.9}
 \end{align}\]</span>
-Both Equations <a href="bayes-st.html#eq:aic-elpd">(3.7)</a> and <a href="bayes-st.html#eq:waic-elpd">(3.8)</a> are based on within-sample measures, and so overestimate the ELPD.
-As such, the information criteria are adjusted downward by a complexity penalty <span class="math inline">\(p_{\texttt{IC}}\)</span>.</p>
+As both Equations <a href="bayes-st.html#eq:aic-elpd">(3.8)</a> and <a href="bayes-st.html#eq:waic-elpd">(3.9)</a> are based on within-sample measures, they overestimate the ELPD.
+As such, they are adjusted downward by a complexity penalty <span class="math inline">\(p_{\texttt{IC}}\)</span>, which varies depending on the particular information criteria.</p>
 </div>
 <div id="cross-validation" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Cross-validation<a href="bayes-st.html#cross-validation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Cross-validation is an alternative way to estimate the ELPD.
-Rather than use a complexity penalty, as in Section <a href="bayes-st.html#information-criteria">3.4.1</a>, to adjust within-sample estimates of ELPD, cross-validation uses left out data.</p>
-<!-- Leave-one-out (LOO) cross-validation. -->
+Rather than use a complexity penalty, as in Section <a href="bayes-st.html#information-criteria">3.4.1</a>, to adjust a within-sample estimate, cross-validation (CV) partitions the data into training and held-out sets of data.
+In a leave-out-out (LOO) CV there are <span class="math inline">\(n\)</span> partitions, where each held-out set is a single obsevation.
+The LOO-CV estimate of ELPD is
+<span class="math display" id="eq:loo-cv-elpd">\[\begin{align}
+  \text{elpd}_\texttt{LOO-CV} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}_i). \tag{3.10}
+\end{align}\]</span>
+Naively, computing <span class="math inline">\(\text{elpd}_\texttt{LOO-CV}\)</span> requires refitting the model <span class="math inline">\(n\)</span> times.
+As such, computational approximations have been developed, most notably importance sampling methods using the the full posterior as a proposal <span class="citation">(<a href="#ref-vehtari2017practical">Vehtari, Gelman, and Gabry 2017</a>)</span>.</p>
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validiation schemes for specific settings. -->
 <!-- Importance sampling less likely to work in some settings, like the spatial. -->
 </div>
-<div id="bayes-factors" class="section level3 hasAnchor" number="3.4.3">
-<h3><span class="header-section-number">3.4.3</span> Bayes factors<a href="bayes-st.html#bayes-factors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Another measure of model performance is provided by the evidence <span class="math inline">\(p(\mathbf{y})\)</span>, given in Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>.
+<div id="scoring-rules" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Scoring rules<a href="bayes-st.html#scoring-rules" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Scoring rules [SR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] measure the quality of probabilistic forecasts.
+The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
+In fact, any information criterion (Section <a href="bayes-st.html#information-criteria">3.4.1</a>) or cross-validation strategy (Section <a href="bayes-st.html#cross-validation">3.4.2</a>) can be redefined using a different scoring rule.</p>
+<p>One reason the log score (LS) is popular is that it is an example of a strictly proper scoring rule (SPSR).
+A scoring rule is called strictly proper when the forecaster gains maximum expected reward by reporting their true probability distribution, and discourages any manipulation.
+Another example of a SPSR is the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], which generalises the Brier score <span class="citation">(<a href="#ref-brier1950verification">Brier 1950</a>)</span> beyond binary classification.</p>
+</div>
+<div id="bayes-factors" class="section level3 hasAnchor" number="3.4.4">
+<h3><span class="header-section-number">3.4.4</span> Bayes factors<a href="bayes-st.html#bayes-factors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Finally, I mention that the evidence <span class="math inline">\(p(\mathbf{y})\)</span>, given in Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>, can also be used as a measure of model performance.
 Let <span class="math inline">\(\mathcal{M}_0\)</span> and <span class="math inline">\(\mathcal{M}_1\)</span> be two competing models.
 Then the Bayes factor comparing <span class="math inline">\(\mathcal{M}_0\)</span> to <span class="math inline">\(\mathcal{M_1}\)</span> is
 <span class="math display">\[\begin{equation}
@@ -793,16 +812,6 @@ B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \ma
 where <span class="math inline">\(p(\mathbf{y} \, | \, \ \mathcal{M})\)</span> denotes the evidence under model <span class="math inline">\(\mathcal{M}\)</span>.
 If <span class="math inline">\(B_{01} &gt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M}_0\)</span> and if <span class="math inline">\(B_{01} &lt; 1\)</span> then support is provided for <span class="math inline">\(\mathcal{M}_1\)</span>.
 Bayes factors can be framed as predictive criterion as follows.</p>
-</div>
-<div id="scoring-rules" class="section level3 hasAnchor" number="3.4.4">
-<h3><span class="header-section-number">3.4.4</span> Scoring rules<a href="bayes-st.html#scoring-rules" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Scoring rules [SR; <span class="citation">Gneiting and Raftery (<a href="#ref-gneiting2007strictly">2007</a>)</span>] measure the quality of probabilistic forecasts.
-The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
-In fact, any information criterion or cross-validation strategy can be adapted to use a different scoring rule.</p>
-<p>The log score (LS) is an example of a strictly proper scoring rule (SPSR).
-A scoring rule is called proper when such and such.
-A scoring rule is called strictly proper when such and such.
-Another example of a SPSR is the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], which generalises the Brier score <span class="citation">(<a href="#ref-brier1950verification">Brier 1950</a>)</span> beyond binary classification.</p>
 </div>
 </div>
 <div id="survey" class="section level2 hasAnchor" number="3.5">
@@ -1066,6 +1075,9 @@ Tokdar, Surya T, and Robert E Kass. 2010. <span>“<span class="nocase">Importan
 </div>
 <div id="ref-measure2012sampling" class="csl-entry">
 USAID. 2012. <span>“<span class="nocase">Sampling and Household Listing Manual: Demographic and Health Surveys Methodology</span>.”</span> <a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf">https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf</a>.
+</div>
+<div id="ref-vehtari2017practical" class="csl-entry">
+Vehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. <span>“Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.”</span> <em>Statistics and Computing</em> 27: 1413–32.
 </div>
 <div id="ref-watanabe2013widely" class="csl-entry">
 Watanabe, Sumio. 2013. <span>“<span class="nocase">A widely applicable Bayesian information criterion</span>.”</span> <em>Journal of Machine Learning Research</em> 14 (Mar): 867–97.
