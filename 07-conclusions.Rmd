@@ -52,7 +52,7 @@ The work done in this thesis, particularly Chapters \@ref(beyond-borders) and \@
 In part, this approach reflects the complexity of the models and methods used in this thesis.
 Understanding complex systems from a theoretical perspective can be challenging.
 That being said, much of the work done in this thesis would benefit from closer integration with statistical theory.
-Though end-to-end theoretical understanding is unlikely, value could come from better understanding of limiting cases, simplified examples, and steps in complete procedures.
+Though end-to-end theoretical understanding is overly hopeful, significant advantages could come from better understanding of limiting cases, simplified versions, and components of complete procedures.
 
 In working most tangibly with real world data, Chapter \@ref(multi-agyw) inherits a wide range of limitations.
 To highlight a few:
@@ -78,37 +78,43 @@ The primary difficulty, as it appears now, which would have to be overcome is th
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-k-fixed.png")
 ```
 
-3. The universal INLA implementation developed in Chapter \@ref(naomi-aghq) is enabling of methodological research.
+3. The universal INLA implementation developed in Chapter \@ref(naomi-aghq) enables methodological research.
 For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections \@ref(loaloa) and \@ref(malawi)).
-For this purpose, it is particularly important that the `TMB` C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via `tmbstan`.
-Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
-How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
-For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
-Additional theoretical work could be conducted to complement the empirical work described above.
-This work could be benefited by the exhaustive specification of the INLA-like algorithms used in this thesis.
+This type of research benefits greatly from a single `TMB` C++ template for the log-posterior supporting inference using multiple methods, including gold-standard NUTS via `tmbstan`.
+
+    Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
+    How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
+    For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
+
+    Additionally, theoretical work could be conducted to complement the empirical work described above, extending the findings of @bilodeau2022stochastic.
+    This work is benefited by the exhaustive specification of the INLA-like algorithms used in this thesis.
 
 ## Broader reflections
 
 Conducting the work in this thesis involved testing the boundaries of available statistical software.
 For example, I found it challenging, if not impossible, to implement a common model using different inferential software.
 As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes: "the devil is in the details".
-Similarly, I encountered difficulties implementing a desired collection of different models in a common inferential software.
+Similarly, I encountered issues implementing a desired collection of different models in a common inferential software.
+From personal experience, my colleagues have also encountered similar problems.
 If not addressed, these difficulties would result in conflation of statistical models and inference methodologies, limiting the validity of any findings.
 Ultimately, I resolved these issues by implementing all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
 (Additionally, I would recommend implementing the model used in Chapter \@ref(multi-agyw) in `TMB` for future development.)
-Alongside being sufficiently flexible to meet my model specification requirements, `TMB` is compatible with a range of inference methodologies (including those contributed to in this thesis).
+Alongside being sufficiently flexible to meet my model specification requirements, `TMB` is compatible with a range of inference methodologies, including those advanced in this thesis.
 As such, `TMB` remains [@osgood2023statistical] an under-rated statistical tool.
-In demonstrating some of its capabilities, I hope that this thesis might contribute to its wider adoption.
+In demonstrating some of its capabilities, I hope this thesis contributes to its wider adoption.
 
 There are both direct and indirect paths to impact for the work in this thesis.
 Directly, the methodological contributions of Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) may eventually lead to marginally more accurate indicator estimates, contributing to a broadly more effective response.
-However, these improvements in accuracy seem of quite minor consequence within the broader context of the HIV response and the factors limiting its effectiveness.
-The applied contributions of Chapter \@ref(multi-agyw) have a more promising case for direct impact.
+However, these improvements in accuracy seem of minor consequence within the broader context of the HIV response, and factors limiting its effectiveness.
+The applied contributions of Chapter \@ref(multi-agyw) have a more promising case for direct impact, and indeed I have seen evidence of engagement with the work by decision makers.
 
 To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
 I hope that having done so facilitates my work to be scrutinised, and more optimistically, built upon.
-For example, with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter \@ref(multi-agyw) to include additional countries (Panel \@ref(fig:global-update)B).
+In part this hope has already been realised, as with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter \@ref(multi-agyw) to include additional countries (Panel \@ref(fig:global-update)B).
 This would not have been possible without tools from the R ecosystem such as `rmarkdown` and `rticles` for reporting, `devtools` for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as `orderly` and `didehpc`.
+It is crucial that academia adjusts to appropriately incentivises software contributions, and encourages adaption of open science best practices.
+Work done to inform public health decision making should be held to high standards of transparency, reproducibility and collaboration.
+Especially so in an outbreak response scenario, where time is limited and decisions may be of significant consequence.
 
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
 <!-- Greater reliance on routine health system data. -->
