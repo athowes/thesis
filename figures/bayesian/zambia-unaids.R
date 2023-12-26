@@ -88,7 +88,7 @@ maps <- sf_constituency %>%
   ) %>%
   ggplot(aes(fill = est)) +
   geom_sf(size = 0.1, color = "grey30") +
-  facet_grid(sample_size ~ type) +
+  facet_grid(type ~ sample_size) +
   scale_fill_viridis_c(
     option = "C", direction = 1, limits = c(0, 0.6),
     labels = scales::label_percent(1), na.value = viridis::viridis(20, option = "C")[1]
@@ -96,13 +96,14 @@ maps <- sf_constituency %>%
   labs(fill = "") +
   theme_void() +
   theme(
-    legend.position = "bottom",
-    legend.key.width = unit(1, 'cm')
+    legend.position = "left",
+    legend.key.width = unit(0.75, 'cm'),
+    strip.text.y = element_text(angle = 270)
   )
 
 maps
 
-ggsave("figures/bayesian/zmb-maps.png", h = 7, w = 6.25)
+ggsave("figures/bayesian/zmb-maps.png", h = 3.5, w = 6.25)
 
 scatter <- sf_constituency %>%
   sf::st_drop_geometry() %>%
@@ -115,13 +116,15 @@ scatter <- sf_constituency %>%
   dplyr::select(rho, sample_size, type, est) %>%
   ggplot(aes(x = rho, y = est)) +
   geom_point(alpha = 0.5, shape = 1) +
-  facet_grid(sample_size ~ type) +
+  facet_grid(type ~ sample_size) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
-  stat_cor(aes(label = after_stat(r.label)), method = "pearson", label.x = 0.75, label.y = 0.1, p.digits = 3) +
-  lims(x = c(0, 1), y = c(0, 1)) +
+  stat_cor(aes(label = after_stat(r.label)), method = "pearson", label.x = 0.6, label.y = 0.1, p.digits = 3) +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.5, 1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 1)) +
+  coord_fixed(ratio = 1) +
   labs(x = "Underlying truth", y = "Estimate") +
   theme_minimal()
 
 scatter
 
-ggsave("figures/bayesian/zmb-scatter.png", h = 7, w = 6.25, bg = "white")
+ggsave("figures/bayesian/zmb-scatter.png", h = 4.25, w = 6.25, bg = "white")
