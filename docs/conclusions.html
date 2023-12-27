@@ -411,7 +411,7 @@ div.csl-indent {
 <h1><span class="header-section-number">7</span> Conclusions<a href="conclusions.html#conclusions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 <!-- JWE: Minor corrections often involve (1) fixing typos, (2) clarifying things, (3) elaborating on the contributions to science and implications of the PhD in the conclusions chapter [by far the most common point of examiner feedback] -->
-<p>This chapter concludes the thesis by discussing the most important contributions, limitations, promising avenues for future work, and broader reflections about the work.</p>
+<p>This chapter concludes the thesis by discussing its most important contributions, limitations, some promising avenues for future work, and broader reflections about the work.</p>
 <div id="contributions" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Contributions<a href="conclusions.html#contributions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Chapter <a href="beyond-borders.html#beyond-borders">4</a> used tools for model assessment such as proper scoring rules and posterior predictive checks to comprehensively compare adjacency- and kernel-based models for spatial structure.
@@ -425,40 +425,40 @@ Figure 7.1: Panel A shows the front page of <span class="citation">UNAIDS (<a hr
 </p>
 </div>
 <p>Chapter <a href="multi-agyw.html#multi-agyw">5</a> estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy <span class="citation">(<a href="#ref-unaids2021global">UNAIDS 2021b</a>)</span>.
-Risk group proportion estimates were used to disaggregate HIV prevalence and incidence estimates by behaviour, and assess the benefits of a variety of risk stratification strategies.
-This work forms the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
-At least 30 countries have now been included in the tool, extending from the 13 initially included [Figure <a href="conclusions.html#fig:global-update">7.1</a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
-The models informing the tool will be rerun each year with updated data as a part of UNAIDS annual HIV estimates process.
+Risk group proportion estimates were used to behaviorally disaggregate HIV prevalence and incidence, and assess the benefits of a variety of risk stratification strategies.
+This work is the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
+The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure <a href="conclusions.html#fig:global-update">7.1</a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
+Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter <a href="multi-agyw.html#multi-agyw">5</a> exemplified specification of complex multinomial spatio-temporal models in <code>R-INLA</code> using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.</p>
 <p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by a challenging and practically important problem in evidence synthesis for small-area estimation of HIV indicators.
 Its most important contributions are two-fold.
 First, an implementation of INLA which is compatible with models specified using a <code>TMB</code> C++ template.
-Notably, this contribution enables practitioners to fit essentially any model using INLA for the first time.
+For the first time, practitioners can now fit essentially any model using INLA.
 Second, a quadrature rule which naturally extends the applicability of INLA methods to moderate hyperparameter dimension, by combining PCA and AGHQ.</p>
 </div>
 <div id="limitations-1" class="section level2 hasAnchor" number="7.2">
 <h2><span class="header-section-number">7.2</span> Limitations<a href="conclusions.html#limitations-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The work done in this thesis, particularly Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a>, focused on producing empirical evidence experimentally.
-In part, this approach reflects the complexity of the models and methods used in this thesis.
+<p>The work done in this thesis, particularly Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a>, focused on producing experimental, empirical evidence.
+This approach reflects the complexity of the models and methods used in this thesis.
 Understanding complex systems from a theoretical perspective can be challenging.
-That being said, much of the work done in this thesis would benefit from closer integration with statistical theory.
-Though end-to-end theoretical understanding is overly hopeful, significant advantages could come from better understanding of limiting cases, simplified versions, and components of complete procedures.</p>
+That said, the work in this thesis would benefit from closer integration with statistical theory.
+While obtaining comprehensive theoretical understanding of models or algorithms may be too optimistic, there may be significant value in better understanding simplified examples, limiting cases, or constituent parts.</p>
 <p>In working most tangibly with real world data, Chapter <a href="multi-agyw.html#multi-agyw">5</a> inherits a wide range of limitations.
 To highlight a few:
-the external validity of risk ratios derived from cohort studies.</p>
+the external validity of risk ratios derived from cohort studies, difficulties defining and measuring key population sizes, and under-reporting of high-risk sexual behaviour.</p>
 </div>
 <div id="future-work" class="section level2 hasAnchor" number="7.3">
 <h2><span class="header-section-number">7.3</span> Future work<a href="conclusions.html#future-work" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Promising avenues for future work that I would prioritise include:</p>
+<p>Promising avenues for future work, that I might prioritise, include:</p>
 <ol style="list-style-type: decimal">
-<li><p>Although AGYW are disproportionately at risk of HIV infection, 56% of new infections in SSA occur in other demographic groups.
-As such, it would be valuable to extend the risk group model developed in Chapter <a href="multi-agyw.html#multi-agyw">5</a>, and the derived prioritisation tool, to include all adults 15-49.
-This might involve modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span>.
-Such a model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
-<li><p>Practical use of the INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would benefit significantly from improvements to its speed and usability.
-The most important speed enhancement would likely come from using the simplified approximation to the Laplace marginals developed by <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.
-Usability would be improved by integration of the method into statistical software, first and foremost via the <code>aghq</code> package.
-The primary difficulty, as it appears now, which would have to be overcome is that the <code>random</code> argument of <code>TMB::MakeADFun</code> does not allow indexing.</p></li>
+<li><p>It would be valuable to extend the risk group model developed in Chapter <a href="multi-agyw.html#multi-agyw">5</a>, and the resulting tool, to include all adults 15-49.
+Although AGYW are disproportionately at risk of HIV infection, 56% of new infections in SSA occur in other demographic groups.
+Modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span> may help to overcome reporting biases by harmonising male and female reporting.
+This model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
+<li><p>The INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would benefit significantly from improvements to its speed and usability.
+The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.
+Usability would be improved by providing the method as a part of statistical software, likely via the <code>aghq</code> package.
+The primary difficulty which would have to be overcome to do so is that the <code>random</code> argument of <code>TMB::MakeADFun</code> does not allow indexing.</p></li>
 </ol>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-diff-k-fixed"></span>
@@ -468,9 +468,9 @@ Figure 7.2: For the Loa loa ELGM, increasing the number of quadrature nodes per 
 </p>
 </div>
 <ol start="3" style="list-style-type: decimal">
-<li><p>The universal INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> enables methodological research.
+<li><p>New methodological research could be done, enabled by the universal INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.
 For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections <a href="naomi-aghq.html#loaloa">6.2.2</a> and <a href="naomi-aghq.html#malawi">6.5</a>).
-This type of research benefits greatly from a single <code>TMB</code> C++ template for the log-posterior supporting inference using multiple methods, including gold-standard NUTS via <code>tmbstan</code>.</p>
+That a single <code>TMB</code> C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via <code>tmbstan</code>, is a substantial asset in conducting this type of research.</p>
 <p>Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
 How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
 For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure <a href="conclusions.html#fig:conditional-simulation-diff-k-fixed">7.2</a>).</p>
@@ -494,14 +494,15 @@ In demonstrating some of its capabilities, I hope this thesis contributes to its
 <p>There are both direct and indirect paths to impact for the work in this thesis.
 Directly, the methodological contributions of Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> may eventually lead to marginally more accurate indicator estimates, contributing to a broadly more effective response.
 However, these improvements in accuracy seem of minor consequence within the broader context of the HIV response, and factors limiting its effectiveness.
-The applied contributions of Chapter <a href="multi-agyw.html#multi-agyw">5</a> have a more promising case for direct impact, and indeed I have seen evidence of engagement with the work by decision makers.</p>
+The applied contributions of Chapter <a href="multi-agyw.html#multi-agyw">5</a> have a more promising case for direct impact.
+Indeed, I have seen evidence of engagement with this work by decision makers, though this alone is not sufficient to generate impact.</p>
 <p>To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
 I hope that having done so facilitates my work to be scrutinised, and more optimistically, built upon.
 In part this hope has already been realised, as with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter <a href="multi-agyw.html#multi-agyw">5</a> to include additional countries (Panel <a href="conclusions.html#fig:global-update">7.1</a>B).
 This would not have been possible without tools from the R ecosystem such as <code>rmarkdown</code> and <code>rticles</code> for reporting, <code>devtools</code> for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as <code>orderly</code> and <code>didehpc</code>.
 It is crucial that academia adjusts to appropriately incentivises software contributions, and encourages adaption of open science best practices.
 Work done to inform public health decision making should be held to high standards of transparency, reproducibility and collaboration.
-Especially so in an outbreak response scenario, where time is limited and decisions may be of significant consequence.</p>
+Especially so in an outbreak response scenario <span class="citation">(<a href="#ref-grieve2023importance">Grieve et al. 2023</a>)</span>, where time is limited and decisions may be of significant consequence.</p>
 <!-- Aims for HIV response going forward, and the surveillance capabilities needed to meet them. -->
 <!-- Greater reliance on routine health system data. -->
 <!-- It is not recommended to include HIV testing in nationally representative household surveys in low (<2%) HIV prevalence settings [@world2005guidelines]. -->
@@ -517,6 +518,9 @@ Especially so in an outbreak response scenario, where time is limited and decisi
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-bilodeau2022stochastic" class="csl-entry">
 Bilodeau, Blair, Alex Stringer, and Yanbo Tang. 2022. <span>“<span class="nocase">Stochastic convergence rates and applications of adaptive quadrature in Bayesian inference</span>.”</span> <em>Journal of the American Statistical Association</em>, 1–11.
+</div>
+<div id="ref-grieve2023importance" class="csl-entry">
+Grieve, Richard, Youqi Yang, Sam Abbott, Giridhara R Babu, Malay Bhattacharyya, Natalie Dean, Stephen Evans, et al. 2023. <span>“The Importance of Investing in Data, Models, Experiments, Team Science, and Public Trust to Help Policymakers Prepare for the Next Pandemic.”</span> <em>PLOS Global Public Health</em> 3 (11): e0002601.
 </div>
 <div id="ref-osgood2023statistical" class="csl-entry">
 Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“<span class="nocase">A Statistical Review of Template Model Builder: A Flexible Tool for Spatial Modelling</span>.”</span> <em>International Statistical Review</em> 91 (2): 318–42.
