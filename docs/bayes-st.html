@@ -826,30 +826,30 @@ p(\mathbf{y}) = p(y_1) p(y_2 \, | \, y_1) \cdots p(y_n \, | \, y_{n - 1}, \ldots
 </div>
 <div id="survey" class="section level2 hasAnchor" number="3.5">
 <h2><span class="header-section-number">3.5</span> Survey methods<a href="bayes-st.html#survey" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Large national household surveys (Section <a href="hiv-aids.html#hiv-data">2.2.1</a>) provide the high quality population-level information about HIV indicators in SSA.
-Two examples are the Demographic and Health Surveys [DHS; <span class="citation">USAID (<a href="#ref-measure2012sampling">2012</a>)</span>] and Population-based HIV Impact Assessment (PHIA) surveys.
-DHS are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries, and PHIA are funded by PEPFAR and run every four to five years in high HIV burden countries.
-Specific methods are required to analyse the data produced by these surveys.</p>
+<p>Large national household surveys (Section <a href="hiv-aids.html#hiv-data">2.2.1</a>) provide the highest quality population-level information about HIV indicators in SSA.
+Demographic and Health Surveys [DHS; <span class="citation">USAID (<a href="#ref-measure2012sampling">2012</a>)</span>] are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
+Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every four to five years in high HIV burden countries.</p>
+<p>Specific methods are required to analyse the responses from these surveys.</p>
 <div id="survey-notation-and-key-terms" class="section level3 hasAnchor" number="3.5.1">
 <h3><span class="header-section-number">3.5.1</span> Survey notation and key terms<a href="bayes-st.html#survey-notation-and-key-terms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Consider a population of individuals <span class="math inline">\(i = 1, \ldots, N\)</span> with outcomes of interest <span class="math inline">\(y_i\)</span>.
-It is usually too expensive or otherwise impractical to run a census, so only a subset of these individuals are sampled.
-Let <span class="math inline">\(S_i\)</span> be an indicator for whether or not individual <span class="math inline">\(i\)</span> is sampled.
-Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
-Let <span class="math inline">\(R_i\)</span> be an indicator for whether or not <span class="math inline">\(y_i\)</span> is recorded.
-If <span class="math inline">\(S_i = 0\)</span> then <span class="math inline">\(R_i = 0\)</span>, and if <span class="math inline">\(S_i = 1\)</span> then individual <span class="math inline">\(i\)</span> may not respond such that <span class="math inline">\(R_i = 0\)</span>.</p>
-<p>If a census were run, and all responses were recorded, then any population quantity could be directly calculated.
-For example, if <span class="math inline">\(G_i = G(y_i)\)</span> then the population mean of <span class="math inline">\(G\)</span> is
+<p>Consider a population of <span class="math inline">\(N\)</span> individuals, indexed by <span class="math inline">\(i\)</span>, with outcomes of interest <span class="math inline">\(y_i\)</span>.
+If a census were run, with all responses recorded, then any population quantities of interest could be directly calculated.
+However, running a census is usually too expensive or otherwise impractical.
+As such, in a survey only a subset of individuals are sampled: let <span class="math inline">\(S_i\)</span> be an indicator for whether or not individual <span class="math inline">\(i\)</span> is sampled.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise: let <span class="math inline">\(R_i\)</span> be an indicator for whether or not <span class="math inline">\(y_i\)</span> is recorded.
+If <span class="math inline">\(S_i = 0\)</span> then <span class="math inline">\(R_i = 0\)</span>, and if <span class="math inline">\(S_i = 1\)</span> then individual <span class="math inline">\(i\)</span> may not respond such that <span class="math inline">\(R_i = 0\)</span>.
+Consider a function <span class="math inline">\(G_i = G(y_i)\)</span>.
+The population mean of <span class="math inline">\(G\)</span> is
 <span class="math display">\[\begin{equation}
-\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
+\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i),
 \end{equation}\]</span>
-Instead, population quantities may be estimated based on the recorded subset of the population by
+and a direct estimate of <span class="math inline">\(\bar G\)</span> based on the recorded subset of the population is
 <span class="math display">\[\begin{equation}
 \bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
 \end{equation}\]</span>
 where <span class="math inline">\(m_R = \sum_{i = 1}^N R_i\)</span> is the recorded sample size.</p>
-<p>A probability sample refers to the case when individuals are selected to be included in the survey at random.
-In a non-probability sample, inclusion or exclusion from the survey is deterministic.
+<p>In a probability sample, individuals are selected to be included in the survey at random.
+On the other hand, in a non-probability sample, inclusion or exclusion from the survey is deterministic.
 A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal
 <span class="math display">\[\begin{equation}
 P(S_i = 1) = \frac{1}{N}.
@@ -860,8 +860,9 @@ P(S_i = 1) = \pi_i,
 \end{equation}\]</span>
 with <span class="math inline">\(\sum_{i = 1}^N \pi_i = 1\)</span> and <span class="math inline">\(\pi_i &gt; 0\)</span>.
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
-Care is required in analysing data collected using complex survey designs.
-Under a complex design, not accounting for unequal sampling probabilities will result in bias (that said, for a SRS, nonresponse can cause analogous bias).</p>
+However, care is required in analysing data collected using complex survey designs.
+Under a complex design, not accounting for unequal sampling probabilities will result in bias.
+That said, even under SRS, nonresponse analogous bias can be caused by non-response.</p>
 </div>
 <div id="survey-design" class="section level3 hasAnchor" number="3.5.2">
 <h3><span class="header-section-number">3.5.2</span> Survey design<a href="bayes-st.html#survey-design" class="anchor-section" aria-label="Anchor link to header"></a></h3>

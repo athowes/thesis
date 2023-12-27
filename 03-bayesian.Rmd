@@ -467,33 +467,34 @@ p(\mathbf{y}) = p(y_1) p(y_2 \, | \, y_1) \cdots p(y_n \, | \, y_{n - 1}, \ldots
 
 ## Survey methods {#survey}
 
-Large national household surveys (Section \@ref(hiv-data)) provide the high quality population-level information about HIV indicators in SSA.
-Two examples are the Demographic and Health Surveys [DHS; @measure2012sampling] and Population-based HIV Impact Assessment (PHIA) surveys.
-DHS are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries, and PHIA are funded by PEPFAR and run every four to five years in high HIV burden countries.
-Specific methods are required to analyse the data produced by these surveys.
+Large national household surveys (Section \@ref(hiv-data)) provide the highest quality population-level information about HIV indicators in SSA.
+Demographic and Health Surveys [DHS; @measure2012sampling] are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
+Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every four to five years in high HIV burden countries.
+
+Specific methods are required to analyse the responses from these surveys. 
+
 
 ### Survey notation and key terms
 
-Consider a population of individuals $i = 1, \ldots, N$ with outcomes of interest $y_i$.
-It is usually too expensive or otherwise impractical to run a census, so only a subset of these individuals are sampled.
-Let $S_i$ be an indicator for whether or not individual $i$ is sampled.
-Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise.
-Let $R_i$ be an indicator for whether or not $y_i$ is recorded.
+Consider a population of $N$ individuals, indexed by $i$, with outcomes of interest $y_i$.
+If a census were run, with all responses recorded, then any population quantities of interest could be directly calculated.
+However, running a census is usually too expensive or otherwise impractical.
+As such, in a survey only a subset of individuals are sampled: let $S_i$ be an indicator for whether or not individual $i$ is sampled.
+Furthermore, only a subset of those sampled have their outcome recorded, due to nonresponse or otherwise: let $R_i$ be an indicator for whether or not $y_i$ is recorded.
 If $S_i = 0$ then $R_i = 0$, and if $S_i = 1$ then individual $i$ may not respond such that $R_i = 0$.
-
-If a census were run, and all responses were recorded, then any population quantity could be directly calculated.
-For example, if $G_i = G(y_i)$ then the population mean of $G$ is
+Consider a function $G_i = G(y_i)$.
+The population mean of $G$ is
 \begin{equation}
-\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i).
+\bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i),
 \end{equation}
-Instead, population quantities may be estimated based on the recorded subset of the population by
+and a direct estimate of $\bar G$ based on the recorded subset of the population is
 \begin{equation}
 \bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
 \end{equation}
 where $m_R = \sum_{i = 1}^N R_i$ is the recorded sample size.
 
-A probability sample refers to the case when individuals are selected to be included in the survey at random.
-In a non-probability sample, inclusion or exclusion from the survey is deterministic.
+In a probability sample, individuals are selected to be included in the survey at random.
+On the other hand, in a non-probability sample, inclusion or exclusion from the survey is deterministic.
 A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal
 \begin{equation}
 P(S_i = 1) = \frac{1}{N}.
@@ -504,8 +505,9 @@ P(S_i = 1) = \pi_i,
 \end{equation}
 with $\sum_{i = 1}^N \pi_i = 1$ and $\pi_i > 0$.
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
-Care is required in analysing data collected using complex survey designs.
-Under a complex design, not accounting for unequal sampling probabilities will result in bias (that said, for a SRS, nonresponse can cause analogous bias).
+However, care is required in analysing data collected using complex survey designs.
+Under a complex design, not accounting for unequal sampling probabilities will result in bias.
+That said, even under SRS, nonresponse analogous bias can be caused by non-response.
 
 ### Survey design
 
