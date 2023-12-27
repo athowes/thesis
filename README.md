@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 291 pages. There are various
+> Thesis under construction! Currently 290 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -155,7 +155,9 @@ time to work on it:
   and [Wood
   (2020)](https://academic.oup.com/biomet/article-abstract/107/1/223/5572662).
   It would be instructive to implement these approximations for a simple
-  example.
+  example. Additionally, a more complete description of the “augmenting
+  the latent field” issue (perhaps a simple example would be instructive
+  here too).
 - For all figures showing the use of a quadrature rule, it could be
   informative to compute and display the resulting integral estimate.
   When compared to a known truth, this would make demonstrate the value
@@ -245,3 +247,16 @@ time to work on it:
   `aghq` and output the model comparison criteria. Likely the best
   approach would be to use samples, as this is the most transferable
   way.
+- In Chapter 3 I follow other authors in using the notation
+  $u_k(w_{ki})$ to refer to random effects. It would be good to connect
+  up this functional notation with specifying random effects as
+  e.g. $u_i$ rather than some function of some covariates.
+- In Chapter 4, for the HIV survey experiments, the kernel models with a
+  lengthscale prior seem to be performing as if they are IID models. I
+  have a strong suspicion that what is going on is that the prior is set
+  on the wrong units, and as such the model has learnt a very small
+  lengthscale and behaves as if it is IID. I don’t think this should be
+  too difficult to fix. (I’ve had issues before with the `units` R
+  package and how it is used in `sf`.)
+- In Chapter 3, it would be nice to include a figure illustrating the
+  DHS sampling procedure.
