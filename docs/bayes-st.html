@@ -214,7 +214,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="bayes-st.html"><a href="bayes-st.html#survey"><i class="fa fa-check"></i><b>3.5</b> Survey methods</a>
 <ul>
-<li class="chapter" data-level="3.5.1" data-path="bayes-st.html"><a href="bayes-st.html#survey-notation-and-key-terms"><i class="fa fa-check"></i><b>3.5.1</b> Survey notation and key terms</a></li>
+<li class="chapter" data-level="3.5.1" data-path="bayes-st.html"><a href="bayes-st.html#background-1"><i class="fa fa-check"></i><b>3.5.1</b> Background</a></li>
 <li class="chapter" data-level="3.5.2" data-path="bayes-st.html"><a href="bayes-st.html#survey-design"><i class="fa fa-check"></i><b>3.5.2</b> Survey design</a></li>
 <li class="chapter" data-level="3.5.3" data-path="bayes-st.html"><a href="bayes-st.html#survey-analysis"><i class="fa fa-check"></i><b>3.5.3</b> Survey analysis</a></li>
 </ul></li>
@@ -257,7 +257,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="5" data-path="multi-agyw.html"><a href="multi-agyw.html"><i class="fa fa-check"></i><b>5</b> A model for risk group proportions</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-1"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
+<li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-2"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
 <li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#data"><i class="fa fa-check"></i><b>5.2</b> Data</a>
 <ul>
 <li class="chapter" data-level="5.2.1" data-path="multi-agyw.html"><a href="multi-agyw.html#behavioural-data-from-household-surveys"><i class="fa fa-check"></i><b>5.2.1</b> Behavioural data from household surveys</a></li>
@@ -829,9 +829,10 @@ p(\mathbf{y}) = p(y_1) p(y_2 \, | \, y_1) \cdots p(y_n \, | \, y_{n - 1}, \ldots
 <p>Large national household surveys (Section <a href="hiv-aids.html#hiv-data">2.2.1</a>) provide the highest quality population-level information about HIV indicators in SSA.
 Demographic and Health Surveys [DHS; <span class="citation">USAID (<a href="#ref-measure2012sampling">2012</a>)</span>] are funded by the United States Agency for International Development (USAID) and run every three to five years in most countries.
 Population-based HIV Impact Assessment (PHIA) surveys are funded by PEPFAR and run every four to five years in high HIV burden countries.</p>
-<p>Specific methods are required to analyse the responses from these surveys.</p>
-<div id="survey-notation-and-key-terms" class="section level3 hasAnchor" number="3.5.1">
-<h3><span class="header-section-number">3.5.1</span> Survey notation and key terms<a href="bayes-st.html#survey-notation-and-key-terms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Analysis of responses from survey methods can require specific methods.
+This section provides required background, before describing the survey design approach used by household surveys in SSA, and the methdos used to analyse this data in this thesis.</p>
+<div id="background-1" class="section level3 hasAnchor" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> Background<a href="bayes-st.html#background-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Consider a population of <span class="math inline">\(N\)</span> individuals, indexed by <span class="math inline">\(i\)</span>, with outcomes of interest <span class="math inline">\(y_i\)</span>.
 If a census were run, with all responses recorded, then any population quantities of interest could be directly calculated.
 However, running a census is usually too expensive or otherwise impractical.
@@ -844,21 +845,14 @@ The population mean of <span class="math inline">\(G\)</span> is
 \bar G = \frac{1}{N} \sum_{i = 1}^N G(y_i),
 \end{equation}\]</span>
 and a direct estimate of <span class="math inline">\(\bar G\)</span> based on the recorded subset of the population is
-<span class="math display">\[\begin{equation}
-\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \label{eq:direct}
+<span class="math display" id="eq:direct">\[\begin{equation}
+\bar G_R = \frac{\sum_{i = 1}^N R_i G(y_i)}{\sum_{i = 1}^N R_i}, \tag{3.11}
 \end{equation}\]</span>
 where <span class="math inline">\(m_R = \sum_{i = 1}^N R_i\)</span> is the recorded sample size.</p>
 <p>In a probability sample, individuals are selected to be included in the survey at random.
 On the other hand, in a non-probability sample, inclusion or exclusion from the survey is deterministic.
-A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal
-<span class="math display">\[\begin{equation}
-P(S_i = 1) = \frac{1}{N}.
-\end{equation}\]</span>
-A survey design is called complex when the sampling probabilities for each individual vary, such that
-<span class="math display">\[\begin{equation}
-P(S_i = 1) = \pi_i,
-\end{equation}\]</span>
-with <span class="math inline">\(\sum_{i = 1}^N \pi_i = 1\)</span> and <span class="math inline">\(\pi_i &gt; 0\)</span>.
+A simple random sample (SRS) is a probability sample where the sampling probability for each individual is equal <span class="math inline">\(\mathbb{P}(S_i = 1) = 1 / N\)</span>.
+A survey design is called complex when the sampling probabilities for each individual vary, such that <span class="math inline">\(\mathbb{P}(S_i = 1) = \pi_i\)</span>, with <span class="math inline">\(\sum_{i = 1}^N \pi_i = 1\)</span> and <span class="math inline">\(\pi_i &gt; 0\)</span>.
 Complex survey designs can offer both greater practicality and statistical efficiency than a SRS.
 However, care is required in analysing data collected using complex survey designs.
 Under a complex design, not accounting for unequal sampling probabilities will result in bias.
@@ -866,56 +860,58 @@ That said, even under SRS, nonresponse analogous bias can be caused by non-respo
 </div>
 <div id="survey-design" class="section level3 hasAnchor" number="3.5.2">
 <h3><span class="header-section-number">3.5.2</span> Survey design<a href="bayes-st.html#survey-design" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<!-- Add figure here to demonstrate sampling of DHS data -->
 <p>The DHS employs a two-stage sampling procedure.
-In the first stage, ennumeration areas (EAs) from a recently conducted census are typically used as the primary sampling unit (PSU).
-The EAs are then stratified by region, as well as by urban-rural status.
-After appropriate sample sizes are determined, EAs sampled with probability proportional to size (PPS).
-In the second stage, the secondary sampling units (SSUs) are households.
-All households in the selected EAs are listed, before being sampled systematically.
-Finally, each selected household is visited, and all adults are interviewed.</p>
-<p>The probability an individual is sampled is equal to the probability their household is sampled.
-The first-stage sampling probability of the <span class="math inline">\(j\)</span>th cluster in stratum <span class="math inline">\(h\)</span> given by
+In the first stage, typically ennumeration areas from a recently conducted census are used as the primary sampling unit, or cluster.
+The clusters are assigned strata <span class="math inline">\(h\)</span> by region, as well as by urban-rural status.
+After appropriate sample sizes <span class="math inline">\(n_h\)</span> are determined, EAs are sampled with probability proportional to size
 <span class="math display">\[\begin{equation}
 \pi_{1hj} = n_h \times \frac{N_{hj}}{\sum_j N_{hj}},
 \end{equation}\]</span>
-where <span class="math inline">\(N_{hj}\)</span> is the number of households and <span class="math inline">\(n_h\)</span> be the number of clusters selected in stratum <span class="math inline">\(h\)</span>.
-The second-stage sampling probability each household within the <span class="math inline">\(i\)</span>th cluster in stratum <span class="math inline">\(h\)</span> is
+where <span class="math inline">\(N_{hj}\)</span> is the number of households selected in strata <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>.
+In the second stage, the secondary sampling units are households.
+All households in the selected cluster are listed, before being sampled systematically at a regular interval, with equal probability
 <span class="math display">\[\begin{equation}
 \pi_{1hj} = \frac{n_{hj}}{N_{hj}},
 \end{equation}\]</span>
 where <span class="math inline">\(n_{hj}\)</span> is the number of households selected in cluster <span class="math inline">\(j\)</span> and stratum <span class="math inline">\(h\)</span>.
-That is, each household in the cluster has equal selection probability.
-The overall selection probability of each household in cluster <span class="math inline">\(j\)</span> of stratum <span class="math inline">\(h\)</span> is <span class="math inline">\(\pi_{hi} = \pi_{1hj} \times \pi_{2hj}\)</span>.</p>
+All adults are interviewed in each selected household.
+As a result, the probability an individual is sampled is equal to the probability their household is sampled <span class="math inline">\(\pi_{hj} = \pi_{1hj} \times \pi_{2hj}\)</span>.</p>
 </div>
 <div id="survey-analysis" class="section level3 hasAnchor" number="3.5.3">
 <h3><span class="header-section-number">3.5.3</span> Survey analysis<a href="bayes-st.html#survey-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Suppose a complex survey is run with sampling probabilities <span class="math inline">\(\pi_i\)</span>.
-The standard method for taking into account that some individuals are more likely to be included in the survey than others is to overweight the responses of those unlikely to be included, and underweight the responses of those likely to be included.
-This can be achieved using design weights <span class="math inline">\(\delta_i = 1 / \pi_i\)</span>, which can be thought of as the number of individuals in the population represented by the <span class="math inline">\(i\)</span>th sampled individual.
-Let <span class="math inline">\(P(R_i = 1 \, | \, S_i = 1) = \upsilon_i\)</span> be the probability of response for sampled individual <span class="math inline">\(i\)</span>.
-The problem of nonresponse can be treated in the same way using nonresponse weights <span class="math inline">\(\gamma_i = 1 / \upsilon_i\)</span>, which analogously can be thought of as the number of sampled individuals represented by the <span class="math inline">\(i\)</span>th recorded individual.
-Multiplying the design and nonresponse weights gives survey weights <span class="math inline">\(\omega_i = \delta_i \times \gamma_i\)</span>.</p>
-<p>A weighted estimate <span class="citation">(<a href="#ref-hajek1971discussion">Hájek 1971</a>)</span> of the population mean using the survey weights <span class="math inline">\(\omega_i\)</span> is given by
+<p>Suppose a survey is run with complex design, and sampling probabilities <span class="math inline">\(\pi_i\)</span>.
+Some individuals are more likely to be included in the survey than others.
+By over-weighting the responses of those unlikely to be included, and under-weighting the responses of those likely to be included, this feature can be taken into account.
+Design weights <span class="math inline">\(\delta_i = 1 / \pi_i\)</span> can be thought of as the number of individuals in the population represented by the <span class="math inline">\(i\)</span>th sampled individual.
+Let
 <span class="math display">\[\begin{equation}
-\bar G_\omega = \frac{\sum_{i = 1}^N \omega_j R_i G(y_i)}{\sum_{i = 1}^N \omega_i R_i}. \label{eq:hajek}
+\mathbb{P}(R_i = 1 \, | \, S_i = 1) = \upsilon_i
 \end{equation}\]</span>
-Decomposing the additive error of this estimate provides useful intuition as to the potential benefits of survey weighting.
-Following <span class="citation">Meng (<a href="#ref-meng2018statistical">2018</a>)</span> then under SRS
+be the probability of response for sampled individual <span class="math inline">\(i\)</span>.
+Nonresponse can be handled using nonresponse weights <span class="math inline">\(\gamma_i = 1 / \upsilon_i\)</span>, which analogously can be thought of as the number of sampled individuals represented by the <span class="math inline">\(i\)</span>th recorded individual.
+Multiplying the design and nonresponse weights gives survey weights <span class="math inline">\(\omega_i = \delta_i \times \gamma_i\)</span>.</p>
+<p>Extending Equation <a href="bayes-st.html#eq:direct">(3.11)</a>, a weighted estimate <span class="citation">(<a href="#ref-hajek1971discussion">Hájek 1971</a>)</span> of the population mean using the survey weights <span class="math inline">\(\omega_i\)</span> is
+<span class="math display" id="eq:hajek">\[\begin{equation}
+\bar G_\omega = \frac{\sum_{i = 1}^N \omega_j R_i G(y_i)}{\sum_{i = 1}^N \omega_i R_i}. \tag{3.12}
+\end{equation}\]</span>
+Following <span class="citation">Meng (<a href="#ref-meng2018statistical">2018</a>)</span> and <span class="citation">Bradley et al. (<a href="#ref-bradley2021unrepresentative">2021</a>)</span>, decomposing the additive error <span class="math inline">\(\bar G_\omega - \bar G\)</span> of Equation <a href="bayes-st.html#eq:hajek">(3.12)</a> provides useful intuition as to the benefits of survey weighting <span class="citation">(<a href="#ref-bailey2023new">M. A. Bailey 2023</a>)</span>.
+Under SRS then, the error is a product of three terms
 <span class="math display">\[\begin{align}
 \bar G_\omega - \bar G &amp;= \frac{\mathbb{E}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} - \mathbb{E}(G_i) = \frac{\mathbb{C}(\omega_i R_i G_i)}{\mathbb{E}(\omega_i R_i)} \\
 &amp;= \rho_{R_\omega, G} \times \sqrt{\frac{N - m_{R_\omega}}{m_{R_\omega}}} \times \sigma_G,
 \end{align}\]</span>
 where <span class="math inline">\(R_\omega = \omega R\)</span>.
-The data defect correlation (DDC) <span class="math inline">\(\rho_{R_\omega, G}\)</span> measures the correlation between the weighted recording mechanism and given function of the outcome of interest.
-To minimise the DDC then <span class="math inline">\(G \perp \!\!\! \perp R_\omega\)</span>.
-The data scarcity <span class="math inline">\(\sigma_{R_\omega} = \sqrt{(N - m_{R_\omega})/m_{R_\omega}}\)</span> measures the effective proportion of the population who have been recorded.
-The problem difficultly <span class="math inline">\(\sigma_G\)</span> measures the intrinsic difficulty of the estimation problem, and is independent of the sampling or analysis method.</p>
-<p>For simplicity, let <span class="math inline">\(G(y_i) = y_i\)</span> and each <span class="math inline">\(y_i \in \{0, 1\}\)</span>.
-We weight then model following <span class="citation">Chen, Wakefield, and Lumely (<a href="#ref-chen2014use">2014</a>)</span>.
-While this approach acknowledges the survey design, it has some important limitations.
-We ignore clustering structure.
-All of this isn’t great and that someone should figure this out <span class="citation">(<a href="#ref-gelman2007struggles">Gelman 2007</a>)</span>.</p>
+The first term is called the data defect correlation (DDC), and measures the correlation between the weighted recording mechanism and given function of the outcome of interest.
+The DDC is minimised when <span class="math inline">\(G \perp \!\!\! \perp R_\omega\)</span>.
+The second term is the data scarcity, and measures the effective proportion of the population who have been recorded.
+Finally, the third term is the problem difficultly, and measures the intrinsic difficulty of the estimation problem.
+This term is independent of the sampling or analysis method used.</p>
+<p>This thesis uses hierarchical Bayesian models defined using weighted direct survey estimates <span class="citation">(<a href="#ref-fay1979estimates">Fay and Herriot 1979</a>)</span>.
+Following <span class="citation">Chen, Wakefield, and Lumely (<a href="#ref-chen2014use">2014</a>)</span>, the sampling distribution of Equation <a href="bayes-st.html#eq:hajek">(3.12)</a> is arrived at by estimating its variance.
+Although this approach acknowledges the complex survey design, it has some important limitations.
+Foremost, it ignores clustering structure within the observations <span class="math inline">\(i\)</span>.
+Furthermore, as a two-step procedure, it fails to fully propagate uncertainty from a Bayesian perspective.
+While progress has been made in dealing with survey data, the opening comment of <span class="citation">Gelman (<a href="#ref-gelman2007struggles">2007</a>)</span>, that “survey weighting is a mess” remains in part relevant.</p>
 
 </div>
 </div>
@@ -924,6 +920,9 @@ All of this isn’t great and that someone should figure this out <span class="c
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-akaike1973information" class="csl-entry">
 Akaike, Hirotugu. 1973. <span>“<span class="nocase">Information theory as an extension of the maximum likelihood principle–In: Second International Symposium on Information Theory (Eds) BN Petrov, F</span>.”</span> <em>Csaki. BNPBF Csaki Budapest: Academiai Kiado</em>.
+</div>
+<div id="ref-bailey2023new" class="csl-entry">
+Bailey, Michael A. 2023. <span>“A New Paradigm for Polling.”</span> <em>Harvard Data Science Review</em> 5 (3).
 </div>
 <div id="ref-baker1994multinomial" class="csl-entry">
 Baker, Stuart G. 1994. <span>“<span class="nocase">The multinomial-Poisson transformation</span>.”</span> <em>Journal of the Royal Statistical Society: Series D (The Statistician)</em> 43 (4): 495–504.
@@ -939,6 +938,9 @@ Bivand, Roger S, Edzer J Pebesma, Virgilio Gómez-Rubio, and Edzer Jan Pebesma. 
 </div>
 <div id="ref-blei2017variational" class="csl-entry">
 Blei, David M, Alp Kucukelbir, and Jon D McAuliffe. 2017. <span>“<span class="nocase">Variational inference: A review for statisticians</span>.”</span> <em>Journal of the American Statistical Association</em> 112 (518): 859–77.
+</div>
+<div id="ref-bradley2021unrepresentative" class="csl-entry">
+Bradley, Valerie C, Shiro Kuriwaki, Michael Isakov, Dino Sejdinovic, Xiao-Li Meng, and Seth Flaxman. 2021. <span>“Unrepresentative Big Surveys Significantly Overestimated US Vaccine Uptake.”</span> <em>Nature</em> 600 (7890): 695–700.
 </div>
 <div id="ref-brier1950verification" class="csl-entry">
 Brier, Glenn W. 1950. <span>“<span class="nocase">Verification of forecasts expressed in terms of probability</span>.”</span> <em>Monthly Weather Review</em> 78 (1): 1–3.
@@ -960,6 +962,9 @@ Dempster, Arthur P, Nan M Laird, and Donald B Rubin. 1977. <span>“<span class=
 </div>
 <div id="ref-duane1987hybrid" class="csl-entry">
 Duane, Simon, Anthony D Kennedy, Brian J Pendleton, and Duncan Roweth. 1987. <span>“<span>Hybrid Monte Carlo</span>.”</span> <em>Physics Letters B</em> 195 (2): 216–22.
+</div>
+<div id="ref-fay1979estimates" class="csl-entry">
+Fay, Robert E, and Roger A Herriot. 1979. <span>“<span class="nocase">Estimates of income for small places: an application of James-Stein procedures to census data</span>.”</span> <em>Journal of the American Statistical Association</em> 74 (366a): 269–77.
 </div>
 <div id="ref-fisher1936design" class="csl-entry">
 Fisher, Ronald Aylmer. 1936. <span>“<span class="nocase">Design of experiments</span>.”</span> <em>British Medical Journal</em> 1 (3923): 554.
