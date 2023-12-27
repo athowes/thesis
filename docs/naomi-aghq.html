@@ -675,12 +675,11 @@ The AGHQ estimate of the normalising constant for <span class="math inline">\(k 
 \end{equation}\]</span>
 which corresponds to the Laplace approximation <span class="math inline">\(\tilde p_{\texttt{LA}}(\mathbf{y})\)</span> given in Equation <a href="naomi-aghq.html#eq:la2">(6.5)</a>.
 This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than <span class="math inline">\(k = 1\)</span> is required.</p>
-<!-- For each quadrature rule, the estimate of the integral is given by... -->
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:aghq-demo"></span>
-<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\). The integral approximation \(I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2\) obtained by the quadrature rule in each panel are given." width="95%" />
+<img src="figures/naomi-aghq/aghq-demo.png" alt="The Gauss-Hermite quadrature nodes \(\mathbf{z} \in \mathcal{Q}(2, 3)\) for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is \(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\), where \(\text{sn}(\cdot)\) is the standard skewnormal probability density function with shape parameter \(\alpha \in \mathbb{R}\)." width="95%" />
 <p class="caption">
-Figure 6.3: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>. The integral approximation <span class="math inline">\(I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2\)</span> obtained by the quadrature rule in each panel are given.
+Figure 6.3: The Gauss-Hermite quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(2, 3)\)</span> for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is <span class="math inline">\(f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)\)</span>, where <span class="math inline">\(\text{sn}(\cdot)\)</span> is the standard skewnormal probability density function with shape parameter <span class="math inline">\(\alpha \in \mathbb{R}\)</span>.
 </p>
 </div>
 <p>Two alternatives for the matrix decomposition <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}^{-1} = \hat{\mathbf{P}} \hat{\mathbf{P}}^\top\)</span> are the Cholesky and spectral decomposition <span class="citation">(<a href="#ref-jackel2005note">Jäckel 2005</a>)</span>.
@@ -806,22 +805,20 @@ Details are left to Section 3.2.3 of <span class="citation">Håvard Rue, Martino
 This work was motivated by a setting in which, which similar to extended latent Gaussian models [ELGMs; <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>], precision matrices are not typically as sparse as GMRFs.
 Details are left to <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.</p>
 </div>
-<div id="appending-the-noisy-structured-additive-predictor-to-the-latent-field" class="section level4 hasAnchor" number="6.1.3.5">
-<h4><span class="header-section-number">6.1.3.5</span> Appending the noisy structured additive predictor to the latent field<a href="naomi-aghq.html#appending-the-noisy-structured-additive-predictor-to-the-latent-field" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Discussion of INLA is concluded by outlining the cases for and against appending the noisy structured additive predictor to the latent field.
-The crux of the issue relates to the sparsity structure of the Hessian matrix
-<span class="math display">\[\begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
-\end{equation}\]</span>
-As before, <span class="math inline">\(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span>.</p>
-<p>The modified model used by <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> extends <span class="math inline">\(\mathbf{x}\)</span> to include a noisy structured additive predictor as follows
+<div id="augmenting-a-noisy-structured-additive-predictor-to-the-latent-field" class="section level4 hasAnchor" number="6.1.3.5">
+<h4><span class="header-section-number">6.1.3.5</span> Augmenting a noisy structured additive predictor to the latent field<a href="naomi-aghq.html#augmenting-a-noisy-structured-additive-predictor-to-the-latent-field" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Discussion of INLA is concluded by briefly mentioning a difference in implementation between <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> and <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>.
+Specifically, <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span> augment the latent field to include a noisy structured additive predictor as follows
 <span class="math display">\[\begin{align}
 \boldsymbol{\mathbf{\eta}}^\star &amp;= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
 \boldsymbol{\mathbf{\epsilon}} &amp;\sim \mathcal{N}(\mathbf{0}, \tau^{-1} \mathbf{I}_n), \\
-\mathbf{x}^\star &amp;= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\mathbf{0}, \cdots).
-\end{align}\]</span></p>
-<p><span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> note that approach has several drawbacks in the case of ELGMs where the matrix <span class="math inline">\(\cdots\)</span> is no longer diagonal, and may be dense.
-Discussed in <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span>.</p>
+\mathbf{x}^\star &amp;= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}).
+\end{align}\]</span>
+<span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> (Section 3.2) omit this augmentation, highlighting several drawbacks including: fitting ELGMs, fitting LGMs to large datasets, and theoretical study of the approximation error.
+Similarly, in what <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> (Section 2.1) refer to as the “modern” formula of INLA, the latent field is not augmented.
+The crux of the issue regards the dimensions and sparsity structure of the Hessian matrix <span class="math inline">\(\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}})\)</span>.
+Details are left to <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>.
+This thesis, as such, does not augment the latent field.</p>
 </div>
 </div>
 <div id="software" class="section level3 hasAnchor" number="6.1.4">

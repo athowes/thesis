@@ -324,12 +324,11 @@ The AGHQ estimate of the normalising constant for $k = 1$ is then given by
 which corresponds to the Laplace approximation $\tilde p_{\texttt{LA}}(\mathbf{y})$ given in Equation \@ref(eq:la2).
 This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than $k = 1$ is required.
 
-<!-- For each quadrature rule, the estimate of the integral is given by... -->
-
-(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$. The integral approximation $I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2$ obtained by the quadrature rule in each panel are given.
+(ref:aghq-demo) The Gauss-Hermite quadrature nodes $\mathbf{z} \in \mathcal{Q}(2, 3)$ for a two-dimensional integral with three nodes per dimension (Panel A). Adaption occurs based on the mode (Panel B) and covariance of the integrand via either the Cholesky (Panel C) or spectral (Panel D) decomposition of the inverse curvature at the mode. Here, the integrand is $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$, where $\text{sn}(\cdot)$ is the standard skewnormal probability density function with shape parameter $\alpha \in \mathbb{R}$.
 
 ```{r aghq-demo, fig.cap="(ref:aghq-demo)"}
 knitr::include_graphics("figures/naomi-aghq/aghq-demo.png")
+# The integral approximation $I \approx \int \int f(z_1, z_2) \text{d} z_1 \text{d} z_2$ obtained by the quadrature rule in each panel are given.
 ```
 
 Two alternatives for the matrix decomposition $\hat{\boldsymbol{\mathbf{H}}}^{-1} = \hat{\mathbf{P}} \hat{\mathbf{P}}^\top$ are the Cholesky and spectral decomposition [@jackel2005note].
@@ -460,24 +459,20 @@ Details are left to Section 3.2.3 of @rue2009approximate.
 This work was motivated by a setting in which, which similar to extended latent Gaussian models [ELGMs; @stringer2022fast], precision matrices are not typically as sparse as GMRFs.
 Details are left to @wood2020simplified.
 
-#### Appending the noisy structured additive predictor to the latent field
+#### Augmenting a noisy structured additive predictor to the latent field
 
-Discussion of INLA is concluded by outlining the cases for and against appending the noisy structured additive predictor to the latent field.
-The crux of the issue relates to the sparsity structure of the Hessian matrix
-\begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
-\end{equation}
-As before, $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}})$.
-
-The modified model used by @rue2009approximate extends $\mathbf{x}$ to include a noisy structured additive predictor as follows
+Discussion of INLA is concluded by briefly mentioning a difference in implementation between @rue2009approximate and @stringer2022fast.
+Specifically, @rue2009approximate augment the latent field to include a noisy structured additive predictor as follows
 \begin{align}
 \boldsymbol{\mathbf{\eta}}^\star &= \boldsymbol{\mathbf{\eta}} + \boldsymbol{\mathbf{\epsilon}}, \\
 \boldsymbol{\mathbf{\epsilon}} &\sim \mathcal{N}(\mathbf{0}, \tau^{-1} \mathbf{I}_n), \\
-\mathbf{x}^\star &= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}) \sim \mathcal{N}(\mathbf{0}, \cdots).
+\mathbf{x}^\star &= (\boldsymbol{\mathbf{\eta}}^\star, \mathbf{x}).
 \end{align}
-
-@stringer2022fast note that approach has several drawbacks in the case of ELGMs where the matrix $\cdots$ is no longer diagonal, and may be dense.
-Discussed in @van2023new.
+@stringer2022fast (Section 3.2) omit this augmentation, highlighting several drawbacks including: fitting ELGMs, fitting LGMs to large datasets, and theoretical study of the approximation error.
+Similarly, in what @van2023new (Section 2.1) refer to as the "modern" formula of INLA, the latent field is not augmented.
+The crux of the issue regards the dimensions and sparsity structure of the Hessian matrix $\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}})$.
+Details are left to @stringer2022fast.
+This thesis, as such, does not augment the latent field.
 
 ### Software {#software}
 
