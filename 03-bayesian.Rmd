@@ -388,19 +388,20 @@ In Chapter \@ref(naomi-aghq), the Naomi small-area estimation model used to prod
 
 ## Model comparison {#model-comparison}
 
-During the course of an analysis, many different models can be fit to the same data.
-Model comparison methods are used to determine which model is the most suitable to use.
-This section focuses on measuring suitability via the model's predictive performance.
+Many models can be fit to the same data during the course of an analysis.
+Model comparison methods are used to determine which is the most suitable for use.
+This section focuses on measuring suitability via the model's predictive performance [@vehtari2012survey].
 
-Consider new data $\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)$ drawn from the true data generating process.
-The log predictive density for new data (LPD) [@gelman2014understanding] measures the out-of-sample predictive performance and is given by
+Ideally, new data $\tilde{\mathbf{y}} = (\tilde{y}_1, \ldots, \tilde{y}_n)$ drawn from the true data generating process would be available to test predictive performance.
+The log predictive density for new data (LPD) [@gelman2014understanding] is one measure of out-of-sample predictive performance given by
 \begin{equation}
-\text{lpd} = \sum_{i = 1}^n \log p(\tilde y_i \, | \, \mathbf{y}). (\#eq:lpd)
+\text{lpd} = \sum_{i = 1}^n \log p(\tilde y_i \, | \, \mathbf{y}) = \sum_{i = 1}^n \log p(\tilde y_i \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \text{d}\boldsymbol{\mathbf{\phi}}. (\#eq:lpd)
 \end{equation}
 The expected LPD (ELPD) integrates the LPD over the data generating process to give a measure of expected performance
 \begin{equation}
-\text{lpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
+\text{elpd} = \sum_{i = 1}^n \log \int p(\tilde y_i \, | \, \mathbf{y}) p(\tilde y_i) \text{d} \tilde y_i. (\#eq:elpd)
 \end{equation}
+In reality, such data are not usually available, and instead the ELPD must be approximated using the available data.
 
 ### Information criteria {#information-criteria}
 
@@ -415,19 +416,22 @@ The widely applicable information criteria [WAIC; @watanabe2013widely] improves 
   \text{elpd}_\texttt{WAIC} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}). (\#eq:waic-elpd)
 \end{align}
 As both Equations \@ref(eq:aic-elpd) and \@ref(eq:waic-elpd) are based on within-sample measures, they overestimate the ELPD.
-As such, they are adjusted downward by a complexity penalty $p_{\texttt{IC}}$, which varies depending on the particular information criteria.
+As such, they are adjusted downward by a complexity penalty $p_{\texttt{IC}}$.
+The particular penalty varies depending on the particular information criteria.
 
 ### Cross-validation {#cross-validation}
 
 Cross-validation is an alternative way to estimate the ELPD.
 Rather than use a complexity penalty, as in Section \@ref(information-criteria), to adjust a within-sample estimate, cross-validation (CV) partitions the data into training and held-out sets of data.
-In a leave-out-out (LOO) CV there are $n$ partitions, where each held-out set is a single obsevation.
+For example, in a leave-out-out (LOO) CV there are $n$ partitions, where each held-out set is a single observation.
 The LOO-CV estimate of ELPD is
 \begin{align}
-  \text{elpd}_\texttt{LOO-CV} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}_i). (\#eq:loo-cv-elpd)
+  \text{elpd}_\texttt{LOO-CV} = \sum_{i = 1}^n \log p(y_i \, | \, \mathbf{y}_{-i}), (\#eq:loo-cv-elpd)
 \end{align}
+where the subscript $-i$ refers to all elements of the vector excluding $i$.
 Naively, computing $\text{elpd}_\texttt{LOO-CV}$ requires refitting the model $n$ times.
-As such, computational approximations have been developed, most notably importance sampling methods using the the full posterior as a proposal [@vehtari2017practical].
+This can be computationally costly, and so approximation strategies have been developed.
+Importance sampling methods using the the full posterior as a proposal are a notable example, including Pareto-smoothed importance sampling [PSIS; @vehtari2017practical].
 
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validiation schemes for specific settings. -->
@@ -436,24 +440,30 @@ As such, computational approximations have been developed, most notably importan
 ### Scoring rules
 
 Scoring rules [SR; @gneiting2007strictly] measure the quality of probabilistic forecasts.
-The log score, used above in the ELPD, is one example of a scoring rule, but by no means the only possibility.
-In fact, any information criterion (Section \@ref(information-criteria)) or cross-validation strategy (Section \@ref(cross-validation)) can be redefined using a different scoring rule.
+The log score, used above in the ELPD, is one example of a scoring rule.
+However, it is by no means the only possibility.
+Any information criterion (Section \@ref(information-criteria)) or cross-validation strategy (Section \@ref(cross-validation)) can be redefined using a different scoring rule, or utility function more broadly.
+Possible examples include the root mean square error (RMSE), variance explained ($R^2$) or classification accuracy.
 
-One reason the log score (LS) is popular is that it is an example of a strictly proper scoring rule (SPSR).
-A scoring rule is called strictly proper when the forecaster gains maximum expected reward by reporting their true probability distribution, and discourages any manipulation.
-Another example of a SPSR is the continuous ranked probability score [CRPS; @matheson1976scoring], which generalises the Brier score [@brier1950verification] beyond binary classification.
+The log score (LS) is popular in part because it is an example of a strictly proper scoring rule (SPSR).
+A scoring rule is strictly proper when the forecaster gains maximum expected reward by reporting their true probability distribution.
+Any scoring rule which does not admit this property is susceptible to manipulation, in some sense.
+The continuous ranked probability score [CRPS; @matheson1976scoring], which generalises the Brier score [@brier1950verification] beyond binary classification, is another example of a SPSR.
 
 ### Bayes factors
 
-Finally, I mention that the evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence), can also be used as a measure of model performance.
-Let $\mathcal{M}_0$ and $\mathcal{M}_1$ be two competing models.
-Then the Bayes factor comparing $\mathcal{M}_0$ to $\mathcal{M_1}$ is
+Finally, the evidence $p(\mathbf{y})$, given in Equation \@ref(eq:evidence), can also be used as a measure of model performance.
+If $\mathcal{M}_0$ and $\mathcal{M}_1$ are two competing models, then the Bayes factor comparing $\mathcal{M}_0$ to $\mathcal{M_1}$ is
 \begin{equation}
 B_{01} = \frac{p(\mathbf{y} \, | \, \ \mathcal{M}_0)}{p(\mathbf{y} \, | \, \ \mathcal{M}_1)},
 \end{equation}
 where $p(\mathbf{y} \, | \, \ \mathcal{M})$ denotes the evidence under model $\mathcal{M}$.
+The Bayes factor can be interpreted as supporting the maximum a posteriori model.
 If $B_{01} > 1$ then support is provided for $\mathcal{M}_0$ and if $B_{01} < 1$ then support is provided for $\mathcal{M}_1$.
-Bayes factors can be framed as predictive criterion as follows.
+Bayes factors can also be framed as predictive criteria according to the decomposition
+\begin{equation}
+p(\mathbf{y}) = p(y_1) p(y_2 \, | \, y_1) \cdots p(y_n \, | \, y_{n - 1}, \ldots, y_1).
+\end{equation}
 
 ## Survey methods {#survey}
 
