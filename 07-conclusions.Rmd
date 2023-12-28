@@ -27,10 +27,10 @@ Chapter \@ref(beyond-borders) used tools for model assessment such as proper sco
 The experiments conducted provide useful data to guide the use of spatial random effect models by applied practitioners, as well as to base methodological developments on.
 The most important findings were as follows (remains to write).
 
-(ref:global-update) Panel A shows the front page of @unaids2023global. Panel B shows the page containing text and a figure based on the work done in Chapter \@ref(multi-agyw). In this figure, 30 countries are included.
+(ref:global-update-conclusion) Panel A shows the front page of @unaids2023global. Panel B shows the page containing text and a figure based on the work done in Chapter \@ref(multi-agyw). In this figure, 30 countries are included.
 
-```{r global-update, fig.cap="(ref:global-update)"}
-knitr::include_graphics("figures/conclusions/global-update.png")
+```{r global-update-conclusion, fig.cap="(ref:global-update-conclusion)"}
+knitr::include_graphics("figures/conclusions/global-update-conclusion.png")
 ```
 
 Chapter \@ref(multi-agyw) estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy [@unaids2021global].
@@ -40,12 +40,13 @@ The tool now encompasses at least 30 countries, expanding from the initial 13 in
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter \@ref(multi-agyw) exemplified specification of complex multinomial spatio-temporal models in `R-INLA` using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.
 
-Chapter \@ref(naomi-aghq) developed deterministic Bayesian inference methods, motivated by a challenging and practically important problem in evidence synthesis for small-area estimation of HIV indicators.
+Chapter \@ref(naomi-aghq) developed deterministic Bayesian inference methods, motivated by a challenging problem in evidence synthesis for small-area estimation of HIV indicators.
+Estimates from the Naomi model are used in over $X$ countries.
 Its most important methods contributions are two-fold.
 First, an implementation of INLA which is compatible with models specified using a `TMB` C++ template.
-For the first time, practitioners can now fit essentially any model using INLA.
-Second, a quadrature rule which naturally extends the applicability of INLA methods to moderate hyperparameter dimension, by combining PCA and AGHQ.
-Additionally, Chapter \@ref(naomi-aghq) provides detailed description and analysis of the Naomi.
+For the first time, practitioners can now fit essentially any model using the INLA method.
+Second, a quadrature rule which combines PCA and AGHQ to naturally extend the applicability of INLA methods to moderate hyperparameter dimension, allowing more complex models to be fit.
+Additionally, Chapter \@ref(naomi-aghq) provides detailed description and analysis of the Naomi model.
 Indeed, @esra2023improved used tables and text from Appendix \@ref(naomi-aghq-appendix) in an update to @eaton2021naomi.
 
 ## Limitations
@@ -98,8 +99,8 @@ For example, I found it challenging, if not impossible, to implement a common mo
 As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes: "the devil is in the details".
 Similarly, I encountered issues implementing a desired collection of different models in a common inferential software.
 From personal experience, my colleagues have also encountered similar problems.
-If not addressed, these difficulties would result in conflation of statistical models and inference methodologies, limiting the validity of any findings.
-Ultimately, I resolved these issues by implementing all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
+Needless to say, conflation of statistical models and inference methodologies limits the validity of any findings.
+To avoid this issue, I implemented all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
 (Additionally, I would recommend implementing the model used in Chapter \@ref(multi-agyw) in `TMB` for future development.)
 Alongside being sufficiently flexible to meet my model specification requirements, `TMB` is compatible with a range of inference methodologies, including those advanced in this thesis.
 As such, `TMB` remains [@osgood2023statistical] an under-rated statistical tool.

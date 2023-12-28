@@ -20,4 +20,7 @@ figure_ggplot <- ggplot() +
 
 title_ggplot + figure_ggplot + plot_layout(ncol = 2)
 
-ggsave("figures/conclusions/global-update.png", height = 4.5, width = 6.25, dpi = 450)
+ggsave("figures/conclusions/global-update-conclusion.png", height = 4.5, width = 6.25, dpi = 450)
+
+file.remove("figures/conclusions/title.png")
+file.remove("figures/conclusions/figure.png")

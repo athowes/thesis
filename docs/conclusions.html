@@ -418,8 +418,8 @@ div.csl-indent {
 The experiments conducted provide useful data to guide the use of spatial random effect models by applied practitioners, as well as to base methodological developments on.
 The most important findings were as follows (remains to write).</p>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:global-update"></span>
-<img src="figures/conclusions/global-update.png" alt="Panel A shows the front page of UNAIDS (2023b). Panel B shows the page containing text and a figure based on the work done in Chapter 5. In this figure, 30 countries are included." width="95%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:global-update-conclusion"></span>
+<img src="figures/conclusions/global-update-conclusion.png" alt="Panel A shows the front page of UNAIDS (2023b). Panel B shows the page containing text and a figure based on the work done in Chapter 5. In this figure, 30 countries are included." width="95%" />
 <p class="caption">
 Figure 7.1: Panel A shows the front page of <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>. Panel B shows the page containing text and a figure based on the work done in Chapter <a href="multi-agyw.html#multi-agyw">5</a>. In this figure, 30 countries are included.
 </p>
@@ -427,15 +427,16 @@ Figure 7.1: Panel A shows the front page of <span class="citation">UNAIDS (<a hr
 <p>Chapter <a href="multi-agyw.html#multi-agyw">5</a> estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy <span class="citation">(<a href="#ref-unaids2021global">UNAIDS 2021b</a>)</span>.
 Risk group proportion estimates were used to behaviorally disaggregate HIV prevalence and incidence, and assess the benefits of a variety of risk stratification strategies.
 This work is the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
-The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure <a href="conclusions.html#fig:global-update">7.1</a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
+The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure <a href="#fig:global-update"><strong>??</strong></a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter <a href="multi-agyw.html#multi-agyw">5</a> exemplified specification of complex multinomial spatio-temporal models in <code>R-INLA</code> using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.</p>
-<p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by a challenging and practically important problem in evidence synthesis for small-area estimation of HIV indicators.
+<p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by a challenging problem in evidence synthesis for small-area estimation of HIV indicators.
+Estimates from the Naomi model are used in over <span class="math inline">\(X\)</span> countries.
 Its most important methods contributions are two-fold.
 First, an implementation of INLA which is compatible with models specified using a <code>TMB</code> C++ template.
-For the first time, practitioners can now fit essentially any model using INLA.
-Second, a quadrature rule which naturally extends the applicability of INLA methods to moderate hyperparameter dimension, by combining PCA and AGHQ.
-Additionally, Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> provides detailed description and analysis of the Naomi.
+For the first time, practitioners can now fit essentially any model using the INLA method.
+Second, a quadrature rule which combines PCA and AGHQ to naturally extend the applicability of INLA methods to moderate hyperparameter dimension, allowing more complex models to be fit.
+Additionally, Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> provides detailed description and analysis of the Naomi model.
 Indeed, <span class="citation">Esra (<a href="#ref-esra2023improved">2023</a>)</span> used tables and text from Appendix <a href="naomi-aghq-appendix.html#naomi-aghq-appendix">C</a> in an update to <span class="citation">Eaton et al. (<a href="#ref-eaton2021naomi">2021</a>)</span>.</p>
 </div>
 <div id="limitations-1" class="section level2 hasAnchor" number="7.2">
@@ -463,7 +464,7 @@ Usability would be improved by providing the method as a part of statistical sof
 The primary difficulty which would have to be overcome to do so is that the <code>random</code> argument of <code>TMB::MakeADFun</code> does not allow indexing.</p></li>
 </ol>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-diff-k-fixed"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:conditional-simulation-diff-k-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-diff-k-fixed.png" alt="For the Loa loa ELGM, increasing the number of quadrature nodes per hyperparameter dimension from \(k = 3\) to \(k = 7\) did little to improve accuracy. On the other hand, using Laplace marginals rather than Gaussian marginals did have a substantial effect (Figures 6.12 and 6.13). More broadly, it would be valuable to better understand, and aspirationally have diagnostics for, the circumstances under which more accurate approximations are required." width="95%" />
 <p class="caption">
 Figure 7.2: For the Loa loa ELGM, increasing the number of quadrature nodes per hyperparameter dimension from <span class="math inline">\(k = 3\)</span> to <span class="math inline">\(k = 7\)</span> did little to improve accuracy. On the other hand, using Laplace marginals rather than Gaussian marginals did have a substantial effect (Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a> and <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a>). More broadly, it would be valuable to better understand, and aspirationally have diagnostics for, the circumstances under which more accurate approximations are required.
@@ -487,8 +488,8 @@ For example, I found it challenging, if not impossible, to implement a common mo
 As the frequently asked questions section of the <code>R-INLA</code> website <span class="citation">(<a href="#ref-rinla2023faq">Havard Rue 2023</a>)</span> notes: “the devil is in the details”.
 Similarly, I encountered issues implementing a desired collection of different models in a common inferential software.
 From personal experience, my colleagues have also encountered similar problems.
-If not addressed, these difficulties would result in conflation of statistical models and inference methodologies, limiting the validity of any findings.
-Ultimately, I resolved these issues by implementing all models in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> using <code>TMB</code> model templates.
+Needless to say, conflation of statistical models and inference methodologies limits the validity of any findings.
+To avoid this issue, I implemented all models in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> using <code>TMB</code> model templates.
 (Additionally, I would recommend implementing the model used in Chapter <a href="multi-agyw.html#multi-agyw">5</a> in <code>TMB</code> for future development.)
 Alongside being sufficiently flexible to meet my model specification requirements, <code>TMB</code> is compatible with a range of inference methodologies, including those advanced in this thesis.
 As such, <code>TMB</code> remains <span class="citation">(<a href="#ref-osgood2023statistical">Osgood-Zimmerman and Wakefield 2023</a>)</span> an under-rated statistical tool.
@@ -500,7 +501,7 @@ The applied contributions of Chapter <a href="multi-agyw.html#multi-agyw">5</a> 
 Indeed, I have seen evidence of engagement with this work by decision makers, though this alone is not sufficient to generate impact.</p>
 <p>To the best of my abilities, this thesis, and the work described within it, was written in keeping with the principles of open science.
 I hope that having done so facilitates my work to be scrutinised, and more optimistically, built upon.
-In part this hope has already been realised, as with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter <a href="multi-agyw.html#multi-agyw">5</a> to include additional countries (Panel <a href="conclusions.html#fig:global-update">7.1</a>B).
+In part this hope has already been realised, as with limited input from me, Dr. Kathryn Risher was able to extend my code for Chapter <a href="multi-agyw.html#multi-agyw">5</a> to include additional countries (Panel <a href="#fig:global-update"><strong>??</strong></a>B).
 This would not have been possible without tools from the R ecosystem such as <code>rmarkdown</code> and <code>rticles</code> for reporting, <code>devtools</code> for R package development, as well as those written by software engineers within the MRC Centre for Global Infectious Disease Analysis such as <code>orderly</code> and <code>didehpc</code>.
 It is crucial that academia adjusts to appropriately incentivises software contributions, and encourages adaption of open science best practices.
 Work done to inform public health decision making should be held to high standards of transparency, reproducibility and collaboration.
