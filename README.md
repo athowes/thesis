@@ -167,9 +167,9 @@ time to work on it:
   conversation I began
   [here](https://groups.google.com/g/r-inla-discussion-group/c/avPWD5ED0NM/m/b94kaaUVAgAJ)
   on the `R-INLA` Google group.
-- Further detail about how automatic differentation works might be
+- Further detail about how automatic differentiation works might be
   helpful. This could include a simple example. See this nice blog post
-  [“symbolic differentaition in a few lines of
+  [“symbolic differentiation in a few lines of
   code”](https://reside-ic.github.io/blog/symbolic-differentiation-in-a-few-lines-of-code/)
   by Rich FitzJohn.
 - The simulation study in Chapter 4 was run using 250 replicates. As you

@@ -38,3 +38,5 @@ spell_check("90-appendixA.Rmd")
 spell_check("91-appendixB.Rmd")
 spell_check("92-appendixC.Rmd")
 spell_check("references.bib")
+
+spell_check("README.Rmarkdown")
