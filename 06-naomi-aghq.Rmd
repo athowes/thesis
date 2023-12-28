@@ -99,7 +99,7 @@ The information provided for strategic response to the HIV epidemic may therefor
 It is usually intractable to obtain the posterior distribution.
 This is because the denominator in Equation \@ref(eq:bayes) contains a potentially high-dimensional integral over the $d \in \mathbb{Z}^+$ -dimensional parameters
 \begin{equation}
-p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}. (\#eq:evidence)
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}. (\#eq:evidence2)
 \end{equation}
 This quantity is sometimes called the evidence or posterior normalising constant.
 As a result, approximations to the posterior distribution $\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ are typically used in place of the exact posterior distribution.
@@ -110,7 +110,7 @@ Instead they find ways to work with the unnormalised posterior distribution
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}),
 \end{equation}
 where $p(\mathbf{y})$ is not a function of $\boldsymbol{\mathbf{\phi}}$ and so can be removed as a constant.
-Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant (Equation \@ref(eq:evidence)).
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant (Equation \@ref(eq:evidence2)).
 The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods because they do not make fundamental use of randomness.
 
 ### The Laplace approximation {#la}
@@ -120,7 +120,7 @@ Laplace's method [@laplace1774memoire] is a technique used to approximate integr
 \int \exp(C h(\mathbf{z})) \text{d}\mathbf{z},
 \end{equation}
 where $C > 0$ is a constant, $h$ is a function which is twice-differentiable, and $\mathbf{z}$ are generic variables.
-The Laplace approximation [@tierney1986accurate] is obtained by application of Laplace's method to calculate the posterior normalising constant (Equation \@ref(eq:evidence)).
+The Laplace approximation [@tierney1986accurate] is obtained by application of Laplace's method to calculate the posterior normalising constant (Equation \@ref(eq:evidence2)).
 Let $h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})$ such that
 \begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
@@ -136,7 +136,7 @@ be the posterior mode, and
 \hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}} (\#eq:hessian)
 \end{equation}
 be the Hessian matrix evaluated at the posterior mode.
-The Laplace approximation to the posterior normalising constant (Equation \@ref(eq:evidence)) is then
+The Laplace approximation to the posterior normalising constant (Equation \@ref(eq:evidence2)) is then
 \begin{align}
 \tilde p_{\texttt{LA}}(\mathbf{y}) &= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} (\#eq:la) \\
 &= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}. (\#eq:la2)
@@ -207,7 +207,7 @@ However, its deviation can be expected to be small if $\log p(\mathbf{y} \, | \,
 Quadrature is a method used to approximate integrals using a weighted sum of function evaluations.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 Let $\mathcal{Q}$ be a set of quadrature nodes $\mathbf{z} \in \mathcal{Q}$ and $\omega: \mathbb{R}^d \to \mathbb{R}$ be a weighting function.
-Then, quadrature can be used to estimate the posterior normalising constant (Equation \@ref(eq:evidence)) by
+Then, quadrature can be used to estimate the posterior normalising constant (Equation \@ref(eq:evidence2)) by
 \begin{equation}
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}

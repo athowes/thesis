@@ -461,8 +461,8 @@ For example, historic data about treatment demand are only required for planning
 The information provided for strategic response to the HIV epidemic may therefore be thought of as functions of some posterior distribution.</p>
 <p>It is usually intractable to obtain the posterior distribution.
 This is because the denominator in Equation <a href="naomi-aghq.html#eq:bayes">(6.1)</a> contains a potentially high-dimensional integral over the <span class="math inline">\(d \in \mathbb{Z}^+\)</span> -dimensional parameters
-<span class="math display" id="eq:evidence">\[\begin{equation}
-p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}. \tag{3.3}
+<span class="math display" id="eq:evidence2">\[\begin{equation}
+p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}. \tag{6.2}
 \end{equation}\]</span>
 This quantity is sometimes called the evidence or posterior normalising constant.
 As a result, approximations to the posterior distribution <span class="math inline">\(\tilde p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})\)</span> are typically used in place of the exact posterior distribution.</p>
@@ -472,7 +472,7 @@ Instead they find ways to work with the unnormalised posterior distribution
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\boldsymbol{\mathbf{\phi}}, \mathbf{y}),
 \end{equation}\]</span>
 where <span class="math inline">\(p(\mathbf{y})\)</span> is not a function of <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> and so can be removed as a constant.
-Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant (Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>).
+Other approximate Bayesian inference methods can more directly be thought of as ways to estimate the posterior normalising constant (Equation <a href="naomi-aghq.html#eq:evidence2">(6.2)</a>).
 The methods in this chapter fall into this latter category, and are sometimes described as deterministic Bayesian inference methods because they do not make fundamental use of randomness.</p>
 <div id="la" class="section level3 hasAnchor" number="6.1.1">
 <h3><span class="header-section-number">6.1.1</span> The Laplace approximation<a href="naomi-aghq.html#la" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -481,7 +481,7 @@ The methods in this chapter fall into this latter category, and are sometimes de
 \int \exp(C h(\mathbf{z})) \text{d}\mathbf{z},
 \end{equation}\]</span>
 where <span class="math inline">\(C &gt; 0\)</span> is a constant, <span class="math inline">\(h\)</span> is a function which is twice-differentiable, and <span class="math inline">\(\mathbf{z}\)</span> are generic variables.
-The Laplace approximation <span class="citation">(<a href="#ref-tierney1986accurate">Tierney and Kadane 1986</a>)</span> is obtained by application of Laplace’s method to calculate the posterior normalising constant (Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>).
+The Laplace approximation <span class="citation">(<a href="#ref-tierney1986accurate">Tierney and Kadane 1986</a>)</span> is obtained by application of Laplace’s method to calculate the posterior normalising constant (Equation <a href="naomi-aghq.html#eq:evidence2">(6.2)</a>).
 Let <span class="math inline">\(h(\boldsymbol{\mathbf{\phi}}) = \log p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})\)</span> such that
 <span class="math display">\[\begin{equation}
 p(\mathbf{y}) = \int_{\mathbb{R}^d} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}} = \int_{\mathbb{R}^d} \exp(h(\boldsymbol{\mathbf{\phi}})) \text{d}\boldsymbol{\mathbf{\phi}}.
@@ -490,17 +490,17 @@ Laplace’s method involves approximating the function <span class="math inline"
 This expansion is then evaluated at a maxima of <span class="math inline">\(h\)</span> to eliminate the first order term.
 Let
 <span class="math display" id="eq:posterior-mode">\[\begin{equation}
-\hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}}) \tag{6.2}
+\hat{\boldsymbol{\mathbf{\phi}}} = \arg\max_{\boldsymbol{\mathbf{\phi}}} h(\boldsymbol{\mathbf{\phi}}) \tag{6.3}
 \end{equation}\]</span>
 be the posterior mode, and
 <span class="math display" id="eq:hessian">\[\begin{equation}
-\hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}} \tag{6.3}
+\hat {\mathbf{H}} = - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\phi}} \partial \boldsymbol{\mathbf{\phi}}^\top} h(\boldsymbol{\mathbf{\phi}}) \rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}} \tag{6.4}
 \end{equation}\]</span>
 be the Hessian matrix evaluated at the posterior mode.
-The Laplace approximation to the posterior normalising constant (Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>) is then
+The Laplace approximation to the posterior normalising constant (Equation <a href="naomi-aghq.html#eq:evidence2">(6.2)</a>) is then
 <span class="math display" id="eq:la2" id="eq:la">\[\begin{align}
-\tilde p_{\texttt{LA}}(\mathbf{y}) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.4} \\
-&amp;= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}. \tag{6.5}
+\tilde p_{\texttt{LA}}(\mathbf{y}) &amp;= \int_{\mathbb{R}^d} \exp \left( h(\hat{\boldsymbol{\mathbf{\phi}}}) - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right) \text{d}\boldsymbol{\mathbf{\phi}} \tag{6.5} \\
+&amp;= p(\hat{\boldsymbol{\mathbf{\phi}}}, \mathbf{y}) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}} |^{1/2}}. \tag{6.6}
 \end{align}\]</span>
 The result above is calculated using the known normalising constant of the Gaussian distribution
 <span class="math display">\[\begin{equation}
@@ -510,8 +510,8 @@ The Laplace approximation may be thought of as approximating the posterior distr
 <span class="math display">\[\begin{equation}
 \tilde p_{\texttt{LA}}(\mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})} \Big\rvert_{\boldsymbol{\mathbf{\phi}} = \hat{\boldsymbol{\mathbf{\phi}}}}.
 \end{equation}\]</span></p>
-<p>Calculation of the Laplace approximation requires obtaining the second derivative of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> (Equation <a href="naomi-aghq.html#eq:hessian">(6.3)</a>).
-Derivatives may also be used to improve the performance of the optimisation algorithm used to obtain the maxima of <span class="math inline">\(h\)</span> (Equation <a href="naomi-aghq.html#eq:posterior-mode">(6.2)</a>) by providing access to the gradient of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.</p>
+<p>Calculation of the Laplace approximation requires obtaining the second derivative of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span> (Equation <a href="naomi-aghq.html#eq:hessian">(6.4)</a>).
+Derivatives may also be used to improve the performance of the optimisation algorithm used to obtain the maxima of <span class="math inline">\(h\)</span> (Equation <a href="naomi-aghq.html#eq:posterior-mode">(6.3)</a>) by providing access to the gradient of <span class="math inline">\(h\)</span> with respect to <span class="math inline">\(\boldsymbol{\mathbf{\phi}}\)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:laplace"></span>
 <img src="figures/naomi-aghq/laplace.png" alt="Demonstration of the Laplace approximation for the simple Bayesian inference example of Figure 3.1. The unnormalised posterior is \(p(\phi, \mathbf{y}) = \phi^8 \exp(-4 \phi)\), and can be recognised as the unnormalised gamma distribution \(\text{Gamma}(9, 4)\). The true log normalising constant is \(\log p(\mathbf{y}) = \log\Gamma(9) - 9 \log(4) = -1.872046\), whereas the Laplace approximate log normalising constant is \(\log \tilde p_{\texttt{LA}}(\mathbf{y}) = -1.882458\), resulting from the Gaussian approximation \(p_\texttt{G}(\phi \, | \, \mathbf{y}) = \mathcal{N}(\phi \, | \,\mu = 2, \tau = 2)\)." width="95%" />
@@ -532,16 +532,16 @@ p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) = p(\mathbf{y} \, | \, \
 where <span class="math inline">\(\mathbf{x} = (x_1, \ldots, x_N)\)</span> is the latent field, and <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\theta_1, \ldots, \theta_m)\)</span> are the hyperparameters.
 Applying a Gaussian approximation to the latent field, we have <span class="math inline">\(h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) = \log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})\)</span> with <span class="math inline">\(N\)</span>-dimensional posterior mode
 <span class="math display" id="eq:marginal-posterior-mode">\[\begin{equation}
-\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \tag{6.6}
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) = \arg\max_{\mathbf{x}} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \tag{6.7}
 \end{equation}\]</span>
 and <span class="math inline">\((N \times N)\)</span>-dimensional Hessian matrix evaluated at the posterior mode
 <span class="math display" id="eq:marginal-hessian">\[\begin{equation}
-\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. \tag{6.7}
+\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} h(\mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}. \tag{6.8}
 \end{equation}\]</span>
-Dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit in both Equation <a href="naomi-aghq.html#eq:marginal-posterior-mode">(6.6)</a> and <a href="naomi-aghq.html#eq:marginal-hessian">(6.7)</a> such that there is a Gaussian approximation to the marginal posterior of the latent field <span class="math inline">\(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\)</span> at each value <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> in the space <span class="math inline">\(\mathbb{R}^m\)</span>.
+Dependence on the hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> is made explicit in both Equation <a href="naomi-aghq.html#eq:marginal-posterior-mode">(6.7)</a> and <a href="naomi-aghq.html#eq:marginal-hessian">(6.8)</a> such that there is a Gaussian approximation to the marginal posterior of the latent field <span class="math inline">\(\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})\)</span> at each value <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span> in the space <span class="math inline">\(\mathbb{R}^m\)</span>.
 The resulting marginal Laplace approximation, for a particular value of the hyperparameters, is then
 <span class="math display" id="eq:marginalla">\[\begin{align}
-\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \tag{6.8} \\
+\tilde p_{\texttt{LA}}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &amp;= \int_{\mathbb{R}^N} \exp \left( h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \boldsymbol{\mathbf{\theta}}) - \frac{1}{2} (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}))^\top \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) (\mathbf{x} - \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})) \right) \text{d}\mathbf{x} \tag{6.9} \\
 &amp;= \exp(h(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \mathbf{y})) \cdot \frac{(2 \pi)^{d/2}}{| \hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) |^{1/2}} \\
 &amp;= \frac{p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
 \end{align}\]</span></p>
@@ -566,7 +566,7 @@ However, its deviation can be expected to be small if <span class="math inline">
 <p>Quadrature is a method used to approximate integrals using a weighted sum of function evaluations.
 As with the Laplace approximation, it is deterministic in that the computational procedure is not intrinsically random.
 Let <span class="math inline">\(\mathcal{Q}\)</span> be a set of quadrature nodes <span class="math inline">\(\mathbf{z} \in \mathcal{Q}\)</span> and <span class="math inline">\(\omega: \mathbb{R}^d \to \mathbb{R}\)</span> be a weighting function.
-Then, quadrature can be used to estimate the posterior normalising constant (Equation <a href="bayes-st.html#eq:evidence">(3.3)</a>) by
+Then, quadrature can be used to estimate the posterior normalising constant (Equation <a href="naomi-aghq.html#eq:evidence2">(6.2)</a>) by
 <span class="math display">\[\begin{equation}
 \tilde p_{\mathcal{Q}}(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} p(\mathbf{y}, \mathbf{z}) \omega(\mathbf{z}).
 \end{equation}\]</span></p>
@@ -574,7 +574,7 @@ Then, quadrature can be used to estimate the posterior normalising constant (Equ
 This integral can be calculated analytically using integration by parts and evaluates to <span class="math inline">\(\pi\)</span>.
 A quadrature approximation of this integral is
 <span class="math display" id="eq:zsinz">\[\begin{equation}
-\pi = \sin(z) - z \cos(z) \bigg|_0^\pi = \int_{0}^\pi z \sin(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} z \sin(z) \omega(z), \tag{6.9}
+\pi = \sin(z) - z \cos(z) \bigg|_0^\pi = \int_{0}^\pi z \sin(z) \text{d} z \approx \sum_{z \in \mathcal{Q}} z \sin(z) \omega(z), \tag{6.10}
 \end{equation}\]</span>
 where <span class="math inline">\(\mathcal{Q} = \{z_1, \ldots z_k\}\)</span> are a set of <span class="math inline">\(k\)</span> quadrature nodes and <span class="math inline">\(\omega: \mathbb{R} \to \mathbb{R}\)</span> is a weighting function.</p>
 <p>The trapezoid rule is an example of a quadrature rule, in which quadrature nodes are spaced throughout the domain with <span class="math inline">\(\epsilon_i = z_i - z_{i - 1} &gt; 0\)</span> for <span class="math inline">\(1 &lt; i &lt; k\)</span>.
@@ -586,7 +586,7 @@ The weighting function is
   \epsilon_i / 2 &amp; i \in \{1, k\}.
 \end{cases}
 \end{equation}\]</span>
-Figure <a href="naomi-aghq.html#fig:trapezoid">6.2</a> shows application of the trapezoid rule to integration of <span class="math inline">\(z \sin(z)\)</span> as described in Equation <a href="naomi-aghq.html#eq:zsinz">(6.9)</a>.
+Figure <a href="naomi-aghq.html#fig:trapezoid">6.2</a> shows application of the trapezoid rule to integration of <span class="math inline">\(z \sin(z)\)</span> as described in Equation <a href="naomi-aghq.html#eq:zsinz">(6.10)</a>.
 The more quadrature nodes are used, the more accurate the estimate of the integrand is.
 Under some regularity conditions on <span class="math inline">\(f\)</span>, as the spacing between quadrature nodes <span class="math inline">\(\epsilon \to 0\)</span> the estimate obtained using the trapezoid rule converges to the true value of the integral.
 Indeed, this approach was used by Riemann to provide the first rigorous definition of the integral.</p>
@@ -607,7 +607,7 @@ Though quadrature is embarrassingly parallel, in that function evaluation at eac
 <p>It is possible to construct quadrature rules which use relatively few nodes and are highly accurate when the integrand adheres to certain assumptions [Chapter 4; <span class="citation">Press et al. (<a href="#ref-press2007numerical">2007</a>)</span>].
 Gauss-Hermite quadrature [GHQ; <span class="citation">Davis and Rabinowitz (<a href="#ref-davis1975methods">1975</a>)</span>] is a quadrature rule designed to integrate functions of the form <span class="math inline">\(f(\mathbf{z}) = \varphi(\mathbf{z}) P_\alpha(\mathbf{z})\)</span> exactly, that is with no error, such that
 <span class="math display" id="eq:ghqexact">\[\begin{equation}
-\int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). \tag{6.10}
+\int \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \text{d} \mathbf{z} = \sum_{\mathbf{z} \in \mathcal{Q}}  \varphi(\mathbf{z}) P_\alpha(\mathbf{z}) \omega(\mathbf{z}). \tag{6.11}
 \end{equation}\]</span>
 In this equation, the term <span class="math inline">\(\varphi(\cdot)\)</span> is a standard multivariate normal density <span class="math inline">\(\mathcal{N}(\cdot \, | \, \mathbf{0}, \mathbf{I})\)</span>, where <span class="math inline">\(\mathbf{0}\)</span> and <span class="math inline">\(\mathbf{I}\)</span> are the zero-vector and identify matrix of relevant dimension, and the term <span class="math inline">\(P_\alpha(\cdot)\)</span> is a polynomial with highest degree monomial <span class="math inline">\(\alpha \leq 2k - 1\)</span>, where <span class="math inline">\(k\)</span> is the number of quadrature nodes per dimension.
 GHQ is attractive for Bayesian inference problems because posterior distributions are typically well approximated by functions of this form.
@@ -631,7 +631,7 @@ H_2(z) = z^2 - 1 = 0 \implies \mathcal{Q}(1, 2) &amp;= \{-0.707, 0.707\}, \\
 H_3(z) = z^3 - 3z = 0 \implies \mathcal{Q}(1, 3) &amp;= \{-1.225, 0, 1.225\}.
 \end{align}\]</span>
 The quadrature nodes are symmetric about zero, and include zero when <span class="math inline">\(k\)</span> is odd.
-The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\)</span> chosen to satisfy Equation <a href="naomi-aghq.html#eq:ghqexact">(6.10)</a> is given by
+The corresponding weighting function <span class="math inline">\(\omega: \mathcal{Q}(1, k) \to \mathbb{R}\)</span> chosen to satisfy Equation <a href="naomi-aghq.html#eq:ghqexact">(6.11)</a> is given by
 <span class="math display">\[\begin{equation}
 \omega(z) = \frac{k!}{\varphi(z) [H_{k + 1}(z)]^2}.
 \end{equation}\]</span></p>
@@ -662,7 +662,7 @@ Taking the later approach, the resulting adaptive quadrature estimate of the pos
 &amp;= | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}(\mathbf{z})) \omega(\mathbf{z}) \\
 &amp;=  | \hat{\mathbf{P}} | \sum_{\mathbf{z} \in \mathcal{Q}(d, k)} p(\mathbf{y}, \hat{\mathbf{P}} \mathbf{z} + \hat{\boldsymbol{\mathbf{\phi}}}) \omega(\mathbf{z}).
 \end{align}\]</span></p>
-<p>The quantities <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> and <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}\)</span> are exactly those given in Equations <a href="naomi-aghq.html#eq:posterior-mode">(6.2)</a> and <a href="naomi-aghq.html#eq:hessian">(6.3)</a> and used in the Laplace approximation.
+<p>The quantities <span class="math inline">\(\hat{\boldsymbol{\mathbf{\phi}}}\)</span> and <span class="math inline">\(\hat{\boldsymbol{\mathbf{H}}}\)</span> are exactly those given in Equations <a href="naomi-aghq.html#eq:posterior-mode">(6.3)</a> and <a href="naomi-aghq.html#eq:hessian">(6.4)</a> and used in the Laplace approximation.
 Indeed, when <span class="math inline">\(k = 1\)</span> then AGHQ corresponds to the Laplace approximation.
 To see this, we have <span class="math inline">\(H_1(z)\)</span> with univariate zero <span class="math inline">\(z = 0\)</span> such that the adapted node is given by the mode <span class="math inline">\(\boldsymbol{\mathbf{\phi}}(\mathbf{z} = \mathbf{0} = 0 \times \cdots \times 0) = \hat{\boldsymbol{\mathbf{\phi}}}\)</span>.
 The weighting function is given by
@@ -673,7 +673,7 @@ The AGHQ estimate of the normalising constant for <span class="math inline">\(k 
 <span class="math display">\[\begin{equation}
 \tilde p_{\texttt{AQ}}(\mathbf{y}) = p(\mathbf{y}, \hat{\boldsymbol{\mathbf{\phi}}}) \cdot | \hat{\mathbf{P}} | \cdot (2 \pi)^{d / 2} = p(\mathbf{y}, \hat{\boldsymbol{\mathbf{\phi}}}) \cdot \frac{(2 \pi)^{d / 2}}{| \hat{\mathbf{H}} | ^{1/2}},
 \end{equation}\]</span>
-which corresponds to the Laplace approximation <span class="math inline">\(\tilde p_{\texttt{LA}}(\mathbf{y})\)</span> given in Equation <a href="naomi-aghq.html#eq:la2">(6.5)</a>.
+which corresponds to the Laplace approximation <span class="math inline">\(\tilde p_{\texttt{LA}}(\mathbf{y})\)</span> given in Equation <a href="naomi-aghq.html#eq:la2">(6.6)</a>.
 This connection supports AGHQ being a natural extension of the Laplace approximation when greater accuracy than <span class="math inline">\(k = 1\)</span> is required.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:aghq-demo"></span>
@@ -710,7 +710,7 @@ On the other hand, using the spectral decomposition results in adapted quadratur
 \end{equation}\]</span>
 To complete approximation of the posterior normalising constant, the marginal Laplace approximation can be integrated over the hyperparameters using a quadrature rule (Section <a href="naomi-aghq.html#quadrature">6.1.2</a>)
 <span class="math display" id="eq:inlanormconst">\[\begin{equation}
-\tilde p(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} \tilde p_\texttt{LA}(\mathbf{z}, \mathbf{y}) \omega(\mathbf{z}). \tag{6.11}
+\tilde p(\mathbf{y}) = \sum_{\mathbf{z} \in \mathcal{Q}} \tilde p_\texttt{LA}(\mathbf{z}, \mathbf{y}) \omega(\mathbf{z}). \tag{6.12}
 \end{equation}\]</span>
 Though any choice of quadrature rule is possible, following <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span> here I consider use of AGHQ.
 Let <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> be the <span class="math inline">\(m\)</span>-dimensional GHQ nodes constructed using the product rule with <span class="math inline">\(k\)</span> nodes per dimension, and <span class="math inline">\(\omega: \mathbb{R}^m \to \mathbb{R}\)</span> the corresponding weighting function.
@@ -722,7 +722,7 @@ These nodes are adapted by <span class="math inline">\(\boldsymbol{\mathbf{\thet
 \end{align}\]</span>
 The nested AGHQ estimate of the posterior normalising constant is then
 <span class="math display" id="eq:aghqnormconst">\[\begin{equation}
-\tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}}_\texttt{LA} | \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}). \tag{6.12}
+\tilde p_{\texttt{AQ}}(\mathbf{y}) = | \hat{\mathbf{P}}_\texttt{LA} | \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \omega(\mathbf{z}). \tag{6.13}
 \end{equation}\]</span>
 This estimate can be used to normalise the marginal Laplace approximation as follows
 <span class="math display">\[\begin{equation}
@@ -741,19 +741,19 @@ Four methods are presented below, trading-off accuracy with computational expens
 <p>Most easily, inferences for the latent field can be obtained by approximation of <span class="math inline">\(p(\mathbf{x} \, | \, \mathbf{y})\)</span> using another application of the quadrature rule <span class="citation">(<a href="#ref-rue2007approximate">Håvard Rue and Martino 2007</a>)</span>
 <span class="math display" id="eq:mixgaussian">\[\begin{align}
 p(\mathbf{x} \, | \, \mathbf{y}) &amp;= \int p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} = \int p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) p(\boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
-&amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). \tag{6.13}
+&amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}) \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}). \tag{6.14}
 \end{align}\]</span>
 The quadrature rule <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> is used both internally to normalise the marginal Laplace approximation, and externally to perform integration with respect to the hyperparameters.
-Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.13)</a> is a mixture of Gaussian distributions
+Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a> is a mixture of Gaussian distributions
 <span class="math display" id="eq:mixgaussian-individual">\[\begin{equation}
-p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}), \tag{6.14}
+p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y}), \tag{6.15}
 \end{equation}\]</span>
 each with multinomial probabilities
 <span class="math display">\[\begin{equation}
 \lambda(\mathbf{z}) = |\hat{\mathbf{P}}_\texttt{LA}| \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \omega(\mathbf{z}),
 \end{equation}\]</span>
 where <span class="math inline">\(\sum \lambda(\mathbf{z}) = 1\)</span> and <span class="math inline">\(\lambda(\mathbf{z}) &gt; 0\)</span>.
-Samples may therefore be naturally obtained for the complete vector <span class="math inline">\(\mathbf{x}\)</span> jointly by first drawing a node <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> with multinomial probabilities <span class="math inline">\(\lambda(\mathbf{z})\)</span> then drawing a sample from the corresponding Gaussian distribution in Equation <a href="naomi-aghq.html#eq:mixgaussian-individual">(6.14)</a>.
+Samples may therefore be naturally obtained for the complete vector <span class="math inline">\(\mathbf{x}\)</span> jointly by first drawing a node <span class="math inline">\(\mathbf{z} \in \mathcal{Q}(m, k)\)</span> with multinomial probabilities <span class="math inline">\(\lambda(\mathbf{z})\)</span> then drawing a sample from the corresponding Gaussian distribution in Equation <a href="naomi-aghq.html#eq:mixgaussian-individual">(6.15)</a>.
 Algorithms for fast and exact simulation from a Gaussian distribution have been developed, including by <span class="citation">Håvard Rue (<a href="#ref-rue2001fast">2001</a>)</span>.
 The posterior marginals for any subset of the complete vector can simply be obtained by keeping the relevant entries of <span class="math inline">\(\mathbf{x}\)</span>.</p>
 </div>
@@ -761,7 +761,7 @@ The posterior marginals for any subset of the complete vector can simply be obta
 <h4><span class="header-section-number">6.1.3.2</span> Laplace marginals<a href="naomi-aghq.html#laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>An alternative higher accuracy, but more computationally expensive, approach is to calculate a Laplace approximation to the marginal posterior
 <span class="math display" id="eq:lamarginaljoint">\[\begin{equation}
-\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}. \tag{6.15}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}. \tag{6.16}
 \end{equation}\]</span>
 Here, the variable <span class="math inline">\(x_i\)</span> is excluded from the Gaussian approximation such that
 <span class="math display">\[\begin{equation}
@@ -775,27 +775,27 @@ and <span class="math inline">\([(N - 1) \times (N - 1)]\)</span>-dimensional He
 <span class="math display">\[\begin{equation}
 \hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) = - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
 \end{equation}\]</span>
-The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> may be obtained by normalising the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.15)</a>) before performing integration with respect to the hyperparameters (as in Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.13)</a>).
+The approximate posterior marginal <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> may be obtained by normalising the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.16)</a>) before performing integration with respect to the hyperparameters (as in Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a>).
 The normalised Laplace approximation is
 <span class="math display">\[\begin{equation}
 \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p(\mathbf{y})}.
 \end{equation}\]</span>
-where either the estimate of the evidence in Equation <a href="naomi-aghq.html#eq:aghqnormconst">(6.12)</a> may be reused or a de novo estimate can be computed.
+where either the estimate of the evidence in Equation <a href="naomi-aghq.html#eq:aghqnormconst">(6.13)</a> may be reused or a de novo estimate can be computed.
 Integration with respect to the hyperparameters is performed via
 <span class="math display" id="eq:lamarginal">\[\begin{align}
 p(x_i \, | \, \mathbf{y}) &amp;= \int p(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \text{d} \boldsymbol{\mathbf{\theta}} \\
-&amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \tilde \omega(\mathbf{z}). \tag{6.16}
+&amp;\approx |\hat{\mathbf{P}}_\texttt{LA}| \sum_{\mathbf{z} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}(\mathbf{z}) \, | \, \mathbf{y}) \tilde \omega(\mathbf{z}). \tag{6.17}
 \end{align}\]</span></p>
-<p>Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> is a mixture of the normalised Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
+<p>Equation <a href="naomi-aghq.html#eq:lamarginal">(6.17)</a> is a mixture of the normalised Laplace approximations <span class="math inline">\(\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y})\)</span> over the hyperparameter quadrature nodes.
 However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>) it is not easy to directly sample each Laplace approximation.
-As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.16)</a> may instead be represented by its evaluation at a number of nodes.
+As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.17)</a> may instead be represented by its evaluation at a number of nodes.
 One approach is to chose these nodes based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
 The probability density function of the marginal posterior may then be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>When the latent field <span class="math inline">\(\mathbf{x}\)</span> is a Gauss-Markov random fields [GMRF; <span class="citation">Havard Rue and Held (<a href="#ref-rue2005gaussian">2005</a>)</span>] it is possible to efficiently approximate the Laplace marginals in Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>.
-The simplified approximation is achieved by a Taylor expansion on the numerator and denominator of Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.15)</a> up to third order.
+The simplified approximation is achieved by a Taylor expansion on the numerator and denominator of Equation <a href="naomi-aghq.html#eq:lamarginaljoint">(6.16)</a> up to third order.
 The approach is analogous to correcting the Gaussian approximation in Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a> for location and skewness.
 Details are left to Section 3.2.3 of <span class="citation">Håvard Rue, Martino, and Chopin (<a href="#ref-rue2009approximate">2009</a>)</span>.</p>
 </div>
@@ -920,7 +920,7 @@ with structured additive predictor
 &amp;= \beta_0 + \beta_\texttt{Base} \log(\texttt{Base}_i / 4) + \beta_\texttt{Trt} \texttt{Trt}_i +
    \beta_{\texttt{Trt} \times \texttt{Base}} (\texttt{Trt}_i \times \log(\texttt{Base}_i / 4)) \\
 &amp;+ \beta_\texttt{Age} \log(\texttt{Age}_i) + \beta_{\texttt{V}_4} {\texttt{V}_4}_j +
-   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4]. \tag{6.17}
+   \epsilon_i + \nu_{ij}, \quad i \in [59], \quad j \in [4]. \tag{6.18}
 \end{align}\]</span>
 The prior distribution on each of the regression parameters, including the intercept <span class="math inline">\(\beta_0\)</span>, was <span class="math inline">\(\mathcal{N}(0, 100^2)\)</span>.
 The patient <span class="math inline">\(\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)\)</span> and patient-visit <span class="math inline">\(\nu_{ij} \sim \mathcal{N}(0, 1/\tau_\nu)\)</span> random effects were IID with gamma precision prior distributions <span class="math inline">\(\tau_\epsilon, \tau_\nu \sim \Gamma(0.001, 0.001)\)</span>.</p>
@@ -1015,7 +1015,7 @@ The covariates may be obtained and their transformations centred by:</p>
 <span id="cb2-6"><a href="naomi-aghq.html#cb2-6" tabindex="-1"></a>         <span class="at">CV4     =</span> <span class="fu">centre</span>(V4),</span>
 <span id="cb2-7"><a href="naomi-aghq.html#cb2-7" tabindex="-1"></a>         <span class="at">ClAge   =</span> <span class="fu">centre</span>(<span class="fu">log</span>(Age)),</span>
 <span id="cb2-8"><a href="naomi-aghq.html#cb2-8" tabindex="-1"></a>         <span class="at">CBT     =</span> <span class="fu">centre</span>(Trt <span class="sc">*</span> <span class="fu">log</span>(Base<span class="sc">/</span><span class="dv">4</span>)))</span></code></pre></div>
-<p>The structured additive predictor in Equation <a href="naomi-aghq.html#eq:epil">(6.17)</a> is then specified by:</p>
+<p>The structured additive predictor in Equation <a href="naomi-aghq.html#eq:epil">(6.18)</a> is then specified by:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="naomi-aghq.html#cb3-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> CTrt <span class="sc">+</span> ClBase4 <span class="sc">+</span> CV4 <span class="sc">+</span> ClAge <span class="sc">+</span> CBT <span class="sc">+</span></span>
 <span id="cb3-2"><a href="naomi-aghq.html#cb3-2" tabindex="-1"></a>  <span class="fu">f</span>(rand, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior) <span class="sc">+</span>  </span>
 <span id="cb3-3"><a href="naomi-aghq.html#cb3-3" tabindex="-1"></a>  <span class="fu">f</span>(Ind,  <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> tau_prior)</span></code></pre></div>
@@ -1120,7 +1120,7 @@ The argument <code>k</code> specifies the number of quadrature nodes to be used 
 Here there are two hyperparameters <span class="math inline">\(\boldsymbol{\mathbf{\theta}} = (\tau_\epsilon, \tau_\nu)\)</span>, and <code>k</code> is set to three, such that in total there are <span class="math inline">\(3^2 = 9\)</span> quadrature nodes:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="naomi-aghq.html#cb15-1" tabindex="-1"></a>init <span class="ot">&lt;-</span> <span class="fu">c</span>(param<span class="sc">$</span>l_tau_epsilon, param<span class="sc">$</span>l_tau_nu)</span>
 <span id="cb15-2"><a href="naomi-aghq.html#cb15-2" tabindex="-1"></a>fit <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">marginal_laplace_tmb</span>(obj, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">startingvalue =</span> init)</span></code></pre></div>
-<p>Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.13)</a>) can be obtained by:</p>
+<p>Draws from the mixture of Gaussians approximating the latent field posterior distribution (Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.14)</a>) can be obtained by:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="naomi-aghq.html#cb16-1" tabindex="-1"></a>samples <span class="ot">&lt;-</span> aghq<span class="sc">::</span><span class="fu">sample_marginal</span>(aghq, <span class="at">M =</span> <span class="dv">1000</span>)<span class="sc">$</span>samps</span></code></pre></div>
 <p>For a more complete <code>aghq</code> vignette, see <span class="citation">Stringer (<a href="#ref-stringer2021implementing">2021</a>)</span>.</p>
 </div>
@@ -1249,7 +1249,7 @@ Counts of cases <span class="math inline">\(y_i \in \mathbb{N}^{+}\)</span> from
 Some areas are thought to be unsuitable for disease transmission, and possibly as a result there are relatively high number of villages with zero prevalence.
 To account for the possibility of structural zeros, following <span class="citation">Diggle and Giorgi (<a href="#ref-diggle2016model">2016</a>)</span>, a zero-inflated binomial likelihood was used
 <span class="math display" id="eq:loaloa-likelihood">\[\begin{equation}
-p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) \tag{6.18}
+p(y_i) = (1 - \phi(s_i)) \mathbb{I}(y_i = 0) + \phi(s_i) \text{Bin}(y_i \, | \, n_i, \rho(s_i)) \tag{6.19}
 \end{equation}\]</span>
 where <span class="math inline">\(s_i \in \mathbb{R}^2\)</span> is the village location, <span class="math inline">\(\phi(s_i) \in [0, 1]\)</span> is the suitability probability, and <span class="math inline">\(\rho(s_i) \in [0, 1]\)</span> is the disease prevalence.
 The prevalence and suitability were modelled jointly using logistic regressions
@@ -1268,7 +1268,7 @@ Gamma penalised complexity <span class="citation">(<a href="#ref-simpson2017pena
 \mathbb{P}(\rho &lt; 200\text{km}) &amp;= 0.975.
 \end{align}\]</span>
 The smoothness parameter <span class="math inline">\(\nu\)</span> was fixed to 1.</p>
-<p>The zero-inflated likelihood in Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.18)</a> is not compatible with <code>R-INLA</code>.
+<p>The zero-inflated likelihood in Equation <a href="naomi-aghq.html#eq:loaloa-likelihood">(6.19)</a> is not compatible with <code>R-INLA</code>.
 Section 2.2 of <span class="citation">Brown (<a href="#ref-brown2015model">2015</a>)</span> demonstrates use of <code>R-INLA</code> to fit a simpler LGM model which includes covariates.
 Instead, <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span> implemented this model in <code>TMB</code>.
 Inference was then performed using Gaussian marginals and AGHQ via <code>aghq</code> and NUTS via <code>tmbstan</code>.
@@ -1406,51 +1406,51 @@ The set of all <span class="math inline">\(I\)</span> is denoted <span class="ma
 <p>Independent logistic regression models are specified for HIV prevalence and ART coverage in the general population.
 Without giving the linear predictors in detail, these models are specified by
 <span class="math display" id="eq:rho">\[\begin{equation}
-\text{logit}(\rho_i) = \eta^\rho_i, \tag{6.19}
+\text{logit}(\rho_i) = \eta^\rho_i, \tag{6.20}
 \end{equation}\]</span>
 and
 <span class="math display" id="eq:alpha">\[\begin{equation}
-\text{logit}(\alpha_i) = \eta^\alpha_i. \tag{6.20}
+\text{logit}(\alpha_i) = \eta^\alpha_i. \tag{6.21}
 \end{equation}\]</span>
 HIV incidence rate is modelled on the log scale as
 <span class="math display" id="eq:lambda">\[\begin{equation}
-\log(\lambda_i) = \eta^\lambda_i. \tag{6.21}
+\log(\lambda_i) = \eta^\lambda_i. \tag{6.22}
 \end{equation}\]</span>
 The structured additive predictor <span class="math inline">\(\eta^\lambda_i\)</span> includes terms for adult HIV prevalence and adult ART coverage.
 The proportion recently infected among HIV positive persons is linked to HIV incidence via
 <span class="math display" id="eq:kappa">\[\begin{equation}
-\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.22}
+\kappa_i = 1- \exp \left( - \lambda_i \cdot \frac{1 - \rho_i}{\rho_i} \cdot (\Omega_T - \beta_T) - \beta_T \right), \tag{6.23}
 \end{equation}\]</span>
 where the mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and the proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span> are set based on informative priors for the particular HIV test used.</p>
-<p>The three processes in Equations <a href="naomi-aghq.html#eq:rho">(6.19)</a>, <a href="naomi-aghq.html#eq:alpha">(6.20)</a>, and <a href="naomi-aghq.html#eq:lambda">(6.21)</a> are each primarily informed by household survey data.
+<p>The three processes in Equations <a href="naomi-aghq.html#eq:rho">(6.20)</a>, <a href="naomi-aghq.html#eq:alpha">(6.21)</a>, and <a href="naomi-aghq.html#eq:lambda">(6.22)</a> are each primarily informed by household survey data.
 Let <span class="math inline">\(j\)</span> denote a surveyed individual, in district-age-sex strata <span class="math inline">\(i(j)\)</span>.
 Weighted aggregate survey observations are calculated based on individual responses <span class="math inline">\(\theta_j \in \{0, 1\}\)</span> as
 <span class="math display" id="eq:survey-obs">\[\begin{equation}
-\hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, \tag{6.23}
+\hat \theta_I = \frac{\sum_{i(j) \in I} w_j \cdot\theta_j}{\sum_{i(j) \in I} w_j}, \tag{6.24}
 \end{equation}\]</span>
 Survey weights <span class="math inline">\(w_j\)</span> for each of <span class="math inline">\(\theta \in \{\rho, \alpha, \kappa\}\)</span> are supplied by the survey provider.
 These weights aim to reduce bias by decreasing possible correlation between response and recording mechanism <span class="citation">(<a href="#ref-meng2018statistical">Meng 2018</a>)</span>.
-The weighted aggregate number of outcomes are obtained by multiplying Equation <a href="naomi-aghq.html#eq:survey-obs">(6.23)</a> by the Kish effective sample size [ESS; <span class="citation">Kish (<a href="#ref-kish1965survey">1965</a>)</span>]
+The weighted aggregate number of outcomes are obtained by multiplying Equation <a href="naomi-aghq.html#eq:survey-obs">(6.24)</a> by the Kish effective sample size [ESS; <span class="citation">Kish (<a href="#ref-kish1965survey">1965</a>)</span>]
 <span class="math display" id="eq:weighted-aggregate">\[\begin{equation}
-y^{\theta}_{I} = m^{\theta}_{I} \hat \theta_{I}, \tag{6.24}
+y^{\theta}_{I} = m^{\theta}_{I} \hat \theta_{I}, \tag{6.25}
 \end{equation}\]</span>
 where
 <span class="math display" id="eq:kish-ess">\[\begin{equation}
-m^{\theta}_I = \frac{\left(\sum_{i(j) \in I} w_j\right)^2}{\sum_{i(j) \in I} w_j^2}. \tag{6.25}
+m^{\theta}_I = \frac{\left(\sum_{i(j) \in I} w_j\right)^2}{\sum_{i(j) \in I} w_j^2}. \tag{6.26}
 \end{equation}\]</span>
 As the Kish ESS is maximised by constant survey weights, in exchange for reducing bias, survey weighting increases variance.
-Equations <a href="naomi-aghq.html#eq:survey-obs">(6.23)</a> and <a href="naomi-aghq.html#eq:kish-ess">(6.25)</a> are slightly imprecise in the notation used does not reflect the fact that <span class="math inline">\(j\)</span> only runs over individuals within the relevant denominator.
+Equations <a href="naomi-aghq.html#eq:survey-obs">(6.24)</a> and <a href="naomi-aghq.html#eq:kish-ess">(6.26)</a> are slightly imprecise in the notation used does not reflect the fact that <span class="math inline">\(j\)</span> only runs over individuals within the relevant denominator.
 In particular, for ART coverage <span class="math inline">\(\alpha\)</span> and the proportion recently infected among HIV positive persons <span class="math inline">\(\kappa\)</span>, only those individuals who are HIV positive are included in the set.
 The denominator for HIV prevalence <span class="math inline">\(\rho\)</span> includes all individuals.</p>
 <p>The weighted aggregate number of outcomes are modelled using a binomial working likelihood <span class="citation">(<a href="#ref-chen2014use">Chen, Wakefield, and Lumely 2014</a>)</span> defined to operate on the reals
 <span class="math display" id="eq:xbin">\[\begin{equation}
-y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}). \tag{6.26}
+y^{\theta}_{I} \sim \text{xBin}(m^{\theta}_{I}, \theta_{I}). \tag{6.27}
 \end{equation}\]</span>
 The terms <span class="math inline">\(\theta_{I}\)</span> are the following weighted aggregates
 <span class="math display" id="eq:weighted-aggregates">\[\begin{equation}
 \rho_{I} = \frac{\sum_{i \in I} N_i \rho_i}{\sum_{i \in I} N_i}, \quad
 \alpha_{I} = \frac{\sum_{i \in I} N_i \rho_i \alpha_i}{\sum_{i \in I} N_i \rho_i}, \quad
-\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}, \tag{6.27}
+\kappa_{I} = \frac{\sum_{i \in I} N_i \rho_i \kappa_i}{\sum_{i \in I} N_i \rho_i}, \tag{6.28}
 \end{equation}\]</span>
 where the denominators of <span class="math inline">\(\alpha_{I}\)</span> and <span class="math inline">\(\kappa_{I}\)</span> reflect their restriction to HIV positive persons.</p>
 </div>
@@ -1479,7 +1479,7 @@ y^{\rho^\text{ANC}}_I &amp;\sim \text{Bin}(m^{\rho^\text{ANC}}_I, \rho^\text{ANC
 y^{\alpha^\text{ANC}}_I &amp;\sim \text{Bin}(y^{\rho^\text{ANC}}_I, \alpha^\text{ANC}_{I}).
 \end{align*}\]</span>
 It is not necessary to use an extended binomial working likelihood, as in Section <a href="bayes-st.html#survey">3.5</a>, because the ANC data are not survey weighted and therefore are integer valued.
-Analogous to Equation <a href="naomi-aghq.html#eq:weighted-aggregates">(6.27)</a> in the household survey component, the weighted aggregates used here are
+Analogous to Equation <a href="naomi-aghq.html#eq:weighted-aggregates">(6.28)</a> in the household survey component, the weighted aggregates used here are
 <span class="math display">\[\begin{equation*}
 \rho^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}}{\sum_{i \in I} \Psi_i}, \quad
 \alpha^\text{ANC}_{I} = \frac{\sum_{i \in I} \Psi_i \rho_i^\text{ANC} \alpha^\text{ANC}_i}{\sum_{i \in I} \Psi_i \rho_i^\text{ANC}},
@@ -1503,11 +1503,11 @@ The log-odds are modelled using a structured additive predictor which only depen
 As a result, it is assumed that travel to each neighbouring district, for all age-sex strata, is equally likely.</p>
 <p>Let the number of people observed receiving ART in strata <span class="math inline">\(i\)</span> be <span class="math inline">\(y^{A}_i\)</span> with corresponding aggregate
 <span class="math display" id="eq:art-aggregate">\[\begin{equation}
-y^{A}_I = \sum_{i \in I} y^{A}_i. \tag{6.28}
+y^{A}_I = \sum_{i \in I} y^{A}_i. \tag{6.29}
 \end{equation}\]</span>
 Let the probability of a person in strata <span class="math inline">\(i\)</span> travelling from district <span class="math inline">\(x(i) = x\)</span> to <span class="math inline">\(x&#39;\)</span> to receive ART be
 <span class="math display" id="eq:recieve-art">\[\begin{equation}
-\pi_{i, x(i) = x, x&#39;} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x&#39;}. \tag{6.29}
+\pi_{i, x(i) = x, x&#39;} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x&#39;}. \tag{6.30}
 \end{equation}\]</span>
 These probabilities are the product of three probabilities, each for a person in strata <span class="math inline">\(i\)</span>:</p>
 <ol style="list-style-type: decimal">
@@ -1523,7 +1523,7 @@ Each unobserved count can be considered as arising from a binomial distribution,
 <span class="math display">\[\begin{equation}
 A_{i, x(i) = x&#39;, x} \sim \text{Bin}(N_{i, x(i) = x&#39;}, \pi_{i, x(i) = x&#39;, x}).
 \end{equation}\]</span></p>
-<p>Each aggregate attendance observation (Equation <a href="naomi-aghq.html#eq:art-aggregate">(6.28)</a>) is modelled using a Gaussian approximation to a sum of binomials.
+<p>Each aggregate attendance observation (Equation <a href="naomi-aghq.html#eq:art-aggregate">(6.29)</a>) is modelled using a Gaussian approximation to a sum of binomials.
 This sum is over both the strata <span class="math inline">\(i \in I\)</span> and the number of ART clients travelling from district <span class="math inline">\(x(i) = x&#39;\)</span> to <span class="math inline">\(x\)</span> to receive treatment.
 The Gaussian approximation is
 <span class="math display">\[\begin{equation}
@@ -1531,13 +1531,13 @@ y^{A}_I \sim \mathcal{N}(\mu^A_I, {\sigma^A_I}^2),
 \end{equation}\]</span>
 where the mean is
 <span class="math display" id="eq:art-aggregate-mean">\[\begin{equation}
-\mu^A_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x}, \tag{6.30}
+\mu^A_I = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x}, \tag{6.31}
 \end{equation}\]</span>
 and the variance is
 <span class="math display" id="eq:art-aggregate-var">\[\begin{equation}
-{\sigma^A_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x} \cdot (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.31}
+{\sigma^A_I}^2 = \sum_{i \in I} \sum_{x&#39; \sim x, x&#39; = x} N_{i, x(i) = x&#39;} \cdot \pi_{i, x(i) = x&#39;, x} \cdot (1 -  \pi_{i, x(i) = x&#39;, x}). \tag{6.32}
 \end{equation}\]</span>
-Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.30)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.31)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
+Equations <a href="naomi-aghq.html#eq:art-aggregate-mean">(6.31)</a> and <a href="naomi-aghq.html#eq:art-aggregate-var">(6.32)</a> are based on a Gaussian approximation to the binomial distribution <span class="math inline">\(\text{Bin}(n, p)\)</span> with mean <span class="math inline">\(np\)</span> and variance <span class="math inline">\(np(1 - p)\)</span>, together with the equations for a linear combination of Gaussian random variables.</p>
 </div>
 </div>
 <div id="naomi-elgm" class="section level3 hasAnchor" number="6.3.2">
@@ -1564,7 +1564,7 @@ This is a relatively minor point, and it is possible to specify models with seve
 Each <span class="math inline">\(\log(\lambda_i)\)</span> therefore depends on 28 structured additive predictors, where 28 arises by the product of 2 sexes (male and female), 7 age groups (<span class="math inline">\(\{\text{15-19}, \ldots, \text{45-49}\}\)</span>), and 2 indicators, HIV prevalence and ART coverage.
 This reflects basic HIV epidemiology: incidence of sexually transmitted HIV is proportional to unsuppressed viral load among an individual’s potential sexual partners.
 The district-level adult averages are used as a proxy.</p></li>
-<li><p>In Section <a href="naomi-aghq.html#household">6.3.1.2</a>, the proportion recently infected <span class="math inline">\(\kappa_i\)</span> is given by a non-linear function (Equation <a href="naomi-aghq.html#eq:kappa">(6.22)</a>) of HIV incidence <span class="math inline">\(\lambda_i\)</span>, HIV prevalence <span class="math inline">\(\rho_i\)</span>, mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span>.
+<li><p>In Section <a href="naomi-aghq.html#household">6.3.1.2</a>, the proportion recently infected <span class="math inline">\(\kappa_i\)</span> is given by a non-linear function (Equation <a href="naomi-aghq.html#eq:kappa">(6.23)</a>) of HIV incidence <span class="math inline">\(\lambda_i\)</span>, HIV prevalence <span class="math inline">\(\rho_i\)</span>, mean duration of recent infection <span class="math inline">\(\Omega_T\)</span> and proportion of long-term HIV infections misclassified as recent <span class="math inline">\(\beta_T\)</span>.
 Though arguably a contorting of the ELGM framework, by considering <span class="math inline">\(\Omega_T\)</span> and <span class="math inline">\(\beta_T\)</span> as (Gaussian) linear predictors, then each <span class="math inline">\(\kappa_i\)</span> depends on four structured additive predictors.</p></li>
 <li><p>In Section <a href="naomi-aghq.html#anc">6.3.1.3</a>, HIV prevalence and ART coverage among pregnant women are modelled as offset from their respective indicators in the general population.
 Thus each mean response depends on two structured additive predictors.
@@ -1622,7 +1622,7 @@ For example, for <span class="math inline">\(m = 2\)</span> and <span class="mat
 Figure <a href="naomi-aghq.html#fig:pca-demo">6.17</a> illustrates PCA-AGHQ for a case when <span class="math inline">\(m = 2\)</span> and <span class="math inline">\(s = 1\)</span>.
 Since AGHQ with <span class="math inline">\(k = 1\)</span> corresponds to the Laplace approximation, PCA-AGHQ can be interpreted as performing AGHQ on the first <span class="math inline">\(s\)</span> principal components of the inverse curvature, and a Laplace approximation on the remaining <span class="math inline">\(m - s\)</span> principal components.
 As such, it may be argued that PCA-AGHQ provides a natural compromise between the EB and AGHQ integration strategies.</p>
-<p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.11)</a>) is given by
+<p>For concreteness, the normalising constant obtained by application of PCA-AGHQ to integration of the marginal Laplace approximation (Equation <a href="naomi-aghq.html#eq:inlanormconst">(6.12)</a>) is given by
 <span class="math display">\[\begin{equation}
 \tilde p_\texttt{PCA}(\mathbf{y}) = |\hat{\mathbf{E}}_{\texttt{LA}} \hat{\mathbf{\Lambda}}_{\texttt{LA}}^{1/2}|\sum_{\mathbf{z} \in \mathcal{Q}(m, s, k)} \tilde p_\texttt{LA}(\hat{\mathbf{E}}_{\texttt{LA}, s} \hat{\mathbf{\Lambda}}_{\texttt{LA}, s}^{1/2} \mathbf{z} + \hat{\boldsymbol{\mathbf{\theta}}}_\texttt{LA}, \mathbf{y}) \omega(\mathbf{z}),
 \end{equation}\]</span>
@@ -1782,7 +1782,7 @@ These contributions are discussed in turn, before outlining suggestions for futu
 <p><span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> write that “to our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly”.
 This chapter made important progress towards adding INLA to the integration tools easily accessible using <code>TMB</code>.</p>
 <p>Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
-For example, after requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.26)</a> to be included in <code>R-INLA</code>, a prototype version was shortly made available.
+For example, after requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.27)</a> to be included in <code>R-INLA</code>, a prototype version was shortly made available.
 That said, it is ultimately more sustainable to enable users to implement their own distributions and models.</p>
 </div>
 <div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
