@@ -1435,13 +1435,46 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 ### Inference comparison
 
-```{r}
+(ref:naomi-time) The number of hours taken to perform inference for the Naomi ELGM using each approach.
+
+```{r naomi-time, fig.height = 3, fig.width = 6.25, fig.cap="(ref:naomi-time)"}
 time_taken <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/time-taken.csv"))
+
+#' Should have used consistent units here but didn't: lesson learned for future
+#' To be fair, I used the R way to measure time? Why does it have this default, seems bad eh
+
+#' Measured in minutes (convert to seconds)
+time_taken$aghq <- time_taken$aghq * 60 * 60 
+
+#' Measured in days (convert to seconds)
+time_taken$tmbstan <- time_taken$tmbstan * 60 * 60 * 24
+
+as.data.frame(t(time_taken)) %>%
+  tibble::rownames_to_column("method") %>%
+  mutate(
+    mins = V1 / 60,
+    hours = mins / 60,
+    method = case_when(
+      method == "TMB" ~ "GEB",
+      method == "aghq" ~ "GPCA-AGHQ",
+      method == "tmbstan" ~ "NUTS"
+    ),
+    software = case_when(
+      method == "NUTS" ~ "tmbstan",
+      TRUE ~ "TMB"
+    )
+  ) %>%
+  ggplot(aes(x = method, y = hours, fill = software)) +
+  geom_col() +
+  theme_minimal() +
+  scale_fill_manual(values = c("#D55E00", "#CC79A7")) +
+  labs(x = "", y = "Time taken (h)", fill = "Software") +
+  coord_flip()
 ```
 
 #### Point estimates
 
-(ref:mean-sd-alt-latent) Figure caption.
+(ref:mean-sd-alt-latent) The posterior mean and posterior standard deviation point estimates from each of the 
 
 ```{r mean-sd-alt-latent, fig.cap="(ref:mean-sd-alt-latent)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
@@ -1451,19 +1484,25 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 ### Exceedance probabilities
 
-(ref:exceedance) Figure caption.
-
-```{r exceedance, fig.cap="(ref:exceedance)"}
-knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/exceedance.png"))
-```
-
 #### Meeting the second 90
+
+(ref:exceedance-second90) Figure caption.
+
+```{r exceedance-second90, fig.cap="(ref:exceedance-second90)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/exceedance-second90.png"))
+```
 
 Ambitious targets for scaling up ART treatment have been developed by UNAIDS, with the goal of ending the AIDS epidemic by 2030 [@unaids2014target].
 Meeting the 90-90-90 fast-track target requires that 90% of people living with HIV know their status, 90% of those are on ART, and 90% of those have a suppressed viral load.
 Inferences from Naomi can be used to identify treatment gaps by calculating the probability that the second 90 target has been met, that is $\mathbb{P}(\alpha_i > 0.9^2 = 0.81)$ for each strata $i$.
  
 #### Finding strata with high incidence
+
+(ref:exceedance-1inc) Figure caption.
+
+```{r exceedance-1inc, fig.cap="(ref:exceedance-1inc)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/exceedance-1inc.png"))
+```
 
 Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
 Inferences from Naomi can be used to calculate the probability of a strata having high incidence by evaluating $\mathbb{P}(\lambda_i > 0.01)$.
