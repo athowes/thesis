@@ -418,7 +418,7 @@ div.csl-indent {
 The experiments conducted provide useful data to guide the use of spatial random effect models by applied practitioners, as well as to base methodological developments on.
 The most important findings were as follows (remains to write).</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:global-update-conclusion"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:global-update-conclusion"></span>
 <img src="figures/conclusions/global-update-conclusion.png" alt="Panel A shows the front page of UNAIDS (2023b). Panel B shows the page containing text and a figure based on the work done in Chapter 5. In this figure, 30 countries are included." width="95%" />
 <p class="caption">
 Figure 7.1: Panel A shows the front page of <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>. Panel B shows the page containing text and a figure based on the work done in Chapter <a href="multi-agyw.html#multi-agyw">5</a>. In this figure, 30 countries are included.
@@ -430,8 +430,8 @@ This work is the basis for a tool used to prioritise delivery of HIV prevention 
 The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure <a href="#fig:global-update"><strong>??</strong></a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter <a href="multi-agyw.html#multi-agyw">5</a> exemplified specification of complex multinomial spatio-temporal models in <code>R-INLA</code> using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.</p>
-<p>Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by a challenging problem in evidence synthesis for small-area estimation of HIV indicators.
-Estimates from the Naomi model are used in over <span class="math inline">\(X\)</span> countries.
+<p>The Naomi model has been used in over 35 countries in SSA to produce district-level estimates of HIV indicators by synthesising evidence from multiple sources.
+Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> developed deterministic Bayesian inference methods, motivated by enabling more accurate inferences for this challenging and practically important model.
 Its most important methods contributions are two-fold.
 First, an implementation of INLA which is compatible with models specified using a <code>TMB</code> C++ template.
 For the first time, practitioners can now fit essentially any model using the INLA method.
@@ -458,26 +458,28 @@ the external validity of risk ratios derived from cohort studies, difficulties d
 Although AGYW are disproportionately at risk of HIV infection, 56% of new infections in SSA occur in other demographic groups.
 Modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span> may help to overcome reporting biases by harmonising male and female reporting.
 This model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
-<li><p>The INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would benefit significantly from improvements to its speed and usability.
+<li><p>Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would be enhanced greatly by improvements to its speed and usability.
 The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.
 Usability would be improved by providing the method as a part of statistical software, likely via the <code>aghq</code> package.
 The primary difficulty which would have to be overcome to do so is that the <code>random</code> argument of <code>TMB::MakeADFun</code> does not allow indexing.</p></li>
 </ol>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:conditional-simulation-diff-k-fixed"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:conditional-simulation-diff-k-fixed"></span>
 <img src="figures/naomi-aghq/conditional-simulation-diff-k-fixed.png" alt="For the Loa loa ELGM, increasing the number of quadrature nodes per hyperparameter dimension from \(k = 3\) to \(k = 7\) did little to improve accuracy. On the other hand, using Laplace marginals rather than Gaussian marginals did have a substantial effect (Figures 6.12 and 6.13). More broadly, it would be valuable to better understand, and aspirationally have diagnostics for, the circumstances under which more accurate approximations are required." width="95%" />
 <p class="caption">
 Figure 7.2: For the Loa loa ELGM, increasing the number of quadrature nodes per hyperparameter dimension from <span class="math inline">\(k = 3\)</span> to <span class="math inline">\(k = 7\)</span> did little to improve accuracy. On the other hand, using Laplace marginals rather than Gaussian marginals did have a substantial effect (Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a> and <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a>). More broadly, it would be valuable to better understand, and aspirationally have diagnostics for, the circumstances under which more accurate approximations are required.
 </p>
 </div>
 <ol start="3" style="list-style-type: decimal">
-<li><p>New methodological research could be done, enabled by the universal INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.
-For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections <a href="naomi-aghq.html#loaloa">6.2.2</a> and <a href="naomi-aghq.html#malawi">6.5</a>).
-That a single <code>TMB</code> C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via <code>tmbstan</code>, is a substantial asset in conducting this type of research.</p>
-<p>Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
+<li><p>The universal INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> enables empirical and methodological research that was previously not possible, or prohibitively difficult.</p>
+<p>First, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections <a href="naomi-aghq.html#loaloa">6.2.2</a> and <a href="naomi-aghq.html#malawi">6.5</a>).
+That a single <code>TMB</code> C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via <code>tmbstan</code>, is a substantial asset in conducting this type of research.
+Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
 How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
 For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure <a href="conclusions.html#fig:conditional-simulation-diff-k-fixed">7.2</a>).</p>
-<p>Additionally, theoretical work could be conducted to complement the empirical work described above, extending the findings of <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>.
+<p>Second, it is relatively easy to make alterations to the implementaiton, facilitating possible innovation in the design of INLA-like algorithms.
+It was previously difficult for researchers who are not developers of <code>R-INLA</code> to engage in methodological work about the INLA method.</p>
+<p>Theoretical research could be conducted to complement the work described above, extending the findings of <span class="citation">Bilodeau, Stringer, and Tang (<a href="#ref-bilodeau2022stochastic">2022</a>)</span>.
 This work is benefited by the exhaustive specification of the INLA-like algorithms used in this thesis.</p></li>
 </ol>
 </div>

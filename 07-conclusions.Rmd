@@ -40,8 +40,9 @@ The tool now encompasses at least 30 countries, expanding from the initial 13 in
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
 Alongside these applied contributions, Chapter \@ref(multi-agyw) exemplified specification of complex multinomial spatio-temporal models in `R-INLA` using the Poisson-multinomial transformation, including using two- and three-way Kronecker product interactions.
 
-Chapter \@ref(naomi-aghq) developed deterministic Bayesian inference methods, motivated by a challenging problem in evidence synthesis for small-area estimation of HIV indicators.
-Estimates from the Naomi model are used in over $X$ countries.
+
+The Naomi model has been used in over 35 countries in SSA to produce district-level estimates of HIV indicators by synthesising evidence from multiple sources.
+Chapter \@ref(naomi-aghq) developed deterministic Bayesian inference methods, motivated by enabling more accurate inferences for this challenging and practically important model.
 Its most important methods contributions are two-fold.
 First, an implementation of INLA which is compatible with models specified using a `TMB` C++ template.
 For the first time, practitioners can now fit essentially any model using the INLA method.
@@ -70,7 +71,7 @@ Although AGYW are disproportionately at risk of HIV infection, 56% of new infect
 Modelling of age-stratified sexual partnerships [@wolock2021evaluating] may help to overcome reporting biases by harmonising male and female reporting.
 This model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the inference methods advanced in Chapter \@ref(naomi-aghq).
 
-2. The INLA implementation developed in Chapter \@ref(naomi-aghq) would benefit significantly from improvements to its speed and usability.
+2. Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter \@ref(naomi-aghq) would be enhanced greatly by improvements to its speed and usability.
 The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by @wood2020simplified.
 Usability would be improved by providing the method as a part of statistical software, likely via the `aghq` package.
 The primary difficulty which would have to be overcome to do so is that the `random` argument of `TMB::MakeADFun` does not allow indexing.
@@ -81,15 +82,18 @@ The primary difficulty which would have to be overcome to do so is that the `ran
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-k-fixed.png")
 ```
 
-3. New methodological research could be done, enabled by the universal INLA implementation developed in Chapter \@ref(naomi-aghq).
-For example, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections \@ref(loaloa) and \@ref(malawi)).
-That a single `TMB` C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via `tmbstan`, is a substantial asset in conducting this type of research.
+3. The universal INLA implementation developed in Chapter \@ref(naomi-aghq) enables empirical and methodological research that was previously not possible, or prohibitively difficult.
 
+    First, INLA-like methods can now be tested for a broader class of models, such as the Loa loa and Naomi ELGMs (Sections \@ref(loaloa) and \@ref(malawi)).
+    That a single `TMB` C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via `tmbstan`, is a substantial asset in conducting this type of research.
     Within this broader class of models, I wonder about the best way to achieve accurate results given a certain computational budget.
     How should computational effort be traded-off between additional hyperparameter grid points and more accurate latent field approximations?
     For example, for the Loa loa ELGM, the accuracy benefit of using Laplace marginals was more than using a higher number of AGHQ nodes per dimension (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
 
-    Additionally, theoretical work could be conducted to complement the empirical work described above, extending the findings of @bilodeau2022stochastic.
+    Second, it is relatively easy to make alterations to the implementaiton, facilitating possible innovation in the design of INLA-like algorithms.
+    It was previously difficult for researchers who are not developers of `R-INLA` to engage in methodological work about the INLA method.
+
+    Theoretical research could be conducted to complement the work described above, extending the findings of @bilodeau2022stochastic.
     This work is benefited by the exhaustive specification of the INLA-like algorithms used in this thesis.
 
 ## Broader reflections
