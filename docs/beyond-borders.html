@@ -936,6 +936,7 @@ Appendix <a href="models-for-areal-spatial-structure.html#aghq-nuts">A.1</a> com
 <h3><span class="header-section-number">4.3.3</span> Model assessment<a href="beyond-borders.html#model-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Let the parameter <span class="math inline">\(\phi\)</span> have posterior marginal <span class="math inline">\(f(\phi) = p(\phi \, | \, \mathbf{y})\)</span> with cumulative distribution function <span class="math inline">\(F\)</span>.
 Let <span class="math inline">\(\phi_s\)</span> be samples <span class="math inline">\(s \in [S]\)</span> from <span class="math inline">\(f\)</span>.
+Here, the number of samples per posterior marginal was <span class="math inline">\(S = 200\)</span>.
 Let <span class="math inline">\(\omega\)</span> be the true value of <span class="math inline">\(\phi\)</span> used in the simulation.</p>
 <p>The accuracy of latent field parameter and hyperparameter posterior marginals from each model were assessed using three methods.
 These were the mean squared error (MSE), the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], and the calibration.</p>
@@ -983,6 +984,14 @@ Figure 4.8: The mean CRPS and its standard error for each inferential model and 
 Figure 4.9: The mean CRPS and its standard error for each inferential model and simulation model on the Texas geometry (Panel <a href="beyond-borders.html#fig:geometries">4.6</a>G).
 </p>
 </div>
+<p>For the vignette geometries, because each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models.
+Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-1">A.13</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-2">A.14</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-3">A.15</a> and <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-4">A.16</a> show that almost all 95% credible intervals for the mean CRPS overlap.
+Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
+Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure <a href="models-for-areal-spatial-structure.html#fig:lengthscale-recovery">A.11</a>).
+Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
+Two changes should be made.
+First, an increase to the sample size.
+Second, more careful specification of study with regard to the lengthscale.</p>
 <p>Figures <a href="beyond-borders.html#fig:crps-mean-se-grid">4.7</a>, <a href="beyond-borders.html#fig:crps-mean-se-civ">4.8</a> and <a href="beyond-borders.html#fig:crps-mean-se-tex">4.9</a> present the mean CRPS for the three realistic geometries.
 Results for the four vignette geometries are provided in Appendix <a href="models-for-areal-spatial-structure.html#simulation-appendix">A.3</a>.
 The most important findings from the simulation study are as follows:</p>
@@ -1108,7 +1117,8 @@ Figure 4.11: In leave-one-out (LOO) cross-validation, in each fold one observati
 <li>a regular leave-one-out cross-validation (LOO-CV);</li>
 <li>a spatial leave-one-out cross-validation (SLOO-CV).</li>
 </ol>
-<p>At each fold the CRPS, MSE and quantile (as in Section <a href="beyond-borders.html#model-assessment">4.3.3</a>) of posterior predictive samples as compared with the observed data were computed.</p>
+<p>At each fold the CRPS, MSE and quantile (as in Section <a href="beyond-borders.html#model-assessment">4.3.3</a>) of posterior predictive samples as compared with the observed data were computed.
+In this section, the number of samples per posterior marginal was <span class="math inline">\(S = 1000\)</span>.</p>
 <!-- To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed. -->
 <!-- Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo]. -->
 </div>

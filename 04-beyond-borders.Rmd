@@ -508,6 +508,7 @@ Appendix \@ref(aghq-nuts) compares posterior mean and standard deviations from A
 
 Let the parameter $\phi$ have posterior marginal $f(\phi) = p(\phi \, | \, \mathbf{y})$ with cumulative distribution function $F$.
 Let $\phi_s$ be samples $s \in [S]$ from $f$.
+Here, the number of samples per posterior marginal was $S = 200$.
 Let $\omega$ be the true value of $\phi$ used in the simulation.
 
 The accuracy of latent field parameter and hyperparameter posterior marginals from each model were assessed using three methods.
@@ -558,6 +559,15 @@ knitr::include_graphics(path)
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-tex.png")
 knitr::include_graphics(path)
 ```
+
+For the vignette geometries, because each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models.
+Figures \@ref(fig:crps-mean-se-1), \@ref(fig:crps-mean-se-2), \@ref(fig:crps-mean-se-3) and \@ref(fig:crps-mean-se-4) show that almost all 95% credible intervals for the mean CRPS overlap.
+Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
+Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure \@ref(fig:lengthscale-recovery)).
+Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
+Two changes should be made.
+First, an increase to the sample size.
+Second, more careful specification of study with regard to the lengthscale.
 
 Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) present the mean CRPS for the three realistic geometries.
 Results for the four vignette geometries are provided in Appendix \@ref(simulation-appendix).
@@ -654,6 +664,7 @@ Each model was assessed using (Figure \@ref(fig:cv)):
 2. a spatial leave-one-out cross-validation (SLOO-CV).
 
 At each fold the CRPS, MSE and quantile (as in Section \@ref(model-assessment)) of posterior predictive samples as compared with the observed data were computed.
+In this section, the number of samples per posterior marginal was $S = 1000$.
 
 <!-- To contrast approaches to model comparison, the DIC and WAIC measures of model fit were also computed. -->
 <!-- Given pointwise log-likelihood evaluations, these measures were obtained via the `loo` R package [@loo]. -->
