@@ -539,6 +539,19 @@ Uniformity was assessed using probability integral transform (PIT) histograms [@
 
 ### Results
 
+#### Vignette geometries
+
+As each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models for the vignette geometries.
+Figures \@ref(fig:crps-mean-se-1), \@ref(fig:crps-mean-se-2), \@ref(fig:crps-mean-se-3) and \@ref(fig:crps-mean-se-4) show that almost all 95% credible intervals for the mean CRPS overlap.
+Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
+Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure \@ref(fig:lengthscale-recovery)).
+Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
+Two changes should be made.
+First, an increase to the sample size.
+Second, more careful specification of study with regard to the lengthscale.
+
+#### Realistic geometries
+
 (ref:crps-mean-se-grid) The mean CRPS and its standard error for each inferential model and simulation model on the grid geometry (Panel \@ref(fig:geometries)E).
 
 ```{r crps-mean-se-grid, fig.cap="(ref:crps-mean-se-grid)"}
@@ -560,40 +573,22 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mea
 knitr::include_graphics(path)
 ```
 
-For the vignette geometries, because each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models.
-Figures \@ref(fig:crps-mean-se-1), \@ref(fig:crps-mean-se-2), \@ref(fig:crps-mean-se-3) and \@ref(fig:crps-mean-se-4) show that almost all 95% credible intervals for the mean CRPS overlap.
-Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
-Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure \@ref(fig:lengthscale-recovery)).
-Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
-Two changes should be made.
-First, an increase to the sample size.
-Second, more careful specification of study with regard to the lengthscale.
+The two problems with the vignette geometry study did not apply to the more realistic geometries.
+Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 90% credible intervals that often do not overlap.
 
-Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) present the mean CRPS for the three realistic geometries.
-Results for the four vignette geometries are provided in Appendix \@ref(simulation-appendix).
-The most important findings from the simulation study are as follows:
-
-* The difficulty of the inference problem varied across spatial random effect model used to generate synthetic data.
-Namely, IID structure is harder to predict than either Besag or IK.
+The difficulty of the forecasting problem varied by spatial random effect model used to simulate synthetic data (Table \@ref(tab:simulation-models)).
+IID structure is harder to predict than spatial structure.
 To a lesser extent, Besag structure is harder to predict than IK.
-As would be expected, the greater amount of correlation structure, the easier the problem.
+This is explained by forecasting being made easier by additional correlation structure.
 
-* For IID synthetic data, the IID, BYM2, CK and IK models perform well.
-The BYM2, CK and IK models have ways to learn the extent of spatial structure.
-For example, Appendix \@ref(bym2-proportion) shows successful recovery of the BYM2 proportion parameter.
-Models with fixed spatial structure performed particularly poorly on the geometry interiors.
+For IID synthetic data, the IID and BYM2 models performed well.
+The BYM2 model also performed almost as well as the Besag model on the spatially structured synthetic data (Besag or IK).
+Meanwhile, the IID model performed poorly on spatially structured synthetic data.
+Appendix \@ref(bym2-proportion) shows that the BYM2 proportion parameter successfully recovers either IID or spatial structure.
 
-* For both Besag and IK synthetic data, the IID model performed poorly.
-As with the IID case, the BYM2 proportion parameter enabled learning spatial structure, and as such the BYM2 model performed only modestly worse than the Besag model.
+The performance of kernel models on Besag synthetic data diminished with increasingly spatially irregular geometry.
 
-* Across all synthetic data, the CK and IK models with a prior distribution on the lengthscale performed better than the FCK and FIK models where the lengthscale was fixed.
-These models were able to successfully infer the lengthscale (Appendix \@ref(lengthscale)).
-
-* Although there were differences in the performance of the FCK and FIK models, the CK and IK models were hard to distinguish, even for geometries designed to be spatially irregular.
-This is somewhat a puzzle.
-
-* The lengthscale and the noise.
-I wonder if kernel models might be defined where there hyperparameters are orthogonal.
+For the most part, differences between the centroid and integrated versions of the kernel models were small.
 
 ## HIV prevalence study {#hiv-study}
 
@@ -712,28 +707,43 @@ Figures \@ref(fig:ladder-civ2017phia), \@ref(fig:ladder-mwi2016phia), \@ref(fig:
 
 ### Modelling
 
-* What are my recommendations with respect to which spatial model to use
-* What are my suggestions for new models to develop on the basis of this work
-* Kernel with long lengthscale looks like IID
-* GMRFs perform smoothing more locally
-* Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete.
-* Aggregation via the integrated kernel occurs at the level of the latent field.
-However, most of the time we expect aggregation to occur at the level of the data.
-If the link function $g$ is the identity or linear then the two are equivalent.
-On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process.
-* Discussion of the overall area versus point question. Papers of Sam using point level.
-* @li2012spatial and @li2012lgcp.
-* Discussion of non-stationarity [@paciorek2006spatial].
-* The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless].
-* BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian.
-* How does the weighted GMRF connect?
+This study supports the conclusion that adjacency-based spatial random effect models are difficult to improve upon.
+For the study on HIV survey data, adjacency-based models performed well, if not the best, in all cases.
 
-### Model selection
+Under data truly generated from a kernel model, there is a significant benefit to using a corresponding kernel model for inference.
+However, this finding only weakly supports use of kernel models for applied work, for the following reasons.
+First, it is usually impossible to know that real data was generated from any particular process.
+Second, the synthetic data study used the same kernel, Matérn with $\nu = 3/2$ (Equation), for both simulation and inference, and as such represents a best-case.
+Third, specification of the lengthscale prior distribution is challenging and easy to do badly.
 
-* Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model fit. Use of the DIC is recommended against. The metrics used in this study were more theoretically suitable and enabled more precise findings.
-* Application of scoring rules to transformed versions of parameters [@bosse2023scoring].
-* The log-score was considered but requires a kernel density estimate.
-* How interpretable are the CRPS and MSE.
+<!-- * Aggregation via the integrated kernel occurs at the level of the latent field. -->
+<!-- However, most of the time we expect aggregation to occur at the level of the data. -->
+<!-- If the link function $g$ is the identity or linear then the two are equivalent. -->
+<!-- On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process. -->
+
+<!-- * What are my suggestions for new models to develop on the basis of this work -->
+<!-- * GMRFs perform smoothing more locally -->
+<!-- * Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete. -->
+
+<!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
+<!-- * @li2012spatial and @li2012lgcp. -->
+<!-- * Discussion of non-stationarity [@paciorek2006spatial]. -->
+<!-- * The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless]. -->
+<!-- * BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian. -->
+<!-- * How does the weighted GMRF connect? -->
+<!-- * Lengthscale and noise. I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
+
+### Model comparison
+
+Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model performance.
+Use of the DIC is strongly discouraged by @vehtari2017practical.
+This study used measures of model performance with less problems, such as the CRPS, calculated using cross-validation when required.
+With increased sample size for the simulation study, choropleths of fit by area would enable more precise conclusions about spatial models.
+It would be beneficial to compute the DIC and WAIC in Section \@ref(hiv-study) to provide comparison.
+
+<!-- * Application of scoring rules to transformed versions of parameters [@bosse2023scoring]. -->
+<!-- * The log-score was considered but requires a kernel density estimate. -->
+<!-- * How interpretable are the CRPS and MSE. -->
 
 ### Inference
 
