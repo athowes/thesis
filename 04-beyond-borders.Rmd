@@ -692,10 +692,21 @@ if(knitr::is_latex_output()) {
 The results (Figure \@ref(fig:crps-mean-se-surveys) and Table \@ref(tab:cv-crps)) for each survey were as follows:
 
 1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO and SLOO cross-validation (Figures \@ref(fig:crps-mean-se-civ2017phia))
-The pointwise CRPS value was especially high at the one outlying district in the survey, Grand-Ponts.
-Though there are ways that this error possibly could be mitigated, such as using a distribution with wider tails than a Gaussian, it is difficult to see how any spatial model could have performed well in this case without additional covariates.
+The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
+It is difficult to see how any spatial random model would perform well in this situation, without additional covariates or using a distribution with heavier tails than the Gaussian.
 
-2. For the 2017 PHIA survey in Malawi (Figures \@ref(fig:crps-mean-se-mwi2016phia)).
+    The CK and IK models had lengthscale posterior distributions largely unchanged from their prior distribution (Figure \@ref(fig:lengthscale-posteriors)).
+    This uncertainty in lengthscale resulted wide prevalence 90% credible intervals for the CK and IK models in Figure \@ref(ladder-civ2017phia).
+    This example shows the importance of being careful using kernel models, and the prior distributions set on their hyperparameters.
+    It is suprisingly that this behaviour appears not to have resulted in poor LOO or SLOO performance.
+
+    For this survey the BYM2 proportion posterior distribution was also similar to its prior distribution, in contrast to each of the other surveys which had BYM2 proportion posteriors peaked at one, corresponding to spatially structured noise (Figure \@ref(fig:proportion-posteriors)).
+
+2. For the 2017 PHIA survey in Malawi (Figures \@ref(fig:crps-mean-se-mwi2016phia)) the Besag and BYM2 models performed the best, followed by the kernel models, and then the IID model.
+While the LOO and SLOO CRPS values for IID, Besag and BYM2 models were similar, for the kernel models forecasting performance was substantially reduced by leaving out adjacent districts.
+This finding is suprising, as the kernel models make use of more distant correlations, and it is the adjacency-based models that one would intuitively expect to be hampered more by the SLOO cross-validation.
+For the IID model, that LOO and SLOO performance are similar is no surprise as in all cases the IID model should be predicting the mean.
+Though less data is available in the SLOO case, this should be of little consequence.
 
 3. For the 2017 PHIA survey in Tanzania (Figures  \@ref(fig:crps-mean-se-tza2017phia)).
 
@@ -707,24 +718,24 @@ Figures \@ref(fig:ladder-civ2017phia), \@ref(fig:ladder-mwi2016phia), \@ref(fig:
 
 ### Modelling
 
-This study supports the conclusion that adjacency-based spatial random effect models are difficult to improve upon.
+Though there are situations were other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
 For the study on HIV survey data, adjacency-based models performed well, if not the best, in all cases.
 
 Under data truly generated from a kernel model, there is a significant benefit to using a corresponding kernel model for inference.
-However, this finding only weakly supports use of kernel models for applied work, for the following reasons.
-First, it is usually impossible to know that real data was generated from any particular process.
+However, the transferability of this finding to applied settings is limited by the following factors.
+First and foremost, it is usually impossible to know that real data was generated from any particular process.
 Second, the synthetic data study used the same kernel, Matérn with $\nu = 3/2$ (Equation), for both simulation and inference, and as such represents a best-case.
-Third, specification of the lengthscale prior distribution is challenging and easy to do badly.
+Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
 
-<!-- * Aggregation via the integrated kernel occurs at the level of the latent field. -->
-<!-- However, most of the time we expect aggregation to occur at the level of the data. -->
-<!-- If the link function $g$ is the identity or linear then the two are equivalent. -->
-<!-- On the other hand, for non-linear link functions $g$ such as the commonly used exponential or logistic, the generative model does not match the proposed data generating process. -->
+In the simulation study, aggregation via the integrated kernel occured at the level of the latent field.
+However, most of the time we expect aggregation to occur at the level of the data.
+If the link function $g$ is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy.
+<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
+<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
 
 <!-- * What are my suggestions for new models to develop on the basis of this work -->
 <!-- * GMRFs perform smoothing more locally -->
 <!-- * Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete. -->
-
 <!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
 <!-- * @li2012spatial and @li2012lgcp. -->
 <!-- * Discussion of non-stationarity [@paciorek2006spatial]. -->
@@ -735,11 +746,12 @@ Third, specification of the lengthscale prior distribution is challenging and ea
 
 ### Model comparison
 
-Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model performance.
+Previous spatial random effect comparison studies [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model performance.
 Use of the DIC is strongly discouraged by @vehtari2017practical.
-This study used measures of model performance with less problems, such as the CRPS, calculated using cross-validation when required.
-In Section \@ref(hiv-study) it would be beneficial to compute the DIC and WAIC in order to compare to findings based on cross-validation.
-With increased sample size for the simulation study, choropleths of fit by area would enable more precise conclusions about spatial models.
+This study used less flawed measures of model performance, such as the cross-validated CRPS.
+It would be beneficial to compute the DIC and WAIC in Section \@ref(hiv-study) as a comparison.
+Additionally, the measures presented in this work are disaggregated by area.
+With refinements to the sample sizes used, these disaggregated measures could enable nuanced findings about spatial random effect models.
 
 Cross-validation was performed using $\phi$ as the forecasting target, rather than $y$ as is typical.
 I made this decision because applied interest is in forecasting HIV prevlance at a district level, not in the outcome of a household survey.
@@ -749,11 +761,9 @@ If sample size corresponds to population size, then forecasting $y$ could be a u
 In general, choice of the particular paramter, or transformation of that parameter, to score is an ongoing topic of research [@bosse2023scoring].
 
 The CRPS was used in preference to the log-score primarily because of computational difficulties with the log-score.
-In particular, the log-score requries a kernel density estimate of the posterior distribution.
-Kernel density estimates can be very sensitive to hyperparameter estimates.
-Meanwhile, the CRPS can be estimated without any tunable hyperparameters.
+Whereas  the log-score requires a kernel density estimate of the posterior distribution, and is therefore sensitive to tuning parameters, the CRPS can be estimated from samples alone.
 
-A downside of use of the CRPS and MSE is their relative lack of interpretability.
+One downside of use of the CRPS and MSE is their relative lack of interpretability.
 For example, it is difficult to determine whether a forecast is good, or suitable for practical use, on the basis of its CRPS or MSE.
 Measures such as the skill score have been used to contrast forecast performance with some baseline.
 A constant model, with no random effects, could be used as such a baseline.
@@ -768,6 +778,3 @@ Not all of the inferential models were compatible with `R-INLA`, so `rstan` was 
 However, due to the difference in inference algorithm, this study design did not allow for direct model comparison.
 Consistent use of `TMB`, a fast and flexible tool for spatial modelling [@osgood2023statistical], overcame this limitation.
 Chapter \@ref(naomi-aghq) extends `TMB` to implement the INLA algorithm of `R-INLA`.
-
-<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
-<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
