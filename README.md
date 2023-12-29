@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 291 pages. There are various
+> Thesis under construction! Currently 292 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -260,3 +260,6 @@ time to work on it:
   package and how it is used in `sf`.)
 - In Chapter 3, it would be nice to include a figure illustrating the
   DHS sampling procedure.
+- Rendering the PDF version, figures and tables tend to move around a
+  lot, especially in the appendix. It would be good to have been control
+  over this, but I know that this can be challenging in LaTeX.
