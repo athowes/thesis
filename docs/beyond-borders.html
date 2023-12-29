@@ -1678,11 +1678,22 @@ Third, specification of the lengthscale prior distribution is challenging and ea
 <p>Previous comparisons of spatial random effects <span class="citation">(<a href="#ref-best2005comparison">Nicky Best, Richardson, and Thomson 2005</a>; <a href="#ref-lee2011comparison">Lee 2011</a>)</span> were limited to the DIC measure of model performance.
 Use of the DIC is strongly discouraged by <span class="citation">Vehtari, Gelman, and Gabry (<a href="#ref-vehtari2017practical">2017</a>)</span>.
 This study used measures of model performance with less problems, such as the CRPS, calculated using cross-validation when required.
-With increased sample size for the simulation study, choropleths of fit by area would enable more precise conclusions about spatial models.
-It would be beneficial to compute the DIC and WAIC in Section <a href="beyond-borders.html#hiv-study">4.4</a> to provide comparison.</p>
-<!-- * Application of scoring rules to transformed versions of parameters [@bosse2023scoring]. -->
-<!-- * The log-score was considered but requires a kernel density estimate. -->
-<!-- * How interpretable are the CRPS and MSE. -->
+In Section <a href="beyond-borders.html#hiv-study">4.4</a> it would be beneficial to compute the DIC and WAIC in order to compare to findings based on cross-validation.
+With increased sample size for the simulation study, choropleths of fit by area would enable more precise conclusions about spatial models.</p>
+<p>Cross-validation was performed using <span class="math inline">\(\phi\)</span> as the forecasting target, rather than <span class="math inline">\(y\)</span> as is typical.
+I made this decision because applied interest is in forecasting HIV prevlance at a district level, not in the outcome of a household survey.
+It could be argued that a district does not become more important to forecast well by virtue of surveying a larger sample size in that district.
+That said, an alternative viewpoint is that forecast accuracy should be incentivised more for districts with large populations, such that PLHIV is accurately estimated.
+If sample size corresponds to population size, then forecasting <span class="math inline">\(y\)</span> could be a useful proxy.
+In general, choice of the particular paramter, or transformation of that parameter, to score is an ongoing topic of research <span class="citation">(<a href="#ref-bosse2023scoring">Nikos I. Bosse et al. 2023</a>)</span>.</p>
+<p>The CRPS was used in preference to the log-score primarily because of computational difficulties with the log-score.
+In particular, the log-score requries a kernel density estimate of the posterior distribution.
+Kernel density estimates can be very sensitive to hyperparameter estimates.
+Meanwhile, the CRPS can be estimated without any tunable hyperparameters.</p>
+<p>A downside of use of the CRPS and MSE is their relative lack of interpretability.
+For example, it is difficult to determine whether a forecast is good, or suitable for practical use, on the basis of its CRPS or MSE.
+Measures such as the skill score have been used to contrast forecast performance with some baseline.
+A constant model, with no random effects, could be used as such a baseline.</p>
 </div>
 <div id="inference-1" class="section level3 hasAnchor" number="4.5.3">
 <h3><span class="header-section-number">4.5.3</span> Inference<a href="beyond-borders.html#inference-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1728,6 +1739,9 @@ Bhatt, Samir, DJ Weiss, E Cameron, D Bisanzio, B Mappin, U Dalrymple, KE Battle,
 </div>
 <div id="ref-blangiardo2013spatial" class="csl-entry">
 Blangiardo, Marta, Michela Cameletti, Gianluca Baio, and Håvard Rue. 2013. <span>“<span class="nocase">Spatial and spatio-temporal models with R-INLA</span>.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 4: 33–49.
+</div>
+<div id="ref-bosse2023scoring" class="csl-entry">
+Bosse, Nikos I, Sam Abbott, Anne Cori, Edwin van Leeuwen, Johannes Bracher, and Sebastian Funk. 2023. <span>“<span class="nocase">Scoring epidemiological forecasts on transformed scales</span>.”</span> <em>PLoS Computational Biology</em> 19 (8): e1011393.
 </div>
 <div id="ref-carpenter2017stan" class="csl-entry">
 Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).

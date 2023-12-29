@@ -738,12 +738,25 @@ Third, specification of the lengthscale prior distribution is challenging and ea
 Previous comparisons of spatial random effects [@best2005comparison; @lee2011comparison] were limited to the DIC measure of model performance.
 Use of the DIC is strongly discouraged by @vehtari2017practical.
 This study used measures of model performance with less problems, such as the CRPS, calculated using cross-validation when required.
+In Section \@ref(hiv-study) it would be beneficial to compute the DIC and WAIC in order to compare to findings based on cross-validation.
 With increased sample size for the simulation study, choropleths of fit by area would enable more precise conclusions about spatial models.
-It would be beneficial to compute the DIC and WAIC in Section \@ref(hiv-study) to provide comparison.
 
-<!-- * Application of scoring rules to transformed versions of parameters [@bosse2023scoring]. -->
-<!-- * The log-score was considered but requires a kernel density estimate. -->
-<!-- * How interpretable are the CRPS and MSE. -->
+Cross-validation was performed using $\phi$ as the forecasting target, rather than $y$ as is typical.
+I made this decision because applied interest is in forecasting HIV prevlance at a district level, not in the outcome of a household survey.
+It could be argued that a district does not become more important to forecast well by virtue of surveying a larger sample size in that district.
+That said, an alternative viewpoint is that forecast accuracy should be incentivised more for districts with large populations, such that PLHIV is accurately estimated.
+If sample size corresponds to population size, then forecasting $y$ could be a useful proxy.
+In general, choice of the particular paramter, or transformation of that parameter, to score is an ongoing topic of research [@bosse2023scoring].
+
+The CRPS was used in preference to the log-score primarily because of computational difficulties with the log-score.
+In particular, the log-score requries a kernel density estimate of the posterior distribution.
+Kernel density estimates can be very sensitive to hyperparameter estimates.
+Meanwhile, the CRPS can be estimated without any tunable hyperparameters.
+
+A downside of use of the CRPS and MSE is their relative lack of interpretability.
+For example, it is difficult to determine whether a forecast is good, or suitable for practical use, on the basis of its CRPS or MSE.
+Measures such as the skill score have been used to contrast forecast performance with some baseline.
+A constant model, with no random effects, could be used as such a baseline.
 
 ### Inference
 
