@@ -263,7 +263,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.2.1" data-path="multi-agyw.html"><a href="multi-agyw.html#behavioural-data-from-household-surveys"><i class="fa fa-check"></i><b>5.2.1</b> Behavioural data from household surveys</a></li>
 <li class="chapter" data-level="5.2.2" data-path="multi-agyw.html"><a href="multi-agyw.html#other-data"><i class="fa fa-check"></i><b>5.2.2</b> Other data</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions"><i class="fa fa-check"></i><b>5.3</b> Model for risk group proportions</a>
+<li class="chapter" data-level="5.3" data-path="multi-agyw.html"><a href="multi-agyw.html#risk-group-model"><i class="fa fa-check"></i><b>5.3</b> Model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="5.3.1" data-path="multi-agyw.html"><a href="multi-agyw.html#st-multinomial"><i class="fa fa-check"></i><b>5.3.1</b> Spatio-temporal multinomial logistic regression</a></li>
 <li class="chapter" data-level="5.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#s-logistic"><i class="fa fa-check"></i><b>5.3.2</b> Spatial logistic regression</a></li>
@@ -277,7 +277,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#results-2"><i class="fa fa-check"></i><b>5.5</b> Results</a>
 <ul>
-<li class="chapter" data-level="5.5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions-1"><i class="fa fa-check"></i><b>5.5.1</b> Model for risk group proportions</a></li>
+<li class="chapter" data-level="5.5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions"><i class="fa fa-check"></i><b>5.5.1</b> Model for risk group proportions</a></li>
 <li class="chapter" data-level="5.5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group-1"><i class="fa fa-check"></i><b>5.5.2</b> Prevalence and incidence by risk group</a></li>
 </ul></li>
 <li class="chapter" data-level="5.6" data-path="multi-agyw.html"><a href="multi-agyw.html#discussion-1"><i class="fa fa-check"></i><b>5.6</b> Discussion</a>
@@ -525,9 +525,9 @@ The sample size for women aged 25-29 is smaller because there were 6 DHS surveys
 Table <a href="a-model-for-risk-group-proportions.html#tab:household-survey-data">B.3</a> gives the sample size by age group for every survey included in the analysis.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:category-flowchart"></span>
-<img src="figures/multi-agyw/category-flowchart.png" alt="Flowchart giving classification of survey respondents to HIV risk groups." width="95%" />
+<img src="figures/multi-agyw/category-flowchart.png" alt="Flowchart describing how respondents were classified to HIV risk groups based on their survey responses." width="95%" />
 <p class="caption">
-Figure 5.3: Flowchart giving classification of survey respondents to HIV risk groups.
+Figure 5.3: Flowchart describing how respondents were classified to HIV risk groups based on their survey responses.
 </p>
 </div>
 </div>
@@ -539,8 +539,8 @@ I used administrative area hierarchy and geographic boundaries corresponding to 
 Exceptions were Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.</p>
 </div>
 </div>
-<div id="model-for-risk-group-proportions" class="section level2 hasAnchor" number="5.3">
-<h2><span class="header-section-number">5.3</span> Model for risk group proportions<a href="multi-agyw.html#model-for-risk-group-proportions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="risk-group-model" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Model for risk group proportions<a href="multi-agyw.html#risk-group-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Owing to the incomparability in estimating the <span class="math inline">\(k = 4\)</span> risk group across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
 Denote being in either the third or fourth risk group as <span class="math inline">\(k = 3^{+}\)</span>.
 First, using all the surveys, I used a spatio-temporal multinomial logistic regression model to estimate the proportion of AGYW in the risk groups <span class="math inline">\(k \in \{1, 2, 3^{+}\}\)</span>.
@@ -807,13 +807,13 @@ Each of these criterion can be calculated in <code>R-INLA</code> without requiri
 The results are presented in Table <a href="multi-agyw.html#tab:model-comparison-multinomial">5.4</a> and Figure <a href="multi-agyw.html#fig:model-comparison">5.4</a>.</p>
 
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:model-comparison"></span>
-<img src="resources/multi-agyw/20231219-192637-4244d933/depends/model-comparison.png" alt="For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe." width="95%" />
+<img src="resources/multi-agyw/20231219-192637-4244d933/depends/model-comparison.png" alt="For the multinomial logistic regression model, under the conditional predictive ordinate (CPO) criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the deviance information criterion (DIC) and widely applicable information criterion (WAIC), where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe." width="95%" />
 <p class="caption">
-Figure 5.4: For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
+Figure 5.4: For the multinomial logistic regression model, under the conditional predictive ordinate (CPO) criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the deviance information criterion (DIC) and widely applicable information criterion (WAIC), where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
 </p>
 </div>
 <table>
-<caption><span id="tab:model-comparison-multinomial">Table 5.4: </span> CPO, DIC, and WAIC values for the multinomial logistic regression model specifications with corresponding standard errors.</caption>
+<caption><span id="tab:model-comparison-multinomial">Table 5.4: </span> Conditional predictive ordinate (CPO), deviance information criterion (DIC), and widely applicable information criterion (WAIC) values for the multinomial logistic regression model specifications with corresponding standard errors.</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -1124,8 +1124,8 @@ As there are three age groups, the resulting function was piecewise linear with 
 </div>
 <div id="results-2" class="section level2 hasAnchor" number="5.5">
 <h2><span class="header-section-number">5.5</span> Results<a href="multi-agyw.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="model-for-risk-group-proportions-1" class="section level3 hasAnchor" number="5.5.1">
-<h3><span class="header-section-number">5.5.1</span> Model for risk group proportions<a href="multi-agyw.html#model-for-risk-group-proportions-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="model-for-risk-group-proportions" class="section level3 hasAnchor" number="5.5.1">
+<h3><span class="header-section-number">5.5.1</span> Model for risk group proportions<a href="multi-agyw.html#model-for-risk-group-proportions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="estimates" class="section level4 hasAnchor" number="5.5.1.1">
 <h4><span class="header-section-number">5.5.1.1</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Figure <a href="a-model-for-risk-group-proportions.html#fig:aaa-variance-proportions">B.1</a> and Figure <a href="multi-agyw.html#fig:3p1-within-between-country-variation">5.8</a> show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.

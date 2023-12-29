@@ -603,7 +603,7 @@ knitr::include_graphics("figures/naomi-aghq/epil.png")
 | Section \@ref(epil-nuts)             | NUTS           | `tmbstan`     |
 | Section \@ref(epil-nuts-rstan)       | NUTS           | `rstan`       |
 
-Table: (\#tab:epil-approaches) The inference methods and software considered to fit the epilepsy GLMM.
+Table: (\#tab:epil-approaches) The inference methods and software considered to fit the epilepsy GLMM in Section \@ref(epil).
 
 Inference for the epilepsy GLMM was conducted using a range of approaches (Table \@ref(tab:epil-approaches)).
 Section \@ref(epil-comparison) compares the results.
@@ -974,7 +974,7 @@ This section considers inference using three approaches (Table \@ref(tab:loaloa-
 | Laplace, AGHQ  | `TMB` and `aghq` | $k = 3$ |
 | NUTS           | `tmbstan`     | 4 chains of 5000 iterations, default NUTS settings [@carpenter2017stan] |
 
-Table: (\#tab:loaloa-approaches) The inference methods and software considered to fit the Loa loa ELGM.
+Table: (\#tab:loaloa-approaches) The inference methods and software considered to fit the Loa loa ELGM in Section \@ref(loaloa).
 
 @bilodeau2022stochastic found that NUTS did not converge for the full model, but did converge when the values of $\beta_\phi$ and $\beta_\rho$ were fixed at their posterior mode (obtained using AGHQ with Gaussian marginals).
 To allow for comparison between Gaussian and Laplace marginals, the same approach was taken here.
@@ -1409,7 +1409,7 @@ The reduced rank approximation to the inverse curvature with this choice of $s$ 
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.png"))
 ```
 
-(ref:reduced-rank) With $s = 8$, the reduced rank matrix approximation (Panel B) to the covariance matrix was visually similar to the full rank original matrix (Panel A).
+(ref:reduced-rank) The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank ($s = 8$) matrix approximation (Panel B).
 
 ```{r reduced-rank, fig.cap="(ref:reduced-rank)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/reduced-rank.png"))
@@ -1421,7 +1421,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
 ```
 
-(ref:nodes-samples-comparison) The $k^s = 3^8$ PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
+(ref:nodes-samples-comparison) The $k^s = 3^8 = 6561$ PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 
 ```{r nodes-samples-comparison, fig.cap="(ref:nodes-samples-comparison)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/nodes-samples-comparison.png"))
@@ -1435,7 +1435,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 ### Inference comparison
 
-(ref:naomi-time) The number of hours taken to perform inference for the Naomi ELGM using each approach.
+(ref:naomi-time) The number of hours taken to perform inference for the Naomi ELGM (Section \@ref(sec:naomi-model)) using each approach.
 
 ```{r naomi-time, fig.height = 3, fig.width = 6.25, fig.cap="(ref:naomi-time)"}
 time_taken <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/time-taken.csv"))
@@ -1474,7 +1474,7 @@ as.data.frame(t(time_taken)) %>%
 
 #### Point estimates
 
-(ref:mean-sd-alt-latent) The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduces RMSE and MAE as compared with GEB.
+(ref:mean-sd-alt-latent) The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
 
 ```{r mean-sd-alt-latent, fig.cap="(ref:mean-sd-alt-latent)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
@@ -1482,7 +1482,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 #### Distributional quantities
 
-(ref:ks-summary) Figure caption.
+(ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model.
 
 ```{r ks-summary, fig.cap="(ref:ks-summary)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ks-summary.png"))
@@ -1632,7 +1632,7 @@ For wider dissemination of this method, it is important that the user is not bur
 One possibility would be to change the `random` argument in `TMB::MakeADFun` to allow for indexing.
 Another (less desirable) option would be to algorithmically generate the modified `TMB` C++ template based on the original template.
 
-(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the @cranlogs R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure. The official `rstan` documentation recommends installation of a development version hosted outside CRAN.
+(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the `cranlogs` [@cranlogs] R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure. The official `rstan` documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the populartiy of `rstan`.
 
 ```{r package-downloads, fig.cap="(ref:package-downloads)"}
 knitr::include_graphics("figures/naomi-aghq/package-downloads.png")

@@ -182,7 +182,7 @@ Of the total `r total_surveys` surveys included in the analysis, `r length(gifts
 The sample size for women aged 25-29 is smaller because there were `r length(giftsvar_exclude_Y025_029)` DHS surveys which excluded women 25-29 from the transactional sex survey question.
 Table \@ref(tab:household-survey-data) gives the sample size by age group for every survey included in the analysis.
 
-(ref:category-flowchart) Flowchart giving classification of survey respondents to HIV risk groups.
+(ref:category-flowchart) Flowchart describing how respondents were classified to HIV risk groups based on their survey responses.
 
 ```{r category-flowchart, fig.cap="(ref:category-flowchart)"}
 knitr::include_graphics(paste0("figures/multi-agyw/category-flowchart.png"))
@@ -195,7 +195,7 @@ I used the most recent 2022 estimates for all countries, apart from Mozambique w
 I used administrative area hierarchy and geographic boundaries corresponding to those used for health service planning by countries (Table \@ref(tab:area-levels)).
 Exceptions were Cameroon and Kenya, where I conducted analyses one level higher at the department and county levels, respectively.
 
-## Model for risk group proportions
+## Model for risk group proportions {#risk-group-model}
 
 Owing to the incomparability in estimating the $k = 4$ risk group across surveys, I took a two-stage modelling approach to estimate the four risk group proportions.
 Denote being in either the third or fourth risk group as $k = 3^{+}$.
@@ -405,7 +405,7 @@ For comparison, I also computed the deviance information criterion (DIC) [@spieg
 Each of these criterion can be calculated in `R-INLA` without requiring model refitting.
 The results are presented in Table \@ref(tab:model-comparison-multinomial) and Figure \@ref(fig:model-comparison).
 
-(ref:model-comparison) For the multinomial logistic regression model, under the CPO criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the DIC and WAIC, where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
+(ref:model-comparison) For the multinomial logistic regression model, under the conditional predictive ordinate (CPO) criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the deviance information criterion (DIC) and widely applicable information criterion (WAIC), where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
 
 ```{r model-comparison, fig.cap="(ref:model-comparison)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/model-comparison.png"))
@@ -417,7 +417,7 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 | DIC  | 100780 (300) | 101588 (317) | 100781 (300) | 101589 (317) |
 | WAIC | 103763 (358) | 105008 (383) | 103763 (358) | 105009 (383) |
 
-Table: (\#tab:model-comparison-multinomial) CPO, DIC, and WAIC values for the multinomial logistic regression model specifications with corresponding standard errors.
+Table: (\#tab:model-comparison-multinomial) Conditional predictive ordinate (CPO), deviance information criterion (DIC), and widely applicable information criterion (WAIC) values for the multinomial logistic regression model specifications with corresponding standard errors.
 
 ### Spatial logistic regression {#s-logistic}
 

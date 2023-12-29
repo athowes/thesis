@@ -57,6 +57,8 @@ knitr::include_graphics("figures/naomi-aghq/nuts-loa-loa.png")
 knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd-pct.png")
 ```
 
+\newpage
+
 ## Simplified Naomi model description {#naomi-math}
 
 This section describes the simplified version of the Naomi model [@eaton2021naomi] in more detail.
@@ -112,7 +114,7 @@ and independent beta prior distributions for the two BYM2 proportion parameters
 | $\mathbf{u}_x^{\rho, a < 15}$    | $\text{ICAR}(\sigma_{XA}^\rho)$                 | Spatial random effects for the difference in logit paediatric prevalence to adult women prevalence in district $x$ |
 | $\boldsymbol{\mathbf{\eta}}^\rho_{R_x, s, a}$ | $-$                                | Fixed offsets specifying assumed odds ratios for prevalence outside the age ranges for which data were available. Calculated from Spectrum model [@stover2019updates] outputs for region $R_x$ |
 
-Table: (\#tab:prev) Each term in Equation \@ref(eq:prev) together with (where applicable) its prior distribution and a written description of its role.
+Table: (\#tab:prev) Each term in Equation \@ref(eq:prev) together with, where applicable, its prior distribution and a written description of its role.
 
 #### ART coverage {#art-cov}
 
@@ -120,7 +122,7 @@ ART coverage $\alpha_{x, s, a} \in [0, 1]$ was modelled on the logit scale using
 \begin{equation}
 \text{logit}(\alpha_{x, s, a}) = \beta^\alpha_0 + \beta_{S}^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_a + \mathbf{u}_a^{\alpha, s = \text{M}} + \mathbf{u}^\alpha_x + \mathbf{u}_x^{\alpha, s = \text{M}} + \mathbf{u}_x^{\alpha, a < 15} + \boldsymbol{\mathbf{\eta}}^\alpha_{R_x, s, a} 
 \end{equation}
-with terms and priors analogous to the HIV prevalence process model in Section \@ref(hiv-prev) above.
+with terms and prior distributions analogous to the HIV prevalence process model in Section \@ref(hiv-prev) above.
 
 #### HIV incidence rate {#hiv-inc}
 
@@ -140,7 +142,7 @@ Table \@ref(tab:inc) provides a description of the terms included in Equation \@
 | $\mathbf{u}_x^\lambda$                   | $\mathcal{N}(0, \sigma^\lambda)$ | IID spatial random effects with $\sigma^\lambda \sim \mathcal{N}^+(0, 1)$                                                                              |
 | $\boldsymbol{\mathbf{\eta}}^\lambda_{R_x, s, a}$      | $-$          | Fixed log incidence rate ratios by sex and age group calculated from Spectrum model outputs for region $R_x$                                                                    |
 
-Table: (\#tab:inc) Each term in Equation \@ref(eq:inc) together with (where applicable) its prior distribution and a written description of its role.
+Table: (\#tab:inc) Each term in Equation \@ref(eq:inc) together with, where applicable, its prior distribution and a written description of its role.
 
 The proportion recently infected among HIV positive persons $\kappa_{x, s, a} \in [0, 1]$ was modelled as
 \begin{equation}
@@ -201,8 +203,8 @@ Fixing $\tilde \gamma_{x, x} = 0$ then the multinomial probabilities may be reco
 | $\tilde \gamma_0$              | $-$                                        | Fixed intercept $\tilde \gamma_0 = -4$. Implies a prior mean on $\gamma_{x, x'}$ of 1.8%, such that a-priori $(100 - 1.8 \times \text{ne}(x))\%$ of ART clients in district $x$ obtain treatment in their home district |
 | $\mathbf{u}_x^{\tilde \gamma}$ | $\mathcal{N}(0, \sigma_X^{\tilde \gamma})$ | District random effects, with $\sigma_X^{\tilde \gamma} \sim \mathcal{N}^+(0, 2.5)$ |
 
-Table: (\#tab:log-or) Each term in Equation \@ref(eq:log-or) and \@ref(eq:anc2) together with (where applicable) its prior distribution and a written description of its role.
-No terms include $x'$, such that $\gamma_{x, x'}$ is only a function of $x$.
+Table: (\#tab:log-or) Each term in Equation \@ref(eq:log-or) together with, where applicable, its prior distribution and a written description of its role.
+As no terms include $x'$, $\gamma_{x, x'}$ is only a function of $x$.
 
 ### Additional likelihood specification {#naomi-likelihood}
 
@@ -304,13 +306,13 @@ naomi_nuts <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depend
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rhat.png"))
 ```
 
-(ref:ess) The efficiency of the NUTS, as measured by a ratio of effective sample size to iterations, was low for most parameters (Panel A). Many iterations were required for the the effective number of samples (mean `r round(naomi_nuts$ess_mean)`) obtained to be satisfactory (Panel B). 
+(ref:ess) The efficiency of the NUTS, as measured by the ratio of effective sample size to total number of iterations run, was low for most parameters (Panel A). As a result, the number of iterations required for the the effective number of samples (mean `r round(naomi_nuts$ess_mean)`) to be satisfactory was high (Panel B). 
 
 ```{r ess, fig.cap="(ref:ess)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ess.png"))
 ```
 
-(ref:worst-trace) Traceplots for the parameters with the lowest ESS (Panel A) and highest potential scale reduction factor (Panel B). These were `log_sigma_alpha_xs` (an $\text{ESS}$ of `r round(naomi_nuts$ess_min)`) and `ui_lambda_x[10]` (an $\hat R$ of `r round(naomi_nuts$rhat_max, 3)`). 
+(ref:worst-trace) Traceplots for the parameter with the lowest ESS which was `log_sigma_alpha_xs` (an $\text{ESS}$ of `r round(naomi_nuts$ess_min)`, Panel A) and highest potential scale reduction factor which was `ui_lambda_x[10]` (an $\hat R$ of `r round(naomi_nuts$rhat_max, 3)`, Panel B).
 
 ```{r worst-trace, fig.cap="(ref:worst-trace)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/worst-trace.png"))
@@ -328,7 +330,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/alpha_x.png"))
 ```
 
-(ref:posterior-contraction) The posterior contraction for each parameter in the model. Values are averaged for parameters of length greater than one. A posterior contraction of zero corresponds to the prior distribution and posterior distribution having the same standard deviation. This could indicate that the data is not informative about the parameter. The closer the posterior contraction is to one, the more than the marginal posterior distribution has concentrated about a single point.
+(ref:posterior-contraction) The posterior contraction for each parameter in the model. Values are averaged for parameters of length greater than one. The posterior contraction is zero when the prior distribution and posterior distribution have the same standard deviation. This could indicate that the data is not informative about the parameter. The closer the posterior contraction is to one, the more than the marginal posterior distribution has concentrated about a single point.
 
 ```{r posterior-contraction, fig.cap="(ref:posterior-contraction)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/posterior-contraction.png"))

@@ -195,7 +195,7 @@ However, if the amount of information in the shaded area remains fixed, it is in
 In the image analysis setting this modelling assumption is reasonable: each pixel represents a fixed amount of information and a higher pixel density represents a greater amount of information.
 On the other hand, in public health and epidemiology, drawing boundaries to create additional areas is not expected to correspond to a greater amount of information.
 
-(ref:maup3) Each of the shaded areas are split into two moving from Panel A to Panel B.
+(ref:maup3) Each of the shaded areas in the geometry in Panel A are split into two in Panel B.
 
 ```{r maup3, fig.cap="(ref:maup3)", fig.height=3.5}
 knitr::include_graphics("figures/beyond-borders/maup3.png")
@@ -419,7 +419,7 @@ The data and modelling choices were designed with a spatial epidemiology applica
 | Besag | $\mathbf{u} \sim \mathcal{N}(0, {\mathbf{R}^\star}^{-})$ as in Section \@ref(besag) |
 | Integrated kernel (IK) | $\mathbf{u} \sim \mathcal{N}(0, \mathbf{K}^\star)$ as in Section \@ref(integrated-kernel) with Matérn kernel, $\nu = 3/2, l = 2.5$ and $L_i = 100$ points per area |
 
-Table: (\#tab:simulation-models) The three spatial random effect models used to create synthetic data for the simulation study.
+Table: (\#tab:simulation-models) The three spatial random effect models used to generate synthetic data in the simulation study (Section \@ref(simulation-study)).
 
 Data $\mathbf{y} = (y_i)_{i \in [n]}$ were simulated from a binomial likelihood $y_i \sim \text{Bin}(m_i, \rho_i)$.
 The probabilities $\rho_i \in [0, 1]$ were linked to linear predictors $\eta_i \in \mathbb{R}$ via
@@ -574,7 +574,7 @@ knitr::include_graphics(path)
 ```
 
 The two problems with the vignette geometry study did not apply to the more realistic geometries.
-Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 90% credible intervals that often do not overlap.
+Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 95% credible intervals that often do not overlap.
 
 The difficulty of the forecasting problem varied by spatial random effect model used to simulate synthetic data (Table \@ref(tab:simulation-models)).
 IID structure is harder to predict than spatial structure.
@@ -605,11 +605,11 @@ Household survey data was used from across four countries in sub-Saharan Africa 
 | Tanzania       | PHIA 2017 | 26              | Regions, with islands removed          |
 | Zimbabwe       | PHIA 2016 | 60              | Districts       |
 
-Table: (\#tab:hiv-surveys) The four PHIA household surveys included in the HIV prevalence study.
+Table: (\#tab:hiv-surveys) The four PHIA household surveys included in the HIV prevalence study (Section \@ref(hiv-study)).
 
 ### Household survey data
 
-(ref:hiv-surveys) Adult (15-49) HIV prevalence from the most recent PHIA survey in Côte d'Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D).
+(ref:hiv-surveys) Adult (15-49) HIV prevalence from the most recent PHIA survey conducted in Côte d'Ivoire (Panel A), Malawi (Panel B), Tanzania (Panel C), and Zimbabwe (Panel D). These estimates survey weighted according to Equation \@ref(eq:survey-weighted-prevalence).
 
 ```{r hiv-surveys, fig.cap="(ref:hiv-surveys)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/hiv-surveys.png")
@@ -626,7 +626,7 @@ w_{ij} = \frac{1}{\pi_{ij}}
 were used to account for the complex survey design.
 The survey weighted prevalence in area $i$ is
 \begin{equation}
-\rho_i^\star = \frac{\sum_{j} w_{ij} y_{ij}}{\sum_{j} w_{ij}}.
+\rho_i^\star = \frac{\sum_{j} w_{ij} y_{ij}}{\sum_{j} w_{ij}}. (\#eq:survey-weighted-prevalence)
 \end{equation}
 The effective number of cases $y_i^\star = \rho_i^\star \cdot m_i^\star$ is given by the product of the weighted prevalence, and the Kish effective sample size [@kish1965survey]
 \begin{equation}
@@ -642,12 +642,12 @@ Due to survey weighting, the effective number of cases $y_i^\star \in \mathbb{R}
 Following @chen2014use a generalised binomial distribution $y_i^\star \sim \text{xBin}(m_i^\star, \rho_i)$ was used, with working likelihood for $m^\star_i \geq y^\star_i$ given by
 \begin{equation}
 p(y_i^\star \, | \, m_i^\star, \rho_i) =
-\frac{\Gamma(m_i^\star + 1)}{\Gamma(y_i^\star + 1) \Gamma(m_i^\star - y_i^\star + 1)}  \rho_i ^{y_i^\star}  (1 - \rho_i)^{(m_i^\star - y_i^\star)}. \label{eq:xbinomial}
+\frac{\Gamma(m_i^\star + 1)}{\Gamma(y_i^\star + 1) \Gamma(m_i^\star - y_i^\star + 1)}  \rho_i ^{y_i^\star}  (1 - \rho_i)^{(m_i^\star - y_i^\star)}. (\#eq:xbinomial)
 \end{equation}
 
 ### Model comparison
 
-(ref:cv) In leave-one-out (LOO) cross-validation, in each fold one observation is left out of the training data and predicted upon. In spatial-leave-one-out (SLOO) cross-validation, observations corresponding to adjacent areas are also left out of the training data.
+(ref:cv) In leave-one-out (LOO) cross-validation, one observation is left out of the training data and predicted upon in each fold. The spatial-leave-one-out (SLOO) cross-validation scheme considered here is similar, only differing in that observations corresponding to adjacent areas are also left out of the training data.
 
 ```{r cv, fig.cap="(ref:cv)"}
 knitr::include_graphics("figures/beyond-borders/cv.png")
@@ -666,7 +666,7 @@ In this section, the number of samples per posterior marginal was $S = 1000$.
 
 ### Results
 
-(ref:crps-mean-se-surveys) The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating $\rho$ using each inferential model for the four PHIA surveys described in Table \@ref(tab:hiv-surveys). The 95% credible intervals shown are generated using 1.96 times the standard error. 
+(ref:crps-mean-se-surveys) The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating $\rho_i$ using each inferential model for the four PHIA surveys described in Table \@ref(tab:hiv-surveys). The 95% credible intervals shown are generated using 1.96 times the standard error. 
 
 ```{r crps-mean-se-surveys, fig.cap="(ref:crps-mean-se-surveys)"}
 path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mean-se-surveys.png")
@@ -696,7 +696,7 @@ The pointwise CRPS for all models was high at one outlying district in the surve
 It is difficult to see how any spatial random model would perform well in this situation, without additional covariates or using a distribution with heavier tails than the Gaussian.
 
     The CK and IK models had lengthscale posterior distributions largely unchanged from their prior distribution (Figure \@ref(fig:lengthscale-posteriors)).
-    This uncertainty in lengthscale resulted wide prevalence 90% credible intervals for the CK and IK models in Figure \@ref(fig:ladder-civ2017phia).
+    This uncertainty in lengthscale resulted wide prevalence 95% credible intervals for the CK and IK models in Figure \@ref(fig:ladder-civ2017phia).
     This example shows the importance of being careful using kernel models, and the prior distributions set on their hyperparameters.
     It is suprisingly that this behaviour appears not to have resulted in poor LOO or SLOO performance.
 
