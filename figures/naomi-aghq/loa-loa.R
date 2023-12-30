@@ -549,11 +549,15 @@ ggsave("figures/naomi-aghq/loa-loa-worst-node.png", h = 3.5, w = 6.25, bg = "whi
 
 time_nuts <- readRDS(file = "figures/naomi-aghq/nuts-big-time.rds")
 
-data.frame(
+time_df <- data.frame(
   "time" = c(time_aghq$toc - time_aghq$tic, (time_test$toc - time_test$tic) * N, time_nuts$toc - time_nuts$tic),
   "method" = c("Gaussian, AGHQ", "Laplace, AGHQ", "NUTS"),
   "software" = c("TMB", "TMB", "tmbstan")
-) %>%
+  )
+
+readr::write_csv(time_df, "figures/naomi-aghq/loa-loa-time.csv")
+
+time_df %>%
   mutate(mins = time / 60) %>%
   ggplot(aes(x = method, y = mins, fill = software)) +
   geom_col() +
@@ -563,7 +567,6 @@ data.frame(
   coord_flip()
 
 ggsave("figures/naomi-aghq/loa-loa-time.png", h = 3, w = 6.25)
-
 
 #' Section in conclusions about using a bigger grid being possibly better than more accurate marginals
 #' Comparison between k = 3 AGHQ with Gaussian marginals and k = 7 AGHQ with Gaussian marginals
