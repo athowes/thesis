@@ -292,7 +292,7 @@ For further reference on the `TMB` software see @tmbdocumentation.
 | `ui_anc_alpha_x`       | $\mathbf{u}_x^{\alpha^{\text{ANC}}}$                 | Latent | $\mathbb{R}^{n}$  |     | Yes |     |
 | `log_or_gamma`         | $\mathbf{u}_x^{\tilde \gamma}$                       | Latent | $\mathbb{R}^{n}$  |     |     |      
 
-Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the Naomi `TMB` template and the mathematical notation used in Appendix \@ref(naomi-math). The parameter type, either a hyperparameter or elements of the latent field, are given. All of the parameters are defined on the real-scale in some dimension. In the final three columns ($\rho, \alpha, \lambda$) indication is given as to which component of the model the parameter is primarily used in.
+Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the Naomi `TMB` template and the mathematical notation used in Appendix \@ref(naomi-math). The parameter type, either a hyperparameter or element of the latent field, is also given. All of the parameters are defined on the real-scale in some dimension. In the final three columns ($\rho$, $\alpha$, and $\lambda$) indication is given as to which component of the model the parameter is primarily used in.
 
 ## NUTS convergence and suitability
 
@@ -300,7 +300,7 @@ Table: (\#tab:tmb-lookup) Correspondence between the variable name used in the N
 naomi_nuts <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mcmc-out.rds"))
 ```
 
-(ref:rhat) The maximum potential scale reduction factor was `r round(naomi_nuts$rhat_max, 3)`, below the value of 1.05 typically used as a cutoff for acceptable chain mixing. Additionally, the vast majority (`r round(100 * naomi_nuts$rhat_above_threshold, 1)`%) of $\hat R$ values were less than 1.1.
+(ref:rhat) For NUTS run on the Naomi ELGM, the maximum potential scale reduction factor was `r round(naomi_nuts$rhat_max, 3)`, below the value of 1.05 typically used as a cutoff for acceptable chain mixing, indicating that the results are acceptable to use. Additionally, the vast majority (`r round(100 * naomi_nuts$rhat_above_threshold, 1)`%) of $\hat R$ values were less than 1.1.
 
 ```{r rhat, fig.cap="(ref:rhat)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rhat.png"))
@@ -318,13 +318,13 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/worst-trace.png"))
 ```
 
-(ref:rho-a) Pairs plots for `log_sigma_rho_a` and `logit_phi_rho_a`. 
+(ref:rho-a) NUTS pairs plots for the parameters $\log(\sigma_{A}^\rho)$ and $\text{logit}(\phi_{A}^\rho)$, or as written `log_sigma_rho_a` and `logit_phi_rho_a`.
 
 ```{r rho-a, fig.cap="(ref:rho-a)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/rho_a.png"))
 ```
 
-(ref:alpha-x) Pairs plots for `log_sigma_alpha_x` and `logit_phi_alpha_x`. 
+(ref:alpha-x) NUTS pairs plots for the parameters $\log(\sigma_X^\alpha)$ and $\text{logit}(\phi_X^\alpha)$, or as written `log_sigma_alpha_x` and `logit_phi_alpha_x`.
 
 ```{r alpha-x, fig.cap="(ref:alpha-x)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/alpha_x.png"))

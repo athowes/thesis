@@ -188,7 +188,9 @@ Then, Section \@ref(small-area-estimation) describes how these properties facili
 
 ### Properties of spatio-temporal data {#properties}
 
-#### Scales
+Three important properties are discussed in this section: scale, correlation structure, and size.
+
+#### Scale
 
 (ref:st) In Panel A, the spatial location of Cape Town in South Africa can be considered a point, and the ZF Mgcawu District Municipality (DM) can be considered as an an area. In Panel B, World AIDS Day, designated on the 1st of December every year, can be considered a point in time, whereas the second fiscal quarter, running through April, May and June, and denoted by Q2 represents a period of time. In reality, both Cape Town and World AIDS Day are areas, rather than true point locations. Instances of infinitesimal point locations in everyday life, outside of mathematical abstraction, are rare.
 
@@ -213,7 +215,7 @@ Special cases of the change-of-support problem include downscaling, upscaling, a
 It is also possible that spatio-temporal observations of the same process are made at multiple scales.
 Jointly modelling data at different scales simultaneously is another closely related challenge to the change-of-support problem.
 
-#### Covariance structure {#correlation-structure}
+#### Correlation structure {#correlation-structure}
 
 In "The Design of Experiments" @fisher1936design observed that neighbouring crops were more likely to have similar yields than those far apart.
 This observation was later termed Tobler's first law of geography: "everything is related to everything else, but near things are more related than distant things" [@tobler1970computer].
@@ -247,7 +249,7 @@ In spatio-temporal statistics, there are a large number of possible locations in
 Given the cost of data collection, often no or limited direct observations may be available for any given space-time location.
 Direct estimates of indicators of interest are either impossible or inaccurate in this setting.
 
-(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size $m = 5, 25, 125$ in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the `viridis` R package [@viridis], used in this figure, and often throughout this thesis, was designed to be perceptually uniform and accessible to colourblind viewers [@smith2015better]. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
+(ref:zmb-maps) Simulation of a simple random sample $y_i \sim \text{Bin}(m, p_i)$ with varying sample size $m = 5, 25, 125$ in each of the $i = 1, \ldots, 156$ constituencies of Zambia. Direct estimates were obtained by the empirical ratio of data to sample size. Modelled estimates were obtained using a logistic regression with linear predictor given by an intercept and a spatial random effect. Estimates of HIV indicators for Zambia have previously been generated at the district-level, comprising 116 spatial units. Moving forward, there is interest in generating estimates at the higher-resolution constituency level, as program planning is devolved locally. The viridis colour palette, as implemented by the `viridis` R package [@viridis], was used in this figure. It is use often throughout this thesis because it is perceptually uniform and accessible to colourblind viewers [@smith2015better]. This figure was adapted from a presentation given for the Zambia HIV Estimates Technical Working Group, available from [`https://github.com/athowes/zambia-unaids`](https://github.com/athowes/zambia-unaids).
 
 ```{r zmb-maps, fig.cap="(ref:zmb-maps)"}
 knitr::include_graphics("figures/bayesian/zmb-maps.png")
@@ -553,8 +555,8 @@ Finally, the third term is the problem difficultly, and measures the intrinsic d
 This term is independent of the sampling or analysis method used.
 
 This thesis uses hierarchical Bayesian models defined using weighted direct survey estimates [@fay1979estimates].
-Following @chen2014use, the sampling distribution of Equation \@ref(eq:hajek) is arrived at by estimating its variance.
+Following @chen2014use, the sampling distribution of these direct estimates is arrived at using by estimating the variance of Equation \@ref(eq:hajek).
 Although this approach acknowledges the complex survey design, it has some important limitations.
-Foremost, it ignores clustering structure within the observations $i$.
+Importantly, it ignores clustering structure within the observations $i$.
 Furthermore, as a two-step procedure, it fails to fully propagate uncertainty from a Bayesian perspective.
-While progress has been made in dealing with survey data, the opening comment of @gelman2007struggles, that "survey weighting is a mess" remains in part relevant.
+While progress has been made in dealing with survey data, the @gelman2007struggles claim that "survey weighting is a mess" still holds some weight.

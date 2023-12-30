@@ -226,7 +226,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.1.1" data-path="beyond-borders.html"><a href="beyond-borders.html#besag"><i class="fa fa-check"></i><b>4.1.1</b> The Besag model</a></li>
 <li class="chapter" data-level="4.1.2" data-path="beyond-borders.html"><a href="beyond-borders.html#best-practises-for-the-besag-model"><i class="fa fa-check"></i><b>4.1.2</b> Best practises for the Besag model</a></li>
 <li class="chapter" data-level="4.1.3" data-path="beyond-borders.html"><a href="beyond-borders.html#concerns"><i class="fa fa-check"></i><b>4.1.3</b> Concerns about the Besag model</a></li>
-<li class="chapter" data-level="4.1.4" data-path="beyond-borders.html"><a href="beyond-borders.html#weighted-icar-models-weighted-icar"><i class="fa fa-check"></i><b>4.1.4</b> Weighted ICAR models {weighted-icar}</a></li>
+<li class="chapter" data-level="4.1.4" data-path="beyond-borders.html"><a href="beyond-borders.html#weighted-icar"><i class="fa fa-check"></i><b>4.1.4</b> Weighted ICAR models</a></li>
 <li class="chapter" data-level="4.1.5" data-path="beyond-borders.html"><a href="beyond-borders.html#bym2"><i class="fa fa-check"></i><b>4.1.5</b> The reparameterised Besag-York-Mollié model</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="beyond-borders.html"><a href="beyond-borders.html#kernel-models"><i class="fa fa-check"></i><b>4.2</b> Models using kernels</a>
@@ -354,7 +354,7 @@ div.csl-indent {
 <li class="chapter" data-level="B" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html"><i class="fa fa-check"></i><b>B</b> A model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="B.1" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#the-global-aids-strategy"><i class="fa fa-check"></i><b>B.1</b> The Global AIDS Strategy</a></li>
-<li class="chapter" data-level="B.2" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#household-survey-data-1"><i class="fa fa-check"></i><b>B.2</b> Household survey data</a></li>
+<li class="chapter" data-level="B.2" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#household-survey-data-agyw"><i class="fa fa-check"></i><b>B.2</b> Household survey data</a></li>
 <li class="chapter" data-level="B.3" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#spatial-analysis-levels"><i class="fa fa-check"></i><b>B.3</b> Spatial analysis levels</a></li>
 <li class="chapter" data-level="B.4" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#survey-questions"><i class="fa fa-check"></i><b>B.4</b> Survey questions and risk group allocation</a></li>
 <li class="chapter" data-level="B.5" data-path="a-model-for-risk-group-proportions.html"><a href="a-model-for-risk-group-proportions.html#additional-figures"><i class="fa fa-check"></i><b>B.5</b> Additional figures</a></li>
@@ -412,7 +412,56 @@ div.csl-indent {
 <h2><span class="header-section-number">C.1</span> Epilepsy example<a href="naomi-aghq-appendix.html#epilepsy-example" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="tmb-epil" class="section level3 hasAnchor" number="10.1.1">
 <h3><span class="header-section-number">C.1.1</span> <code>TMB</code> C++ template<a href="naomi-aghq-appendix.html#tmb-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="naomi-aghq-appendix.html#cb21-1" tabindex="-1"></a><span class="co">// epil.cpp</span></span>
+<div class="sourceCode" id="cb20"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb20-1"><a href="naomi-aghq-appendix.html#cb20-1" tabindex="-1"></a><span class="co">// epil.cpp</span></span>
+<span id="cb20-2"><a href="naomi-aghq-appendix.html#cb20-2" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="naomi-aghq-appendix.html#cb20-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
+<span id="cb20-4"><a href="naomi-aghq-appendix.html#cb20-4" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="naomi-aghq-appendix.html#cb20-5" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Type<span class="op">&gt;</span></span>
+<span id="cb20-6"><a href="naomi-aghq-appendix.html#cb20-6" tabindex="-1"></a>Type objective_function<span class="op">&lt;</span>Type<span class="op">&gt;::</span><span class="kw">operator</span><span class="op">()()</span></span>
+<span id="cb20-7"><a href="naomi-aghq-appendix.html#cb20-7" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb20-8"><a href="naomi-aghq-appendix.html#cb20-8" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>N<span class="op">);</span></span>
+<span id="cb20-9"><a href="naomi-aghq-appendix.html#cb20-9" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>J<span class="op">);</span></span>
+<span id="cb20-10"><a href="naomi-aghq-appendix.html#cb20-10" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>K<span class="op">);</span></span>
+<span id="cb20-11"><a href="naomi-aghq-appendix.html#cb20-11" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>X<span class="op">);</span></span>
+<span id="cb20-12"><a href="naomi-aghq-appendix.html#cb20-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
+<span id="cb20-13"><a href="naomi-aghq-appendix.html#cb20-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
+<span id="cb20-14"><a href="naomi-aghq-appendix.html#cb20-14" tabindex="-1"></a>  </span>
+<span id="cb20-15"><a href="naomi-aghq-appendix.html#cb20-15" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>beta<span class="op">);</span></span>
+<span id="cb20-16"><a href="naomi-aghq-appendix.html#cb20-16" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>epsilon<span class="op">);</span></span>
+<span id="cb20-17"><a href="naomi-aghq-appendix.html#cb20-17" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>nu<span class="op">);</span></span>
+<span id="cb20-18"><a href="naomi-aghq-appendix.html#cb20-18" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb20-19"><a href="naomi-aghq-appendix.html#cb20-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb20-20"><a href="naomi-aghq-appendix.html#cb20-20" tabindex="-1"></a>  </span>
+<span id="cb20-21"><a href="naomi-aghq-appendix.html#cb20-21" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb20-22"><a href="naomi-aghq-appendix.html#cb20-22" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb20-23"><a href="naomi-aghq-appendix.html#cb20-23" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
+<span id="cb20-24"><a href="naomi-aghq-appendix.html#cb20-24" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
+<span id="cb20-25"><a href="naomi-aghq-appendix.html#cb20-25" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span></span>
+<span id="cb20-26"><a href="naomi-aghq-appendix.html#cb20-26" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
+<span id="cb20-27"><a href="naomi-aghq-appendix.html#cb20-27" tabindex="-1"></a>  </span>
+<span id="cb20-28"><a href="naomi-aghq-appendix.html#cb20-28" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
+<span id="cb20-29"><a href="naomi-aghq-appendix.html#cb20-29" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb20-30"><a href="naomi-aghq-appendix.html#cb20-30" tabindex="-1"></a>  </span>
+<span id="cb20-31"><a href="naomi-aghq-appendix.html#cb20-31" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
+<span id="cb20-32"><a href="naomi-aghq-appendix.html#cb20-32" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
+<span id="cb20-33"><a href="naomi-aghq-appendix.html#cb20-33" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span></span>
+<span id="cb20-34"><a href="naomi-aghq-appendix.html#cb20-34" tabindex="-1"></a>                 Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb20-35"><a href="naomi-aghq-appendix.html#cb20-35" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb20-36"><a href="naomi-aghq-appendix.html#cb20-36" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-37"><a href="naomi-aghq-appendix.html#cb20-37" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-38"><a href="naomi-aghq-appendix.html#cb20-38" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-39"><a href="naomi-aghq-appendix.html#cb20-39" tabindex="-1"></a>  </span>
+<span id="cb20-40"><a href="naomi-aghq-appendix.html#cb20-40" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb20-41"><a href="naomi-aghq-appendix.html#cb20-41" tabindex="-1"></a>  </span>
+<span id="cb20-42"><a href="naomi-aghq-appendix.html#cb20-42" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
+<span id="cb20-43"><a href="naomi-aghq-appendix.html#cb20-43" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
+<span id="cb20-44"><a href="naomi-aghq-appendix.html#cb20-44" tabindex="-1"></a>  </span>
+<span id="cb20-45"><a href="naomi-aghq-appendix.html#cb20-45" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
+<span id="cb20-46"><a href="naomi-aghq-appendix.html#cb20-46" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="tmb-modified-epil" class="section level3 hasAnchor" number="10.1.2">
+<h3><span class="header-section-number">C.1.2</span> Modified <code>TMB</code> C++ template<a href="naomi-aghq-appendix.html#tmb-modified-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="naomi-aghq-appendix.html#cb21-1" tabindex="-1"></a><span class="co">// epil_modified.cpp</span></span>
 <span id="cb21-2"><a href="naomi-aghq-appendix.html#cb21-2" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="naomi-aghq-appendix.html#cb21-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
 <span id="cb21-4"><a href="naomi-aghq-appendix.html#cb21-4" tabindex="-1"></a></span>
@@ -426,140 +475,91 @@ div.csl-indent {
 <span id="cb21-12"><a href="naomi-aghq-appendix.html#cb21-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
 <span id="cb21-13"><a href="naomi-aghq-appendix.html#cb21-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
 <span id="cb21-14"><a href="naomi-aghq-appendix.html#cb21-14" tabindex="-1"></a>  </span>
-<span id="cb21-15"><a href="naomi-aghq-appendix.html#cb21-15" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>beta<span class="op">);</span></span>
-<span id="cb21-16"><a href="naomi-aghq-appendix.html#cb21-16" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>epsilon<span class="op">);</span></span>
-<span id="cb21-17"><a href="naomi-aghq-appendix.html#cb21-17" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>nu<span class="op">);</span></span>
-<span id="cb21-18"><a href="naomi-aghq-appendix.html#cb21-18" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb21-19"><a href="naomi-aghq-appendix.html#cb21-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb21-20"><a href="naomi-aghq-appendix.html#cb21-20" tabindex="-1"></a>  </span>
-<span id="cb21-21"><a href="naomi-aghq-appendix.html#cb21-21" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb21-22"><a href="naomi-aghq-appendix.html#cb21-22" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb21-23"><a href="naomi-aghq-appendix.html#cb21-23" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
-<span id="cb21-24"><a href="naomi-aghq-appendix.html#cb21-24" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
-<span id="cb21-25"><a href="naomi-aghq-appendix.html#cb21-25" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span></span>
-<span id="cb21-26"><a href="naomi-aghq-appendix.html#cb21-26" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
-<span id="cb21-27"><a href="naomi-aghq-appendix.html#cb21-27" tabindex="-1"></a>  </span>
-<span id="cb21-28"><a href="naomi-aghq-appendix.html#cb21-28" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
-<span id="cb21-29"><a href="naomi-aghq-appendix.html#cb21-29" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
-<span id="cb21-30"><a href="naomi-aghq-appendix.html#cb21-30" tabindex="-1"></a>  </span>
-<span id="cb21-31"><a href="naomi-aghq-appendix.html#cb21-31" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
-<span id="cb21-32"><a href="naomi-aghq-appendix.html#cb21-32" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
-<span id="cb21-33"><a href="naomi-aghq-appendix.html#cb21-33" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span></span>
-<span id="cb21-34"><a href="naomi-aghq-appendix.html#cb21-34" tabindex="-1"></a>                 Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb21-35"><a href="naomi-aghq-appendix.html#cb21-35" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb21-36"><a href="naomi-aghq-appendix.html#cb21-36" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-37"><a href="naomi-aghq-appendix.html#cb21-37" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-38"><a href="naomi-aghq-appendix.html#cb21-38" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-15"><a href="naomi-aghq-appendix.html#cb21-15" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_starts<span class="op">);</span>  <span class="co">// Start index of each subvector of x</span></span>
+<span id="cb21-16"><a href="naomi-aghq-appendix.html#cb21-16" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_lengths<span class="op">);</span> <span class="co">// Length of each subvector of x</span></span>
+<span id="cb21-17"><a href="naomi-aghq-appendix.html#cb21-17" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>i<span class="op">);</span>         <span class="co">// Index i</span></span>
+<span id="cb21-18"><a href="naomi-aghq-appendix.html#cb21-18" tabindex="-1"></a>  </span>
+<span id="cb21-19"><a href="naomi-aghq-appendix.html#cb21-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>x_i<span class="op">);</span></span>
+<span id="cb21-20"><a href="naomi-aghq-appendix.html#cb21-20" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>x_minus_i<span class="op">);</span></span>
+<span id="cb21-21"><a href="naomi-aghq-appendix.html#cb21-21" tabindex="-1"></a>  </span>
+<span id="cb21-22"><a href="naomi-aghq-appendix.html#cb21-22" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> x<span class="op">(</span><span class="dv">301</span><span class="op">);</span></span>
+<span id="cb21-23"><a href="naomi-aghq-appendix.html#cb21-23" tabindex="-1"></a>  <span class="dt">int</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-24"><a href="naomi-aghq-appendix.html#cb21-24" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> <span class="dv">301</span><span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb21-25"><a href="naomi-aghq-appendix.html#cb21-25" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>j <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> i<span class="op">)</span> <span class="op">{</span> <span class="co">// +1 because C++ does zero-indexing</span></span>
+<span id="cb21-26"><a href="naomi-aghq-appendix.html#cb21-26" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_i<span class="op">;</span></span>
+<span id="cb21-27"><a href="naomi-aghq-appendix.html#cb21-27" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb21-28"><a href="naomi-aghq-appendix.html#cb21-28" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_minus_i<span class="op">(</span>k<span class="op">);</span></span>
+<span id="cb21-29"><a href="naomi-aghq-appendix.html#cb21-29" tabindex="-1"></a>      k<span class="op">++;</span></span>
+<span id="cb21-30"><a href="naomi-aghq-appendix.html#cb21-30" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-31"><a href="naomi-aghq-appendix.html#cb21-31" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb21-32"><a href="naomi-aghq-appendix.html#cb21-32" tabindex="-1"></a>  </span>
+<span id="cb21-33"><a href="naomi-aghq-appendix.html#cb21-33" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> beta <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">0</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">0</span><span class="op">));</span></span>
+<span id="cb21-34"><a href="naomi-aghq-appendix.html#cb21-34" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> epsilon <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">1</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
+<span id="cb21-35"><a href="naomi-aghq-appendix.html#cb21-35" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> nu <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">2</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">2</span><span class="op">));</span></span>
+<span id="cb21-36"><a href="naomi-aghq-appendix.html#cb21-36" tabindex="-1"></a></span>
+<span id="cb21-37"><a href="naomi-aghq-appendix.html#cb21-37" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb21-38"><a href="naomi-aghq-appendix.html#cb21-38" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
 <span id="cb21-39"><a href="naomi-aghq-appendix.html#cb21-39" tabindex="-1"></a>  </span>
-<span id="cb21-40"><a href="naomi-aghq-appendix.html#cb21-40" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb21-41"><a href="naomi-aghq-appendix.html#cb21-41" tabindex="-1"></a>  </span>
-<span id="cb21-42"><a href="naomi-aghq-appendix.html#cb21-42" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
-<span id="cb21-43"><a href="naomi-aghq-appendix.html#cb21-43" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
-<span id="cb21-44"><a href="naomi-aghq-appendix.html#cb21-44" tabindex="-1"></a>  </span>
-<span id="cb21-45"><a href="naomi-aghq-appendix.html#cb21-45" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
-<span id="cb21-46"><a href="naomi-aghq-appendix.html#cb21-46" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</div>
-<div id="tmb-modified-epil" class="section level3 hasAnchor" number="10.1.2">
-<h3><span class="header-section-number">C.1.2</span> Modified <code>TMB</code> C++ template<a href="naomi-aghq-appendix.html#tmb-modified-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="naomi-aghq-appendix.html#cb22-1" tabindex="-1"></a><span class="co">// epil_modified.cpp</span></span>
-<span id="cb22-2"><a href="naomi-aghq-appendix.html#cb22-2" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="naomi-aghq-appendix.html#cb22-3" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;TMB.hpp&gt;</span></span>
-<span id="cb22-4"><a href="naomi-aghq-appendix.html#cb22-4" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="naomi-aghq-appendix.html#cb22-5" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Type<span class="op">&gt;</span></span>
-<span id="cb22-6"><a href="naomi-aghq-appendix.html#cb22-6" tabindex="-1"></a>Type objective_function<span class="op">&lt;</span>Type<span class="op">&gt;::</span><span class="kw">operator</span><span class="op">()()</span></span>
-<span id="cb22-7"><a href="naomi-aghq-appendix.html#cb22-7" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb22-8"><a href="naomi-aghq-appendix.html#cb22-8" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>N<span class="op">);</span></span>
-<span id="cb22-9"><a href="naomi-aghq-appendix.html#cb22-9" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>J<span class="op">);</span></span>
-<span id="cb22-10"><a href="naomi-aghq-appendix.html#cb22-10" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>K<span class="op">);</span></span>
-<span id="cb22-11"><a href="naomi-aghq-appendix.html#cb22-11" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>X<span class="op">);</span></span>
-<span id="cb22-12"><a href="naomi-aghq-appendix.html#cb22-12" tabindex="-1"></a>  DATA_VECTOR<span class="op">(</span>y<span class="op">);</span></span>
-<span id="cb22-13"><a href="naomi-aghq-appendix.html#cb22-13" tabindex="-1"></a>  DATA_MATRIX<span class="op">(</span>E<span class="op">);</span> <span class="co">// Epsilon matrix</span></span>
-<span id="cb22-14"><a href="naomi-aghq-appendix.html#cb22-14" tabindex="-1"></a>  </span>
-<span id="cb22-15"><a href="naomi-aghq-appendix.html#cb22-15" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_starts<span class="op">);</span>  <span class="co">// Start index of each subvector of x</span></span>
-<span id="cb22-16"><a href="naomi-aghq-appendix.html#cb22-16" tabindex="-1"></a>  DATA_IVECTOR<span class="op">(</span>x_lengths<span class="op">);</span> <span class="co">// Length of each subvector of x</span></span>
-<span id="cb22-17"><a href="naomi-aghq-appendix.html#cb22-17" tabindex="-1"></a>  DATA_INTEGER<span class="op">(</span>i<span class="op">);</span>         <span class="co">// Index i</span></span>
-<span id="cb22-18"><a href="naomi-aghq-appendix.html#cb22-18" tabindex="-1"></a>  </span>
-<span id="cb22-19"><a href="naomi-aghq-appendix.html#cb22-19" tabindex="-1"></a>  PARAMETER<span class="op">(</span>x_i<span class="op">);</span></span>
-<span id="cb22-20"><a href="naomi-aghq-appendix.html#cb22-20" tabindex="-1"></a>  PARAMETER_VECTOR<span class="op">(</span>x_minus_i<span class="op">);</span></span>
-<span id="cb22-21"><a href="naomi-aghq-appendix.html#cb22-21" tabindex="-1"></a>  </span>
-<span id="cb22-22"><a href="naomi-aghq-appendix.html#cb22-22" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> x<span class="op">(</span><span class="dv">301</span><span class="op">);</span></span>
-<span id="cb22-23"><a href="naomi-aghq-appendix.html#cb22-23" tabindex="-1"></a>  <span class="dt">int</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb22-24"><a href="naomi-aghq-appendix.html#cb22-24" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> <span class="dv">301</span><span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb22-25"><a href="naomi-aghq-appendix.html#cb22-25" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>j <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> i<span class="op">)</span> <span class="op">{</span> <span class="co">// +1 because C++ does zero-indexing</span></span>
-<span id="cb22-26"><a href="naomi-aghq-appendix.html#cb22-26" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_i<span class="op">;</span></span>
-<span id="cb22-27"><a href="naomi-aghq-appendix.html#cb22-27" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb22-28"><a href="naomi-aghq-appendix.html#cb22-28" tabindex="-1"></a>      x<span class="op">(</span>j<span class="op">)</span> <span class="op">=</span> x_minus_i<span class="op">(</span>k<span class="op">);</span></span>
-<span id="cb22-29"><a href="naomi-aghq-appendix.html#cb22-29" tabindex="-1"></a>      k<span class="op">++;</span></span>
-<span id="cb22-30"><a href="naomi-aghq-appendix.html#cb22-30" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb22-31"><a href="naomi-aghq-appendix.html#cb22-31" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb22-32"><a href="naomi-aghq-appendix.html#cb22-32" tabindex="-1"></a>  </span>
-<span id="cb22-33"><a href="naomi-aghq-appendix.html#cb22-33" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> beta <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">0</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">0</span><span class="op">));</span></span>
-<span id="cb22-34"><a href="naomi-aghq-appendix.html#cb22-34" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> epsilon <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">1</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
-<span id="cb22-35"><a href="naomi-aghq-appendix.html#cb22-35" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> nu <span class="op">=</span> x<span class="op">.</span>segment<span class="op">(</span>x_starts<span class="op">(</span><span class="dv">2</span><span class="op">),</span> x_lengths<span class="op">(</span><span class="dv">2</span><span class="op">));</span></span>
-<span id="cb22-36"><a href="naomi-aghq-appendix.html#cb22-36" tabindex="-1"></a></span>
-<span id="cb22-37"><a href="naomi-aghq-appendix.html#cb22-37" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb22-38"><a href="naomi-aghq-appendix.html#cb22-38" tabindex="-1"></a>  PARAMETER<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb22-39"><a href="naomi-aghq-appendix.html#cb22-39" tabindex="-1"></a>  </span>
-<span id="cb22-40"><a href="naomi-aghq-appendix.html#cb22-40" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
-<span id="cb22-41"><a href="naomi-aghq-appendix.html#cb22-41" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
-<span id="cb22-42"><a href="naomi-aghq-appendix.html#cb22-42" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
-<span id="cb22-43"><a href="naomi-aghq-appendix.html#cb22-43" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
-<span id="cb22-44"><a href="naomi-aghq-appendix.html#cb22-44" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span></span>
-<span id="cb22-45"><a href="naomi-aghq-appendix.html#cb22-45" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
-<span id="cb22-46"><a href="naomi-aghq-appendix.html#cb22-46" tabindex="-1"></a>  </span>
-<span id="cb22-47"><a href="naomi-aghq-appendix.html#cb22-47" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
-<span id="cb22-48"><a href="naomi-aghq-appendix.html#cb22-48" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
-<span id="cb22-49"><a href="naomi-aghq-appendix.html#cb22-49" tabindex="-1"></a>  </span>
-<span id="cb22-50"><a href="naomi-aghq-appendix.html#cb22-50" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
-<span id="cb22-51"><a href="naomi-aghq-appendix.html#cb22-51" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
-<span id="cb22-52"><a href="naomi-aghq-appendix.html#cb22-52" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span></span>
-<span id="cb22-53"><a href="naomi-aghq-appendix.html#cb22-53" tabindex="-1"></a>                 Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb22-54"><a href="naomi-aghq-appendix.html#cb22-54" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb22-55"><a href="naomi-aghq-appendix.html#cb22-55" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-56"><a href="naomi-aghq-appendix.html#cb22-56" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-57"><a href="naomi-aghq-appendix.html#cb22-57" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-58"><a href="naomi-aghq-appendix.html#cb22-58" tabindex="-1"></a>  </span>
-<span id="cb22-59"><a href="naomi-aghq-appendix.html#cb22-59" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
-<span id="cb22-60"><a href="naomi-aghq-appendix.html#cb22-60" tabindex="-1"></a>  </span>
-<span id="cb22-61"><a href="naomi-aghq-appendix.html#cb22-61" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
-<span id="cb22-62"><a href="naomi-aghq-appendix.html#cb22-62" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
-<span id="cb22-63"><a href="naomi-aghq-appendix.html#cb22-63" tabindex="-1"></a>  </span>
-<span id="cb22-64"><a href="naomi-aghq-appendix.html#cb22-64" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
-<span id="cb22-65"><a href="naomi-aghq-appendix.html#cb22-65" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb21-40"><a href="naomi-aghq-appendix.html#cb21-40" tabindex="-1"></a>  Type tau_epsilon <span class="op">=</span> exp<span class="op">(</span>l_tau_epsilon<span class="op">);</span></span>
+<span id="cb21-41"><a href="naomi-aghq-appendix.html#cb21-41" tabindex="-1"></a>  Type tau_nu <span class="op">=</span> exp<span class="op">(</span>l_tau_nu<span class="op">);</span></span>
+<span id="cb21-42"><a href="naomi-aghq-appendix.html#cb21-42" tabindex="-1"></a>  Type sigma_epsilon <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">);</span></span>
+<span id="cb21-43"><a href="naomi-aghq-appendix.html#cb21-43" tabindex="-1"></a>  Type sigma_nu <span class="op">=</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">);</span></span>
+<span id="cb21-44"><a href="naomi-aghq-appendix.html#cb21-44" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> eta<span class="op">(</span>X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">);</span></span>
+<span id="cb21-45"><a href="naomi-aghq-appendix.html#cb21-45" tabindex="-1"></a>  vector<span class="op">&lt;</span>Type<span class="op">&gt;</span> lambda<span class="op">(</span>exp<span class="op">(</span>eta<span class="op">));</span></span>
+<span id="cb21-46"><a href="naomi-aghq-appendix.html#cb21-46" tabindex="-1"></a>  </span>
+<span id="cb21-47"><a href="naomi-aghq-appendix.html#cb21-47" tabindex="-1"></a>  Type nll<span class="op">;</span></span>
+<span id="cb21-48"><a href="naomi-aghq-appendix.html#cb21-48" tabindex="-1"></a>  nll <span class="op">=</span> Type<span class="op">(</span><span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb21-49"><a href="naomi-aghq-appendix.html#cb21-49" tabindex="-1"></a>  </span>
+<span id="cb21-50"><a href="naomi-aghq-appendix.html#cb21-50" tabindex="-1"></a>  <span class="co">// Note: dgamma() is parameterised as (shape, scale)</span></span>
+<span id="cb21-51"><a href="naomi-aghq-appendix.html#cb21-51" tabindex="-1"></a>  <span class="co">// R-INLA is parameterised as (shape, rate)</span></span>
+<span id="cb21-52"><a href="naomi-aghq-appendix.html#cb21-52" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_epsilon<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span></span>
+<span id="cb21-53"><a href="naomi-aghq-appendix.html#cb21-53" tabindex="-1"></a>                 Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb21-54"><a href="naomi-aghq-appendix.html#cb21-54" tabindex="-1"></a>  nll <span class="op">-=</span> dlgamma<span class="op">(</span>l_tau_nu<span class="op">,</span> Type<span class="op">(</span><span class="fl">0.001</span><span class="op">),</span> Type<span class="op">(</span><span class="fl">1.0</span> <span class="op">/</span> <span class="fl">0.001</span><span class="op">),</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb21-55"><a href="naomi-aghq-appendix.html#cb21-55" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>epsilon<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_epsilon<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-56"><a href="naomi-aghq-appendix.html#cb21-56" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>nu<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> sigma_nu<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-57"><a href="naomi-aghq-appendix.html#cb21-57" tabindex="-1"></a>  nll <span class="op">-=</span> dnorm<span class="op">(</span>beta<span class="op">,</span> Type<span class="op">(</span><span class="dv">0</span><span class="op">),</span> Type<span class="op">(</span><span class="dv">100</span><span class="op">),</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-58"><a href="naomi-aghq-appendix.html#cb21-58" tabindex="-1"></a>  </span>
+<span id="cb21-59"><a href="naomi-aghq-appendix.html#cb21-59" tabindex="-1"></a>  nll <span class="op">-=</span> dpois<span class="op">(</span>y<span class="op">,</span> lambda<span class="op">,</span> <span class="kw">true</span><span class="op">).</span>sum<span class="op">();</span></span>
+<span id="cb21-60"><a href="naomi-aghq-appendix.html#cb21-60" tabindex="-1"></a>  </span>
+<span id="cb21-61"><a href="naomi-aghq-appendix.html#cb21-61" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_epsilon<span class="op">);</span></span>
+<span id="cb21-62"><a href="naomi-aghq-appendix.html#cb21-62" tabindex="-1"></a>  ADREPORT<span class="op">(</span>tau_nu<span class="op">);</span></span>
+<span id="cb21-63"><a href="naomi-aghq-appendix.html#cb21-63" tabindex="-1"></a>  </span>
+<span id="cb21-64"><a href="naomi-aghq-appendix.html#cb21-64" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>nll<span class="op">);</span></span>
+<span id="cb21-65"><a href="naomi-aghq-appendix.html#cb21-65" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="stan-epil" class="section level3 hasAnchor" number="10.1.3">
 <h3><span class="header-section-number">C.1.3</span> <code>Stan</code> C++ template<a href="naomi-aghq-appendix.html#stan-epil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb23"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="naomi-aghq-appendix.html#cb23-1" tabindex="-1"></a><span class="co">// epil.stan</span></span>
-<span id="cb23-2"><a href="naomi-aghq-appendix.html#cb23-2" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="naomi-aghq-appendix.html#cb23-3" tabindex="-1"></a>data <span class="op">{</span></span>
-<span id="cb23-4"><a href="naomi-aghq-appendix.html#cb23-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> N<span class="op">;</span>        <span class="co">// Number of patients</span></span>
-<span id="cb23-5"><a href="naomi-aghq-appendix.html#cb23-5" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span>        <span class="co">// Number of clinic visits</span></span>
-<span id="cb23-6"><a href="naomi-aghq-appendix.html#cb23-6" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> K<span class="op">;</span>        <span class="co">// Number of predictors (inc. intercept)</span></span>
-<span id="cb23-7"><a href="naomi-aghq-appendix.html#cb23-7" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> K<span class="op">]</span> X<span class="op">;</span>    <span class="co">// Design matrix</span></span>
-<span id="cb23-8"><a href="naomi-aghq-appendix.html#cb23-8" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> y<span class="op">[</span>N <span class="op">*</span> J<span class="op">];</span> <span class="co">// Outcome variable</span></span>
-<span id="cb23-9"><a href="naomi-aghq-appendix.html#cb23-9" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> N<span class="op">]</span> E<span class="op">;</span>    <span class="co">// Epsilon matrix</span></span>
-<span id="cb23-10"><a href="naomi-aghq-appendix.html#cb23-10" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-11"><a href="naomi-aghq-appendix.html#cb23-11" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="naomi-aghq-appendix.html#cb23-12" tabindex="-1"></a>parameters <span class="op">{</span></span>
-<span id="cb23-13"><a href="naomi-aghq-appendix.html#cb23-13" tabindex="-1"></a>  vector<span class="op">[</span>K<span class="op">]</span> beta<span class="op">;</span>            <span class="co">// Vector of coefficients</span></span>
-<span id="cb23-14"><a href="naomi-aghq-appendix.html#cb23-14" tabindex="-1"></a>  vector<span class="op">[</span>N<span class="op">]</span> epsilon<span class="op">;</span>         <span class="co">// Patient specific errors</span></span>
-<span id="cb23-15"><a href="naomi-aghq-appendix.html#cb23-15" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> nu<span class="op">;</span>          <span class="co">// Patient-visit errors</span></span>
-<span id="cb23-16"><a href="naomi-aghq-appendix.html#cb23-16" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_epsilon<span class="op">;</span> <span class="co">// Precision of epsilon</span></span>
-<span id="cb23-17"><a href="naomi-aghq-appendix.html#cb23-17" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_nu<span class="op">;</span>      <span class="co">// Precision of nu</span></span>
-<span id="cb23-18"><a href="naomi-aghq-appendix.html#cb23-18" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-19"><a href="naomi-aghq-appendix.html#cb23-19" tabindex="-1"></a></span>
-<span id="cb23-20"><a href="naomi-aghq-appendix.html#cb23-20" tabindex="-1"></a>transformed parameters <span class="op">{</span></span>
-<span id="cb23-21"><a href="naomi-aghq-appendix.html#cb23-21" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> eta <span class="op">=</span> X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">;</span></span>
-<span id="cb23-22"><a href="naomi-aghq-appendix.html#cb23-22" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb23-23"><a href="naomi-aghq-appendix.html#cb23-23" tabindex="-1"></a></span>
-<span id="cb23-24"><a href="naomi-aghq-appendix.html#cb23-24" tabindex="-1"></a>model <span class="op">{</span></span>
-<span id="cb23-25"><a href="naomi-aghq-appendix.html#cb23-25" tabindex="-1"></a>  beta <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
-<span id="cb23-26"><a href="naomi-aghq-appendix.html#cb23-26" tabindex="-1"></a>  tau_epsilon <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
-<span id="cb23-27"><a href="naomi-aghq-appendix.html#cb23-27" tabindex="-1"></a>  tau_nu <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
-<span id="cb23-28"><a href="naomi-aghq-appendix.html#cb23-28" tabindex="-1"></a>  epsilon <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">));</span></span>
-<span id="cb23-29"><a href="naomi-aghq-appendix.html#cb23-29" tabindex="-1"></a>  nu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">));</span></span>
-<span id="cb23-30"><a href="naomi-aghq-appendix.html#cb23-30" tabindex="-1"></a>  y <span class="op">~</span> poisson_log<span class="op">(</span>eta<span class="op">);</span></span>
-<span id="cb23-31"><a href="naomi-aghq-appendix.html#cb23-31" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="naomi-aghq-appendix.html#cb22-1" tabindex="-1"></a><span class="co">// epil.stan</span></span>
+<span id="cb22-2"><a href="naomi-aghq-appendix.html#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="naomi-aghq-appendix.html#cb22-3" tabindex="-1"></a>data <span class="op">{</span></span>
+<span id="cb22-4"><a href="naomi-aghq-appendix.html#cb22-4" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> N<span class="op">;</span>        <span class="co">// Number of patients</span></span>
+<span id="cb22-5"><a href="naomi-aghq-appendix.html#cb22-5" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span>        <span class="co">// Number of clinic visits</span></span>
+<span id="cb22-6"><a href="naomi-aghq-appendix.html#cb22-6" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> K<span class="op">;</span>        <span class="co">// Number of predictors (inc. intercept)</span></span>
+<span id="cb22-7"><a href="naomi-aghq-appendix.html#cb22-7" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> K<span class="op">]</span> X<span class="op">;</span>    <span class="co">// Design matrix</span></span>
+<span id="cb22-8"><a href="naomi-aghq-appendix.html#cb22-8" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> y<span class="op">[</span>N <span class="op">*</span> J<span class="op">];</span> <span class="co">// Outcome variable</span></span>
+<span id="cb22-9"><a href="naomi-aghq-appendix.html#cb22-9" tabindex="-1"></a>  matrix<span class="op">[</span>N <span class="op">*</span> J<span class="op">,</span> N<span class="op">]</span> E<span class="op">;</span>    <span class="co">// Epsilon matrix</span></span>
+<span id="cb22-10"><a href="naomi-aghq-appendix.html#cb22-10" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-11"><a href="naomi-aghq-appendix.html#cb22-11" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="naomi-aghq-appendix.html#cb22-12" tabindex="-1"></a>parameters <span class="op">{</span></span>
+<span id="cb22-13"><a href="naomi-aghq-appendix.html#cb22-13" tabindex="-1"></a>  vector<span class="op">[</span>K<span class="op">]</span> beta<span class="op">;</span>            <span class="co">// Vector of coefficients</span></span>
+<span id="cb22-14"><a href="naomi-aghq-appendix.html#cb22-14" tabindex="-1"></a>  vector<span class="op">[</span>N<span class="op">]</span> epsilon<span class="op">;</span>         <span class="co">// Patient specific errors</span></span>
+<span id="cb22-15"><a href="naomi-aghq-appendix.html#cb22-15" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> nu<span class="op">;</span>          <span class="co">// Patient-visit errors</span></span>
+<span id="cb22-16"><a href="naomi-aghq-appendix.html#cb22-16" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_epsilon<span class="op">;</span> <span class="co">// Precision of epsilon</span></span>
+<span id="cb22-17"><a href="naomi-aghq-appendix.html#cb22-17" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau_nu<span class="op">;</span>      <span class="co">// Precision of nu</span></span>
+<span id="cb22-18"><a href="naomi-aghq-appendix.html#cb22-18" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-19"><a href="naomi-aghq-appendix.html#cb22-19" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="naomi-aghq-appendix.html#cb22-20" tabindex="-1"></a>transformed parameters <span class="op">{</span></span>
+<span id="cb22-21"><a href="naomi-aghq-appendix.html#cb22-21" tabindex="-1"></a>  vector<span class="op">[</span>N <span class="op">*</span> J<span class="op">]</span> eta <span class="op">=</span> X <span class="op">*</span> beta <span class="op">+</span> nu <span class="op">+</span> E <span class="op">*</span> epsilon<span class="op">;</span></span>
+<span id="cb22-22"><a href="naomi-aghq-appendix.html#cb22-22" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-23"><a href="naomi-aghq-appendix.html#cb22-23" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="naomi-aghq-appendix.html#cb22-24" tabindex="-1"></a>model <span class="op">{</span></span>
+<span id="cb22-25"><a href="naomi-aghq-appendix.html#cb22-25" tabindex="-1"></a>  beta <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
+<span id="cb22-26"><a href="naomi-aghq-appendix.html#cb22-26" tabindex="-1"></a>  tau_epsilon <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
+<span id="cb22-27"><a href="naomi-aghq-appendix.html#cb22-27" tabindex="-1"></a>  tau_nu <span class="op">~</span> gamma<span class="op">(</span><span class="fl">0.001</span><span class="op">,</span> <span class="fl">0.001</span><span class="op">);</span></span>
+<span id="cb22-28"><a href="naomi-aghq-appendix.html#cb22-28" tabindex="-1"></a>  epsilon <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_epsilon<span class="op">));</span></span>
+<span id="cb22-29"><a href="naomi-aghq-appendix.html#cb22-29" tabindex="-1"></a>  nu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> sqrt<span class="op">(</span><span class="dv">1</span> <span class="op">/</span> tau_nu<span class="op">));</span></span>
+<span id="cb22-30"><a href="naomi-aghq-appendix.html#cb22-30" tabindex="-1"></a>  y <span class="op">~</span> poisson_log<span class="op">(</span>eta<span class="op">);</span></span>
+<span id="cb22-31"><a href="naomi-aghq-appendix.html#cb22-31" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div id="nuts-convergence-and-suitability" class="section level3 hasAnchor" number="10.1.4">
 <h3><span class="header-section-number">C.1.4</span> NUTS convergence and suitability<a href="naomi-aghq-appendix.html#nuts-convergence-and-suitability" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -923,8 +923,8 @@ As no terms include <span class="math inline">\(x&#39;\)</span>, <span class="ma
 <div id="naomi-likelihood" class="section level3 hasAnchor" number="10.3.2">
 <h3><span class="header-section-number">C.3.2</span> Additional likelihood specification<a href="naomi-aghq-appendix.html#naomi-likelihood" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Though Section <a href="naomi-aghq.html#naomi">6.3</a> provides a complete description of Naomi’s likelihood specification, any additional useful details are provided here.</p>
-<div id="household-survey-data-2" class="section level4 hasAnchor" number="10.3.2.1">
-<h4><span class="header-section-number">C.3.2.1</span> Household survey data<a href="naomi-aghq-appendix.html#household-survey-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="household-survey-data-1" class="section level4 hasAnchor" number="10.3.2.1">
+<h4><span class="header-section-number">C.3.2.1</span> Household survey data<a href="naomi-aghq-appendix.html#household-survey-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>The generalised binomial <span class="math inline">\(y \sim \text{xBin}(m, p)\)</span> is defined for <span class="math inline">\(y, m \in \mathbb{R}^+\)</span> with <span class="math inline">\(y \leq m\)</span> such that
 <span class="math display">\[\begin{align}
 \log p(y) = &amp;\log \Gamma(m + 1) - \log \Gamma(y + 1) \\
@@ -957,7 +957,7 @@ The sex ratio for HIV incidence is determined by the sex incidence rate ratio fr
 For ease of understanding, Table <a href="naomi-aghq-appendix.html#tab:tmb-lookup">C.6</a> provides correspondence between the mathematical notation used in Section <a href="naomi-aghq-appendix.html#naomi-math">C.3</a> and the variable names used in the <code>TMB</code> code, for all hyperparameters and latent field parameters.
 For further reference on the <code>TMB</code> software see <span class="citation">Kristensen (<a href="#ref-tmbdocumentation">2021</a>)</span>.</p>
 <table>
-<caption><span id="tab:tmb-lookup">Table C.6: </span> Correspondence between the variable name used in the Naomi <code>TMB</code> template and the mathematical notation used in Appendix <a href="naomi-aghq-appendix.html#naomi-math">C.3</a>. The parameter type, either a hyperparameter or elements of the latent field, are given. All of the parameters are defined on the real-scale in some dimension. In the final three columns (<span class="math inline">\(\rho, \alpha, \lambda\)</span>) indication is given as to which component of the model the parameter is primarily used in.</caption>
+<caption><span id="tab:tmb-lookup">Table C.6: </span> Correspondence between the variable name used in the Naomi <code>TMB</code> template and the mathematical notation used in Appendix <a href="naomi-aghq-appendix.html#naomi-math">C.3</a>. The parameter type, either a hyperparameter or element of the latent field, is also given. All of the parameters are defined on the real-scale in some dimension. In the final three columns (<span class="math inline">\(\rho\)</span>, <span class="math inline">\(\alpha\)</span>, and <span class="math inline">\(\lambda\)</span>) indication is given as to which component of the model the parameter is primarily used in.</caption>
 <colgroup>
 <col width="28%" />
 <col width="20%" />
@@ -1410,49 +1410,49 @@ For further reference on the <code>TMB</code> software see <span class="citation
 <h2><span class="header-section-number">C.4</span> NUTS convergence and suitability<a href="naomi-aghq-appendix.html#nuts-convergence-and-suitability-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:rhat"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/rhat.png" alt="The maximum potential scale reduction factor was 1.021, below the value of 1.05 typically used as a cutoff for acceptable chain mixing. Additionally, the vast majority (93.7%) of \(\hat R\) values were less than 1.1." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/rhat.png" alt="For NUTS run on the Naomi ELGM, the maximum potential scale reduction factor was 1.021, below the value of 1.05 typically used as a cutoff for acceptable chain mixing, indicating that the results are acceptable to use. Additionally, the vast majority (93.7%) of \(\hat R\) values were less than 1.1." width="95%" />
 <p class="caption">
-Figure C.5: The maximum potential scale reduction factor was 1.021, below the value of 1.05 typically used as a cutoff for acceptable chain mixing. Additionally, the vast majority (93.7%) of <span class="math inline">\(\hat R\)</span> values were less than 1.1.
+Figure C.5: For NUTS run on the Naomi ELGM, the maximum potential scale reduction factor was 1.021, below the value of 1.05 typically used as a cutoff for acceptable chain mixing, indicating that the results are acceptable to use. Additionally, the vast majority (93.7%) of <span class="math inline">\(\hat R\)</span> values were less than 1.1.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ess"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/ess.png" alt="The efficiency of the NUTS, as measured by the ratio of effective sample size to total number of iterations run, was low for most parameters (Panel A). As a result, the number of iterations required for the the effective number of samples (mean 1265) to be satisfactory was high (Panel B)." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/ess.png" alt="The efficiency of the NUTS, as measured by the ratio of effective sample size to total number of iterations run, was low for most parameters (Panel A). As a result, the number of iterations required for the the effective number of samples (mean 1265) to be satisfactory was high (Panel B)." width="95%" />
 <p class="caption">
 Figure C.6: The efficiency of the NUTS, as measured by the ratio of effective sample size to total number of iterations run, was low for most parameters (Panel A). As a result, the number of iterations required for the the effective number of samples (mean 1265) to be satisfactory was high (Panel B).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:worst-trace"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/worst-trace.png" alt="Traceplots for the parameter with the lowest ESS which was log_sigma_alpha_xs (an \(\text{ESS}\) of 208, Panel A) and highest potential scale reduction factor which was ui_lambda_x[10] (an \(\hat R\) of 1.021, Panel B)." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/worst-trace.png" alt="Traceplots for the parameter with the lowest ESS which was log_sigma_alpha_xs (an \(\text{ESS}\) of 208, Panel A) and highest potential scale reduction factor which was ui_lambda_x[10] (an \(\hat R\) of 1.021, Panel B)." width="95%" />
 <p class="caption">
 Figure C.7: Traceplots for the parameter with the lowest ESS which was <code>log_sigma_alpha_xs</code> (an <span class="math inline">\(\text{ESS}\)</span> of 208, Panel A) and highest potential scale reduction factor which was <code>ui_lambda_x[10]</code> (an <span class="math inline">\(\hat R\)</span> of 1.021, Panel B).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:rho-a"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/rho_a.png" alt="Pairs plots for log_sigma_rho_a and logit_phi_rho_a." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/rho_a.png" alt="NUTS pairs plots for the parameters \(\log(\sigma_{A}^\rho)\) and \(\text{logit}(\phi_{A}^\rho)\), or as written log_sigma_rho_a and logit_phi_rho_a." width="95%" />
 <p class="caption">
-Figure C.8: Pairs plots for <code>log_sigma_rho_a</code> and <code>logit_phi_rho_a</code>.
+Figure C.8: NUTS pairs plots for the parameters <span class="math inline">\(\log(\sigma_{A}^\rho)\)</span> and <span class="math inline">\(\text{logit}(\phi_{A}^\rho)\)</span>, or as written <code>log_sigma_rho_a</code> and <code>logit_phi_rho_a</code>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:alpha-x"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/alpha_x.png" alt="Pairs plots for log_sigma_alpha_x and logit_phi_alpha_x." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/alpha_x.png" alt="NUTS pairs plots for the parameters \(\log(\sigma_X^\alpha)\) and \(\text{logit}(\phi_X^\alpha)\), or as written log_sigma_alpha_x and logit_phi_alpha_x." width="95%" />
 <p class="caption">
-Figure C.9: Pairs plots for <code>log_sigma_alpha_x</code> and <code>logit_phi_alpha_x</code>.
+Figure C.9: NUTS pairs plots for the parameters <span class="math inline">\(\log(\sigma_X^\alpha)\)</span> and <span class="math inline">\(\text{logit}(\phi_X^\alpha)\)</span>, or as written <code>log_sigma_alpha_x</code> and <code>logit_phi_alpha_x</code>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:posterior-contraction"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/posterior-contraction.png" alt="The posterior contraction for each parameter in the model. Values are averaged for parameters of length greater than one. The posterior contraction is zero when the prior distribution and posterior distribution have the same standard deviation. This could indicate that the data is not informative about the parameter. The closer the posterior contraction is to one, the more than the marginal posterior distribution has concentrated about a single point." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/posterior-contraction.png" alt="The posterior contraction for each parameter in the model. Values are averaged for parameters of length greater than one. The posterior contraction is zero when the prior distribution and posterior distribution have the same standard deviation. This could indicate that the data is not informative about the parameter. The closer the posterior contraction is to one, the more than the marginal posterior distribution has concentrated about a single point." width="95%" />
 <p class="caption">
 Figure C.10: The posterior contraction for each parameter in the model. Values are averaged for parameters of length greater than one. The posterior contraction is zero when the prior distribution and posterior distribution have the same standard deviation. This could indicate that the data is not informative about the parameter. The closer the posterior contraction is to one, the more than the marginal posterior distribution has concentrated about a single point.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nuts-hand-comparison"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/nuts-hand-comparison.png" alt="Prior standard deviations were calculated by using NUTS to simulate from the prior distribution. This approach is more convenient than simulating directly from the model, but can lead to inaccuracies." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/nuts-hand-comparison.png" alt="Prior standard deviations were calculated by using NUTS to simulate from the prior distribution. This approach is more convenient than simulating directly from the model, but can lead to inaccuracies." width="95%" />
 <p class="caption">
 Figure C.11: Prior standard deviations were calculated by using NUTS to simulate from the prior distribution. This approach is more convenient than simulating directly from the model, but can lead to inaccuracies.
 </p>
@@ -1462,9 +1462,9 @@ Figure C.11: Prior standard deviations were calculated by using NUTS to simulate
 <h2><span class="header-section-number">C.5</span> Use of PCA-AGHQ<a href="naomi-aghq-appendix.html#use-of-pca-aghq-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-quantiles-sd"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/nodes-quantiles-sd.png" alt="The standard deviation of the quadrature nodes can be used as a measure of coverage of the posterior marginal distribution. Nodes spaced evenly within the marginal distribution would be expected to uniformly distributed quantile, corresponding to a standard deviation of 0.2875, shown as a dashed line." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/nodes-quantiles-sd.png" alt="The standard deviation of the quadrature nodes can be used as a measure of coverage of the posterior marginal distribution. Nodes spaced evenly within the marginal distribution would be expected to uniformly distributed quantile, corresponding to a standard deviation of 0.2896, shown as a dashed line." width="95%" />
 <p class="caption">
-Figure C.12: The standard deviation of the quadrature nodes can be used as a measure of coverage of the posterior marginal distribution. Nodes spaced evenly within the marginal distribution would be expected to uniformly distributed quantile, corresponding to a standard deviation of 0.2875, shown as a dashed line.
+Figure C.12: The standard deviation of the quadrature nodes can be used as a measure of coverage of the posterior marginal distribution. Nodes spaced evenly within the marginal distribution would be expected to uniformly distributed quantile, corresponding to a standard deviation of 0.2896, shown as a dashed line.
 </p>
 </div>
 </div>
@@ -1477,14 +1477,14 @@ Figure C.12: The standard deviation of the quadrature nodes can be used as a mea
 <h3><span class="header-section-number">C.7.1</span> Point estimates<a href="naomi-aghq-appendix.html#point-estimates-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:mean-alt-output"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/mean-alt-output.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/mean-alt-output.png" alt="Figure caption." width="95%" />
 <p class="caption">
 Figure C.13: Figure caption.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:sd-alt-output"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/sd-alt-output.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/sd-alt-output.png" alt="Figure caption." width="95%" />
 <p class="caption">
 Figure C.14: Figure caption.
 </p>
@@ -1494,7 +1494,7 @@ Figure C.14: Figure caption.
 <h3><span class="header-section-number">C.7.2</span> Distributional quantities<a href="naomi-aghq-appendix.html#distributional-quantities-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ks-ess"></span>
-<img src="resources/naomi-aghq/20231228-185815-b52d9cb3/depends/ks-ess.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/ks-ess.png" alt="Figure caption." width="95%" />
 <p class="caption">
 Figure C.15: Figure caption.
 </p>
