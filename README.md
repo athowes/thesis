@@ -4,7 +4,7 @@
 ![](https://geps.dev/progress/100)<!-- -->
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 292 pages. There are various
+> Thesis under construction! Currently 293 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -137,18 +137,75 @@ small-area estimation model to data from Malawi.
 
 ## Enhancements
 
-Here are some enhancements I think could improve the thesis, given more
-time to work on it:
+Here are a collection of enhancements I think would improve this thesis,
+given more time to work on it:
 
-- In Chapter 2, the sections about challenges and statistical approaches
-  used to overcome those challenges could be 1) better connected to the
-  work done in the thesis, and 2) better integrated with existing
-  literature. Doing so is relatively challenging 1) because this chapter
-  precedes proper introduction of the methods used in this thesis, and
-  is instead meant to provide a high-level overview, and 2) because the
-  statistical approaches described e.g. “borrowing information” are
-  relatively general and would be difficult, though not impossible, to
-  credit to any particular works.
+### [Chapter 2](https://athowes.github.io/thesis/hiv-aids.html)
+
+- The sections about challenges and statistical approaches used to
+  overcome those challenges could be 1) better connected to the work
+  done in the thesis, and 2) better integrated with existing literature.
+  Doing so is relatively challenging 1) because this chapter precedes
+  proper introduction of the methods used in this thesis, and is instead
+  meant to provide a high-level overview, and 2) because the statistical
+  approaches described e.g. “borrowing information” are relatively
+  general and would be difficult, though not impossible, to credit to
+  any particular works.
+
+### [Chapter 3](https://athowes.github.io/thesis/bayes-st.html)
+
+- The writing throughout Chapter 3 is weak in places. Particularly the
+  sections on 1) deterministic Bayesian inference methods (difficult to
+  know how much to say given focus of later chapters on this
+  material) 2) properties of spatio-temporal data, 3) aspects of the
+  survey section.
+- In Chapter 3 I follow other authors in using the notation
+  $u_k(w_{ki})$ to refer to random effects. It would be good to connect
+  up this functional notation with specifying random effects as
+  e.g. $u_i$ rather than some function of some covariates.
+- In Chapter 3, it would be nice to include a figure illustrating the
+  DHS sampling procedure.
+
+### [Chapter 4]((https://athowes.github.io/thesis/beyond-borders.html)) and [Appendix A](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html)
+
+- The simulation study was run using 250 replicates. As you can see from
+  the plots showing the mean and standard errors, this sample size was
+  insufficient to distinguish between models in some cases. All the more
+  so zooming into single areas. It would be relatively simple to
+  increase the sample size here, but this wasn’t done in the interests
+  of time.
+- For the simulation study on the four vignette geometries, the
+  lengthscale priors are mis-specified with respect to the true
+  lengthscale. This seems like an odd choice. Likely these experiments
+  should be rerun simulating data from a more suitable lengthscale than
+  the value 2.5 used currently.
+- In Chapter 4, it would be useful to frame the Besag model (and BYM2,
+  if possible) in terms of an equivalent kernel. I believe that the
+  technical vignette [Paciorek
+  (2008)](https://www.stat.berkeley.edu/users/paciorek/research/techVignettes/techVignette2.pdf)
+  does this.
+- In Chapter 4, calculating the DIC and WAIC values for each of the
+  fitted models would be informative as to the possible benefits of the
+  other model comparison techniques used in the chapter. This would
+  require writing a function to take a model fitted using `TMB` or
+  `aghq` and output the model comparison criteria. Likely the best
+  approach would be to use samples, as this is the most transferable
+  way.
+
+### [Chapter 5](https://athowes.github.io/thesis/multi-agyw.html) and [Appendix B](https://athowes.github.io/thesis/a-model-for-risk-group-proportions.html)
+
+- Too little emphasis is placed on the HIV prevalence and HIV incidence
+  results, as compared to the HIV risk group results. For example,
+  continental choropleths could be produced for the these
+  epidemiological quantities as well.
+- Chapter 5 could benefit from more discussion of the statistical
+  results and conclusions from the work. Some of this work is already
+  done in my [retrospective blog
+  post](https://athowes.github.io/posts/2023-04-21-risk-group-retrospective/)
+  about the work.
+
+### [Chapter 6](https://athowes.github.io/thesis/naomi-aghq.html) and [Appendix C](https://athowes.github.io/thesis/fast-approximate-bayesian-inference.html)
+
 - A more thorough description of the approximations to the Laplace
   approximation used by [Rue, Martino, and Chopin
   (2009)](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2008.00700.x)
@@ -172,45 +229,13 @@ time to work on it:
   [“symbolic differentiation in a few lines of
   code”](https://reside-ic.github.io/blog/symbolic-differentiation-in-a-few-lines-of-code/)
   by Rich FitzJohn.
-- The simulation study in Chapter 4 was run using 250 replicates. As you
-  can see from the plots showing the mean and standard errors, this
-  sample size was insufficient to distinguish between models in some
-  cases. All the more so zooming into single areas. It would be
-  relatively simple to increase the sample size here, but this wasn’t
-  done in the interests of time.
-- For the simulation study on the four vignette geometries, the
-  lengthscale priors are mis-specified with respect to the true
-  lengthscale. This seems like an odd choice. Likely these experiments
-  should be rerun simulating data from a more suitable lengthscale than
-  the value 2.5 used currently.
-- In Chapter 5, too little emphasis is placed on the HIV prevalence and
-  HIV incidence results as compared to the HIV risk group results. For
-  example, continental chloropleths could be produced for the these
-  epidemiological quantities as well.
 - Although the epilepsy example shows that the INLA results from `TMB`
   are highly comparable to `R-INLA`, they are not exactly the same. As
   such it would be valuable to provide an explanation for the possible
-  causes. The best source of information about this is [Osgood-Zimmerman
+  causes. There are things that `R-INLA` does that I have not talked
+  about. The best source of information about this is [Osgood-Zimmerman
   and Wakefield
   (2022)](https://onlinelibrary.wiley.com/doi/abs/10.1111/insr.12534).
-- In Chapter 4, it would be useful to frame the Besag model (and BYM2,
-  if possible) in terms of an equivalent kernel. I believe that the
-  technical vignette [Paciorek
-  (2008)](https://www.stat.berkeley.edu/users/paciorek/research/techVignettes/techVignette2.pdf)
-  does this.
-- The writing throughout Chapter 3 is somewhat weak. Particularly the
-  sections on 1) deterministic Bayesian inference methods (difficult to
-  know how much to say given focus of later chapters on this
-  material) 2) properties of spatio-temporal data.
-- Writing of the results and conclusions sections for Chapters 4 and 6
-  was relatively rushed. As such, it’s likely that a more thorough job
-  could be done interpreting the results and connecting them to key
-  takeaways.
-- Chapter 5 could benefit from more discussion of the statistical
-  results and conclusions from the work. Some of this work is already
-  done in my [retrospective blog
-  post](https://athowes.github.io/posts/2023-04-21-risk-group-retrospective/)
-  about the work.
 - Running NUTS via `tmbstan` for Appendix A I found that some of the
   chains hung for a very long time. This is suggestive of the posterior
   geometries being tricky. In part this is confusing because I have
@@ -240,26 +265,16 @@ time to work on it:
   the weights. There is a section in [Rue, Martino, and Chopin
   (2009)](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2008.00700.x)
   which could be useful.
-- In Chapter 4, calculating the DIC and WAIC values for each of the
-  fitted models would be informative as to the possible benefits of the
-  other model comparison techniques used in the chapter. This would
-  require writing a function to take a model fitted using `TMB` or
-  `aghq` and output the model comparison criteria. Likely the best
-  approach would be to use samples, as this is the most transferable
-  way.
-- In Chapter 3 I follow other authors in using the notation
-  $u_k(w_{ki})$ to refer to random effects. It would be good to connect
-  up this functional notation with specifying random effects as
-  e.g. $u_i$ rather than some function of some covariates.
-- In Chapter 4, for the HIV survey experiments, the kernel models with a
-  lengthscale prior seem to be performing as if they are IID models. I
-  have a strong suspicion that what is going on is that the prior is set
-  on the wrong units, and as such the model has learnt a very small
-  lengthscale and behaves as if it is IID. I don’t think this should be
-  too difficult to fix. (I’ve had issues before with the `units` R
-  package and how it is used in `sf`.)
-- In Chapter 3, it would be nice to include a figure illustrating the
-  DHS sampling procedure.
+- I ran Laplace marginals with emprirical Bayes for the Naomi ELGM but
+  did not have enough time to present the results and integrate them
+  into the discussion. This would be of interest to do.
+
+### General
+
+- Writing of the results and conclusions sections for Chapters 4 and 6
+  was relatively rushed. As such, it’s likely that a more thorough job
+  could be done interpreting the results and connecting them to key
+  takeaways.
 - Rendering the PDF version, figures and tables tend to move around a
   lot, especially in the appendix. It would be good to have been control
   over this, but I know that this can be challenging in LaTeX.

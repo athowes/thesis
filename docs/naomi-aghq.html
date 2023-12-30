@@ -327,9 +327,8 @@ div.csl-indent {
 <li class="chapter" data-level="7" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>7</b> Conclusions</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="conclusions.html"><a href="conclusions.html#contributions"><i class="fa fa-check"></i><b>7.1</b> Contributions</a></li>
-<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#limitations-1"><i class="fa fa-check"></i><b>7.2</b> Limitations</a></li>
-<li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.3</b> Future work</a></li>
-<li class="chapter" data-level="7.4" data-path="conclusions.html"><a href="conclusions.html#broader-reflections"><i class="fa fa-check"></i><b>7.4</b> Broader reflections</a></li>
+<li class="chapter" data-level="7.2" data-path="conclusions.html"><a href="conclusions.html#future-work"><i class="fa fa-check"></i><b>7.2</b> Future work</a></li>
+<li class="chapter" data-level="7.3" data-path="conclusions.html"><a href="conclusions.html#broader-reflections"><i class="fa fa-check"></i><b>7.3</b> Broader reflections</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="models-for-areal-spatial-structure.html"><a href="models-for-areal-spatial-structure.html"><i class="fa fa-check"></i><b>A</b> Models for areal spatial structure</a>
@@ -1651,23 +1650,23 @@ Figure 6.18: District-level HIV prevalence, ART coverage, and new HIV cases and 
 <p>This section presents a case-study of approximate Bayesian inference methods applied to the Naomi model in Malawi.
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the <code>naomi</code> R package vignette available from <a href="https://github.com/mrc-ide/naomi"><code>https://github.com/mrc-ide/naomi</code></a>.
 Malawi was chosen for the vignette and this case-study in part because it has a small number of districts, <span class="math inline">\(n = 30\)</span>, limiting the computational demand of the model.</p>
-<p>Four Bayesian inference approaches were considered:</p>
+<p>Three Bayesian inference approaches were considered:</p>
 <ol style="list-style-type: decimal">
 <li>Gaussian marginals and EB with <code>TMB</code>.
 This approach was previously used in production for Naomi.
 As short-hand, this approach is referred to as GEB.</li>
-<li>Laplace marginals and EB with <code>TMB</code>.
-This is a novel approach, enabled by the implementation work of Section <a href="naomi-aghq.html#universal">6.2</a>.
-As short-hand, this approach is referred to as LEB.</li>
 <li>Gaussian marginals and PCA-AGHQ with <code>TMB</code>
 This is a novel approach, enabled by the methodological work of Section <a href="naomi-aghq.html#pca-aghq">6.4</a>.
 As short-hand, this approach is referred to as GPCA-AGHQ.</li>
 <li>NUTS with <code>tmbstan</code>.
 Conditional on assessing chain convergence and suitability, to be discussed in Section <a href="naomi-aghq.html#naomi-nuts">6.5.1</a>, inferences from NUTS represent a gold-standard.</li>
 </ol>
+<!-- X. Laplace marginals and EB with `TMB`. -->
+<!-- This is a novel approach, enabled by the implementation work of Section \@ref(universal). -->
+<!-- As short-hand, this approach is referred to as LEB. -->
 <p>The <code>TMB</code> C++ user-template used to specify the log-posterior, described in Appendix <a href="naomi-aghq-appendix.html#naomi-implementation">C.3.4</a>, was the same for each approach.
 The dimension of the latent field was <span class="math inline">\(N = 467\)</span> and the dimension of the hyperparameters was <span class="math inline">\(m = 24\)</span>.
-For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
+For GEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
 Model outputs from GEB are illustrated in Figure <a href="naomi-aghq.html#fig:naomi-output">6.18</a>.</p>
 <div id="naomi-nuts" class="section level3 hasAnchor" number="6.5.1">

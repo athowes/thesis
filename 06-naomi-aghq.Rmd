@@ -1337,23 +1337,24 @@ This section presents a case-study of approximate Bayesian inference methods app
 Data from Malawi has previously been used to demonstrate the Naomi model, including as a part of the `naomi` R package vignette available from [`https://github.com/mrc-ide/naomi`](https://github.com/mrc-ide/naomi).
 Malawi was chosen for the vignette and this case-study in part because it has a small number of districts, $n = 30$, limiting the computational demand of the model.
 
-Four Bayesian inference approaches were considered:
+Three Bayesian inference approaches were considered:
 
 1. Gaussian marginals and EB with `TMB`.
 This approach was previously used in production for Naomi.
 As short-hand, this approach is referred to as GEB.
-2. Laplace marginals and EB with `TMB`.
-This is a novel approach, enabled by the implementation work of Section \@ref(universal).
-As short-hand, this approach is referred to as LEB.
-3. Gaussian marginals and PCA-AGHQ with `TMB`
+2. Gaussian marginals and PCA-AGHQ with `TMB`
 This is a novel approach, enabled by the methodological work of Section \@ref(pca-aghq).
 As short-hand, this approach is referred to as GPCA-AGHQ.
-4. NUTS with `tmbstan`.
+3. NUTS with `tmbstan`.
 Conditional on assessing chain convergence and suitability, to be discussed in Section \@ref(naomi-nuts), inferences from NUTS represent a gold-standard.
+
+<!-- X. Laplace marginals and EB with `TMB`. -->
+<!-- This is a novel approach, enabled by the implementation work of Section \@ref(universal). -->
+<!-- As short-hand, this approach is referred to as LEB. -->
 
 The `TMB` C++ user-template used to specify the log-posterior, described in Appendix \@ref(naomi-implementation), was the same for each approach.
 The dimension of the latent field was $N = 467$ and the dimension of the hyperparameters was $m = 24$.
-For GEB, LEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
+For GEB and GPCA-AGHQ, hyperparameter and latent field samples were simulated following deterministic inference.
 For all methods, age-sex-district specific HIV prevalence, ART coverage and HIV incidence were simulated from the latent field and hyperparameter posterior samples.
 Model outputs from GEB are illustrated in Figure \@ref(fig:naomi-output).
 
