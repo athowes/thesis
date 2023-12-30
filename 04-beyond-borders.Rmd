@@ -487,7 +487,7 @@ k(s, s') = \left(1 + \frac{\sqrt{3} \lvert s - s' \rvert}{l} \right) \exp \left(
 The number of points per area $L_i$ was set to 10 with a hexagonal spacing structure (Panel \@ref(fig:integration-strategy)C).
 The actual values of $L_i$ sometimes differed from 10 because `sf::st_sample` with `type = "hexagonal"` does not guarantee exactly the specified number of samples are returned [@pebesma2018sf].
 
-#### Priors
+#### Prior distributions
 
 A weakly informative half-Gaussian prior was placed on the standard deviation such that $\sigma_u \sim \mathcal{N}_+(0, 2.5^2)$ [@gelman2006prior].
 The value 2.5 avoids placing significant prior density on the region $\sigma_u > 5$, which after logistic transformation would facilitate undesirable variation on the probability scale very close to zero or one.
@@ -518,7 +518,7 @@ The MSE is a simple and popular measure given by
 \text{MSE}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S (\phi_s - \omega)^2.
 \end{equation}
 
-The CRPS is a strictly proper scoring rule (SPSR) which has favourable properties and is regarded as a default choice [@gneiting2007strictly].
+The CRPS is a strictly proper scoring rule (SPSR) which has favourable properties and is often regarded as a default choice [@gneiting2007strictly].
 Any scoring rule which is not strictly proper rewards a misrepresentation of beliefs.
 The CRPS is
 \begin{equation}
@@ -687,9 +687,9 @@ if(knitr::is_latex_output()) {
 }
 ```
 
-The results (Figure \@ref(fig:crps-mean-se-surveys) and Table \@ref(tab:cv-crps)) for each survey were as follows:
+The results (Figure \@ref(fig:crps-mean-se-surveys)) for each survey were as follows:
 
-1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO and SLOO cross-validation (Figure \@ref(fig:crps-mean-se-civ2017phia))
+1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure \@ref(fig:crps-mean-se-civ2017phia))
 The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
 It is difficult to see how any spatial random model would perform well in this situation, without additional covariates or using a distribution with heavier tails than the Gaussian.
 
@@ -702,14 +702,14 @@ It is difficult to see how any spatial random model would perform well in this s
 
 2. For the 2017 PHIA survey in Malawi the Besag and BYM2 models performed the best, followed by the kernel models, and then the IID model (Figure \@ref(fig:crps-mean-se-mwi2016phia)).
 While the LOO and SLOO CRPS values for IID, Besag and BYM2 models were similar, for the kernel models forecasting performance was substantially reduced by leaving out adjacent districts.
-This finding is suprising, as the kernel models make use of more distant correlations, and it is the adjacency-based models that one would intuitively expect to be hampered more by the SLOO cross-validation.
+This finding is suprising, as the kernel models make use of more distant correlations, and it is the adjacency-based models that one would intuitively expect to be hampered more by the SLOO-CV.
 For the IID model, that LOO and SLOO performance are similar is no surprise as in all cases the IID model should be predicting the mean.
 Though less data is available in the SLOO case, this should be of little consequence.
 
-3. For the 2017 PHIA survey in Tanzania (Figure \@ref(fig:crps-mean-se-tza2017phia)), under LOO cross-validation the kernel models performed better, but under SLOO cross-validation there was a significant drop in performance.
+3. For the 2017 PHIA survey in Tanzania (Figure \@ref(fig:crps-mean-se-tza2017phia)), under LOO-CV the kernel models performed better, but under SLOO-CV there was a significant drop in performance.
 
 4. Finally, for the 2016 PHIA survey in Zimbabwe, performance for each of the spatially structured models was similar (Figure \@ref(fig:crps-mean-se-zwe2016phia)).
-Again, under SLOO cross-validation, performance of the BYM2 and kernel-based models dropped.
+Again, under SLOO-CV, performance of the BYM2 and kernel-based models dropped.
 Differences within the kernel-based models for this survey, and indeed across all four surveys, were limited.
 
 ## Discussion

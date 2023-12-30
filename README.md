@@ -166,7 +166,7 @@ given more time to work on it:
 - In Chapter 3, it would be nice to include a figure illustrating the
   DHS sampling procedure.
 
-### [Chapter 4]((https://athowes.github.io/thesis/beyond-borders.html)) and [Appendix A](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html)
+### [Chapter 4](https://athowes.github.io/thesis/beyond-borders.html) and [Appendix A](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html)
 
 - The simulation study was run using 250 replicates. As you can see from
   the plots showing the mean and standard errors, this sample size was
