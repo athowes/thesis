@@ -59,6 +59,57 @@ knitr::include_graphics("figures/naomi-aghq/loa-loa-mean-sd-pct.png")
 
 \newpage
 
+## Algorithms {#algorithms}
+
+This section provides the INLA-like algorithm for AGHQ with Laplace marginals used in this thesis.
+The algorithm for AGHQ with Gaussian marginals used in this thesis is as given in @stringer2022fast, and implemented in the `aghq` package.
+
+1. Calculate the mode, Hessian at the mode, lower Cholesky, and Laplace approximation
+\begin{align}
+\hat{\boldsymbol{\mathbf{\theta}}} &= \arg \max_{\boldsymbol{\mathbf{\theta}}} {\tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}, \mathbf{y})}, \\
+\hat{\mathbf{H}} &= - \frac{\partial^2}{\partial \boldsymbol{\mathbf{\theta}} \partial \boldsymbol{\mathbf{\theta}}^\top} \log \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) \rvert_{\boldsymbol{\mathbf{\theta}} = \hat{\boldsymbol{\mathbf{\theta}}}}, \\
+\hat{\mathbf{H}}^{-1} &= \hat{\mathbf{L}} \hat{\mathbf{L}}^\top, \\
+\tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}, \mathbf{y}) &= \frac{p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}})}{\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})},
+\end{align}
+where $\tilde p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \mathcal{N}(\mathbf{x} \, | \, \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}), \hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1})$ is a Gaussian approximation to $p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}, \mathbf{y})$ with mode and precision matrix given by
+\begin{align}
+\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}) &= \arg \max_\mathbf{x} \log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}}), \\
+\hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top} \log p(\mathbf{y}, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x} = \hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})}.
+\end{align}
+2. Generate a set of nodes $\mathbf{u} \in \mathcal{Q}(m, k)$ and weights $\omega: \mathbf{u} \to \mathbb{R}$ from a Gauss-Hermite quadrature rule with $k$ nodes per dimension.
+Adapt these nodes based on the mode and lower Choleksy via $\boldsymbol{\mathbf{\theta}}(\mathbf{u}) = \hat{\boldsymbol{\mathbf{\theta}}} + \mathbf{L} \mathbf{u}$.
+Use this quadrature rule to calculate the normalising constant $\tilde p_{\texttt{AQ}}(\mathbf{y})$ as follows
+\begin{equation}
+\tilde p_{\texttt{AQ}}(\mathbf{y}) = \sum_{\mathbf{u} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(\boldsymbol{\mathbf{\theta}}(\mathbf{u}), \mathbf{y}) \omega(\mathbf{u}). (\#eq:evidence-appendix)
+\end{equation}
+3. For $i \in [N]$ generate $l$ nodes $x_i(\mathbf{v})$ via a Gauss-Hermite quadrature rule $\mathbf{v} \in \mathcal{Q}(1, l)$ adapted based on the mode $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})_i$ and standard deviation $\sqrt{\text{diag}[\hat{\mathbf{H}}(\boldsymbol{\mathbf{\theta}})^{-1}]_i}$ of the Gaussian marginal.
+A value of $l \geq 4$ is recommended to enable B-spline interpolation.
+For $x_i \in \{ x_i(\mathbf{v}) \}_{\mathbf{v} \in \mathcal{Q}(1, l)}$  and $\boldsymbol{\mathbf{\theta}} \in \{ \boldsymbol{\mathbf{\theta}}(\mathbf{u}) \}_{\mathbf{u} \in \mathcal{Q}(m, k)}$ calculate the modes and Hessians
+\begin{align}
+\hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}}) &= \arg \max_{\mathbf{x}_{-i}} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}), \\
+\hat{\mathbf{H}}_{-i, -i}(x_i, \boldsymbol{\mathbf{\theta}}) &= - \frac{\partial^2}{\partial \mathbf{x}_{-i} \partial \mathbf{x}_{-i}^\top} \log p(\mathbf{y}, x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}) \rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})},
+\end{align}
+where optimisation to obtain $\hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})$ can be initialised at $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}})_{-i}$.
+4. For $x_i \in \{ x_i(\mathbf{v}) \}_{\mathbf{v} \in \mathcal{Q}(1, l)}$ calculate
+\begin{equation}
+p_\texttt{AQ}(x_i \, | \, \mathbf{y}) = \frac{\tilde p_\texttt{LA}(x_i, \mathbf{y})}{\tilde p_{\texttt{AQ}}(\mathbf{y})}, (\#eq:laplace-marginal-appendix)
+\end{equation}
+where
+\begin{equation}
+\tilde p_\texttt{LA}(x_i, \mathbf{y}) = \sum_{\mathbf{u} \in \mathcal{Q}(m, k)} \tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}(\mathbf{u}), \mathbf{y}) \omega(\mathbf{u}).
+\end{equation}
+and
+\begin{equation}
+\tilde p_\texttt{LA}(x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y}) = \frac{p(x_i, \mathbf{x}_{-i}, \boldsymbol{\mathbf{\theta}}, \mathbf{y})}{\tilde p_\texttt{G}(\mathbf{x}_{-i} \, | \, x_i, \boldsymbol{\mathbf{\theta}}, \mathbf{y})} \Big\rvert_{\mathbf{x}_{-i} = \hat{\mathbf{x}}_{-i}(x_i, \boldsymbol{\mathbf{\theta}})}.
+\end{equation}
+Equation \@ref(eq:laplace-marginal-appendix) can be calculated using the estimate of the evidence given in Equation \@ref(eq:evidence-appendix), but it is more numerically accurate, and requires little extra computation, to use the estimate
+\begin{equation}
+\tilde p_{\texttt{AQ}}(\mathbf{y}) = \sum_{\mathbf{v} \in \mathcal{Q}(1, l)} \tilde p_\texttt{LA}(x_i(\mathbf{v}), \mathbf{y}) \omega(\mathbf{v})
+\end{equation}
+
+5. Given $\{x_i(\mathbf{v}), \tilde p_\texttt{AQ}(x_i(\mathbf{v}) \, | \, \mathbf{y})\}_{\mathbf{v} \in \mathcal{Q}(1, l)}$ create a spline interpolant to each posterior marginal on the log-scale.
+Samples, and thereby relevant posterior marginal summaries, may be obtained using inverse transform sampling.
+
 ## Simplified Naomi model description {#naomi-math}
 
 This section describes the simplified version of the Naomi model [@eaton2021naomi] in more detail.
