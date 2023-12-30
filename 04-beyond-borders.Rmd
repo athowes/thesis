@@ -205,7 +205,7 @@ As a second example of undesirable behaviour, suppose we fit a Besag model upon 
 If the spatial variation is relatively smooth, dividing the shaded areas into two will result in a lower estimated variance $\sigma^2_u$ in Panel \@ref(fig:maup3)B as compared with Panel \@ref(fig:maup3)A because there will appear to be less variation between neighbouring areas.
 This problem does not only apply locally: since the effect of $\sigma^2_u$ applies everywhere, the smoothing will change even in unaltered parts of the study region.
 
-### Weighted ICAR models
+### Weighted ICAR models {weighted-icar}
 
 The Besag model is a special case of a more general class of (zero-mean) weighted ICAR models.
 These models can be specified in terms of scaled weights $\{b_{ij}\}_{j \sim i}$ and a precision vector $\boldsymbol{\mathbf{\kappa}} = (\kappa_i)_{i \in [n]}$.
@@ -326,7 +326,7 @@ That said, it unsurprising that a stationary covariance function would struggle 
 
 ### Integrated kernel {#integrated-kernel}
 
-Rather than choosing a single representative point, an alternative is to more completely represent the area by integrating the kernel over the areas of interest.
+Rather than choosing a single representative point, an alternative is to more completely represent the area by integrating the kernel over the areas of interest [@kelsall2002modeling; @follestad2003modelling].
 This results in the integrated kernel
 \begin{equation}
   K(A_i, A_j) = \frac{1}{|A_i||A_j|} \int_{A_i} \int_{A_j} k(s, s') \text{d} s \text{d} s'. (\#eq:ik1)
@@ -383,7 +383,7 @@ As such, there is a limit on the size of $L_i$ which it is feasible to use.
 
 #### Connection to log-Gaussian Cox processes
 
-The log-Gaussian Cox Process framework [@diggle2013spatial] arrives naturally at the integrated kernel formulation.
+The log-Gaussian Cox Process framework [@diggle2013spatial] arrives naturally at the integrated kernel formulation [@li2012lgcp].
 A Cox process is an inhomogeneous Poisson process with a continuous stochastic intensity function $\{ x(s), s \in \mathcal{S} \}$ such that conditional on the realisation of $x(s)$ the number of points in any area $A_i$ follows a Poisson distribution.
 The rate parameter of this Poisson distribution is explicitly aggregated as follows
 \begin{equation}
@@ -574,12 +574,12 @@ knitr::include_graphics(path)
 ```
 
 The two problems with the vignette geometry study did not apply to the more realistic geometries.
-Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 95% credible intervals that often do not overlap.
+Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 95% credible intervals which rarely overlap.
 
-The difficulty of the forecasting problem varied by spatial random effect model used to simulate synthetic data (Table \@ref(tab:simulation-models)).
-IID structure is harder to predict than spatial structure.
+The average CRPS varied substantially between the three models used to simulate synthetic data, given Table \@ref(tab:simulation-models).
+In particular, IID structure is harder to predict than spatial structure.
 To a lesser extent, Besag structure is harder to predict than IK.
-This is explained by forecasting being made easier by additional correlation structure.
+This finding is explained by correlation structure making forecasting easier.
 
 For IID synthetic data, the IID and BYM2 models performed well.
 The BYM2 model also performed almost as well as the Besag model on the spatially structured synthetic data (Besag or IK).
@@ -587,8 +587,7 @@ Meanwhile, the IID model performed poorly on spatially structured synthetic data
 Appendix \@ref(bym2-proportion) shows that the BYM2 proportion parameter successfully recovers either IID or spatial structure.
 
 The performance of kernel models on Besag synthetic data diminished with increasingly spatially irregular geometry.
-
-For the most part, differences between the centroid and integrated versions of the kernel models were small.
+For the most part, differences between the centroid and integrated kernel models were small, even for synthetic data generated from the IK model.
 
 ## HIV prevalence study {#hiv-study}
 
@@ -712,7 +711,7 @@ Though less data is available in the SLOO case, this should be of little consequ
 
 4. Finally, for the 2016 PHIA survey in Zimbabwe, performance for each of the spatially structured models was similar (Figure \@ref(fig:crps-mean-se-zwe2016phia)).
 Again, under SLOO cross-validation, performance of the BYM2 and kernel-based models dropped.
-Differences within the kernel-based models for this survey, and throughout this study, were limited.
+Differences within the kernel-based models for this survey, and indeed across all four surveys, were limited.
 
 ## Discussion
 
@@ -720,28 +719,32 @@ Differences within the kernel-based models for this survey, and throughout this 
 
 Though there are situations were other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
 For the study on HIV survey data, adjacency-based models performed well, if not the best, in all cases.
-
-Under data truly generated from a kernel model, there is a significant benefit to using a corresponding kernel model for inference.
+That is not to say that under data truly generated from a kernel model, there isn't significant benefit to using the corresponding kernel model for inference.
 However, the transferability of this finding to applied settings is limited by the following factors.
 First and foremost, it is usually impossible to know that real data was generated from any particular process.
-Second, the synthetic data study used the same kernel, Matérn with $\nu = 3/2$ (Equation), for both simulation and inference, and as such represents a best-case.
+Second, the synthetic data study used the same kernel, Matérn with $\nu = 3/2$ (Equation \@ref(eq:matern)), for both simulation and inference, and as such represents a best-case.
 Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
+Finally, aggregation via the integrated kernel occured at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
+If the link function $g$ is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.
 
-In the simulation study, aggregation via the integrated kernel occured at the level of the latent field.
-However, most of the time we expect aggregation to occur at the level of the data.
-If the link function $g$ is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy.
-<!-- Add equations for mean $\mathbb{E}(y_i)$ and variance $\mathbb{V}(y_i)$ of under this model, as a function of $g$. -->
-<!-- Explain under what circumstances we believe this approximation to be acceptable. -->
+The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
+Although these models are perhaps the most widely used, there are a range of other adjacency-based models, including the more general weighted ICAR model discussed in Section \@ref(weighted-icar).
+
+This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of @lindgren2011explicit as a potentially more computationally efficient way to implement integrated kernel models [@wilson2018pointless].
+Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
+None-the-less, it would be of value to confirm this empirically.
+
+<!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
+This chapter used of area-level models to for point-level data throughout.
+However, @konstantinoudis2020discrete found that using a point-level LGCP model rather than an area-level BYM model may have significant benefits.
+The work in this chapter does not address the broader question of under which circumstances use of an area or point-level model is sensible.
+
+The models used for spatial structure in this chapter were all stationary.
+Although stationarity assumptions may be violated by HIV survey data, it remains challenging to estimate non-stationary spatial structure [@paciorek2006spatial].
 
 <!-- * What are my suggestions for new models to develop on the basis of this work -->
 <!-- * GMRFs perform smoothing more locally -->
-<!-- * Related work to discuss includes @follestad2003modelling and @konstantinoudis2020discrete. -->
-<!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
-<!-- * @li2012spatial and @li2012lgcp. -->
-<!-- * Discussion of non-stationarity [@paciorek2006spatial]. -->
-<!-- * The stochastic partial differential equation approximation as a more computationally efficient way to implement integrated kernels [@wilson2018pointless]. -->
 <!-- * BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian. -->
-<!-- * How does the weighted GMRF connect? -->
 <!-- * Lengthscale and noise. I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
 
 ### Model comparison
@@ -753,28 +756,27 @@ It would be beneficial to compute the DIC and WAIC in Section \@ref(hiv-study) a
 Additionally, the measures presented in this work are disaggregated by area.
 With refinements to the sample sizes used, these disaggregated measures could enable nuanced findings about spatial random effect models.
 
-Cross-validation was performed using $\phi$ as the forecasting target, rather than $y$ as is typical.
-I made this decision because applied interest is in forecasting HIV prevlance at a district level, not in the outcome of a household survey.
+Cross-validation was performed using $\rho$ as the forecasting target, rather than $y$ as is typical.
+This decision was made because applied interest is in forecasting HIV prevalence at a district level, not forecasting the outcome of a household survey.
 It could be argued that a district does not become more important to forecast well by virtue of surveying a larger sample size in that district.
-That said, an alternative viewpoint is that forecast accuracy should be incentivised more for districts with large populations, such that PLHIV is accurately estimated.
-If sample size corresponds to population size, then forecasting $y$ could be a useful proxy.
-In general, choice of the particular paramter, or transformation of that parameter, to score is an ongoing topic of research [@bosse2023scoring].
+That said, an alternative viewpoint is that forecast accuracy should be incentivised in proportion to district population size, such that PLHIV is accurately estimated.
+If sample size is proportional to population size, then forecasting $y$ could be a useful proxy.
+Choice of the particular parameter, or transformation of that parameter [@bosse2023scoring], to score is an ongoing topic of research.
 
-The CRPS was used in preference to the log-score primarily because of computational difficulties with the log-score.
-Whereas  the log-score requires a kernel density estimate of the posterior distribution, and is therefore sensitive to tuning parameters, the CRPS can be estimated from samples alone.
-
-One downside of use of the CRPS and MSE is their relative lack of interpretability.
+The CRPS was used in preference to the log-score.
+Whereas the log-score requires a kernel density estimate of the posterior distribution, and is therefore sensitive to tuning parameters, the CRPS can be estimated from samples alone.
+A downside of use of the CRPS and MSE is their relative lack of interpretability.
 For example, it is difficult to determine whether a forecast is good, or suitable for practical use, on the basis of its CRPS or MSE.
 Measures such as the skill score have been used to contrast forecast performance with some baseline.
 A constant model, with no random effects, could be used as such a baseline.
 
 ### Inference
 
-All of the inferential models (Table \@ref(tab:inferential-models)) in this chapter were implemented in `TMB`.
+A strength of this work is that all of the inferential models (Table \@ref(tab:inferential-models)) in this chapter were implemented in `TMB`.
 Inference was then conducted using AGHQ over the marginal Laplace approximation using the `aghq` package.
 The accuracy of inferences was compared to gold-standard results from NUTS obtained using the `tmbstan` package.
 An earlier version of this study used `R-INLA`.
 Not all of the inferential models were compatible with `R-INLA`, so `rstan` was used in some cases.
-However, due to the difference in inference algorithm, this study design did not allow for direct model comparison.
+However, due to the difference in inference algorithm, this study design conflated statistical models with inference algorithms.
 Consistent use of `TMB`, a fast and flexible tool for spatial modelling [@osgood2023statistical], overcame this limitation.
 Chapter \@ref(naomi-aghq) extends `TMB` to implement the INLA algorithm of `R-INLA`.
