@@ -433,12 +433,7 @@ knitr::include_graphics("figures/beyond-borders/geometries.png")
 Seven geometries were considered (Figure \@ref(fig:geometries)).
 These included the four vignette geometries from Figure \@ref(fig:maup1) which share an adjacency graph.
 Three more realistic geometries were included to represent plausible variation over spatial regularity for the small-area estimation setting.
-From the most to the least spatially regular, these geometries were:
-
-* a $6 \times 6$ lattice grid;
-* the 33 districts of Côte d'Ivoire;
-* the 36 congressional districts of Texas.
-
+From the most to the least spatially regular, these geometries were: a $6 \times 6$ lattice grid; the 33 districts of Côte d'Ivoire; and the 36 congressional districts of Texas.
 For each of the three spatial random effect models and seven geometries 250 synthetic data were generated, resulting in a total of `r 3 * 7 * 250` synthetic data.
 
 ### Inferential models
@@ -536,9 +531,11 @@ Uniformity was assessed using probability integral transform (PIT) histograms [@
 
 As each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models for the vignette geometries.
 Figures \@ref(fig:crps-mean-se-1), \@ref(fig:crps-mean-se-2), \@ref(fig:crps-mean-se-3) and \@ref(fig:crps-mean-se-4) show that almost all 95% credible intervals for the mean CRPS overlap.
-Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
+
+Additionally, for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
 Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure \@ref(fig:lengthscale-recovery)).
-Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
+
+To produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
 Two changes should be made.
 First, an increase to the sample size.
 Second, more careful specification of study with regard to the lengthscale.
@@ -567,9 +564,9 @@ knitr::include_graphics(path)
 ```
 
 The two problems with the vignette geometry study did not apply to the more realistic geometries.
-Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 95% credible intervals which rarely overlap.
+Figures \@ref(fig:crps-mean-se-grid), \@ref(fig:crps-mean-se-civ) and \@ref(fig:crps-mean-se-tex) show mean CRPS values with 95% credible intervals which rarely overlap, and hence provide meaningful findings.
 
-The average CRPS varied substantially between the three models used to simulate synthetic data, given Table \@ref(tab:simulation-models).
+The average CRPS varied substantially between the three models (Table \@ref(tab:simulation-models)) used to simulate synthetic data.
 In particular, IID structure is harder to predict than spatial structure.
 To a lesser extent, Besag structure is harder to predict than IK.
 This finding is explained by correlation structure making forecasting easier.
@@ -579,7 +576,7 @@ The BYM2 model also performed almost as well as the Besag model on the spatially
 Meanwhile, the IID model performed poorly on spatially structured synthetic data.
 Appendix \@ref(bym2-proportion) shows that the BYM2 proportion parameter successfully recovers either IID or spatial structure.
 
-The performance of kernel models on Besag synthetic data diminished with increasingly spatially irregular geometry.
+The performance of kernel models on IID and Besag synthetic data diminished with increasingly spatially irregular geometry.
 For the most part, differences between the centroid and integrated kernel models were small, even for synthetic data generated from the IK model.
 
 ## HIV prevalence study {#hiv-study}
@@ -665,23 +662,34 @@ path <- paste0("resources/beyond-borders/", resource_version, "/depends/crps-mea
 knitr::include_graphics(path)
 ```
 
+(ref:cv-crps) The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating $\rho_i$, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.
+
 ```{r cv-crps}
 gt_cv_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_cv-crps.rds"))
 
-gt_cv_crps <- gt_cv_crps %>%
-  gt::tab_caption(caption = 'The mean pointwise leave-one-out and spatial leave-one-out CRPS, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.')
+as_latex_with_caption <- function(gt, chunk_label) {
+  gt <- gt::as_latex(gt)
+  caption <- paste0(
+    "\\caption{\\label{tab:", chunk_label, "}(ref:", chunk_label, ")}\\\\")
+  latex <- strsplit(gt[1], split = "\n")[[1]]
+  latex <- c(latex[1], caption, latex[-1])
+  latex <- paste(latex, collapse = "\n")
+  gt[1] <- latex
+  return(gt)
+}
 
 if(knitr::is_html_output()) {
-  gt_cv_crps
+  gt_cv_crps %>%
+    gt::tab_caption("(ref:cv-crps)")
 }
 
 if(knitr::is_latex_output()) {
   gt_cv_crps %>%
-    gt::as_latex()
+    as_latex_with_caption("cv-crps")
 }
 ```
 
-The results (Figure \@ref(fig:crps-mean-se-surveys)) for each survey were as follows:
+The results (Figure \@ref(fig:crps-mean-se-surveys), Table \@ref(tab:cv-crps), Table \@ref(tab:cv-mse)) for each survey were as follows:
 
 1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure \@ref(fig:crps-mean-se-civ2017phia))
 The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
@@ -720,27 +728,27 @@ Third, specification of the lengthscale prior distribution is challenging, and e
 Finally, aggregation via the integrated kernel occured at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
 If the link function $g$ is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.
 
-The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
-Although these models are perhaps the most widely used, there are a range of other adjacency-based models, including the more general weighted ICAR model discussed in Section \@ref(weighted-icar).
-
 This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of @lindgren2011explicit as a potentially more computationally efficient way to implement integrated kernel models [@wilson2018pointless].
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
-None-the-less, it would be of value to confirm this empirically.
+Nonetheless, it would be of value to confirm this empirically.
 
 <!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
 This chapter used of area-level models to for point-level data throughout.
 However, @konstantinoudis2020discrete found that using a point-level LGCP model rather than an area-level BYM model may have significant benefits.
 The work in this chapter does not address the broader question of under which circumstances use of an area or point-level model is sensible.
 
+The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
+Although these are perhaps the most widely used adjacency-based models, others could have been considered.
+Examples include the more general weighted ICAR model discussed in Section \@ref(weighted-icar).
+Additionally, it would be of interest to implement the integrated kernel model with population-based weighting (Section \@ref(ik-hetrogeneity)).
+
 The models used for spatial structure in this chapter were all stationary.
 Although stationarity assumptions may be violated by HIV survey data, it remains challenging to estimate non-stationary spatial structure [@paciorek2006spatial].
-
-It would be of interest to implement the integrated kernel model with population-based weighting (Section \@ref(ik-hetrogeneity)).
 
 <!-- * What are my suggestions for new models to develop on the basis of this work -->
 <!-- * GMRFs perform smoothing more locally -->
 <!-- * BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian. -->
-<!-- * Lengthscale and noise. I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
+<!-- * Lengthscale and noise: I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
 
 ### Model comparison
 

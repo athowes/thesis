@@ -1454,7 +1454,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 Projecting the $3^8 = 6561$ PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure \@ref(fig:nodes-samples-comparison)).
 Approximately 12 hyperparameters had well covered marginals: greater than the 8 naively obtained with a dense grid, but nonetheless far fewer than the full 24.
 Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
-This discrepancy occured due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure \@ref(fig:marginal-sd)).
+This discrepancy occurred due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure \@ref(fig:marginal-sd)).
 
 (ref:total-variation) Under PCA, the proportion of total variation explained is given by the sum of the first $s$ eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, `r round(100 * tv_df$tv[8])`% was considered sufficient.
 
@@ -1591,17 +1591,24 @@ This may be due to by difficulties estimating particular parameters for all infe
 
 ##### Maximum mean discrepancy
 
+```{r}
+mmd <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mmd.rds"))
+
+signif(mmd$mmd_tmb@mmdstats, 2)
+```
+
 Let $\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n$ and $\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n$ be two sets of joint posterior samples, and $k$ be a kernel.
 The maximum mean discrepancy [MMD; @gretton2006kernel] is a measure of distance between joint distributions, and can be estimated empirically by samples
 \begin{equation}
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
 \end{equation}
 The kernel was set to $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package].
-As compared with NUTS, the MMD from GPCA-AGHQ to NUTS (0.071) was 11% smaller than that of GEB to NUTS (0.080), in alignment with the results from KS tests.
+The first and third order MMD statistics for GEB were `r`.
+Those of GPCA-AGHQ () were just percent lower.
 
 ### Exceedance probabilities
 
-As a more realistic use case for Naomi model outputs, consider the two following case-studies based on calculating exceedance probabilities.
+As a more realistic use case for the Naomi model outputs, consider the two following case-studies based on exceedance probabilities.
 
 #### Meeting the second 90 {#second90}
 
@@ -1645,10 +1652,12 @@ These contributions are discussed in turn, before outlining suggestions for futu
 ### A universal INLA implementation
 
 @monnahan2018no write that "to our knowledge, `TMB` is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly".
-This chapter made important progress towards adding INLA to the integration tools easily accessible using `TMB`.
-Reaching this goal would be of significant value to both applied and methodological researchers.
+Section \@ref(universal) made important progress towards adding INLA to the integration tools easily accessible using `TMB`.
+Reaching this milestone would be of significant value to both applied and methodological researchers.
 
-There is a place for both formula-based and universal statistical tools.
+The implementation is not intended to replace `R-INLA`, and indeed for the majority of users it is the more suitable software implementation.
+Formula-based and universal statistical tools both have value, as they inhabit different roles.
+For the NUTS algorithm, a universal interface is available via Stan, and packages such as `brms` [@brms] and `rstanarm` [@rstanarm] enable researchers to fit common models using a formula interface.
 Furthermore, developers of formula-based tools do have incentives to engage with the needs of their users, and indeed do so.
 For example, after requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA`, a prototype version was shortly made available.
 That said, it is ultimately more sustainable for advanced users to have capacity to implement their own distributions and models.
@@ -1715,7 +1724,7 @@ The difficulty is, of course, knowing in advance which marginals will be non-Gau
 This could be done if there were a cheap way to obtain posterior means, which could then be compared to posterior modes obtained using optimisation.
 Another approach would be to measure the fit of marginal samples from a cheap approximation, like EB.
 The measures of fit would have to be for marginals, ruling out approaches like PSIS [@yao2018yes] which operate on joint distributions.
-4. Finally, it may be possible to achieve better performance by pruning and prerotation, as discussed by 
+4. Finally, it may be possible to achieve better performance by pruning and prerotation, as discussed by @jackel2005note.
 
 #### Computational improvements
 
@@ -1753,7 +1762,7 @@ For wider dissemination of this method, it is important that the user is not bur
 One possibility would be to change the `random` argument in `TMB::MakeADFun` to allow for indexing.
 Another (less desirable) option would be to algorithmically generate the modified `TMB` C++ template based on the original template.
 
-(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the `cranlogs` [@cranlogs] R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure. The official `rstan` documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the populartiy of `rstan`.
+(ref:package-downloads) Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for `brms`, `glmmTMB`, `nimble`, `rstan` and `TMB`, obtained using the `cranlogs` [@cranlogs] R package. Unfortunately, `R-INLA` is not available from CRAN, and so could not be included in this figure. The official `rstan` documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the popularity of `rstan`.
 
 ```{r package-downloads, fig.cap="(ref:package-downloads)"}
 knitr::include_graphics("figures/naomi-aghq/package-downloads.png")

@@ -132,26 +132,49 @@ knitr::include_graphics(path)
 
 ### Mean squared error
 
+(ref:mse-table) The average mean squared error (MSE) of each inferential model in estimating $\rho$, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case. The units used in this table are thousandths.
+
 ```{r mse-table}
 gt_mse <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_mse.rds"))
 
-gt_mse <- gt_mse %>%
-  gt::tab_caption(caption = "The average mean squared error (MSE) of each inferential model, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case. The units used in this table are thousandths.")
+as_latex_with_caption <- function(gt, chunk_label) {
+  gt <- gt::as_latex(gt)
+  caption <- paste0(
+    "\\caption{\\label{tab:", chunk_label, "}(ref:", chunk_label, ")}\\\\")
+  latex <- strsplit(gt[1], split = "\n")[[1]]
+  latex <- c(latex[1], caption, latex[-1])
+  latex <- paste(latex, collapse = "\n")
+  gt[1] <- latex
+  return(gt)
+}
 
-if(knitr::is_html_output()) gt_mse
-if(knitr::is_latex_output()) gt::as_latex(gt_mse)
+if(knitr::is_html_output()) {
+  gt_mse %>%
+    gt::tab_caption("(ref:mse-table)")
+}
+
+if(knitr::is_latex_output()) {
+  gt_mse %>%
+    as_latex_with_caption("mse-table")
+}
 ```
 
 ### Continuous ranked probability score
 
+(ref:crps-table) The average continuous ranked probability score (CRPS) of each inferential model in estimating $\rho$, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case. The units used in this table are thousandths.
+
 ```{r crps-table}
 gt_crps <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_crps.rds"))
 
-gt_crps <- gt_crps %>%
-  gt::tab_caption(caption = "The average continuous ranked probability score (CRPS) of each inferential model, under different simulation and geometry settings. Entries for FCK and CK on geometry 2 are empty because model was undefined in that case. The units used in this table are thousandths.")
+if(knitr::is_html_output()) {
+  gt_crps %>%
+    gt::tab_caption("(ref:crps-table)")
+}
 
-if(knitr::is_html_output()) gt_crps
-if(knitr::is_latex_output()) gt::as_latex(gt_crps)
+if(knitr::is_latex_output()) {
+  gt_crps %>%
+    as_latex_with_caption("crps-table")
+}
 ```
 
 (ref:crps-mean-se-1) The mean CRPS with 95% credible interval in estimating $\rho$ using each inferential model and simulation model on the first vignette geometry (Panel \@ref(fig:geometries)A). Credible intervals were generated using 1.96 times the standard error.
@@ -330,19 +353,30 @@ knitr::include_graphics(paste0("resources/beyond-borders/", resource_version, "/
 
 #### Mean squared error
 
+(ref:cv-mse) The mean pointwise leave-one-out and spatial leave-one-out MSE in estimating $\rho_i$, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.
+
 ```{r cv-mse}
 gt_cv_mse <- readRDS(paste0("resources/beyond-borders/", resource_version, "/depends/gt_cv-mse.rds"))
 
-gt_cv_mse <- gt_cv_mse %>%
-  gt::tab_caption(caption = 'The mean pointwise leave-one-out and spatial leave-one-out MSE, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.')
+as_latex_with_caption <- function(gt, chunk_label) {
+  gt <- gt::as_latex(gt)
+  caption <- paste0(
+    "\\caption{\\label{tab:", chunk_label, "}(ref:", chunk_label, ")}\\\\")
+  latex <- strsplit(gt[1], split = "\n")[[1]]
+  latex <- c(latex[1], caption, latex[-1])
+  latex <- paste(latex, collapse = "\n")
+  gt[1] <- latex
+  return(gt)
+}
 
 if(knitr::is_html_output()) {
-  gt_cv_mse
+  gt_cv_mse %>%
+    gt::tab_caption("(ref:cv-mse)")
 }
 
 if(knitr::is_latex_output()) {
   gt_cv_mse %>%
-    gt::as_latex()
+    as_latex_with_caption("cv-mse")
 }
 ```
 

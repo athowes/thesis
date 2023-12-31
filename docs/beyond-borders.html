@@ -829,13 +829,8 @@ Figure 4.6: Seven geometries were considered in the simulation study. These were
 <p>Seven geometries were considered (Figure <a href="beyond-borders.html#fig:geometries">4.6</a>).
 These included the four vignette geometries from Figure <a href="beyond-borders.html#fig:maup1">4.2</a> which share an adjacency graph.
 Three more realistic geometries were included to represent plausible variation over spatial regularity for the small-area estimation setting.
-From the most to the least spatially regular, these geometries were:</p>
-<ul>
-<li>a <span class="math inline">\(6 \times 6\)</span> lattice grid;</li>
-<li>the 33 districts of Côte d’Ivoire;</li>
-<li>the 36 congressional districts of Texas.</li>
-</ul>
-<p>For each of the three spatial random effect models and seven geometries 250 synthetic data were generated, resulting in a total of 5250 synthetic data.</p>
+From the most to the least spatially regular, these geometries were: a <span class="math inline">\(6 \times 6\)</span> lattice grid; the 33 districts of Côte d’Ivoire; and the 36 congressional districts of Texas.
+For each of the three spatial random effect models and seven geometries 250 synthetic data were generated, resulting in a total of 5250 synthetic data.</p>
 </div>
 <div id="inferential-models" class="section level3 hasAnchor" number="4.3.2">
 <h3><span class="header-section-number">4.3.2</span> Inferential models<a href="beyond-borders.html#inferential-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -957,10 +952,10 @@ Uniformity was assessed using probability integral transform (PIT) histograms <s
 <div id="vignette-geometries" class="section level4 hasAnchor" number="4.3.4.1">
 <h4><span class="header-section-number">4.3.4.1</span> Vignette geometries<a href="beyond-borders.html#vignette-geometries" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>As each geometry only had three areas, the sample size of 250 synthetic data was insufficient to distinguish between inferential models for the vignette geometries.
-Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-1">A.13</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-2">A.14</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-3">A.15</a> and <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-4">A.16</a> show that almost all 95% credible intervals for the mean CRPS overlap.
-Additionally for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
-Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure <a href="models-for-areal-spatial-structure.html#fig:lengthscale-recovery">A.11</a>).
-Hence, to produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
+Figures <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-1">A.13</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-2">A.14</a>, <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-3">A.15</a> and <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-4">A.16</a> show that almost all 95% credible intervals for the mean CRPS overlap.</p>
+<p>Additionally, for the vignette geometries, both the heuristic method for fixing a lengthscale, and lengthscale prior distribution, were misspecified.
+Three points was insufficient to learn the lengthscale, and as such misspecification of the prior distribution propagated to the posterior distribution (Figure <a href="models-for-areal-spatial-structure.html#fig:lengthscale-recovery">A.11</a>).</p>
+<p>To produce higher resolution and more meaningful results, the simulation study for the vignette geometries should be rerun.
 Two changes should be made.
 First, an increase to the sample size.
 Second, more careful specification of study with regard to the lengthscale.</p>
@@ -989,8 +984,8 @@ Figure 4.9: The mean CRPS and its standard error for each inferential model and 
 </p>
 </div>
 <p>The two problems with the vignette geometry study did not apply to the more realistic geometries.
-Figures <a href="beyond-borders.html#fig:crps-mean-se-grid">4.7</a>, <a href="beyond-borders.html#fig:crps-mean-se-civ">4.8</a> and <a href="beyond-borders.html#fig:crps-mean-se-tex">4.9</a> show mean CRPS values with 95% credible intervals which rarely overlap.</p>
-<p>The average CRPS varied substantially between the three models used to simulate synthetic data, given Table <a href="beyond-borders.html#tab:simulation-models">4.1</a>.
+Figures <a href="beyond-borders.html#fig:crps-mean-se-grid">4.7</a>, <a href="beyond-borders.html#fig:crps-mean-se-civ">4.8</a> and <a href="beyond-borders.html#fig:crps-mean-se-tex">4.9</a> show mean CRPS values with 95% credible intervals which rarely overlap, and hence provide meaningful findings.</p>
+<p>The average CRPS varied substantially between the three models (Table <a href="beyond-borders.html#tab:simulation-models">4.1</a>) used to simulate synthetic data.
 In particular, IID structure is harder to predict than spatial structure.
 To a lesser extent, Besag structure is harder to predict than IK.
 This finding is explained by correlation structure making forecasting easier.</p>
@@ -998,7 +993,7 @@ This finding is explained by correlation structure making forecasting easier.</p
 The BYM2 model also performed almost as well as the Besag model on the spatially structured synthetic data (Besag or IK).
 Meanwhile, the IID model performed poorly on spatially structured synthetic data.
 Appendix <a href="models-for-areal-spatial-structure.html#bym2-proportion">A.3.2</a> shows that the BYM2 proportion parameter successfully recovers either IID or spatial structure.</p>
-<p>The performance of kernel models on Besag synthetic data diminished with increasingly spatially irregular geometry.
+<p>The performance of kernel models on IID and Besag synthetic data diminished with increasingly spatially irregular geometry.
 For the most part, differences between the centroid and integrated kernel models were small, even for synthetic data generated from the IK model.</p>
 </div>
 </div>
@@ -1119,12 +1114,13 @@ In this section, the number of samples per posterior marginal was <span class="m
 Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating <span class="math inline">\(\rho_i\)</span> using each inferential model for the four PHIA surveys described in Table <a href="beyond-borders.html#tab:hiv-surveys">4.3</a>. The 95% credible intervals shown are generated using 1.96 times the standard error.
 </p>
 </div>
-<div id="nbppcvaiqe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+
+<div id="fqbipowrwn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#nbppcvaiqe .gt_table {
+#fqbipowrwn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1149,7 +1145,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-left-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_heading {
+#fqbipowrwn .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1161,12 +1157,12 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_caption {
+#fqbipowrwn .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#nbppcvaiqe .gt_title {
+#fqbipowrwn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1178,7 +1174,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-width: 0;
 }
 
-#nbppcvaiqe .gt_subtitle {
+#fqbipowrwn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1190,13 +1186,13 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-width: 0;
 }
 
-#nbppcvaiqe .gt_bottom_border {
+#fqbipowrwn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_col_headings {
+#fqbipowrwn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1211,7 +1207,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_col_heading {
+#fqbipowrwn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1231,7 +1227,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#nbppcvaiqe .gt_column_spanner_outer {
+#fqbipowrwn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1243,15 +1239,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 4px;
 }
 
-#nbppcvaiqe .gt_column_spanner_outer:first-child {
+#fqbipowrwn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#nbppcvaiqe .gt_column_spanner_outer:last-child {
+#fqbipowrwn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#nbppcvaiqe .gt_column_spanner {
+#fqbipowrwn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1263,7 +1259,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   width: 100%;
 }
 
-#nbppcvaiqe .gt_group_heading {
+#fqbipowrwn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1289,7 +1285,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   text-align: left;
 }
 
-#nbppcvaiqe .gt_empty_group_heading {
+#fqbipowrwn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1304,15 +1300,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: middle;
 }
 
-#nbppcvaiqe .gt_from_md > :first-child {
+#fqbipowrwn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nbppcvaiqe .gt_from_md > :last-child {
+#fqbipowrwn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nbppcvaiqe .gt_row {
+#fqbipowrwn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1331,7 +1327,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#nbppcvaiqe .gt_stub {
+#fqbipowrwn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1344,7 +1340,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#nbppcvaiqe .gt_stub_row_group {
+#fqbipowrwn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1358,11 +1354,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: top;
 }
 
-#nbppcvaiqe .gt_row_group_first td {
+#fqbipowrwn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#nbppcvaiqe .gt_summary_row {
+#fqbipowrwn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1372,16 +1368,16 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#nbppcvaiqe .gt_first_summary_row {
+#fqbipowrwn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_first_summary_row.thick {
+#fqbipowrwn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#nbppcvaiqe .gt_last_summary_row {
+#fqbipowrwn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1391,7 +1387,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_grand_summary_row {
+#fqbipowrwn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1401,7 +1397,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#nbppcvaiqe .gt_first_grand_summary_row {
+#fqbipowrwn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1411,11 +1407,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_striped {
+#fqbipowrwn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#nbppcvaiqe .gt_table_body {
+#fqbipowrwn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1424,7 +1420,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_footnotes {
+#fqbipowrwn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1438,7 +1434,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_footnote {
+#fqbipowrwn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1447,7 +1443,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#nbppcvaiqe .gt_sourcenotes {
+#fqbipowrwn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1461,7 +1457,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#nbppcvaiqe .gt_sourcenote {
+#fqbipowrwn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1469,69 +1465,69 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#nbppcvaiqe .gt_left {
+#fqbipowrwn .gt_left {
   text-align: left;
 }
 
-#nbppcvaiqe .gt_center {
+#fqbipowrwn .gt_center {
   text-align: center;
 }
 
-#nbppcvaiqe .gt_right {
+#fqbipowrwn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nbppcvaiqe .gt_font_normal {
+#fqbipowrwn .gt_font_normal {
   font-weight: normal;
 }
 
-#nbppcvaiqe .gt_font_bold {
+#fqbipowrwn .gt_font_bold {
   font-weight: bold;
 }
 
-#nbppcvaiqe .gt_font_italic {
+#fqbipowrwn .gt_font_italic {
   font-style: italic;
 }
 
-#nbppcvaiqe .gt_super {
+#fqbipowrwn .gt_super {
   font-size: 65%;
 }
 
-#nbppcvaiqe .gt_footnote_marks {
+#fqbipowrwn .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#nbppcvaiqe .gt_asterisk {
+#fqbipowrwn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#nbppcvaiqe .gt_indent_1 {
+#fqbipowrwn .gt_indent_1 {
   text-indent: 5px;
 }
 
-#nbppcvaiqe .gt_indent_2 {
+#fqbipowrwn .gt_indent_2 {
   text-indent: 10px;
 }
 
-#nbppcvaiqe .gt_indent_3 {
+#fqbipowrwn .gt_indent_3 {
   text-indent: 15px;
 }
 
-#nbppcvaiqe .gt_indent_4 {
+#fqbipowrwn .gt_indent_4 {
   text-indent: 20px;
 }
 
-#nbppcvaiqe .gt_indent_5 {
+#fqbipowrwn .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
 <table class="gt_table">
-  <caption><span id="tab:cv-crps">Table 4.4: </span>The mean pointwise leave-one-out and spatial leave-one-out CRPS, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.</caption>
+  <caption><span id="tab:cv-crps">Table 4.4: </span>The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating <span class="math inline">\(\rho_i\)</span>, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.</caption>
   
   <thead class="gt_col_headings">
     <tr>
@@ -1626,7 +1622,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   
 </table>
 </div>
-<p>The results (Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a>) for each survey were as follows:</p>
+<p>The results (Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a>, Table <a href="beyond-borders.html#tab:cv-crps">4.4</a>, Table <a href="models-for-areal-spatial-structure.html#tab:cv-mse">A.4</a>) for each survey were as follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>For the 2017 PHIA survey in Côte d’Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ2017phia">A.37</a>)
 The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
@@ -1661,22 +1657,23 @@ Second, the synthetic data study used the same kernel, Matérn with <span class=
 Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
 Finally, aggregation via the integrated kernel occured at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
 If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.</p>
-<p>The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
-Although these models are perhaps the most widely used, there are a range of other adjacency-based models, including the more general weighted ICAR model discussed in Section <a href="beyond-borders.html#weighted-icar">4.1.4</a>.</p>
 <p>This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span> as a potentially more computationally efficient way to implement integrated kernel models <span class="citation">(<a href="#ref-wilson2018pointless">Wilson and Wakefield 2018</a>)</span>.
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
-None-the-less, it would be of value to confirm this empirically.</p>
+Nonetheless, it would be of value to confirm this empirically.</p>
 <!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
 <p>This chapter used of area-level models to for point-level data throughout.
 However, <span class="citation">Konstantinoudis et al. (<a href="#ref-konstantinoudis2020discrete">2020</a>)</span> found that using a point-level LGCP model rather than an area-level BYM model may have significant benefits.
 The work in this chapter does not address the broader question of under which circumstances use of an area or point-level model is sensible.</p>
+<p>The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
+Although these are perhaps the most widely used adjacency-based models, others could have been considered.
+Examples include the more general weighted ICAR model discussed in Section <a href="beyond-borders.html#weighted-icar">4.1.4</a>.
+Additionally, it would be of interest to implement the integrated kernel model with population-based weighting (Section <a href="beyond-borders.html#ik-hetrogeneity">4.2.2.1</a>).</p>
 <p>The models used for spatial structure in this chapter were all stationary.
 Although stationarity assumptions may be violated by HIV survey data, it remains challenging to estimate non-stationary spatial structure <span class="citation">(<a href="#ref-paciorek2006spatial">Christopher J. Paciorek and Schervish 2006</a>)</span>.</p>
-<p>It would be of interest to implement the integrated kernel model with population-based weighting (Section <a href="beyond-borders.html#ik-hetrogeneity">4.2.2.1</a>).</p>
 <!-- * What are my suggestions for new models to develop on the basis of this work -->
 <!-- * GMRFs perform smoothing more locally -->
 <!-- * BYM2 proportion parameter in the case where there is an outlier ends up too IID. Urban rural or other covariates. Heavier tail than Gaussian. -->
-<!-- * Lengthscale and noise. I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
+<!-- * Lengthscale and noise: I wonder if kernel models might be defined where there hyperparameters are orthogonal. -->
 </div>
 <div id="model-comparison-2" class="section level3 hasAnchor" number="4.5.2">
 <h3><span class="header-section-number">4.5.2</span> Model comparison<a href="beyond-borders.html#model-comparison-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>

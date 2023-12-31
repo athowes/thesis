@@ -27,26 +27,37 @@ Table: (\#tab:unaids-strategy-targets) Commitments recommended by @unaids2021glo
 
 ## Household survey data {#household-survey-data-agyw}
 
+(ref:household-survey-data) The sample size by age group for each included survey in the analysis. The column "TS question" refers to whether or not the survey included a specific question about transactional sex (TS).
+
 ```{r household-survey-data}
 gt_available_surveys <- readRDS(paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.rds"))
+
+as_latex_with_caption <- function(gt, chunk_label) {
+  gt <- gt::as_latex(gt)
+  caption <- paste0(
+    "\\caption{\\label{tab:", chunk_label, "}(ref:", chunk_label, ")}\\\\")
+  latex <- strsplit(gt[1], split = "\n")[[1]]
+  latex <- c(latex[1], caption, latex[-1])
+  latex <- paste(latex, collapse = "\n")
+  gt[1] <- latex
+  return(gt)
+}
 
 gt_available_surveys$`_boxhead`$column_label[[4]] <- "TS question"
 gt_available_surveys$`_boxhead`$column_align[[4]] <- "center"
 
-gt_available_surveys <- gt_available_surveys %>%
-  gt::tab_caption(caption = 'The sample size by age group for each included survey in the analysis. The column "TS question" refers to whether or not the survey included a specific question about transactional sex (TS).')
-
 if(knitr::is_html_output()) {
   gt_available_surveys %>%
     gt::sub_values(values = "[/]cmark", replacement = "✓") %>%
-    gt::sub_values(values = "[/]xmark", replacement = "✗")
+    gt::sub_values(values = "[/]xmark", replacement = "✗") %>%
+    gt::tab_caption("(ref:household-survey-data)")
 }
 
 if(knitr::is_latex_output()) {
   gt_available_surveys %>%
     gt::sub_values(values = "[/]cmark", replacement = "Yes") %>%
     gt::sub_values(values = "[/]xmark", replacement = "No") %>%
-    gt::as_latex()
+    as_latex_with_caption("household-survey-data")
 }
 ```
 
