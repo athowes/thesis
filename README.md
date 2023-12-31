@@ -268,6 +268,10 @@ given more time to work on it:
 - I ran Laplace marginals with emprirical Bayes for the Naomi ELGM but
   did not have enough time to present the results and integrate them
   into the discussion. This would be of interest to do.
+- For the section about Naomi as an ELGM, it would be valuable to
+  note 1) which features are possible in `R-INLA` (and exactly why or
+  why not) 2) whether the feature is an important non-linearity of the
+  model or more of a trivial notation issue.
 
 ### General
 
