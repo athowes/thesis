@@ -1396,7 +1396,7 @@ ar1_bym2_cor_grouped <- ar1_bym2_cor %>%
 ```
 
 Correlation structure in the posterior can result in sampler inefficiency.
-The each of the four pairs of AR1 log standard deviation $\log(\sigma)$ and logit lag-one autocorrelation parameter $\text{logit}(\phi)$ posteriors were positively correlated (mean absolute correlation `r round(ar1_bym2_cor_grouped$cor_mean[1], 2)`, Figure \@ref(fig:rho-a)).
+Each of the four pairs of AR1 log standard deviation $\log(\sigma)$ and logit lag-one autocorrelation parameter $\text{logit}(\phi)$ posteriors were positively correlated (mean absolute correlation `r round(ar1_bym2_cor_grouped$cor_mean[1], 2)`, Figure \@ref(fig:rho-a)).
 These parameters are partially identifiable as variation can either be explained by high standard deviation and high autocorrelation or low standard deviation and low autocorrelation.
 On the other hand, the BYM2 log standard deviation $\log(\sigma)$ and logit proportion parameter $\text{logit}(\phi)$ were, as designed, more orthogonal (mean absolute correlation `r round(ar1_bym2_cor_grouped$cor_mean[2], 2)`, Figure \@ref(fig:alpha-x)).
 
@@ -1506,7 +1506,7 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
 ```
 
-Latent field point estimates obtained from GPCA-AGHQ closer to the gold-standard results from NUTS than the estimates obtained from GEB were (Figure \@ref(mean-sd-alt-latent)).
+Latent field point estimates obtained from GPCA-AGHQ closer to the gold-standard results from NUTS than the estimates obtained from GEB were (Figure \@ref(fig:mean-sd-alt-latent)).
 
 #### Distributional quantities
 
@@ -1544,9 +1544,9 @@ Inferences from Naomi can be used to calculate the probability of a strata havin
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/exceedance-1inc.png"))
 ```
 
-GPCA-AGHQ gave more accurate estimates of the probability that a strata has high HIV incidence than GEB (Figure \@ref(exceedance-1inc)).
+GPCA-AGHQ gave more accurate estimates of the probability that a strata has high HIV incidence than GEB (Figure \@ref(fig:exceedance-1inc)).
 Again, both methods had significant error.
-Unlike in Section \@(second90), there was little difference in error by sex.
+Unlike in Section \@ref(second90), there was little difference in error by sex.
 
 ## Discussion
 
@@ -1563,22 +1563,23 @@ This chapter made important progress towards adding INLA to the integration tool
 
 Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
 For example, after requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA`, a prototype version was shortly made available.
-That said, it is ultimately more sustainable to enable users to implement their own distributions and models.
+That said, it is ultimately more sustainable for users to be able to implement their own distributions and models.
 
 ### PCA-AGHQ with application to INLA for Naomi
 
-For the simplified Naomi model applied to data from Malawi, GPCA-AGHQ more accurately inferring latent field posterior marginal distributions than GEB.
+For the simplified Naomi model applied to data from Malawi, GPCA-AGHQ more accurately inferred latent field posterior marginal distributions than GEB.
 However, model output posterior marginals did not see the same improvements.
-The approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
+Approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
 GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
 
-The inaccuracies in model outputs from GEB and GPCA-AGHQ have the potential to meaningfully mislead policy.
+Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections \@ref(second90) and \@ref(1inc)).
 As such, where possible, gold-standard NUTS results should be computed.
 Though NUTS is to slow too run during a workshop, it could be run afterwards.
-Given that the UNAIDS HIV estimates process is ultimately annual, requiring days to compute more accurate estimates is viable.
+As the UNAIDS HIV estimates process occurs annually, requiring days to compute more accurate estimates is viable.
 That said, Malawi is one of the countries with the fewest number of districts.
 As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may be impossible to run NUTS to convergence, and approximate methods may be required.
-GPCA-AGHQ and NUTS could be added to the Naomi web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) as an alternative to GEB.
+
+To empower users, GPCA-AGHQ and NUTS could be added to the Naomi web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) as alternatives to GEB.
 Analysts would be able to quickly iterate over model options using EB, before switching to a more accurate approach once they are happy with the results.
 
 PCA-AGHQ can be adjusted to suit the computational budget available by choice of the number of dimensions kept in the PCA $s$ and the number of points per dimension $k$.
@@ -1595,7 +1596,7 @@ Some suggestions relate more to individual contributions, others take a broader 
 #### Further comparisons {#further-comparisons}
 
 Comparison to further Bayesian inference methods could be included in Section \@ref(malawi). 
-Three possibilities stand out as being particularly valuable:
+Four possibilities stand out as being particularly valuable:
 
 1. There exist other quadrature rules for moderate dimension, such as the CCD.
 It would be of interest to compare INLA with a PCA-AGHQ rule to INLA with other such quadrature rules.
@@ -1607,36 +1608,26 @@ Other MCMC algorithms, such as blocked Gibbs sampling [@geman1984stochastic] or 
 It may be difficult to implement such algorithms using `TMB`.
 Many MCMC algorithms are implemented and customisable (including, for example, the choice of block structure) within the `NIMBLE` probabilistic programming language [@de2017programming].
 Requiring rewriting the Naomi model log-posterior outside of `TMB` would be a substantial downside.
-
-<!-- Finn Lindgren is working on a method for non-linear predictors, called the [iterative INLA method](https://github.com/inlabru-org/inlabru/blob/55896f10d563c14e34cab577b29b733aac051f86/vignettes/method.Rmd). -->
-<!-- More [slides](https://informatique-mia.inrae.fr/reseau-resste/sites/default/files/2020-09/slides-Lindgren_Avignon2018.pdf) here -->
-
-#### Investigation of quadrature grid
-
-It may be possible to test the assumptions made by use of AGHQ grids. 
-This would allow assessment of their suitability.
-Specifically, AGHQ assumes that the integrand is closely approximated by a polynomial multiplied by a Gaussian density.
-Given NUTS hyperparameter samples (or better yet, hyperparameter samples from the Laplace NUTS hybrid discussed in Section \@ref(further-comparisons)) this assumption could be tested by fitting a model using a polynomial times Gaussian kernel.
-Furthermore, assess whether PCA-AGHQ is suitable.
-Could be generalised?
+4. Finally, it would be of substantial interest to implement the Naomi model using the iterative INLA method via `inlabru`.
+However, as `inlabru`, like `R-INLA`, is based on a formula interface, it may not be possible to do so directly.
 
 #### Better quadrature grids
 
 PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
 However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:
 
-1. Prerotation and pruning.
-2. The amount of variation explained in the Hessian matrix may not be of direct interest.
+1. The amount of variation explained in the Hessian matrix may not be of direct interest.
 For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
 As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indicies, could be preferable.
-3. Use of PCA is challenging when the dimensions have different scales. 
+2. Use of PCA is challenging when the dimensions have different scales. 
 For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
-4. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
+3. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
 This is because the Laplace approximation is exact when the integrand is Gaussian, so a single quadrature node is sufficient.
 The difficulty is, of course, knowing in advance which marginals will be non-Gaussian.
 This could be done if there were a cheap way to obtain posterior means, which could then be compared to posterior modes obtained using optimisation.
 Another approach would be to measure the fit of marginal samples from a cheap approximation, like EB.
 The measures of fit would have to be for marginals, ruling out approaches like PSIS [@yao2018yes] which operate on joint distributions.
+4. Finally, it may be possible to achieve better performance by pruning and prerotation, as discussed by 
 
 #### Computational improvements
 
@@ -1652,7 +1643,13 @@ The class of functions which are integrated exactly by PCA-AGHQ remains to be sh
 Theorem 1 of @stringer2022fast bounds the total variation error of AGHQ, establishing convergence in probability of coverage probabilities under the approximate posterior distribution to those under the true posterior distribution.
 Similar theory could be established for PCA-AGHQ, or more generally AGHQ with varying levels.
 The challenge of connecting this theory to nested use of any quadrature rule, like that in the INLA algorithm, remains an important open question.
-<!-- Perhaps my clear formulation of the INLA algorithm with AGHQ rules helps -->
+
+#### Testing quadrature assumptions
+
+It may be possible to test the assumptions made by use of AGHQ grids, allowing their suitability for a particular integral to be assessed.
+Specifically, AGHQ assumes that the integrand is closely approximated by a polynomial multiplied by a Gaussian density.
+Given NUTS hyperparameter samples (or better yet, hyperparameter samples from the Laplace NUTS hybrid discussed in Section \@ref(further-comparisons)) this assumption could be tested by fitting a model using a polynomial times Gaussian kernel.
+This approach could be generalised to also test the suitability of PCA-AGHQ grids.
 
 #### Exploration of the accuracy of INLA for complex models
 
