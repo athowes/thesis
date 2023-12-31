@@ -1711,40 +1711,44 @@ Based on this findings, these parameters may not be identifiable.</p>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
+<img src="resources/naomi-aghq/20231231-180848-af1d67a5/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
+<p class="caption">
+Figure 6.19: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
+</p>
+</div>
+
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:reduced-rank"></span>
 <img src="resources/naomi-aghq/20231231-180848-af1d67a5/depends/reduced-rank.png" alt="The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (\(s = 8\)) matrix approximation (Panel B)." width="95%" />
 <p class="caption">
-Figure 6.19: The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (<span class="math inline">\(s = 8\)</span>) matrix approximation (Panel B).
+Figure 6.20: The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (<span class="math inline">\(s = 8\)</span>) matrix approximation (Panel B).
 </p>
 </div>
-<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.22</a>).
+<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.19</a>).
 Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain 87% of total variation.
-The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.19</a>).</p>
+The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.20</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pc-loadings"></span>
 <img src="resources/naomi-aghq/20231231-180848-af1d67a5/depends/pc-loadings.png" alt="Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of log_sigma_alpha_as and logit_phi_alpha_as." width="95%" />
 <p class="caption">
-Figure 6.20: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
+Figure 6.21: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
 </p>
 </div>
+<p>The principal component (PC) loadings (Figure <a href="#pc-loadings"><strong>??</strong></a>) provide interpretable information about which directions had the greatest variation.
+Many of the first PC loadings are sums of two hyperparameters.
+As such, there is some redundancy in the hyperparameter parameterisation, supporting the findings of Section <a href="naomi-aghq.html#naomi-nuts">6.5.1</a> regarding correlation structure in the hyperparameter posterior.
+It is exactly this correlation structure that PCA, and PCA-AGHQ, looks to utilise.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-samples-comparison"></span>
 <img src="resources/naomi-aghq/20231231-180848-af1d67a5/depends/nodes-samples-comparison.png" alt="The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS." width="95%" />
 <p class="caption">
-Figure 6.21: The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
+Figure 6.22: The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 </p>
 </div>
-<p>Projecting the <span class="math inline">\(3^8 = 6561\)</span> PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure <a href="naomi-aghq.html#fig:nodes-samples-comparison">6.21</a>).
+<p>Projecting the <span class="math inline">\(3^8 = 6561\)</span> PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure <a href="naomi-aghq.html#fig:nodes-samples-comparison">6.22</a>).
 Approximately 12 hyperparameters had well covered marginals: greater than the 8 naively obtained with a dense grid, but nonetheless far fewer than the full 24.
 Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
 This discrepancy occurred due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure <a href="naomi-aghq-appendix.html#fig:marginal-sd">C.13</a>).</p>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
-<img src="resources/naomi-aghq/20231231-180848-af1d67a5/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
-<p class="caption">
-Figure 6.22: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
-</p>
-</div>
 </div>
 <div id="time-taken" class="section level3 hasAnchor" number="6.5.3">
 <h3><span class="header-section-number">6.5.3</span> Time taken<a href="naomi-aghq.html#time-taken" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1801,15 +1805,14 @@ This may be due to by difficulties estimating particular parameters for all infe
 </div>
 <div id="maximum-mean-discrepancy" class="section level5 hasAnchor" number="6.5.4.2.2">
 <h5><span class="header-section-number">6.5.4.2.2</span> Maximum mean discrepancy<a href="naomi-aghq.html#maximum-mean-discrepancy" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<pre><code>## [1] 0.0800 0.0048</code></pre>
 <p>Let <span class="math inline">\(\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n\)</span> and <span class="math inline">\(\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n\)</span> be two sets of joint posterior samples, and <span class="math inline">\(k\)</span> be a kernel.
 The maximum mean discrepancy [MMD; <span class="citation">Gretton et al. (<a href="#ref-gretton2006kernel">2006</a>)</span>] is a measure of distance between joint distributions, and can be estimated empirically by samples
 <span class="math display">\[\begin{equation}
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
 \end{equation}\]</span>
 The kernel was set to <span class="math inline">\(k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)\)</span> with <span class="math inline">\(\sigma\)</span> estimated from data using the <code>kernlab</code> package <span class="citation">(<a href="#ref-karatzoglou2019package">Karatzoglou et al. 2019</a>)</span>.
-The first and third order MMD statistics for GEB were <code>r</code>.
-Those of GPCA-AGHQ () were just percent lower.</p>
+The first and third order MMD statistics for GEB were 0.08 and 0.0048.
+Those of GPCA-AGHQ (0.078 and 0.0044) were just 3% and 7% lower.</p>
 </div>
 </div>
 </div>
@@ -1861,8 +1864,8 @@ These contributions are discussed in turn, before outlining suggestions for futu
 <p><span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> write that “to our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly”.
 Section <a href="naomi-aghq.html#universal">6.2</a> made important progress towards adding INLA to the integration tools easily accessible using <code>TMB</code>.
 Reaching this milestone would be of significant value to both applied and methodological researchers.</p>
-<p>The implementation is not intended to replace <code>R-INLA</code>, and indeed for the majority of users it is the more suitable software implementation.
-Formula-based and universal statistical tools both have value, as they inhabit different roles.
+<p>The implementation is not intended to replace <code>R-INLA</code>, and indeed for the majority of users a formula-based interface is preferred.
+Both formula-based and universal statistical tools have value, as they inhabit different use-cases.
 For the NUTS algorithm, a universal interface is available via Stan, and packages such as <code>brms</code> <span class="citation">(<a href="#ref-brms">Bürkner 2017</a>)</span> and <code>rstanarm</code> <span class="citation">(<a href="#ref-rstanarm">Goodrich et al. 2020</a>)</span> enable researchers to fit common models using a formula interface.
 Furthermore, developers of formula-based tools do have incentives to engage with the needs of their users, and indeed do so.
 For example, after requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.27)</a> to be included in <code>R-INLA</code>, a prototype version was shortly made available.

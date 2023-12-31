@@ -1429,6 +1429,12 @@ Based on this findings, these parameters may not be identifiable.
 tv_df <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.csv"))
 ```
 
+(ref:total-variation) Under PCA, the proportion of total variation explained is given by the sum of the first $s$ eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, `r round(100 * tv_df$tv[8])`% was considered sufficient.
+
+```{r total-variation, fig.cap="(ref:total-variation)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.png"))
+```
+
 (ref:reduced-rank) The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank ($s = 8$) matrix approximation (Panel B).
 
 ```{r reduced-rank, fig.cap="(ref:reduced-rank)"}
@@ -1445,6 +1451,11 @@ The reduced rank approximation to the inverse curvature with this choice of $s$ 
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
 ```
 
+The principal component (PC) loadings (Figure \@ref(pc-loadings)) provide interpretable information about which directions had the greatest variation.
+Many of the first PC loadings are sums of two hyperparameters.
+As such, there is some redundancy in the hyperparameter parameterisation, supporting the findings of Section \@ref(naomi-nuts) regarding correlation structure in the hyperparameter posterior.
+It is exactly this correlation structure that PCA, and PCA-AGHQ, looks to utilise.
+
 (ref:nodes-samples-comparison) The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 
 ```{r nodes-samples-comparison, fig.cap="(ref:nodes-samples-comparison)"}
@@ -1455,12 +1466,6 @@ Projecting the $3^8 = 6561$ PCA-AGHQ quadrature nodes onto each hyperparameter d
 Approximately 12 hyperparameters had well covered marginals: greater than the 8 naively obtained with a dense grid, but nonetheless far fewer than the full 24.
 Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
 This discrepancy occurred due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure \@ref(fig:marginal-sd)).
-
-(ref:total-variation) Under PCA, the proportion of total variation explained is given by the sum of the first $s$ eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, `r round(100 * tv_df$tv[8])`% was considered sufficient.
-
-```{r total-variation, fig.cap="(ref:total-variation)"}
-knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/total-variation.png"))
-```
 
 ### Time taken
 
@@ -1594,7 +1599,8 @@ This may be due to by difficulties estimating particular parameters for all infe
 ```{r}
 mmd <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/mmd.rds"))
 
-signif(mmd$mmd_tmb@mmdstats, 2)
+first_order_pct <- signif(100 * (mmd$mmd_tmb@mmdstats[1] - mmd$mmd_aghq@mmdstats[1]) / mmd$mmd_tmb@mmdstats[1], 1)
+third_order_pct <- signif(100 * (mmd$mmd_tmb@mmdstats[2] - mmd$mmd_aghq@mmdstats[2]) / mmd$mmd_tmb@mmdstats[2], 1)
 ```
 
 Let $\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n$ and $\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n$ be two sets of joint posterior samples, and $k$ be a kernel.
@@ -1603,8 +1609,8 @@ The maximum mean discrepancy [MMD; @gretton2006kernel] is a measure of distance 
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
 \end{equation}
 The kernel was set to $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package].
-The first and third order MMD statistics for GEB were `r`.
-Those of GPCA-AGHQ () were just percent lower.
+The first and third order MMD statistics for GEB were `r signif(mmd$mmd_tmb@mmdstats[1], 2)` and `r signif(mmd$mmd_tmb@mmdstats[2], 2)`.
+Those of GPCA-AGHQ (`r signif(mmd$mmd_aghq@mmdstats[1], 2)` and `r signif(mmd$mmd_aghq@mmdstats[2], 2)`) were just `r first_order_pct`% and `r third_order_pct`% lower.
 
 ### Exceedance probabilities
 
@@ -1655,8 +1661,8 @@ These contributions are discussed in turn, before outlining suggestions for futu
 Section \@ref(universal) made important progress towards adding INLA to the integration tools easily accessible using `TMB`.
 Reaching this milestone would be of significant value to both applied and methodological researchers.
 
-The implementation is not intended to replace `R-INLA`, and indeed for the majority of users it is the more suitable software implementation.
-Formula-based and universal statistical tools both have value, as they inhabit different roles.
+The implementation is not intended to replace `R-INLA`, and indeed for the majority of users a formula-based interface is preferred.
+Both formula-based and universal statistical tools have value, as they inhabit different use-cases.
 For the NUTS algorithm, a universal interface is available via Stan, and packages such as `brms` [@brms] and `rstanarm` [@rstanarm] enable researchers to fit common models using a formula interface.
 Furthermore, developers of formula-based tools do have incentives to engage with the needs of their users, and indeed do so.
 For example, after requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA`, a prototype version was shortly made available.
