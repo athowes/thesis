@@ -500,6 +500,7 @@ Perhaps the most substantial is the `inlabru` R package [@bachl2019inlabru].
 As well as a simplified syntax, `inlabru` provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
 These complex model components are specified in `inlabru` using the `bru_mapper` system.
 See the `inlabru` package vignettes for additional details.
+Further inference procedures which leverage `R-INLA `include INLA within MCMC [@gomez2018markov] and importance sampling with INLA [@berild2022importance].
 
 <!-- Note: does the CCD need to have weights added? -->
 
@@ -1048,6 +1049,13 @@ A less naive Laplace implementation may achieve a runtime more competitive to th
 ## The Naomi model {#naomi}
 
 The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model [@eaton2021naomi].
+Software has been developed for Naomi to allow countries to input their data and interactively generate estimates during week long workshops as a part of a yearly process supported by UNAIDS.
+Generation of estimates by country teams, rather than external agencies or researchers, is an important and distinctive feature of the HIV response.
+Drawing on expertise closest to the data being modelled improves the accuracy of the process, as well as strengthening trust in the resulting estimates, creating a virtuous cycle of data quality, use and ownership [@noor2022country].
+To allow interactive review and iteration of model results by workshop participants, any inference procedure for Naomi should ideally be fast and have low memory usage.
+Additionally, it should be reliable and automatic, across a range of country settings.
+Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and as such these requirements present a challenging Bayesian inference problem.
+
 This section begins (Section \@ref(naomi-model)) by describing a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.

@@ -843,7 +843,8 @@ By default, the <code>"grid"</code> strategy is used for <span class="math inlin
 Perhaps the most substantial is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>.
 As well as a simplified syntax, <code>inlabru</code> provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.
 These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.
-See the <code>inlabru</code> package vignettes for additional details.</p>
+See the <code>inlabru</code> package vignettes for additional details.
+Further inference procedures which leverage <code>R-INLA</code>include INLA within MCMC <span class="citation">(<a href="#ref-gomez2018markov">Gómez-Rubio and Rue 2018</a>)</span> and importance sampling with INLA <span class="citation">(<a href="#ref-berild2022importance">Berild et al. 2022</a>)</span>.</p>
 <!-- Note: does the CCD need to have weights added? -->
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
@@ -1370,7 +1371,13 @@ A less naive Laplace implementation may achieve a runtime more competitive to th
 <div id="naomi" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> The Naomi model<a href="naomi-aghq.html#naomi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The work in this chapter was conducted in search of a fast and accurate Bayesian inference method for the Naomi model <span class="citation">(<a href="#ref-eaton2021naomi">Eaton et al. 2021</a>)</span>.
-This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing a simplified version of Naomi.
+Software has been developed for Naomi to allow countries to input their data and interactively generate estimates during week long workshops as a part of a yearly process supported by UNAIDS.
+Generation of estimates by country teams, rather than external agencies or researchers, is an important and distinctive feature of the HIV response.
+Drawing on expertise closest to the data being modelled improves the accuracy of the process, as well as strengthening trust in the resulting estimates, creating a virtuous cycle of data quality, use and ownership <span class="citation">(<a href="#ref-noor2022country">Noor 2022</a>)</span>.
+To allow interactive review and iteration of model results by workshop participants, any inference procedure for Naomi should ideally be fast and have low memory usage.
+Additionally, it should be reliable and automatic, across a range of country settings.
+Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and as such these requirements present a challenging Bayesian inference problem.</p>
+<p>This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing a simplified version of Naomi.
 The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
 The nowcasting and temporal projection components of the complete model are omitted.
 These time points play a limited role in inference as they correspond to a small proportion of the total data.
@@ -1974,6 +1981,9 @@ Baydin, Atılım Günes, Barak A Pearlmutter, Alexey Andreyevich Radul, and Jeff
 <div id="ref-cppaddocumentation" class="csl-entry">
 Bell, Bradley. 2023. <span>“<span class="nocase">CppAD: a package for C++ algorithmic differentiation</span>.”</span> <a href="http://www.coin-or.org/CppAD" class="uri">http://www.coin-or.org/CppAD</a>.
 </div>
+<div id="ref-berild2022importance" class="csl-entry">
+Berild, Martin Outzen, Sara Martino, Virgilio Gómez-Rubio, and Håvard Rue. 2022. <span>“Importance Sampling with the Integrated Nested Laplace Approximation.”</span> <em>Journal of Computational and Graphical Statistics</em> 31 (4): 1225–37.
+</div>
 <div id="ref-bilodeau2022stochastic" class="csl-entry">
 Bilodeau, Blair, Alex Stringer, and Yanbo Tang. 2022. <span>“<span class="nocase">Stochastic convergence rates and applications of adaptive quadrature in Bayesian inference</span>.”</span> <em>Journal of the American Statistical Association</em>, 1–11.
 </div>
@@ -2046,6 +2056,9 @@ Geman, Stuart, and Donald Geman. 1984. <span>“<span class="nocase">Stochastic 
 <div id="ref-gomez2020bayesian" class="csl-entry">
 Gómez-Rubio, Virgilio. 2020. <em><span class="nocase">Bayesian inference with INLA</span></em>. CRC Press.
 </div>
+<div id="ref-gomez2018markov" class="csl-entry">
+Gómez-Rubio, Virgilio, and Håvard Rue. 2018. <span>“Markov Chain Monte Carlo with the Integrated Nested Laplace Approximation.”</span> <em>Statistics and Computing</em> 28: 1033–51.
+</div>
 <div id="ref-gretton2006kernel" class="csl-entry">
 Gretton, Arthur, Karsten Borgwardt, Malte Rasch, Bernhard Schölkopf, and Alex Smola. 2006. <span>“A Kernel Method for the Two-Sample-Problem.”</span> <em><span>Advances in Neural Information Processing Systems</span></em> 19.
 </div>
@@ -2099,6 +2112,9 @@ Naylor, John C, and Adrian FM Smith. 1982. <span>“<span class="nocase">Applica
 </div>
 <div id="ref-neal2003slice" class="csl-entry">
 Neal, Radford M. 2003. <span>“<span class="nocase">Slice sampling</span>.”</span> <em>The Annals of Statistics</em> 31 (3): 705–67.
+</div>
+<div id="ref-noor2022country" class="csl-entry">
+Noor, Abdisalan Mohamed. 2022. <span>“Country Ownership in Global Health.”</span> <em>PLOS Global Public Health</em> 2 (2): e0000113.
 </div>
 <div id="ref-osgood2023statistical" class="csl-entry">
 Osgood-Zimmerman, Aaron, and Jon Wakefield. 2023. <span>“<span class="nocase">A Statistical Review of Template Model Builder: A Flexible Tool for Spatial Modelling</span>.”</span> <em>International Statistical Review</em> 91 (2): 318–42.
