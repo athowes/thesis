@@ -314,8 +314,9 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.5.1" data-path="naomi-aghq.html"><a href="naomi-aghq.html#naomi-nuts"><i class="fa fa-check"></i><b>6.5.1</b> NUTS convergence and suitability</a></li>
 <li class="chapter" data-level="6.5.2" data-path="naomi-aghq.html"><a href="naomi-aghq.html#use-of-pca-aghq"><i class="fa fa-check"></i><b>6.5.2</b> Use of PCA-AGHQ</a></li>
-<li class="chapter" data-level="6.5.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.5.3</b> Inference comparison</a></li>
-<li class="chapter" data-level="6.5.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.5.4</b> Exceedance probabilities</a></li>
+<li class="chapter" data-level="6.5.3" data-path="naomi-aghq.html"><a href="naomi-aghq.html#time-taken"><i class="fa fa-check"></i><b>6.5.3</b> Time taken</a></li>
+<li class="chapter" data-level="6.5.4" data-path="naomi-aghq.html"><a href="naomi-aghq.html#inference-comparison"><i class="fa fa-check"></i><b>6.5.4</b> Inference comparison</a></li>
+<li class="chapter" data-level="6.5.5" data-path="naomi-aghq.html"><a href="naomi-aghq.html#exceedance-probabilities"><i class="fa fa-check"></i><b>6.5.5</b> Exceedance probabilities</a></li>
 </ul></li>
 <li class="chapter" data-level="6.6" data-path="naomi-aghq.html"><a href="naomi-aghq.html#discussion-2"><i class="fa fa-check"></i><b>6.6</b> Discussion</a>
 <ul>
@@ -1696,101 +1697,108 @@ Posterior variances can be extracted from NUTS results, and prior variances obta
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.19</a>).
-Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain 87% of total variation.
-The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.20</a>).</p>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
-<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
-<p class="caption">
-Figure 6.19: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
-</p>
-</div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:reduced-rank"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/reduced-rank.png" alt="The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (\(s = 8\)) matrix approximation (Panel B)." width="95%" />
 <p class="caption">
-Figure 6.20: The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (<span class="math inline">\(s = 8\)</span>) matrix approximation (Panel B).
+Figure 6.19: The full rank original covariance matrix (Panel A) was closely reproduced by its reduced rank (<span class="math inline">\(s = 8\)</span>) matrix approximation (Panel B).
 </p>
 </div>
+<p>For the PCA-AGHQ quadrature grid, a Scree plot based on the spectral decomposition of <span class="math inline">\(\hat {\mathbf{H}}_\texttt{LA}(\boldsymbol{\mathbf{\theta}}_\texttt{LA})^{-1}\)</span> was used to select the number of principal components to keep (Figure <a href="naomi-aghq.html#fig:total-variation">6.22</a>).
+Keeping <span class="math inline">\(s = 8\)</span> principal components was sufficient to explain 87% of total variation.
+The reduced rank approximation to the inverse curvature with this choice of <span class="math inline">\(s\)</span> was visually similar to the full rank matrix (Figure <a href="naomi-aghq.html#fig:reduced-rank">6.19</a>).</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:pc-loadings"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/pc-loadings.png" alt="Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of log_sigma_alpha_as and logit_phi_alpha_as." width="95%" />
 <p class="caption">
-Figure 6.21: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
+Figure 6.20: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:nodes-samples-comparison"></span>
-<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/nodes-samples-comparison.png" alt="The \(k^s = 3^8 = 6561\) PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS." width="95%" />
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/nodes-samples-comparison.png" alt="The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS." width="95%" />
 <p class="caption">
-Figure 6.22: The <span class="math inline">\(k^s = 3^8 = 6561\)</span> PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
+Figure 6.21: The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 </p>
 </div>
+<p>When projecting the <span class="math inline">\(3^8 = 6561\)</span> PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure <a href="naomi-aghq.html#fig:nodes-samples-comparison">6.21</a>).
+Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
+This discrepancy occured due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure <a href="naomi-aghq-appendix.html#fig:marginal-sd">C.13</a>).</p>
 
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:marginal-sd"></span>
-<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/marginal-sd.png" alt="The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic." width="95%" />
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:total-variation"></span>
+<img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/total-variation.png" alt="Under PCA, the proportion of total variation explained is given by the sum of the first \(s\) eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient." width="95%" />
 <p class="caption">
-Figure 6.23: The estimated posterior marginal standard deviation of each hyperparameter varied substantially based on its scale, either logarithmic or logistic.
+Figure 6.22: Under PCA, the proportion of total variation explained is given by the sum of the first <span class="math inline">\(s\)</span> eigenvalues over the sum of all eigenvalues. A typical rule-of-thumb is to include dimensions sufficient to explain 90% of total variation. In this case, for computational reasons, 87% was considered sufficient.
 </p>
 </div>
 </div>
-<div id="inference-comparison" class="section level3 hasAnchor" number="6.5.3">
-<h3><span class="header-section-number">6.5.3</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="time-taken" class="section level3 hasAnchor" number="6.5.3">
+<h3><span class="header-section-number">6.5.3</span> Time taken<a href="naomi-aghq.html#time-taken" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:naomi-time"></span>
 <img src="_main_files/figure-html/naomi-time-1.png" alt="The number of hours taken to perform inference for the Naomi ELGM (Section 6.3.1) using each approach." width="95%" />
 <p class="caption">
-Figure 6.24: The number of hours taken to perform inference for the Naomi ELGM (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) using each approach.
+Figure 6.23: The number of hours taken to perform inference for the Naomi ELGM (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) using each approach.
 </p>
 </div>
-<div id="point-estimates" class="section level4 hasAnchor" number="6.5.3.1">
-<h4><span class="header-section-number">6.5.3.1</span> Point estimates<a href="naomi-aghq.html#point-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Inference with NUTS took 79 hours, while inference with GPCA-AGHQ took 1.2 hours and GEB just 0.9 minutes (Figure <a href="naomi-aghq.html#fig:naomi-time">6.23</a>).
+Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, trading off accuracy and runtime.</p>
+</div>
+<div id="inference-comparison" class="section level3 hasAnchor" number="6.5.4">
+<h3><span class="header-section-number">6.5.4</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="point-estimates" class="section level4 hasAnchor" number="6.5.4.1">
+<h4><span class="header-section-number">6.5.4.1</span> Point estimates<a href="naomi-aghq.html#point-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:mean-sd-alt-latent"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/mean-sd-alt-latent.png" alt="The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB." width="95%" />
 <p class="caption">
-Figure 6.25: The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
+Figure 6.24: The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
 </p>
 </div>
+<p>Latent field point estimates obtained from GPCA-AGHQ closer to the gold-standard results from NUTS than the estimates obtained from GEB were (Figure <a href="#mean-sd-alt-latent"><strong>??</strong></a>).</p>
 </div>
-<div id="distributional-quantities" class="section level4 hasAnchor" number="6.5.3.2">
-<h4><span class="header-section-number">6.5.3.2</span> Distributional quantities<a href="naomi-aghq.html#distributional-quantities" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="distributional-quantities" class="section level4 hasAnchor" number="6.5.4.2">
+<h4><span class="header-section-number">6.5.4.2</span> Distributional quantities<a href="naomi-aghq.html#distributional-quantities" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ks-summary"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model." width="95%" />
 <p class="caption">
-Figure 6.26: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model.
+Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model.
 </p>
 </div>
 </div>
 </div>
-<div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.4">
-<h3><span class="header-section-number">6.5.4</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="meeting-the-second-90" class="section level4 hasAnchor" number="6.5.4.1">
-<h4><span class="header-section-number">6.5.4.1</span> Meeting the second 90<a href="naomi-aghq.html#meeting-the-second-90" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.5">
+<h3><span class="header-section-number">6.5.5</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="second90" class="section level4 hasAnchor" number="6.5.5.1">
+<h4><span class="header-section-number">6.5.5.1</span> Meeting the second 90<a href="naomi-aghq.html#second90" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Ambitious targets for scaling up ART treatment have been developed by UNAIDS, with the goal of ending the AIDS epidemic by 2030 <span class="citation">(<a href="#ref-unaids2014target">UNAIDS 2014</a>)</span>.
+Meeting the 90-90-90 fast-track target requires that 90% of people living with HIV know their status, 90% of those are on ART, and 90% of those have a suppressed viral load.
+Inferences from Naomi can be used to identify treatment gaps by calculating the probability that the second 90 target has been met, that is <span class="math inline">\(\mathbb{P}(\alpha_i &gt; 0.9^2 = 0.81)\)</span> for each strata <span class="math inline">\(i\)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:exceedance-second90"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/exceedance-second90.png" alt="The probability each strata has met the second 90 (ART coverage above 81%) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left." width="95%" />
 <p class="caption">
-Figure 6.27: The probability each strata has met the second 90 (ART coverage above 81%) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left.
+Figure 6.26: The probability each strata has met the second 90 (ART coverage above 81%) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left.
 </p>
 </div>
-<p>Ambitious targets for scaling up ART treatment have been developed by UNAIDS, with the goal of ending the AIDS epidemic by 2030 <span class="citation">(<a href="#ref-unaids2014target">UNAIDS 2014</a>)</span>.
-Meeting the 90-90-90 fast-track target requires that 90% of people living with HIV know their status, 90% of those are on ART, and 90% of those have a suppressed viral load.
-Inferences from Naomi can be used to identify treatment gaps by calculating the probability that the second 90 target has been met, that is <span class="math inline">\(\mathbb{P}(\alpha_i &gt; 0.9^2 = 0.81)\)</span> for each strata <span class="math inline">\(i\)</span>.</p>
+<p>Strata probabilities of having met the second 90 target were more accurately estimated by GPCA-AGHQ than GEB (Figure <a href="naomi-aghq.html#fig:exceedance-second90">6.26</a>).
+Both GPCA-AGHQ and GEB had substantial error as compared to results from NUTS, however, particularly for girls and women.</p>
 </div>
-<div id="finding-strata-with-high-incidence" class="section level4 hasAnchor" number="6.5.4.2">
-<h4><span class="header-section-number">6.5.4.2</span> Finding strata with high incidence<a href="naomi-aghq.html#finding-strata-with-high-incidence" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="id_1inc" class="section level4 hasAnchor" number="6.5.5.2">
+<h4><span class="header-section-number">6.5.5.2</span> Finding strata with high incidence<a href="naomi-aghq.html#id_1inc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
+Inferences from Naomi can be used to calculate the probability of a strata having high incidence by evaluating <span class="math inline">\(\mathbb{P}(\lambda_i &gt; 0.01)\)</span>.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:exceedance-1inc"></span>
 <img src="resources/naomi-aghq/20231230-132920-ac7173dd/depends/exceedance-1inc.png" alt="The probability each strata has high HIV incidence (above 1% per year) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left." width="95%" />
 <p class="caption">
-Figure 6.28: The probability each strata has high HIV incidence (above 1% per year) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left.
+Figure 6.27: The probability each strata has high HIV incidence (above 1% per year) calculated using each inference method, as compared with NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left.
 </p>
 </div>
-<p>Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
-Inferences from Naomi can be used to calculate the probability of a strata having high incidence by evaluating <span class="math inline">\(\mathbb{P}(\lambda_i &gt; 0.01)\)</span>.</p>
+<p>GPCA-AGHQ gave more accurate estimates of the probability that a strata has high HIV incidence than GEB (Figure <a href="#exceedance-1inc"><strong>??</strong></a>).
+Again, both methods had significant error.
+Unlike in Section @(second90), there was little difference in error by sex.</p>
 </div>
 </div>
 </div>
@@ -1914,10 +1922,10 @@ Another (less desirable) option would be to algorithmically generate the modifie
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:package-downloads"></span>
 <img src="figures/naomi-aghq/package-downloads.png" alt="Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for brms, glmmTMB, nimble, rstan and TMB, obtained using the cranlogs (Csárdi 2023) R package. Unfortunately, R-INLA is not available from CRAN, and so could not be included in this figure. The official rstan documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the populartiy of rstan." width="95%" />
 <p class="caption">
-Figure 6.29: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <code>cranlogs</code> <span class="citation">(<a href="#ref-cranlogs">Csárdi 2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the populartiy of <code>rstan</code>.
+Figure 6.28: Monthly R package downloads from the Comprehensive R Archive Network (CRAN) for <code>brms</code>, <code>glmmTMB</code>, <code>nimble</code>, <code>rstan</code> and <code>TMB</code>, obtained using the <code>cranlogs</code> <span class="citation">(<a href="#ref-cranlogs">Csárdi 2023</a>)</span> R package. Unfortunately, <code>R-INLA</code> is not available from CRAN, and so could not be included in this figure. The official <code>rstan</code> documentation recommends installation of a development version hosted outside CRAN. As such, this metric may underestimate the populartiy of <code>rstan</code>.
 </p>
 </div>
-<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.29</a>).
+<p>Though gaining in popularity, the user-base of <code>TMB</code> is relatively small, and package downloads are in large part driven by use of the more easy-to-use <code>glmmTMB</code> package (Figure <a href="naomi-aghq.html#fig:package-downloads">6.28</a>).
 For users unfamiliar with C++, it can be challenging to use <code>TMB</code> directly.
 One possibility is to look to disseminate methods via the users of <code>glmmTMB</code>.
 Another approach would be to implement methods in other probabilistic programming languages, such as <code>Stan</code> or <code>NIMBLE</code>.
