@@ -1702,7 +1702,11 @@ On the other hand, the BYM2 log standard deviation <span class="math inline">\(\
 <span class="math display">\[\begin{equation}
 c(\phi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\phi)}.
 \end{equation}\]</span>
-Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.</p>
+Posterior variances were extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed (Figure <a href="naomi-aghq-appendix.html#fig:nuts-hand-comparison">C.10</a>).
+The average posterior contraction was positive for all latent field parameter vectors, and for the majority of hyperparameters (Figure <a href="naomi-aghq-appendix.html#fig:posterior-contraction">C.11</a>).
+However, for seven hyperparameters the posterior contraction was very closet to zero.
+Furthermore, for some latent field parameter vectors, the average contraction was small.
+Based on this findings, these parameters may not be identifiable.</p>
 </div>
 <div id="use-of-pca-aghq" class="section level3 hasAnchor" number="6.5.2">
 <h3><span class="header-section-number">6.5.2</span> Use of PCA-AGHQ<a href="naomi-aghq.html#use-of-pca-aghq" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1776,16 +1780,16 @@ However, puzzlingly, improvements in latent field estimate accuracy only transfe
 <h5><span class="header-section-number">6.5.4.2.1</span> Kolmogorov-Smirnov<a href="naomi-aghq.html#kolmogorov-smirnov" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ks-summary"></span>
-<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better." width="95%" />
+<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters ui_lambda_x the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to \(\mathbf{u}_x^\lambda\) and plays a key role in the ART attendence component of the Naomi (Section 6.3.1.4)." width="95%" />
 <p class="caption">
-Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better.
+Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters <code>ui_lambda_x</code> the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to <span class="math inline">\(\mathbf{u}_x^\lambda\)</span> and plays a key role in the ART attendence component of the Naomi (Section <a href="naomi-aghq.html#art">6.3.1.4</a>).
 </p>
 </div>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ui-lambda-x"></span>
-<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ui-lambda-x.png" alt="Figure caption." width="95%" />
+<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ui-lambda-x.png" alt="The parameter ui_lambda_x[26] had the greatest difference in KS test statistics between GEB and GPCA-AGHQ to NUTS. For this parameter, the potential scale reduction factor was 1 and effective sample size was 2100." width="95%" />
 <p class="caption">
-Figure 6.26: Figure caption.
+Figure 6.26: The parameter <code>ui_lambda_x[26]</code> had the greatest difference in KS test statistics between GEB and GPCA-AGHQ to NUTS. For this parameter, the potential scale reduction factor was 1 and effective sample size was 2100.
 </p>
 </div>
 <p>The two-sample Kolmogorov-Smirnov (KS) test statistic <span class="citation">(<a href="#ref-smirnov1948table">Smirnov 1948</a>)</span> is the maximum absolute difference between two ECDFs <span class="math inline">\(F(\omega) = \frac{1}{n} \sum_{i = 1}^n \mathbb{I}_{\phi_i \leq \omega}\)</span>.
@@ -1794,11 +1798,12 @@ Error as measured by the KS test statistic was correlated with low NUTS ESS (Fig
 <div id="maximum-mean-discrepancy" class="section level5 hasAnchor" number="6.5.4.2.2">
 <h5><span class="header-section-number">6.5.4.2.2</span> Maximum mean discrepancy<a href="naomi-aghq.html#maximum-mean-discrepancy" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p>Let <span class="math inline">\(\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n\)</span> and <span class="math inline">\(\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n\)</span> be two sets of joint posterior samples, and <span class="math inline">\(k\)</span> be a kernel.
-The maximum mean discrepancy [MMD; <span class="citation">Gretton et al. (<a href="#ref-gretton2006kernel">2006</a>)</span>] can be empirically estimated by
-<span class="math display">\[\begin{equation*}
+The maximum mean discrepancy [MMD; <span class="citation">Gretton et al. (<a href="#ref-gretton2006kernel">2006</a>)</span>] is a measure of distance between joint distributions, and can be estimated empirically by samples
+<span class="math display">\[\begin{equation}
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
-\end{equation*}\]</span>
-Setting <span class="math inline">\(k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)\)</span> with <span class="math inline">\(\sigma\)</span> estimated from data using the <code>kernlab</code> package <span class="citation">(<a href="#ref-karatzoglou2019package">Karatzoglou et al. 2019</a>)</span>, then as compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).</p>
+\end{equation}\]</span>
+The kernel was set to <span class="math inline">\(k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)\)</span> with <span class="math inline">\(\sigma\)</span> estimated from data using the <code>kernlab</code> package <span class="citation">(<a href="#ref-karatzoglou2019package">Karatzoglou et al. 2019</a>)</span>.
+As compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).</p>
 </div>
 </div>
 </div>

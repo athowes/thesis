@@ -1417,7 +1417,11 @@ The informativeness of data about a parameter can be summarised by the posterior
 \begin{equation}
 c(\phi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\phi)}.
 \end{equation}
-Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.
+Posterior variances were extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed (Figure \@ref(fig:nuts-hand-comparison)).
+The average posterior contraction was positive for all latent field parameter vectors, and for the majority of hyperparameters (Figure \@ref(fig:posterior-contraction)).
+However, for seven hyperparameters the posterior contraction was very closet to zero.
+Furthermore, for some latent field parameter vectors, the average contraction was small.
+Based on this findings, these parameters may not be identifiable.
 
 ### Use of PCA-AGHQ
 
@@ -1546,13 +1550,17 @@ However, puzzlingly, improvements in latent field estimate accuracy only transfe
 
 ##### Kolmogorov-Smirnov
 
-(ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better.
+(ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters `ui_lambda_x` the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to $\mathbf{u}_x^\lambda$ and plays a key role in the ART attendence component of the Naomi (Section \@ref(art)).
 
 ```{r ks-summary, fig.cap="(ref:ks-summary)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ks-summary.png"))
 ```
 
-(ref:ui-lambda-x) Figure caption.
+```{r}
+ui_lambda_x <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/ui-lambda-x.rds"))
+```
+
+(ref:ui-lambda-x) The parameter ``r paste0(ui_lambda_x$par)`` had the greatest difference in KS test statistics between GEB and GPCA-AGHQ to NUTS. For this parameter, the potential scale reduction factor was `r ui_lambda_x$rhat` and effective sample size was `r ui_lambda_x$ess`.
 
 ```{r ui-lambda-x, fig.cap="(ref:ui-lambda-x)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ui-lambda-x.png"))
@@ -1564,11 +1572,12 @@ Error as measured by the KS test statistic was correlated with low NUTS ESS (Fig
 ##### Maximum mean discrepancy
 
 Let $\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n$ and $\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n$ be two sets of joint posterior samples, and $k$ be a kernel.
-The maximum mean discrepancy [MMD; @gretton2006kernel] can be empirically estimated by
-\begin{equation*}
+The maximum mean discrepancy [MMD; @gretton2006kernel] is a measure of distance between joint distributions, and can be estimated empirically by samples
+\begin{equation}
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
-\end{equation*}
-Setting $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package], then as compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).
+\end{equation}
+The kernel was set to $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package].
+As compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).
 
 ### Exceedance probabilities
 
