@@ -1691,9 +1691,9 @@ These parameters are partially identifiable as variation can either be explained
 On the other hand, the BYM2 log standard deviation <span class="math inline">\(\log(\sigma)\)</span> and logit proportion parameter <span class="math inline">\(\text{logit}(\phi)\)</span> were, as designed, more orthogonal (mean absolute correlation 0.17, Figure <a href="naomi-aghq-appendix.html#fig:alpha-x">C.9</a>).</p>
 <!-- Which parameters had the lowest ESS? -->
 <!-- Other unidentifiables in the model -->
-<p>The informativeness of data about a parameter can be summarised by the posterior contraction <span class="citation">(<a href="#ref-schad2021toward">Schad, Betancourt, and Vasishth 2021</a>)</span> which compares the prior variance <span class="math inline">\(\mathbb{V}_\text{prior}(\psi)\)</span> to posterior variance <span class="math inline">\(\mathbb{V}_\text{post}(\psi)\)</span> via
+<p>The informativeness of data about a parameter can be summarised by the posterior contraction <span class="citation">(<a href="#ref-schad2021toward">Schad, Betancourt, and Vasishth 2021</a>)</span> which compares the prior variance <span class="math inline">\(\mathbb{V}_\text{prior}(\phi)\)</span> to posterior variance <span class="math inline">\(\mathbb{V}_\text{post}(\phi)\)</span> via
 <span class="math display">\[\begin{equation}
-c(\psi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\psi)}.
+c(\phi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\phi)}.
 \end{equation}\]</span>
 Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.</p>
 </div>
@@ -1723,7 +1723,8 @@ Figure 6.20: Each principal component loading, obtained by the eigendecompositio
 Figure 6.21: The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
 </p>
 </div>
-<p>When projecting the <span class="math inline">\(3^8 = 6561\)</span> PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure <a href="naomi-aghq.html#fig:nodes-samples-comparison">6.21</a>).
+<p>Projecting the <span class="math inline">\(3^8 = 6561\)</span> PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure <a href="naomi-aghq.html#fig:nodes-samples-comparison">6.21</a>).
+Approximately 12 hyperparameters had well covered marginals: greater than the 8 naively obtained with a dense grid, but nonetheless far fewer than the full 24.
 Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
 This discrepancy occured due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure <a href="naomi-aghq-appendix.html#fig:marginal-sd">C.13</a>).</p>
 
@@ -1757,10 +1758,15 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 Figure 6.24: The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
 </p>
 </div>
-<p>Latent field point estimates obtained from GPCA-AGHQ closer to the gold-standard results from NUTS than the estimates obtained from GEB were (Figure <a href="naomi-aghq.html#fig:mean-sd-alt-latent">6.24</a>).</p>
+<p>Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure <a href="naomi-aghq.html#fig:mean-sd-alt-latent">6.24</a>).
+The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (0.063) was 20% lower than that between GEB and NUTS (0.078).
+For the posterior standard deviation estimates, there was a substantial 60% reduction in RMSE: from 0.14 (TMB) to 0.05 (PCA-AGHQ).
+However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures <a href="naomi-aghq-appendix.html#fig:mean-alt-output">C.15</a> and <a href="naomi-aghq-appendix.html#fig:sd-alt-output">C.16</a>).</p>
 </div>
 <div id="distributional-quantities" class="section level4 hasAnchor" number="6.5.4.2">
 <h4><span class="header-section-number">6.5.4.2</span> Distributional quantities<a href="naomi-aghq.html#distributional-quantities" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="kolmogorov-smirnov" class="section level5 hasAnchor" number="6.5.4.2.1">
+<h5><span class="header-section-number">6.5.4.2.1</span> Kolmogorov-Smirnov<a href="naomi-aghq.html#kolmogorov-smirnov" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ks-summary"></span>
 <img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better." width="95%" />
@@ -1775,7 +1781,18 @@ Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent 
 Figure 6.26: Figure caption.
 </p>
 </div>
-<p>Error as measured by the KS test statistic was correlated with low NUTS ESS (Figure <a href="naomi-aghq-appendix.html#fig:ks-ess">C.17</a>).</p>
+<p>The two-sample Kolmogorov-Smirnov (KS) test statistic <span class="citation">(<a href="#ref-smirnov1948table">Smirnov 1948</a>)</span> is the maximum absolute difference between two ECDFs <span class="math inline">\(F(\omega) = \frac{1}{n} \sum_{i = 1}^n \mathbb{I}_{\phi_i \leq \omega}\)</span>.
+Error as measured by the KS test statistic was correlated with low NUTS ESS (Figure <a href="naomi-aghq-appendix.html#fig:ks-ess">C.17</a>).</p>
+</div>
+<div id="maximum-mean-discrepancy" class="section level5 hasAnchor" number="6.5.4.2.2">
+<h5><span class="header-section-number">6.5.4.2.2</span> Maximum mean discrepancy<a href="naomi-aghq.html#maximum-mean-discrepancy" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Let <span class="math inline">\(\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n\)</span> and <span class="math inline">\(\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n\)</span> be two sets of joint posterior samples, and <span class="math inline">\(k\)</span> be a kernel.
+The maximum mean discrepancy [MMD; <span class="citation">Gretton et al. (<a href="#ref-gretton2006kernel">2006</a>)</span>] can be empirically estimated by
+<span class="math display">\[\begin{equation*}
+\text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
+\end{equation*}\]</span>
+Setting <span class="math inline">\(k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)\)</span> with <span class="math inline">\(\sigma\)</span> estimated from data using the <code>kernlab</code> package <span class="citation">(<a href="#ref-karatzoglou2019package">Karatzoglou et al. 2019</a>)</span>, then as compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).</p>
+</div>
 </div>
 </div>
 <div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.5">
@@ -1793,10 +1810,11 @@ Figure 6.27: The probability each strata has met the second 90 (ART coverage abo
 </p>
 </div>
 <p>Strata probabilities of having met the second 90 target were more accurately estimated by GPCA-AGHQ than GEB (Figure <a href="naomi-aghq.html#fig:exceedance-second90">6.27</a>).
-Both GPCA-AGHQ and GEB had substantial error as compared to results from NUTS, however, particularly for girls and women.</p>
+Both GPCA-AGHQ and GEB had substantial error as compared to results from NUTS, however, particularly for girls and women.
+This discrepancy in accuracy by sex may be caused by interactions between the household survey and ANC components of the model creating a more challenging posterior geometry.</p>
 </div>
-<div id="id_1inc" class="section level4 hasAnchor" number="6.5.5.2">
-<h4><span class="header-section-number">6.5.5.2</span> Finding strata with high incidence<a href="naomi-aghq.html#id_1inc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="one-inc" class="section level4 hasAnchor" number="6.5.5.2">
+<h4><span class="header-section-number">6.5.5.2</span> Finding strata with high incidence<a href="naomi-aghq.html#one-inc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
 Inferences from Naomi can be used to calculate the probability of a strata having high incidence by evaluating <span class="math inline">\(\mathbb{P}(\lambda_i &gt; 0.01)\)</span>.</p>
 
@@ -1833,7 +1851,7 @@ That said, it is ultimately more sustainable for users to be able to implement t
 However, model output posterior marginals did not see the same improvements.
 Approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
 GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.</p>
-<p>Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections <a href="naomi-aghq.html#second90">6.5.5.1</a> and <a href="#1inc"><strong>??</strong></a>).
+<p>Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections <a href="naomi-aghq.html#second90">6.5.5.1</a> and <a href="naomi-aghq.html#one-inc">6.5.5.2</a>).
 As such, where possible, gold-standard NUTS results should be computed.
 Though NUTS is to slow too run during a workshop, it could be run afterwards.
 As the UNAIDS HIV estimates process occurs annually, requiring days to compute more accurate estimates is viable.
@@ -2028,8 +2046,14 @@ Geman, Stuart, and Donald Geman. 1984. <span>“<span class="nocase">Stochastic 
 <div id="ref-gomez2020bayesian" class="csl-entry">
 Gómez-Rubio, Virgilio. 2020. <em><span class="nocase">Bayesian inference with INLA</span></em>. CRC Press.
 </div>
+<div id="ref-gretton2006kernel" class="csl-entry">
+Gretton, Arthur, Karsten Borgwardt, Malte Rasch, Bernhard Schölkopf, and Alex Smola. 2006. <span>“A Kernel Method for the Two-Sample-Problem.”</span> <em><span>Advances in Neural Information Processing Systems</span></em> 19.
+</div>
 <div id="ref-jackel2005note" class="csl-entry">
 Jäckel, Peter. 2005. <span>“<span class="nocase">A note on multivariate Gauss-Hermite quadrature</span>.”</span> <em>London: ABN-Amro. Re</em>.
+</div>
+<div id="ref-karatzoglou2019package" class="csl-entry">
+Karatzoglou, Alexandros, Alex Smola, Kurt Hornik, and Maintainer Alexandros Karatzoglou. 2019. <span>“Package <span>‘Kernlab’</span>.”</span> <em>CRAN R Project</em>.
 </div>
 <div id="ref-kish1965survey" class="csl-entry">
 Kish, Leslie. 1965. <em><span class="nocase">Survey sampling</span></em>. 04; HN29, K5.
@@ -2120,6 +2144,9 @@ Simpson, Daniel, Håvard Rue, Andrea Riebler, Thiago G Martins, Sigrunn H Sørby
 </div>
 <div id="ref-skaug2009approximate" class="csl-entry">
 Skaug, Hans J. 2009. <span>“<span class="nocase">Discussion of "Approximate Bayesian inference for latent Gaussian models by using integrated nested Laplace approximations"</span>.”</span> In <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, 71:319–92. 2. Wiley Online Library.
+</div>
+<div id="ref-smirnov1948table" class="csl-entry">
+Smirnov, N. 1948. <span>“Table for Estimating the Goodness of Fit of Empirical Distributions.”</span> <em>Annals of Mathematical Statistics</em> 19 (2): 279–81.
 </div>
 <div id="ref-spiegelhalter1996bugs" class="csl-entry">
 Spiegelhalter, David, Andrew Thomas, Nicky Best, and Wally Gilks. 1996. <span>“<span>BUGS 0.5 Examples</span>.”</span> <em>MRC Biostatistics Unit, Institute of Public Health, Cambridge, UK</em> 256.

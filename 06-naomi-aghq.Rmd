@@ -1405,9 +1405,9 @@ On the other hand, the BYM2 log standard deviation $\log(\sigma)$ and logit prop
 <!-- Which parameters had the lowest ESS? -->
 <!-- Other unidentifiables in the model -->
 
-The informativeness of data about a parameter can be summarised by the posterior contraction [@schad2021toward] which compares the prior variance $\mathbb{V}_\text{prior}(\psi)$ to posterior variance $\mathbb{V}_\text{post}(\psi)$ via
+The informativeness of data about a parameter can be summarised by the posterior contraction [@schad2021toward] which compares the prior variance $\mathbb{V}_\text{prior}(\phi)$ to posterior variance $\mathbb{V}_\text{post}(\phi)$ via
 \begin{equation}
-c(\psi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\psi)}.
+c(\phi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\phi)}.
 \end{equation}
 Posterior variances can be extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed.
 
@@ -1439,7 +1439,8 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/nodes-samples-comparison.png"))
 ```
 
-When projecting the $3^8 = 6561$ PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure \@ref(fig:nodes-samples-comparison)).
+Projecting the $3^8 = 6561$ PCA-AGHQ quadrature nodes onto each hyperparameter dimension, there was substantial variation in coverage by hyperparameter (Figure \@ref(fig:nodes-samples-comparison)).
+Approximately 12 hyperparameters had well covered marginals: greater than the 8 naively obtained with a dense grid, but nonetheless far fewer than the full 24.
 Coverage was higher among hyperparameters on the logistic scale, and lower among hyperparameters on the logarithmic scale.
 This discrepancy occured due to logistic hyperparameters naturally having higher posterior marginal standard deviation than logarithmic hyperparameters (Figure \@ref(fig:marginal-sd)).
 
@@ -1508,9 +1509,34 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
 ```
 
-Latent field point estimates obtained from GPCA-AGHQ closer to the gold-standard results from NUTS than the estimates obtained from GEB were (Figure \@ref(fig:mean-sd-alt-latent)).
+```{r}
+df_point <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd.csv"))
+
+df_point_pct <- df_point %>%
+  ungroup() %>%
+  group_by(indicator, type) %>%
+  summarise(
+    rmse_diff = 100 * diff(rmse) / max(rmse),
+    mae_diff = 100 * diff(mae) / max(mae)
+  )
+
+rmse_ahgq_mean <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior mean", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_tmb_mean <- filter(df_point, method == "GEB", indicator == "Posterior mean", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_diff_mean <- filter(df_point_pct, indicator == "Posterior mean", type == "latent") %>% pull(rmse_diff) %>% signif(2)
+
+rmse_ahgq_sd <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior SD", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_tmb_sd <- filter(df_point, method == "GEB", indicator == "Posterior SD", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_diff_sd <- filter(df_point_pct, indicator == "Posterior SD", type == "latent") %>% pull(rmse_diff) %>% signif(0)
+```
+
+Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure \@ref(fig:mean-sd-alt-latent)).
+The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (`r rmse_ahgq_mean`) was `r abs(rmse_diff_mean)`% lower than that between GEB and NUTS (`r rmse_tmb_mean`).
+For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (TMB) to `r abs(rmse_ahgq_sd)` (PCA-AGHQ).
+However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures \@ref(fig:mean-alt-output) and \@ref(fig:sd-alt-output)).
 
 #### Distributional quantities
+
+##### Kolmogorov-Smirnov
 
 (ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better.
 
@@ -1524,7 +1550,17 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ui-lambda-x.png"))
 ```
 
+The two-sample Kolmogorov-Smirnov (KS) test statistic [@smirnov1948table] is the maximum absolute difference between two ECDFs $F(\omega) = \frac{1}{n} \sum_{i = 1}^n \mathbb{I}_{\phi_i \leq \omega}$.
 Error as measured by the KS test statistic was correlated with low NUTS ESS (Figure \@ref(fig:ks-ess)).
+
+##### Maximum mean discrepancy
+
+Let $\Phi^{1} = \{\boldsymbol{\mathbf{\phi}}^1_i\}_{i = 1}^n$ and $\Phi^2 = \{\boldsymbol{\mathbf{\phi}}^2_i\}_{i = 1}^n$ be two sets of joint posterior samples, and $k$ be a kernel.
+The maximum mean discrepancy [MMD; @gretton2006kernel] can be empirically estimated by
+\begin{equation*}
+\text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
+\end{equation*}
+Setting $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package], then as compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).
 
 ### Exceedance probabilities
 
@@ -1542,8 +1578,9 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 Strata probabilities of having met the second 90 target were more accurately estimated by GPCA-AGHQ than GEB (Figure \@ref(fig:exceedance-second90)).
 Both GPCA-AGHQ and GEB had substantial error as compared to results from NUTS, however, particularly for girls and women.
- 
-#### Finding strata with high incidence {#1inc}
+This discrepancy in accuracy by sex may be caused by interactions between the household survey and ANC components of the model creating a more challenging posterior geometry.
+
+#### Finding strata with high incidence {#one-inc}
 
 Some HIV interventions are cost-effective only within high HIV incidence settings, typically defined as higher than 1% incidence per year.
 Inferences from Naomi can be used to calculate the probability of a strata having high incidence by evaluating $\mathbb{P}(\lambda_i > 0.01)$.
@@ -1582,7 +1619,7 @@ However, model output posterior marginals did not see the same improvements.
 Approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had systematic inaccuracies as compared with NUTS.
 GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.
 
-Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections \@ref(second90) and \@ref(1inc)).
+Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections \@ref(second90) and \@ref(one-inc)).
 As such, where possible, gold-standard NUTS results should be computed.
 Though NUTS is to slow too run during a workshop, it could be run afterwards.
 As the UNAIDS HIV estimates process occurs annually, requiring days to compute more accurate estimates is viable.
