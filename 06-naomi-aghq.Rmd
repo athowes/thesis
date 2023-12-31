@@ -1513,13 +1513,9 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 
 ### Inference comparison
 
-#### Point estimates
+Posterior inferences from GEB, GPCA-AGHQ and NUTS were compared using point estimates (Section \@ref(point-estimates)) distributional quantities (Section \@ref(distributional-quantities)).
 
-(ref:mean-sd-alt-latent) The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
-
-```{r mean-sd-alt-latent, fig.cap="(ref:mean-sd-alt-latent)"}
-knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
-```
+#### Point estimates {#point-estimates}
 
 ```{r}
 df_point <- readr::read_csv(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd.csv"))
@@ -1541,16 +1537,36 @@ rmse_tmb_sd <- filter(df_point, method == "GEB", indicator == "Posterior SD", ty
 rmse_diff_sd <- filter(df_point_pct, indicator == "Posterior SD", type == "latent") %>% pull(rmse_diff) %>% signif(0)
 ```
 
+(ref:mean-sd-alt-latent) The latent field posterior mean and posterior standard deviation point estimates from each inference method as compared with those from NUTS. The root mean square error (RMSE) and mean absolute error (MAE) are displayed in the top left. For both the posterior mean and posterior standard deviation, GPCA-AGHQ reduced RMSE and MAE as compared with GEB.
+
+```{r mean-sd-alt-latent, fig.cap="(ref:mean-sd-alt-latent)"}
+knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/mean-sd-alt-latent.png"))
+```
+
 Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure \@ref(fig:mean-sd-alt-latent)).
 The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (`r rmse_ahgq_mean`) was `r abs(rmse_diff_mean)`% lower than that between GEB and NUTS (`r rmse_tmb_mean`).
 For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (TMB) to `r abs(rmse_ahgq_sd)` (PCA-AGHQ).
 However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures \@ref(fig:mean-alt-output) and \@ref(fig:sd-alt-output)).
 
-#### Distributional quantities
+#### Distributional quantities {#distributional-quantities}
 
 ##### Kolmogorov-Smirnov
 
-(ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters `ui_lambda_x` the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to $\mathbf{u}_x^\lambda$ and plays a key role in the ART attendence component of the Naomi (Section \@ref(art)).
+```{r}
+ks_summary <- readRDS(paste0("resources/naomi-aghq/", resource_version, "/depends/ks-summary.rds"))
+
+ks_summary_summarise <- ks_summary %>%
+  ungroup() %>%
+  filter(type == "Latent") %>%
+  summarise(
+    tmb = sum(size * TMB) / sum(size),
+    aghq = sum(size * aghq) / sum(size)
+  )
+
+ks_pct <- (ks_summary_summarise$tmb - ks_summary_summarise$aghq) / ks_summary_summarise$tmb
+```
+
+(ref:ks-summary) The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters `ui_lambda_x` the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to $\mathbf{u}_x^\lambda$ and plays a key role in the ART attendance component of the Naomi (Section \@ref(art)).
 
 ```{r ks-summary, fig.cap="(ref:ks-summary)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/ks-summary.png"))
@@ -1567,7 +1583,11 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 ```
 
 The two-sample Kolmogorov-Smirnov (KS) test statistic [@smirnov1948table] is the maximum absolute difference between two ECDFs $F(\omega) = \frac{1}{n} \sum_{i = 1}^n \mathbb{I}_{\phi_i \leq \omega}$.
-Error as measured by the KS test statistic was correlated with low NUTS ESS (Figure \@ref(fig:ks-ess)).
+It is a relatively stringent, worst case, measure of distance between empirical distributions.
+The average KS test statistic for GPCA-AGHQ (`r signif(ks_summary_summarise$aghq, 2)`) was `r signif(100 * ks_pct, 2)`% less than the average KS test statistic for GEB (`r signif(ks_summary_summarise$tmb, 2)`).
+
+For both GEB and GPCA-AGHQ the KS test statistic for a parameter was correlated with low NUTS ESS (Figure \@ref(fig:ks-ess)).
+This may be due to by difficulties estimating particular parameters for all inference methods, or high KS values caused by NUTS inaccuracies.
 
 ##### Maximum mean discrepancy
 
@@ -1577,9 +1597,11 @@ The maximum mean discrepancy [MMD; @gretton2006kernel] is a measure of distance 
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
 \end{equation}
 The kernel was set to $k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)$ with $\sigma$ estimated from data using the `kernlab` \textsc{R} package [@karatzoglou2019package].
-As compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).
+As compared with NUTS, the MMD from GPCA-AGHQ to NUTS (0.071) was 11% smaller than that of GEB to NUTS (0.080), in alignment with the results from KS tests.
 
 ### Exceedance probabilities
+
+As a more realistic use case for Naomi model outputs, consider the two following case-studies based on calculating exceedance probabilities.
 
 #### Meeting the second 90 {#second90}
 
@@ -1624,10 +1646,12 @@ These contributions are discussed in turn, before outlining suggestions for futu
 
 @monnahan2018no write that "to our knowledge, `TMB` is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly".
 This chapter made important progress towards adding INLA to the integration tools easily accessible using `TMB`.
+Reaching this goal would be of significant value to both applied and methodological researchers.
 
-Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
+There is a place for both formula-based and universal statistical tools.
+Furthermore, developers of formula-based tools do have incentives to engage with the needs of their users, and indeed do so.
 For example, after requesting for the generalised binomial distribution used in Equation \@ref(eq:xbin) to be included in `R-INLA`, a prototype version was shortly made available.
-That said, it is ultimately more sustainable for users to be able to implement their own distributions and models.
+That said, it is ultimately more sustainable for advanced users to have capacity to implement their own distributions and models.
 
 ### PCA-AGHQ with application to INLA for Naomi
 
@@ -1695,7 +1719,8 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 
 #### Computational improvements
 
-1. Approximation: Implement the simplified Laplace marginals of @wood2020simplified (Section \@ref(simplified-inla)).
+1. Approximation: The most significant improvement likely could come by using approximations to the Laplace marginals.
+In particular, he simplified Laplace marginals of @wood2020simplified (Section \@ref(simplified-inla)) should be implemented, as the ELGM setting has relatively dense precision matrices.
 2. Parallelisation: Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 This point is discussed by @kristensen2016tmb who highlight that `TMB` could applied to perform function evaluations in parallel, for example using the `parallel` R package.

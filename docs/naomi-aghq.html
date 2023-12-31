@@ -1760,6 +1760,7 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 </div>
 <div id="inference-comparison" class="section level3 hasAnchor" number="6.5.4">
 <h3><span class="header-section-number">6.5.4</span> Inference comparison<a href="naomi-aghq.html#inference-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Posterior inferences from GEB, GPCA-AGHQ and NUTS were compared using point estimates (Section <a href="naomi-aghq.html#point-estimates">6.5.4.1</a>) distributional quantities (Section <a href="naomi-aghq.html#distributional-quantities">6.5.4.2</a>).</p>
 <div id="point-estimates" class="section level4 hasAnchor" number="6.5.4.1">
 <h4><span class="header-section-number">6.5.4.1</span> Point estimates<a href="naomi-aghq.html#point-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
@@ -1780,9 +1781,9 @@ However, puzzlingly, improvements in latent field estimate accuracy only transfe
 <h5><span class="header-section-number">6.5.4.2.1</span> Kolmogorov-Smirnov<a href="naomi-aghq.html#kolmogorov-smirnov" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:ks-summary"></span>
-<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters ui_lambda_x the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to \(\mathbf{u}_x^\lambda\) and plays a key role in the ART attendence component of the Naomi (Section 6.3.1.4)." width="95%" />
+<img src="resources/naomi-aghq/20231231-111534-5d99a043/depends/ks-summary.png" alt="The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters ui_lambda_x the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to \(\mathbf{u}_x^\lambda\) and plays a key role in the ART attendance component of the Naomi (Section 6.3.1.4)." width="95%" />
 <p class="caption">
-Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters <code>ui_lambda_x</code> the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to <span class="math inline">\(\mathbf{u}_x^\lambda\)</span> and plays a key role in the ART attendence component of the Naomi (Section <a href="naomi-aghq.html#art">6.3.1.4</a>).
+Figure 6.25: The average Kolmogorov-Smirnov (KS) test statistic for each latent field parameter of the Naomi model. Vectors of parameters were grouped together. For points above the dashed line at zero, performance of GEB was better. For points below the dashed line, performance of GPCA-AGHQ was better. Most notably, for the latent field parameters <code>ui_lambda_x</code> the test statistic for GEB was substantially higher than for GPCA-AGHQ. This parameter, of length 32, corresponds to <span class="math inline">\(\mathbf{u}_x^\lambda\)</span> and plays a key role in the ART attendance component of the Naomi (Section <a href="naomi-aghq.html#art">6.3.1.4</a>).
 </p>
 </div>
 
@@ -1793,7 +1794,10 @@ Figure 6.26: The parameter <code>ui_lambda_x[26]</code> had the greatest differe
 </p>
 </div>
 <p>The two-sample Kolmogorov-Smirnov (KS) test statistic <span class="citation">(<a href="#ref-smirnov1948table">Smirnov 1948</a>)</span> is the maximum absolute difference between two ECDFs <span class="math inline">\(F(\omega) = \frac{1}{n} \sum_{i = 1}^n \mathbb{I}_{\phi_i \leq \omega}\)</span>.
-Error as measured by the KS test statistic was correlated with low NUTS ESS (Figure <a href="naomi-aghq-appendix.html#fig:ks-ess">C.17</a>).</p>
+It is a relatively stringent, worst case, measure of distance between empirical distributions.
+The average KS test statistic for GPCA-AGHQ (0.077) was 8.6% less than the average KS test statistic for GEB (0.084).</p>
+<p>For both GEB and GPCA-AGHQ the KS test statistic for a parameter was correlated with low NUTS ESS (Figure <a href="naomi-aghq-appendix.html#fig:ks-ess">C.17</a>).
+This may be due to by difficulties estimating particular parameters for all inference methods, or high KS values caused by NUTS inaccuracies.</p>
 </div>
 <div id="maximum-mean-discrepancy" class="section level5 hasAnchor" number="6.5.4.2.2">
 <h5><span class="header-section-number">6.5.4.2.2</span> Maximum mean discrepancy<a href="naomi-aghq.html#maximum-mean-discrepancy" class="anchor-section" aria-label="Anchor link to header"></a></h5>
@@ -1803,12 +1807,13 @@ The maximum mean discrepancy [MMD; <span class="citation">Gretton et al. (<a hre
 \text{MMD}(\Phi^1, \Phi^2) = \sqrt{\frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^1_i, \boldsymbol{\mathbf{\phi}}^1_j) - \frac{2}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}_i^1, \boldsymbol{\mathbf{\phi}}_j^2) + \frac{1}{n^2} \sum_{i, j = 1}^n k(\boldsymbol{\mathbf{\phi}}^2_i, \boldsymbol{\mathbf{\phi}}^2_j)}.
 \end{equation}\]</span>
 The kernel was set to <span class="math inline">\(k(\boldsymbol{\mathbf{\phi}}^1, \boldsymbol{\mathbf{\phi}}^2) = \exp(-\sigma \lVert \boldsymbol{\mathbf{\phi}}^1 - \boldsymbol{\mathbf{\phi}}^2 \rVert^2)\)</span> with <span class="math inline">\(\sigma\)</span> estimated from data using the <code>kernlab</code> package <span class="citation">(<a href="#ref-karatzoglou2019package">Karatzoglou et al. 2019</a>)</span>.
-As compared with NUTS, the MMD from GPCA-AGHQ (0.071) was 11% smaller than that of GEB (0.080).</p>
+As compared with NUTS, the MMD from GPCA-AGHQ to NUTS (0.071) was 11% smaller than that of GEB to NUTS (0.080), in alignment with the results from KS tests.</p>
 </div>
 </div>
 </div>
 <div id="exceedance-probabilities" class="section level3 hasAnchor" number="6.5.5">
 <h3><span class="header-section-number">6.5.5</span> Exceedance probabilities<a href="naomi-aghq.html#exceedance-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>As a more realistic use case for Naomi model outputs, consider the two following case-studies based on calculating exceedance probabilities.</p>
 <div id="second90" class="section level4 hasAnchor" number="6.5.5.1">
 <h4><span class="header-section-number">6.5.5.1</span> Meeting the second 90<a href="naomi-aghq.html#second90" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Ambitious targets for scaling up ART treatment have been developed by UNAIDS, with the goal of ending the AIDS epidemic by 2030 <span class="citation">(<a href="#ref-unaids2014target">UNAIDS 2014</a>)</span>.
@@ -1852,10 +1857,12 @@ These contributions are discussed in turn, before outlining suggestions for futu
 <div id="a-universal-inla-implementation" class="section level3 hasAnchor" number="6.6.1">
 <h3><span class="header-section-number">6.6.1</span> A universal INLA implementation<a href="naomi-aghq.html#a-universal-inla-implementation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> write that “to our knowledge, <code>TMB</code> is the only software platform capable of toggling between integration tools [the Laplace approximation and NUTS] so effortlessly”.
-This chapter made important progress towards adding INLA to the integration tools easily accessible using <code>TMB</code>.</p>
-<p>Developers of formula-based statistical tools do have incentives to engage with the needs of their users.
+This chapter made important progress towards adding INLA to the integration tools easily accessible using <code>TMB</code>.
+Reaching this goal would be of significant value to both applied and methodological researchers.</p>
+<p>There is a place for both formula-based and universal statistical tools.
+Furthermore, developers of formula-based tools do have incentives to engage with the needs of their users, and indeed do so.
 For example, after requesting for the generalised binomial distribution used in Equation <a href="naomi-aghq.html#eq:xbin">(6.27)</a> to be included in <code>R-INLA</code>, a prototype version was shortly made available.
-That said, it is ultimately more sustainable for users to be able to implement their own distributions and models.</p>
+That said, it is ultimately more sustainable for advanced users to have capacity to implement their own distributions and models.</p>
 </div>
 <div id="pca-aghq-with-application-to-inla-for-naomi" class="section level3 hasAnchor" number="6.6.2">
 <h3><span class="header-section-number">6.6.2</span> PCA-AGHQ with application to INLA for Naomi<a href="naomi-aghq.html#pca-aghq-with-application-to-inla-for-naomi" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1922,7 +1929,8 @@ The measures of fit would have to be for marginals, ruling out approaches like P
 <div id="computational-improvements" class="section level4 hasAnchor" number="6.6.3.3">
 <h4><span class="header-section-number">6.6.3.3</span> Computational improvements<a href="naomi-aghq.html#computational-improvements" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <ol style="list-style-type: decimal">
-<li>Approximation: Implement the simplified Laplace marginals of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> (Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>).</li>
+<li>Approximation: The most significant improvement likely could come by using approximations to the Laplace marginals.
+In particular, he simplified Laplace marginals of <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span> (Section <a href="naomi-aghq.html#simplified-inla">6.1.3.4</a>) should be implemented, as the ELGM setting has relatively dense precision matrices.</li>
 <li>Parallelisation: Integration over a moderate number of hyperparameters resulted in use of quadrature grids with a large number of nodes.
 Computation at each node is independent, so algorithm run-time could potentially be significantly improved using parallel computing.
 This point is discussed by <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span> who highlight that <code>TMB</code> could applied to perform function evaluations in parallel, for example using the <code>parallel</code> R package.</li>
