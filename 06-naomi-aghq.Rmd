@@ -472,7 +472,7 @@ Specifically, @rue2009approximate augment the latent field to include a noisy st
 Similarly, in what @van2023new (Section 2.1) refer to as the "modern" formula of INLA, the latent field is not augmented.
 The crux of the issue regards the dimensions and sparsity structure of the Hessian matrix $\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}})$.
 Details are left to @stringer2022fast.
-This thesis, as such, does not augment the latent field.
+Based on these findings, this thesis does not augment the latent field.
 
 ### Software {#software}
 
@@ -496,9 +496,10 @@ Figure \@ref(fig:inla-grid-demo) demonstrates the latter two integration strateg
 By default, the `"grid"` strategy is used for $m \leq 2$ and the `"ccd"` strategy is used for $m > 2$.
 
 Various software packages have been built using `R-INLA`.
-Perhaps the most substantial of which is the `inlabru` R package [@bachl2019inlabru].
+Perhaps the most substantial is the `inlabru` R package [@bachl2019inlabru].
 As well as a simplified syntax, `inlabru` provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
 These complex model components are specified in `inlabru` using the `bru_mapper` system.
+See the `inlabru` package vignettes for additional details.
 
 <!-- Note: does the CCD need to have weights added? -->
 
@@ -511,7 +512,7 @@ knitr::include_graphics("figures/naomi-aghq/inla-grid-demo.png")
 #### `TMB`
 
 Template Model Builder [`TMB`; @kristensen2016tmb] is an R package which implements the Laplace approximation.
-In `TMB` derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
+In `TMB`, derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; @baydin2017automatic].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
 The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function's derivative.
 A review of AD and how it can be efficiently implemented is provided by @margossian2019review.
@@ -853,6 +854,7 @@ The latent field marginal approximation is then
 As in Section \@ref(epil-laplace-eb-tmb) this expression may be evaluated at a set of $l$ quadrature nodes, and normalised de novo.
 Each objective function inner optimisation can be initialised using the mode $\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}))_{-i}$ of $p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})$.
 Integration over the hyperparameters requires each of the $N$ objective functions to be evaluated at $k \times l$ points, rather than the $1 \times l$ points required in the EB approach.
+The complete algorithm is given in Appendix \@ref(algorithm).
 
 #### NUTS with `tmbstan` {#epil-nuts}
 
@@ -884,11 +886,6 @@ Convergence diagnostics are in Appendix \@ref(rstan-epil).
 
 #### Comparison {#epil-comparison}
 
-Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from the inference methods implemented in `TMB` (Section \@ref(epil-gauss-eb-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-laplace-aghq-tmb)) were highly similar to their `R-INLA` analogues in Section \@ref(epil-inla) (Figure \@ref(fig:beta-mean-sd)).
-Posterior distributions obtained were also similar.
-Figure \@ref(fig:intercept-comparison) shows ECDF difference plots for Gaussian or Laplace marginals from `TMB` and `R-INLA` (as compared with results from NUTS implemented in `tmbstan`) for $\beta_0$.
-These results provide evidence that the implementation of INLA in `TMB` is correct.
-
 (ref:beta-mean-sd) Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with `tmbstan`. Results from `R-INLA` and `TMB` are similar, especially for the posterior mean, but do differ in places. Differences could be attributable to bias corrections used in `R-INLA`.
 
 ```{r beta-mean-sd, fig.cap="(ref:beta-mean-sd)"}
@@ -901,6 +898,11 @@ knitr::include_graphics("figures/naomi-aghq/beta-mean-sd.png")
 knitr::include_graphics("figures/naomi-aghq/intercept-comparison.png")
 ```
 
+Posterior means and standard deviations for the the six regression parameters $\boldsymbol{\mathbf{\beta}}$ from the inference methods implemented in `TMB` (Section \@ref(epil-gauss-eb-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-gauss-aghq-tmb), \@ref(epil-laplace-aghq-tmb)) were highly similar to their `R-INLA` analogues in Section \@ref(epil-inla) (Figure \@ref(fig:beta-mean-sd)).
+Posterior distributions obtained were also similar.
+Figure \@ref(fig:intercept-comparison) shows ECDF difference plots for Gaussian or Laplace marginals from `TMB` and `R-INLA` (as compared with results from NUTS implemented in `tmbstan`) for $\beta_0$.
+These results provide evidence that the implementation of INLA in `TMB` is correct.
+
 ```{r}
 epil_time <- read_csv("figures/naomi-aghq/epil-time.csv")
 epil_time_laplace_eb <- filter(epil_time, method == "Laplace, EB", software == "TMB")
@@ -910,6 +912,12 @@ epil_eb_aghq_multiplier <- round(epil_time_laplace_aghq$time / epil_time_laplace
 epil_time_tmbstan <- filter(epil_time, method == "NUTS", software == "tmbstan")
 epil_time_rstan <- filter(epil_time, method == "NUTS", software == "rstan")
 epil_nuts_multiplier <- 100 * round(epil_time_tmbstan$time / epil_time_rstan$time, digits = 3)
+```
+
+(ref:epil-time) The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table \@ref(tab:epil-approaches).
+
+```{r epil-time, fig.cap="(ref:epil-time)"}
+knitr::include_graphics("figures/naomi-aghq/epil-time.png")
 ```
 
 Figures \@ref(fig:epil-time) shows the number of seconds taken to fit the epilepsy GLMM model for each approach.
@@ -922,12 +930,6 @@ Laplace marginals in `TMB` with AGHQ ($k^2 = 3^2 = 9$ quadrature nodes) took `r 
 For this problem, the `tmbstan` implementation of NUTS took `r epil_nuts_multiplier`% of time of the `rstan` implementation.
 Diagnostics (Figures \@ref(fig:tmbstan-epil) and \@ref(fig:stan-epil)) show that both implementations converged.
 @monnahan2018no (Supporting information) found runtime with `rstan` and `tmbstan` to be comparable, so the relatively large difference in this case is surprising.
-
-(ref:epil-time) The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table \@ref(tab:epil-approaches).
-
-```{r epil-time, fig.cap="(ref:epil-time)"}
-knitr::include_graphics("figures/naomi-aghq/epil-time.png")
-```
 
 ### Loa loa ELGM {#loaloa}
 
@@ -968,8 +970,8 @@ Instead, @bilodeau2022stochastic implemented this model in `TMB`.
 Inference was then performed using Gaussian marginals and AGHQ via `aghq` and NUTS via `tmbstan`.
 This section considers inference using three approaches (Table \@ref(tab:loaloa-approaches)), extending @bilodeau2022stochastic by including AGHQ with Laplace marginals.
 
-| Method         | Software      | Details |
-|----------------|---------------|---------------
+| Method    | Software  | Details       |
+|-----------|-----------|---------------|
 | Gaussian, AGHQ | `TMB` and `aghq` | $k = 3$ |
 | Laplace, AGHQ  | `TMB` and `aghq` | $k = 3$ |
 | NUTS           | `tmbstan`     | 4 chains of 5000 iterations, with default NUTS settings as implemented in `rstan` [@carpenter2017stan] |

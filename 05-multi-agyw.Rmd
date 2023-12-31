@@ -26,7 +26,7 @@ I developed the statistical model, building upon an earlier version of the analy
 The model and results for 13 countries are presented in @howes2023spatio.
 Outputs are implemented in a spreadsheet tool ([`https://hivtools.unaids.org/pse/`](https://hivtools.unaids.org/pse/)) for use in national HIV response planning.
 The tool is being updated by inclusion of more countries to the analysis, and extension of the methodology, including to additional risk groups.
-Code for the analysis in this chapter is available from [`https://github.com/athowes/multi-agyw`](https://github.com/athowes/multi-agyw).
+Code for the analysis in this chapter is available from [`https://github.com/athowes/multi-agyw`](https://github.com/athowes/multi-agyw) and supported by the `multi.utils` R package [@howes2023multiutils].
 
 ## Background
 
@@ -535,19 +535,12 @@ To allow the log odds ratio for the highest risk group to vary based on general 
 I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.
 
 Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV $H_{ia}$ on the logit scale using numerical optimisation.
-I did this by by finding the values of $\theta_{ia}$ which minimise the equation
+To do so, I found the values of $\theta_{ia}$ which minimised the equation
 \begin{equation}
 f(\theta_{ia}) = \sum_{k = 1}^4 \left( \text{logistic}(\theta_{ia} + \log(\text{OR}_k)) \cdot N_{iak} \right) - H_{ia},
 \end{equation}
-where
-\begin{equation}
-\text{logistic}(x) = \exp(x) / (1 + \exp(x)),
-\end{equation}
-such that
-\begin{equation}
-\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}.
-\end{equation}
-These values are given by
+where $\text{logistic}(x) = \exp(x) / (1 + \exp(x))$ such that $\text{logistic}(\hat \theta_{ia} + \log(\text{OR}_k)) = \rho_{iak}$.
+These values were given by
 \begin{equation}
 \hat \theta_{ia} = \arg\min_{\theta_{ia} \in [-10, 10]} f(\theta_{ia})^2.
 \end{equation}
@@ -555,7 +548,7 @@ The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{i
 
 ### Disaggregation of Naomi incidence estimates
 
-I calculated the number of new HIV infections by risk group using linear disaggregation
+I used linear disaggregation to calculate the number of new HIV infections by risk group
 \begin{align}
     I_{ia} &= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
     &= 0 + \lambda_{ia2} (1 - \rho_{ia2}) N_{ia2} + \lambda_{ia3} (1 - \rho_{ia3}) {ia3} + \lambda_{ia4} (1 - \rho_{ia4}) N_{ia4} \\
@@ -563,7 +556,6 @@ I calculated the number of new HIV infections by risk group using linear disaggr
 \end{align}
 where $\text{RR}_{2}$, $\text{RR}_{3}$ and $\text{RR}_{4}(\cdot)$ are the HIV risk ratios given in Table \@ref(tab:risk-groups), and $(1 - \rho_{iak}) N_{iak}$ are the susceptible population sizes in each risk group.
 The risk ratio for FSW was defined as a function of district-level incidence in the general population $\lambda_{ia}$.
-
 Risk group specific HIV incidence estimates were then given by
 \begin{align}
     \lambda_{ia1} &= 0, \\
@@ -571,15 +563,14 @@ Risk group specific HIV incidence estimates were then given by
     \lambda_{ia3} &= \text{RR}_{3} \lambda_{ia2}, \\
     \lambda_{ia4} &= \text{RR}_4(\lambda_{ia}) \lambda_{ia2}.
 \end{align}
-I evaluated these equations using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
+These equations were evaluated using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
 The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
 
 ### Expected new infections reached
 
-I calculated the number of new infections that would be reached prioritising according to each possible stratification of the population.
-That is, for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group. 
-
-To illustrate this approach, consider stratification by age.
+The number of new infections that would be reached prioritising according to each possible stratification of the population were calculated.
+Each possible stratification refers to all $2^3 = 8$ possible combinations of stratification by location, age, and risk group.
+As an illustration, consider stratification by age.
 I first aggregated the number of new HIV infections and HIV incidence such that
 \begin{align}
     I_a &= \sum_{ik} I_{iak}, \\
@@ -703,11 +694,7 @@ fsw_iso3 <- df_3p1_subnational %>%
   summarise(estimate_smoothed = sum(estimate_smoothed * population_mean, na.rm = TRUE) / sum(population_mean, na.rm = TRUE))
 ```
 
-Figure \@ref(fig:aaa-variance-proportions) and Figure \@ref(fig:3p1-within-between-country-variation) show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.
-I focused on the most recent estimates because they are the most relevant to inform ongoing HIV policy.
-In subsequent results, all estimates refer to 2018, unless otherwise indicated.
-
-(ref:3p1-continental-map) The spatial distribution (posterior mean) of the AGYW risk group proportions in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group.
+(ref:3p1-continental-map) The posterior mean of the AGYW risk group proportions over space in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, though desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group.
 
 ```{r 3p1-continental-map, fig.cap="(ref:3p1-continental-map)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/3p1-continental-map.png"))
@@ -718,6 +705,10 @@ knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depe
 ```{r 3p1-within-between-country-variation, fig.cap="(ref:3p1-within-between-country-variation)"}
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/3p1-within-between-country-variation.png"))
 ```
+
+Figure \@ref(fig:aaa-variance-proportions) and Figure \@ref(fig:3p1-within-between-country-variation) show posterior mean estimates for the proportion in each risk group for the final model in 2018, the most recent year included in our analysis.
+I focused on the most recent estimates because they are the most relevant to inform ongoing HIV policy.
+In subsequent results, all estimates refer to 2018, unless otherwise indicated.
 
 The median national FSW proportion was `r fsw_age_Y015_019$median`\% (95\% CI `r fsw_age_Y015_019$lower`--`r fsw_age_Y015_019$upper`) for the 15-19 age group, `r fsw_age_Y020_024$median`\% (95\% CI `r fsw_age_Y020_024$lower`--`r fsw_age_Y020_024$upper`) for the 20-24 age group and `r fsw_age_Y025_029$median`\% (95\% CI `r fsw_age_Y025_029$lower`--`r fsw_age_Y025_029$upper`) for the 25-29 age group, in line with the results displayed in Figure \@ref(fig:age-disagg-fsw-line).
 
@@ -733,6 +724,12 @@ The exception was Mozambique, where the majority (`r 100 - round(moz_Y015_019_no
 
 #### Coverage assessment
 
+(ref:coverage) Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.
+
+```{r coverage, fig.cap="(ref:coverage)"}
+knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/coverage.png"))
+```
+
 To assess the calibration of the fitted model, I calculated the quantile $q$ of each observation within the posterior predictive distribution.
 For calibrated models, these quantiles, known as probability integral transform (PIT) values [@dawid1984present; @bosse2022scoringutils], should follow a uniform distribution $q \sim \mathcal{U}[0, 1]$.
 To generate samples from the posterior predictive distribution, I applied the multinomial likelihood to samples from the latent field, setting the sample size to be the floor of the Kish effective sample size.
@@ -742,12 +739,6 @@ This approach has the advantage of considering all possible confidence values at
 To test for uniformity, I used the binomial distribution based simultaneous confidence bands for ECDF difference values developed by @sailynoja2022graphical.
 I found the only significant deviation from uniformity occurred in the right-hand tail of the one cohabiting partner risk group.
 That is to say, the proportion of the PIT values which were greater than 0.95 was significantly more than would be expected under a calibrated model.
-
-(ref:coverage) Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.
-
-```{r coverage, fig.cap="(ref:coverage)"}
-knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/coverage.png"))
-```
 
 #### Variance decomposition {#variance-decomposition}
 

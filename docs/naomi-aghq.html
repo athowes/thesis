@@ -374,7 +374,7 @@ div.csl-indent {
 <li class="chapter" data-level="C.2.1" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#nuts-convergence-and-suitability-1"><i class="fa fa-check"></i><b>C.2.1</b> NUTS convergence and suitability</a></li>
 <li class="chapter" data-level="C.2.2" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#inference-comparison-1"><i class="fa fa-check"></i><b>C.2.2</b> Inference comparison</a></li>
 </ul></li>
-<li class="chapter" data-level="C.3" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#algorithms"><i class="fa fa-check"></i><b>C.3</b> Algorithms</a></li>
+<li class="chapter" data-level="C.3" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#algorithm"><i class="fa fa-check"></i><b>C.3</b> AGHQ with Laplace marginals algorithm</a></li>
 <li class="chapter" data-level="C.4" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#naomi-math"><i class="fa fa-check"></i><b>C.4</b> Simplified Naomi model description</a>
 <ul>
 <li class="chapter" data-level="C.4.1" data-path="naomi-aghq-appendix.html"><a href="naomi-aghq-appendix.html#naomi-process"><i class="fa fa-check"></i><b>C.4.1</b> Process specification</a></li>
@@ -818,7 +818,7 @@ Specifically, <span class="citation">Håvard Rue, Martino, and Chopin (<a href="
 Similarly, in what <span class="citation">Van Niekerk et al. (<a href="#ref-van2023new">2023</a>)</span> (Section 2.1) refer to as the “modern” formula of INLA, the latent field is not augmented.
 The crux of the issue regards the dimensions and sparsity structure of the Hessian matrix <span class="math inline">\(\hat {\mathbf{H}}(\boldsymbol{\mathbf{\theta}})\)</span>.
 Details are left to <span class="citation">Stringer, Brown, and Stafford (<a href="#ref-stringer2022fast">2022</a>)</span>.
-This thesis, as such, does not augment the latent field.</p>
+Based on these findings, this thesis does not augment the latent field.</p>
 </div>
 </div>
 <div id="software" class="section level3 hasAnchor" number="6.1.4">
@@ -840,9 +840,10 @@ The quadrature grid used can be chosen by setting <code>int.strategy</code> to <
 Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the latter two integration strategies.
 By default, the <code>"grid"</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>"ccd"</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
 <p>Various software packages have been built using <code>R-INLA</code>.
-Perhaps the most substantial of which is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>.
+Perhaps the most substantial is the <code>inlabru</code> R package <span class="citation">(<a href="#ref-bachl2019inlabru">Bachl et al. 2019</a>)</span>.
 As well as a simplified syntax, <code>inlabru</code> provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.
-These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.</p>
+These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.
+See the <code>inlabru</code> package vignettes for additional details.</p>
 <!-- Note: does the CCD need to have weights added? -->
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
@@ -855,7 +856,7 @@ Figure 6.4: Consider the function <span class="math inline">\(f(z_1, z_2) = \tex
 <div id="tmb" class="section level4 hasAnchor" number="6.1.4.2">
 <h4><span class="header-section-number">6.1.4.2</span> <code>TMB</code><a href="naomi-aghq.html#tmb" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Template Model Builder [<code>TMB</code>; <span class="citation">Kristensen et al. (<a href="#ref-kristensen2016tmb">2016</a>)</span>] is an R package which implements the Laplace approximation.
-In <code>TMB</code> derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
+In <code>TMB</code>, derivatives are obtained using automatic differentiation, also known as algorithmic differentiation [AD; <span class="citation">Baydin et al. (<a href="#ref-baydin2017automatic">2017</a>)</span>].
 The approach of AD is to decompose any function into a sequence of elementary operations with known derivatives.
 The known derivatives of the elementary operations may then be composed by repeat use of the chain rule to obtain the function’s derivative.
 A review of AD and how it can be efficiently implemented is provided by <span class="citation">C. C. Margossian (<a href="#ref-margossian2019review">2019</a>)</span>.
@@ -1175,7 +1176,8 @@ The latent field marginal approximation is then
 \end{equation}\]</span>
 As in Section <a href="naomi-aghq.html#epil-laplace-eb-tmb">6.2.1.4</a> this expression may be evaluated at a set of <span class="math inline">\(l\)</span> quadrature nodes, and normalised de novo.
 Each objective function inner optimisation can be initialised using the mode <span class="math inline">\(\hat{\mathbf{x}}(\boldsymbol{\mathbf{\theta}}(\mathbf{z}))_{-i}\)</span> of <span class="math inline">\(p_\texttt{G}(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}(\mathbf{z}), \mathbf{y})\)</span>.
-Integration over the hyperparameters requires each of the <span class="math inline">\(N\)</span> objective functions to be evaluated at <span class="math inline">\(k \times l\)</span> points, rather than the <span class="math inline">\(1 \times l\)</span> points required in the EB approach.</p>
+Integration over the hyperparameters requires each of the <span class="math inline">\(N\)</span> objective functions to be evaluated at <span class="math inline">\(k \times l\)</span> points, rather than the <span class="math inline">\(1 \times l\)</span> points required in the EB approach.
+The complete algorithm is given in Appendix <a href="naomi-aghq-appendix.html#algorithm">C.3</a>.</p>
 </div>
 <div id="epil-nuts" class="section level4 hasAnchor" number="6.2.1.6">
 <h4><span class="header-section-number">6.2.1.6</span> NUTS with <code>tmbstan</code><a href="naomi-aghq.html#epil-nuts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1199,10 +1201,6 @@ Convergence diagnostics are in Appendix <a href="naomi-aghq-appendix.html#rstan-
 </div>
 <div id="epil-comparison" class="section level4 hasAnchor" number="6.2.1.8">
 <h4><span class="header-section-number">6.2.1.8</span> Comparison<a href="naomi-aghq.html#epil-comparison" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> from the inference methods implemented in <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-laplace-aghq-tmb">6.2.1.5</a>) were highly similar to their <code>R-INLA</code> analogues in Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a> (Figure <a href="naomi-aghq.html#fig:beta-mean-sd">6.7</a>).
-Posterior distributions obtained were also similar.
-Figure <a href="naomi-aghq.html#fig:intercept-comparison">6.8</a> shows ECDF difference plots for Gaussian or Laplace marginals from <code>TMB</code> and <code>R-INLA</code> (as compared with results from NUTS implemented in <code>tmbstan</code>) for <span class="math inline">\(\beta_0\)</span>.
-These results provide evidence that the implementation of INLA in <code>TMB</code> is correct.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:beta-mean-sd"></span>
 <img src="figures/naomi-aghq/beta-mean-sd.png" alt="Percentage difference in posterior summary estimate obtained from NUTS as compared to that obtained from a Gaussian or Laplace marginal with quadrature over the hyperparameters. NUTS results were obtained with tmbstan. Results from R-INLA and TMB are similar, especially for the posterior mean, but do differ in places. Differences could be attributable to bias corrections used in R-INLA." width="95%" />
@@ -1217,6 +1215,17 @@ Figure 6.7: Percentage difference in posterior summary estimate obtained from NU
 Figure 6.8: The ECDF and ECDF difference for the <span class="math inline">\(\beta_0\)</span> latent field parameter. For this parameter, the Gaussian marginal results are inaccurate, and are corrected almost entirely by the Laplace marginal. An ECDF difference of zero corresponds to obtaining exactly the same results as NUTS, taken to be the gold-standard. Crucially, results obtained using <code>R-INLA</code> and <code>TMB</code> implementations are similar.
 </p>
 </div>
+<p>Posterior means and standard deviations for the the six regression parameters <span class="math inline">\(\boldsymbol{\mathbf{\beta}}\)</span> from the inference methods implemented in <code>TMB</code> (Section <a href="naomi-aghq.html#epil-gauss-eb-tmb">6.2.1.2</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-gauss-aghq-tmb">6.2.1.3</a>, <a href="naomi-aghq.html#epil-laplace-aghq-tmb">6.2.1.5</a>) were highly similar to their <code>R-INLA</code> analogues in Section <a href="naomi-aghq.html#epil-inla">6.2.1.1</a> (Figure <a href="naomi-aghq.html#fig:beta-mean-sd">6.7</a>).
+Posterior distributions obtained were also similar.
+Figure <a href="naomi-aghq.html#fig:intercept-comparison">6.8</a> shows ECDF difference plots for Gaussian or Laplace marginals from <code>TMB</code> and <code>R-INLA</code> (as compared with results from NUTS implemented in <code>tmbstan</code>) for <span class="math inline">\(\beta_0\)</span>.
+These results provide evidence that the implementation of INLA in <code>TMB</code> is correct.</p>
+
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
+<img src="figures/naomi-aghq/epil-time.png" alt="The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table 6.1." width="95%" />
+<p class="caption">
+Figure 6.9: The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table <a href="naomi-aghq.html#tab:epil-approaches">6.1</a>.
+</p>
+</div>
 <p>Figures <a href="naomi-aghq.html#fig:epil-time">6.9</a> shows the number of seconds taken to fit the epilepsy GLMM model for each approach.
 Gaussian marginals with either EB or AGHQ via <code>TMB</code> were the fastest approach.
 All of the approaches using <code>R-INLA</code> took a similar amount of time.
@@ -1226,13 +1235,6 @@ Laplace marginals in <code>TMB</code> with AGHQ (<span class="math inline">\(k^2
 <p>For this problem, the <code>tmbstan</code> implementation of NUTS took 38.9% of time of the <code>rstan</code> implementation.
 Diagnostics (Figures <a href="naomi-aghq-appendix.html#fig:tmbstan-epil">C.1</a> and <a href="naomi-aghq-appendix.html#fig:stan-epil">C.2</a>) show that both implementations converged.
 <span class="citation">Monnahan and Kristensen (<a href="#ref-monnahan2018no">2018</a>)</span> (Supporting information) found runtime with <code>rstan</code> and <code>tmbstan</code> to be comparable, so the relatively large difference in this case is surprising.</p>
-
-<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:epil-time"></span>
-<img src="figures/naomi-aghq/epil-time.png" alt="The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table 6.1." width="95%" />
-<p class="caption">
-Figure 6.9: The number of seconds taken to perform inference for the epilepsy GLMM using each method and software implementation given in Table <a href="naomi-aghq.html#tab:epil-approaches">6.1</a>.
-</p>
-</div>
 </div>
 </div>
 <div id="loaloa" class="section level3 hasAnchor" number="6.2.2">
@@ -1276,9 +1278,9 @@ This section considers inference using three approaches (Table <a href="naomi-ag
 <table>
 <caption><span id="tab:loaloa-approaches">Table 6.2: </span> The inference methods and software considered to fit the Loa loa ELGM in Section <a href="naomi-aghq.html#loaloa">6.2.2</a>.</caption>
 <colgroup>
-<col width="34%" />
-<col width="32%" />
-<col width="32%" />
+<col width="29%" />
+<col width="29%" />
+<col width="40%" />
 </colgroup>
 <thead>
 <tr class="header">
