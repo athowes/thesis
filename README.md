@@ -272,6 +272,10 @@ given more time to work on it:
   note 1) which features are possible in `R-INLA` (and exactly why or
   why not) 2) whether the feature is an important non-linearity of the
   model or more of a trivial notation issue.
+- At one point I was interested in the kernel stein discrepancy as a way
+  to measure distances between (samples from) distributions. I would
+  have been interested to read more about these measures and their
+  relation to MMD.
 
 ### General
 
