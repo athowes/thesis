@@ -54,8 +54,10 @@ well as advancing Bayesian methods for spatio-temporal data.
 ## Slides
 
 Slides for my thesis defense are available
-[here](https://athowes.github.io/thesis/slides.pdf). They may be useful
-to provide a brief overview of the research.
+[here](https://athowes.github.io/thesis/slides.pdf), or for a longer
+presentation I gave to my lab group about the thesis are available
+[here](https://athowes.github.io/thesis/slides-long.pdf). They may be
+useful to provide a brief overview of the research.
 
 <p align="center">
 <a href="https://athowes.github.io/thesis/slides.pdf">
@@ -80,9 +82,8 @@ If you would like to cite this work, please use:
 Thanks for being interested! You can read either the
 [HTML](https://athowes.github.io/thesis/) or
 [PDF](https://athowes.github.io/thesis/main.pdf) version. I know, an
-overwhelming choice. It’s still a work in progress at the moment though,
-so I’d recommend checking back in January 2024 (post-submission) or
-March 2024 (post-defense) unless you love non-sequiturs.
+overwhelming choice. Depending on my appetite, it may be improved
+post-defense in March 2024.
 
 > How did you format this thesis?
 
