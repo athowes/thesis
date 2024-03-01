@@ -44,7 +44,7 @@ knitr::include_graphics("../figures/bayesian/st.png")
 
 **Small-area estimation**
 
-Sample size for demographic subgroups too small for precise direct estimates
+Sample size for demographic subgroups too low for precise direct estimates
 
 #
 
@@ -61,9 +61,9 @@ knitr::include_graphics("../figures/bayesian/zmb-scatter.png")
 
 #
 
-**Toy example! But same principle applies to real models**
+**Toy example! Same principle applies to real models**
 
-e.g. Naomi^[See [C.4 Simplified Naomi model description](https://athowes.github.io/thesis/naomi-aghq-appendix.html#naomi-math)] [@eaton2021naomi; @esra2024improved].
+e.g. Naomi^[See [C.4 Simplified Naomi model description](https://athowes.github.io/thesis/naomi-aghq-appendix.html#naomi-math)] [@eaton2021naomi; @esra2024improved]
 
 #
 
@@ -75,11 +75,11 @@ knitr::include_graphics("../figures/hiv-aids/naomi-continent.png")
 
 **Nearby things tend to be similar**
 
-Supposing prior correlation structure between observations!
+Suppose prior correlation structure between observations!
 
 #
 
-Gaussian Markov random field model of @besag1991bayesian:\
+**Gaussian Markov random field** model of @besag1991bayesian\
 \
 
 ```{r besag, echo=FALSE, out.width="60%", fig.align = 'center'}
@@ -100,9 +100,21 @@ knitr::include_graphics("../figures/beyond-borders/geometries.png")
 
 #
 
+**Measure forecast performance using strictly proper scoring rules**
+
+See @gneiting2007strictly
+
+#
+
 ```{r crps-mean-se-civ, echo=FALSE, out.width="80%", fig.align = 'center'}
 resource_version <- list.files("../resources/beyond-borders")
 knitr::include_graphics(paste0("../resources/beyond-borders/", resource_version, "/depends/crps-mean-se-civ.png"))
+```
+
+#
+
+```{r cv, echo=FALSE, out.width="80%", fig.align = 'center'}
+knitr::include_graphics("../figures/beyond-borders/cv.R")
 ```
 
 #
@@ -126,6 +138,12 @@ knitr::include_graphics(paste0("../resources/multi-agyw/", resource_version, "/d
 
 #
 
+**Use the multinomial-Poisson transformation of @baker1994multinomial**
+
+A multinomial logistic regression on $\mathbf{y} = (y_1, \ldots, y_K)$ can be expressed as a Poisson regression $y_k \sim \text{Poisson}(\lambda_k)$ with observation-specific random effects with recover the sample size $m = \sum_k y_k$.
+
+#
+
 ```{r thesis-slide-multi-agyw, echo=FALSE, out.width="100%", fig.align = 'center'}
 knitr::include_graphics(paste0("../resources/multi-agyw/", resource_version, "/depends/thesis-slide-multi-agyw.png"))
 ```
@@ -141,6 +159,13 @@ knitr::include_graphics(paste0("../resources/multi-agyw/", resource_version, "/d
 **Since extended to include 1) males, 2) additional countries**
 
 See the sub-national HIV estimates in priority populations UNAIDS tool at [`hivtools.unaids.org/shipp/`](https://hivtools.unaids.org/shipp/)
+
+#
+
+**Bayesian computation amounts to solving challenging integrals**
+$$
+p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
+$$
 
 #
 
@@ -202,4 +227,10 @@ knitr::include_graphics(paste0("../resources/naomi-aghq/", resource_version, "/d
 | Machine Learning and Global Health Network | Worldwide |
 | StatML CDT  | Imperial, Oxford    |
 
+# What am I up to now?
+
+* Adaptive survey design to improve efficiency of mobile phone surveys
+  * Still interested to apply this approach to household surveys e.g. for HIV
+* Multilevel regression and poststratification models for district-level food security estimates
+ 
 # References {.allowframebreaks}
