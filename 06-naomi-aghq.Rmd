@@ -43,19 +43,19 @@ custom_numbers_to_words <- function(number) {
 <!-- For PDF output, include these two LaTeX commands after unnumbered chapter headings, otherwise the mini table of contents and the running header will show the previous chapter -->
 
 This chapter describes the development of a novel deterministic Bayesian inference approach, motivated by the Naomi small-area estimation model [@eaton2021naomi].
-Development of the approach required meeting both methodological challenges and implementation difficulties.
-Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org) to produce subnational estimates of HIV indicators.
-Evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
+Over 35 countries [@unaids2023global] have used the Naomi model web interface ([`https://naomi.unaids.org`](https://naomi.unaids.org)) to produce subnational estimates of HIV indicators.
+In Naomi, evidence is synthesised from household surveys and routinely collected health data to generate estimates of HIV indicators by district, age, and sex.
 The complexity and size of the model makes obtaining fast and accurate Bayesian inferences challenging.
+As such, development of the approach required meeting both methodological challenges and implementation difficulties.
 
-The methods developed in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
+The methods in this chapter combine Laplace approximations with adaptive quadrature, and are descended from the integrated nested Laplace approximation (INLA) method pioneered by @rue2009approximate.
 The INLA method has enabled fast and accurate Bayesian inferences for a vast array of models, across a large number of scientific fields [@rue2017bayesian].
 The success of INLA is in large part due to its accessible implementation in the `R-INLA` software.
 Use of the INLA method and the `R-INLA` software are nearly ubiquitous in applied settings.
 However, the Naomi model is not compatible with `R-INLA`.
-The foremost reason is that Naomi is too complex to be expressed using a formula interface (of the form `y ~ ...`).
+The foremost reason is that Naomi is too complex to be expressed using a formula interface of the form `y ~ ...`.
 Additionally, Naomi has more hyperparameters (moderate-dimensional, >20) than can typically be handled using INLA (low-dimensional, certainly below 10).
-As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, with Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
+As a result, inferences for the Naomi model have previously been obtained using an empirical Bayes [EB; @casella1985introduction] approximation to full Bayesian inference, with the Laplace approximation implemented by the more flexible Template Model Builder [`TMB`; @kristensen2016tmb] R package.
 Under the EB approximation, the hyperparameters are fixed by optimising an approximation to the marginal posterior.
 This is undesirable as fixing the hyperparameters underestimates their uncertainty.
 Ultimately, the resulting overconfidence may lead to worse HIV prevention policy decisions.
@@ -80,7 +80,7 @@ Code for the analysis in this chapter is available from [`https://github.com/ath
 ## Inference methods and software {#naomi-inference}
 
 This section reviews existing deterministic Bayesian inference methods (Sections \@ref(la), \@ref(quadrature), \@ref(inla)) and the software implementing them (Section \@ref(software)).
-Inference comprises obtaining the posterior distribution
+Recall that inference comprises obtaining the posterior distribution
 \begin{equation}
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \frac{p(\boldsymbol{\mathbf{\phi}}, \mathbf{y})}{p(\mathbf{y})}, (\#eq:bayes)
 \end{equation}
@@ -143,7 +143,7 @@ The Laplace approximation to the posterior normalising constant (Equation \@ref(
 \end{align}
 The result above is calculated using the known normalising constant of the Gaussian distribution
 \begin{equation}
-p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N}(\boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1}) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
+p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) = \mathcal{N} \left( \boldsymbol{\mathbf{\phi}} \, | \, \hat{\boldsymbol{\mathbf{\phi}}}, \hat {\mathbf{H}}^{-1} \right) = \frac{| \hat {\mathbf{H}} |^{1/2}}{(2 \pi)^{d/2}} \exp \left( - \frac{1}{2} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}})^\top \hat {\mathbf{H}} (\boldsymbol{\mathbf{\phi}} - \hat{\boldsymbol{\mathbf{\phi}}}) \right).
 \end{equation}
 The Laplace approximation may be thought of as approximating the posterior distribution by a Gaussian distribution $p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \approx p_\texttt{G}(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y})$ such that
 \begin{equation}
