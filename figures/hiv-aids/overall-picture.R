@@ -40,10 +40,6 @@ deaths_global <- read_xlsx("resources/hiv-aids/epidemic-transition-metrics-globa
   mutate(across(1:4, as_numeric_spaces)) %>%
   mutate(Region = "Global", Indicator = "AIDS-related deaths")
 
-fct_reorg <- function(fac, ...) {
-  fct_recode(fct_relevel(fac, ...), ...)
-}
-
 infections_deaths <- bind_rows(
   infections_esa,
   deaths_esa,
@@ -53,14 +49,15 @@ infections_deaths <- bind_rows(
   deaths_global
 ) %>%
   mutate(
-    Region = fct_reorg(Region, "Global" = "Global", "Eastern and\nsouthern Africa" = "Eastern and southern Africa", "Western and\ncentral Africa" = "Western and central Africa"),
+    Region = fct_recode(Region, "Global" = "Global", "Eastern and\nsouthern Africa" = "Eastern and southern Africa", "Western and\ncentral Africa" = "Western and central Africa") %>%
+      fct_relevel("Global", after = 0),
     Indicator = fct_relevel(Indicator, "New HIV infections", "AIDS-related deaths")
   )
 
 ggplot(infections_deaths, aes(x = Year, y = `All ages estimate`, ymax = `Upper Estimate`, ymin = `Lower Estimate`, fill = Region, col = Region)) +
   geom_ribbon(alpha = 0.25, colour = NA) +
   geom_line() +
-  facet_grid(Indicator ~ .) +
+  facet_grid(Indicator ~ ., scales = "free_y") +
   scale_y_continuous(labels = scales::unit_format(unit = "M", scale = 1e-6, sep = ""), limits = c(0, NA)) + 
   scale_fill_manual(values = cbpalette) +
   scale_color_manual(values = cbpalette) +
@@ -79,5 +76,3 @@ deaths_global %>%
   filter(`All ages estimate` == max(`All ages estimate`))
 
 round(100 * (max(deaths_global$`All ages estimate`) - tail(deaths_global$`All ages estimate`, 1)) / max(deaths_global$`All ages estimate`))
-
-
