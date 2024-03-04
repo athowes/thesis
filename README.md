@@ -1,16 +1,17 @@
 
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
-![](https://geps.dev/progress/100)<!-- -->
-
 > \[!WARNING\]  
-> Thesis under construction! Currently 305 pages. There are various
+> Thesis under construction! Currently 306 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
 London](https://www.imperial.ac.uk/).
+
+Available as: [HTML](https://athowes.github.io/thesis/) or
+[PDF](https://athowes.github.io/thesis/main.pdf).
 
 Supervised by: [Seth Flaxman](https://sethrf.com/) and [Jeff
 Eaton](https://www.imperial.ac.uk/people/jeffrey.eaton).
@@ -51,19 +52,6 @@ well as advancing Bayesian methods for spatio-temporal data.
 | B   | [Appendix to a model for risk group proportions](https://athowes.github.io/thesis/a-model-for-risk-group-proportions.html)   |                                                               |                                                                                                                   |
 | C   | [Appendix to fast approximate Bayesian inference](https://athowes.github.io/thesis/fast-approximate-bayesian-inference.html) |                                                               |                                                                                                                   |
 
-## Slides
-
-Slides for my thesis defense are available
-[here](https://athowes.github.io/thesis/slides.pdf), or for a longer
-presentation I gave to my lab group about the thesis are available
-[here](https://athowes.github.io/thesis/slides-long.pdf). They may be
-useful to provide a brief overview of the research.
-
-<p align="center">
-<a href="https://athowes.github.io/thesis/slides.pdf">
-<img src="docs/slide-1.png" alt="The title slide!" height="300"/> </a>
-</p>
-
 ## Citation
 
 If you would like to cite this work, please use:
@@ -74,6 +62,19 @@ If you would like to cite this work, please use:
       title = {Bayesian spatio-temporal methods for small-area estimation of HIV indicators},
       year = {2023}
     }
+
+## Slides
+
+Slides for my thesis defense are available
+[here](https://athowes.github.io/thesis/slides.pdf). They may be useful
+to provide a brief overview of the research. For more detailed slides,
+see this
+[presentation](https://athowes.github.io/thesis/slides-long.pdf).
+
+<p align="center">
+<a href="https://athowes.github.io/thesis/slides.pdf">
+<img src="docs/slide-1.png" alt="The title slide!" height="300"/> </a>
+</p>
 
 ## Frequently asked questions
 
@@ -131,15 +132,16 @@ girls and young women according to risk behaviour and epidemic setting.
 To enable implementation of the strategy, I estimated risk group
 specific population sizes, prevalence and incidences at a
 district-level. I also used these estimates to evaluate the extent to
-which risk varies by age, behaviour, and geographic area. You might also
-be interested in the analysis in [Chapter
+which risk varies by age, behaviour, and geographic area. This work
+forms that basis for the “sub-national HIV estimates in priority
+populations” UNAIDS [tool](https://hivtools.unaids.org/shipp/). You may
+also be interested in the analysis in [Chapter
 6](https://athowes.github.io/thesis/naomi-aghq.html) applying the Naomi
 small-area estimation model to data from Malawi.
 
 ## Enhancements
 
-Here are a collection of enhancements I think would improve this thesis,
-given more time to work on it:
+Here are a collection of enhancements I think would improve this thesis:
 
 ### [Chapter 2](https://athowes.github.io/thesis/hiv-aids.html)
 
