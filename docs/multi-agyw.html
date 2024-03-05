@@ -262,7 +262,7 @@ div.csl-indent {
 <li class="chapter" data-level="5" data-path="multi-agyw.html"><a href="multi-agyw.html"><i class="fa fa-check"></i><b>5</b> A model for risk group proportions</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-2"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
-<li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#data"><i class="fa fa-check"></i><b>5.2</b> Data</a>
+<li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#agyw-data"><i class="fa fa-check"></i><b>5.2</b> Data</a>
 <ul>
 <li class="chapter" data-level="5.2.1" data-path="multi-agyw.html"><a href="multi-agyw.html#behavioural-data-from-household-surveys"><i class="fa fa-check"></i><b>5.2.1</b> Behavioural data from household surveys</a></li>
 <li class="chapter" data-level="5.2.2" data-path="multi-agyw.html"><a href="multi-agyw.html#other-data"><i class="fa fa-check"></i><b>5.2.2</b> Other data</a></li>
@@ -435,21 +435,22 @@ Though AGYW are only 28% of the population, they comprise 44% of new infections 
 HIV incidence for AGYW is 2.4 times higher than for similarly aged (15-29) males.
 The social and biological reasons for this disparity include structural vulnerabilities and power imbalances, age patterns of sexual mixing, a younger age at first sex, and increased susceptibility to HIV infection.
 On this basis, AGYW have been identified as a priority population for HIV prevention services.
-Significant investments, including the DREAMS partnership <span class="citation">(<a href="#ref-saul2018dreams">Saul et al. 2018</a>)</span> and by the Global Fund <span class="citation">(<a href="#ref-global2018measurement">The Global Fund 2018</a>)</span>, have been made to support prevention programming.</p>
+Significant investments, including by the Global Fund <span class="citation">(<a href="#ref-global2018measurement">The Global Fund 2018</a>)</span> and the DREAMS (Determined, Resilient, Empowered, AIDS-free, Mentored, and Safe) partnership <span class="citation">(<a href="#ref-saul2018dreams">Saul et al. 2018</a>)</span>, have been made to support prevention programming.</p>
 <p>The Global AIDS Strategy 2021-2026 <span class="citation">(<a href="#ref-unaids2021global">UNAIDS 2021b</a>)</span> was adopted by the United Nations (UN) General Assembly in June 2021, and “outlines the strategic priorities and actions to be implemented by global, regional, country and community partners to get on-track to ending AIDS”.
 It proposed stratifying HIV prevention packages to AGYW based on two factors:</p>
 <ol style="list-style-type: decimal">
 <li>local population-level HIV incidence, and</li>
 <li>individual-level sexual risk behaviour.</li>
 </ol>
-<p>Risk of acquiring HIV depends on both factors.
-As such, prioritisation of prevention services is more efficient if both factors are taken into account.
-Figure <a href="multi-agyw.html#fig:risk-grid">5.1</a> illustrates this stylistically.
+<p>Risk of acquiring HIV depends importantly on both factors.
+As such, prioritisation of prevention services is more efficient if both are taken into account.
+Figure <a href="multi-agyw.html#fig:risk-grid">5.1</a> illustrates this fact stylistically.
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions (Table <a href="a-model-for-risk-group-proportions.html#tab:unaids-strategy-targets">B.2</a>) based on prioritisation strata which incorporate behavioural risk (Table <a href="a-model-for-risk-group-proportions.html#tab:unaids-strategy-prioritisation">B.1</a>).
-Implementation of the strategy by national HIV programmes and stakeholders requires data on the population size and HIV incidence in each risk group by location.</p>
+Implementation of the strategy by national HIV programmes and stakeholders requires estimates of the population size and HIV incidence in each risk group by location.
+In this chapter, I used behavioural data from household surveys (Section <a href="multi-agyw.html#agyw-data">5.2</a>) to estimate these quantities using a Bayesian spatio-temporal model (Section <a href="multi-agyw.html#risk-group-model">5.3</a>).</p>
 </div>
-<div id="data" class="section level2 hasAnchor" number="5.2">
-<h2><span class="header-section-number">5.2</span> Data<a href="multi-agyw.html#data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="agyw-data" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Data<a href="multi-agyw.html#agyw-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="behavioural-data-from-household-surveys" class="section level3 hasAnchor" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> Behavioural data from household surveys<a href="multi-agyw.html#behavioural-data-from-household-surveys" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <table>
@@ -497,15 +498,15 @@ These countries were Botswana, Cameroon, Kenya, Lesotho, Malawi, Mozambique, Nam
 Surveys conducted in these countries between 1999 and 2018 were included in which both women were interviewed about their sexual behaviour, and sufficient geographic information was available to locate survey clusters to health districts.
 There were 46 suitable surveys (Figure <a href="multi-agyw.html#fig:available-surveys">5.2</a>), with a total sample size of 274,970 women aged 15-29 years.
 Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
-The median number of surveys per country was four, ranging from one in Botswana and South Africa to six in Uganda.</p>
+The median number of surveys per country was four, ranging from one in both Botswana and South Africa to six in Uganda.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:available-surveys"></span>
-<img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/available-surveys.png" alt="Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys." width="95%" />
+<img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/available-surveys.png" alt="Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. That is, whether the respondent had “had sex in return for gifts, cash or anything else in the past 12 months”. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys." width="95%" />
 <p class="caption">
-Figure 5.2: Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.
+Figure 5.2: Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. That is, whether the respondent had “had sex in return for gifts, cash or anything else in the past 12 months”. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.
 </p>
 </div>
-<p>For each survey, respondents were classified into one of four behavioural risk groups <span class="math inline">\(k = 1, 2, 3, 4\)</span> according to reported sexual risk behaviour in the past 12 months (Figure <a href="multi-agyw.html#fig:category-flowchart">5.3</a>).
+<p>For each survey, respondents were classified into one of four behavioural risk groups according to reported sexual risk behaviour in the past 12 months (Figure <a href="multi-agyw.html#fig:category-flowchart">5.3</a>), which I index by <span class="math inline">\(k\)</span>.
 In increasing order of HIV acquisition risk, these risk groups were:</p>
 <ul>
 <li><span class="math inline">\(k = 1\)</span>: Not sexually active</li>
@@ -513,7 +514,8 @@ In increasing order of HIV acquisition risk, these risk groups were:</p>
 <li><span class="math inline">\(k = 3\)</span>: Non-regular or multiple sexual partner(s), and</li>
 <li><span class="math inline">\(k = 4\)</span>: Reporting transactional sex.</li>
 </ul>
-<p>The HIV incidence rate ratio <span class="math inline">\(\text{RR}_k\)</span> was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>), with the one cohabiting partner risk group as baseline.</p>
+<p>The HIV incidence rate ratio <span class="math inline">\(\text{RR}_k\)</span> was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>), with the one cohabiting partner risk group as baseline.
+For the <span class="math inline">\(k = 4\)</span> risk group, the HIV incidence ratio ratio was further assumed to vary by local HIV incidence among the general population.</p>
 <p>Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so with how many partners.
 For their three most recent partners, respondents were also asked about the type of partnership.
