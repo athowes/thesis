@@ -605,7 +605,7 @@ Figure 6.2: The trapezoid rule with <span class="math inline">\(k = 5, 10, 20\)<
 This is because the number of quadrature nodes at which the function is required to be evaluated in the computation grows exponentially with the dimension.
 For even moderate dimension, this quickly makes computation intractable.
 For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure <a href="naomi-aghq.html#fig:trapezoid">6.2</a>, in five-dimensions (rather than one, as shown) would require 3125, 100000 or 3200000 quadrature nodes respectively.
-Though quadrature is embarrassingly parallel, in that function evaluation at each node is entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.</p>
+Though quadrature is easily parallelisable, in that function evaluation at each node are entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.</p>
 <div id="gauss-hermite-quadrature" class="section level4 hasAnchor" number="6.1.2.1">
 <h4><span class="header-section-number">6.1.2.1</span> Gauss-Hermite quadrature<a href="naomi-aghq.html#gauss-hermite-quadrature" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>It is possible to construct quadrature rules which use relatively few nodes and are highly accurate when the integrand adheres to certain assumptions [Chapter 4; <span class="citation">Press et al. (<a href="#ref-press2007numerical">2007</a>)</span>].
@@ -839,7 +839,7 @@ Further information about <code>R-INLA</code>, including recent developments, ca
 The interface is similar to that used in the <code>lm</code> function in the core <code>stats</code> R package.
 For example, a model with one fixed effect <code>a</code> and one IID random effect <code>b</code>, has the formula <code>y ~ a + f(b, model = "iid")</code>.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.</p>
-<p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can chosen by setting <code>method</code> to <code>"gaussian"</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>"laplace"</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
+<p>The approach used to compute the marginals <span class="math inline">\(\tilde p(x_i \, | \, \mathbf{y})\)</span> can be chosen by setting <code>method</code> to <code>"gaussian"</code> (Section <a href="naomi-aghq.html#gaussian-marginals">6.1.3.1</a>), <code>"laplace"</code> (Section <a href="naomi-aghq.html#laplace-marginals">6.1.3.2</a>) or <code>simplified.laplace</code> (Section <a href="naomi-aghq.html#simplified-laplace-marginals">6.1.3.3</a>).
 The quadrature grid used can be chosen by setting <code>int.strategy</code> to <code>"eb"</code> (empirical Bayes, one quadrature node), <code>"grid"</code> (a dense grid), or <code>"ccd"</code> [Box-Wilson central composite design; <span class="citation">Box and Wilson (<a href="#ref-box1992experimental">1992</a>)</span>].
 Figure <a href="naomi-aghq.html#fig:inla-grid-demo">6.4</a> demonstrates the latter two integration strategies.
 By default, the <code>"grid"</code> strategy is used for <span class="math inline">\(m \leq 2\)</span> and the <code>"ccd"</code> strategy is used for <span class="math inline">\(m &gt; 2\)</span>.</p>
@@ -848,7 +848,7 @@ Perhaps the most substantial is the <code>inlabru</code> R package <span class="
 As well as a simplified syntax, <code>inlabru</code> provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of <code>R-INLA</code>.
 These complex model components are specified in <code>inlabru</code> using the <code>bru_mapper</code> system.
 See the <code>inlabru</code> package vignettes for additional details.
-Further inference procedures which leverage <code>R-INLA</code>include INLA within MCMC <span class="citation">(<a href="#ref-gomez2018markov">Gómez-Rubio and Rue 2018</a>)</span> and importance sampling with INLA <span class="citation">(<a href="#ref-berild2022importance">Berild et al. 2022</a>)</span>.</p>
+Further inference procedures which leverage <code>R-INLA</code> include INLA within MCMC <span class="citation">(<a href="#ref-gomez2018markov">Gómez-Rubio and Rue 2018</a>)</span> and importance sampling with INLA <span class="citation">(<a href="#ref-berild2022importance">Berild et al. 2022</a>)</span>.</p>
 <!-- Note: does the CCD need to have weights added? -->
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:inla-grid-demo"></span>
@@ -1738,7 +1738,7 @@ The reduced rank approximation to the inverse curvature with this choice of <spa
 Figure 6.21: Each principal component loading, obtained by the eigendecomposition of the inverse curvature, gives the direction of maximum variation conditional on inclusion of each previous principal component loading. For example, the first principal component loading is a sum of <code>log_sigma_alpha_as</code> and <code>logit_phi_alpha_as</code>.
 </p>
 </div>
-<p>The principal component (PC) loadings (Figure <a href="#pc-loadings"><strong>??</strong></a>) provide interpretable information about which directions had the greatest variation.
+<p>The principal component (PC) loadings (Figure <a href="naomi-aghq.html#fig:pc-loadings">6.21</a>) provide interpretable information about which directions had the greatest variation.
 Many of the first PC loadings are sums of two hyperparameters.
 As such, there is some redundancy in the hyperparameter parameterisation, supporting the findings of Section <a href="naomi-aghq.html#naomi-nuts">6.5.1</a> regarding correlation structure in the hyperparameter posterior.
 It is exactly this correlation structure that PCA, and PCA-AGHQ, looks to utilise.</p>

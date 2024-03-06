@@ -96,7 +96,7 @@ If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can b
 
 ### Best practises for the Besag model
 
-Directly implementing the Besag model as described in Section \@ref(besag) in recommended against.
+Directly implementing the Besag model as described in Section \@ref(besag) is not recommended.
 @freni2018note provide three best practices:
 
 1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance equal to one.
@@ -153,7 +153,7 @@ The discussion in this section is closely linked to:
 
 #### Compression to adjacency 
 
-(ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometries would have the same distribution under the Besag model.
+(ref:maup1) Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometry would have the same distribution under the Besag model.
 
 ```{r maup1, fig.cap="(ref:maup1)"}
 knitr::include_graphics("figures/beyond-borders/maup1.png")
@@ -274,7 +274,7 @@ where $\tau_u$ is the marginal precision of $\mathbf{u}$, $\phi \in [0, 1]$ give
 When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effects follow the Besag model.
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
-Although the BYM and BYM2 models were originally proposed using the Besag model as spatially structured component, this need not be the case.
+Although the BYM and BYM2 models were originally proposed using the Besag model as the spatially structured component, this need not be the case.
 Indeed, more broadly it is reasonable to consider convolution random effects (of a form analogous to that in Equation \@ref(eq:bym) or \@ref(eq:bym2)) with any model for spatially structured noise.
 Any limitations of the model for spatially structured random effects are inherited by the convolution random effects.
 
@@ -317,7 +317,7 @@ This choice results in the centroid kernel
 \end{equation}
 The centroid kernel has been used in environmental epidemiology [@wakefield1999spatial], for US election modelling [@flaxman2015supported], and to model the reproduction number of COVID-19 [@teh2021efficient].
 In a model comparison study @best2005comparison (Section 3) simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
-That said, it unsurprising that a stationary covariance function would struggle to recover non-stationary structure.
+That said, it is unsurprising that a stationary covariance function would struggle to recover non-stationary structure.
 
 ### Integrated kernel {#integrated-kernel}
 
@@ -338,7 +338,7 @@ Additional information accounting for heterogeneity over $A_i$ may be incorporat
 This can be accomplished using weighting distributions $\{w_i\}$ which represent an unequal contribution of each point to the similarity measure.
 The weighted integrated kernel is given by
 \begin{equation}
-  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s', (\#eq:ik2)
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s') k(s, s') \text{d} s \text{d} s'. (\#eq:ik2)
 \end{equation}
 This areal kernel may be useful in disease mapping.
 For example, areas with populations who live close to a shared border are likely to be more strongly correlated than areas whose populations live far apart.
@@ -397,7 +397,7 @@ corresponding to an areal integrated kernel with a logarithmic link function and
 #### Connection to disaggregation regression
 
 Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @arambepola2022simulation; @nandi2023disaggregation]
+Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations [@utazi2019spatial; @arambepola2022simulation; @nandi2023disaggregation].
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.
 
@@ -701,7 +701,7 @@ if(knitr::is_latex_output()) {
 
 The results (Figure \@ref(fig:crps-mean-se-surveys), Table \@ref(tab:cv-crps), Table \@ref(tab:cv-mse)) for each survey were as follows:
 
-1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure \@ref(fig:crps-mean-se-civ2017phia))
+1. For the 2017 PHIA survey in Côte d'Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure \@ref(fig:crps-mean-se-civ2017phia)).
 The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
 It is difficult to see how any spatial random model would perform well in this situation, without additional covariates or using a distribution with heavier tails than the Gaussian.
 
@@ -743,7 +743,7 @@ Though the underlying models are ultimately similar, that is a continuous Matér
 Nonetheless, it would be of value to confirm this empirically.
 
 <!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
-This chapter used of area-level models to for point-level data throughout.
+This chapter used area-level models to for point-level data throughout.
 However, @konstantinoudis2020discrete found that using a point-level LGCP model rather than an area-level BYM model may have significant benefits.
 The work in this chapter does not address the broader question of under which circumstances use of an area or point-level model is sensible.
 

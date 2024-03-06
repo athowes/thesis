@@ -484,7 +484,7 @@ If <span class="math inline">\(\mathcal{G}\)</span> is connected, in that by tra
 </div>
 <div id="best-practises-for-the-besag-model" class="section level3 hasAnchor" number="4.1.2">
 <h3><span class="header-section-number">4.1.2</span> Best practises for the Besag model<a href="beyond-borders.html#best-practises-for-the-besag-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Directly implementing the Besag model as described in Section <a href="beyond-borders.html#besag">4.1.1</a> in recommended against.
+<p>Directly implementing the Besag model as described in Section <a href="beyond-borders.html#besag">4.1.1</a> is not recommended.
 <span class="citation">Freni-Sterrantino, Ventrucci, and Rue (<a href="#ref-freni2018note">2018</a>)</span> provide three best practices:</p>
 <ol style="list-style-type: decimal">
 <li><p>The structure matrix <span class="math inline">\(\mathbf{R}\)</span> should be rescaled to have generalised variance equal to one.
@@ -540,9 +540,9 @@ The discussion in this section is closely linked to:</p>
 <h4><span class="header-section-number">4.1.3.1</span> Compression to adjacency<a href="beyond-borders.html#compression-to-adjacency" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:maup1"></span>
-<img src="figures/beyond-borders/maup1.png" alt="Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometries would have the same distribution under the Besag model." width="95%" />
+<img src="figures/beyond-borders/maup1.png" alt="Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometry would have the same distribution under the Besag model." width="95%" />
 <p class="caption">
-Figure 4.2: Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometries would have the same distribution under the Besag model.
+Figure 4.2: Though they are quite different, the geometries shown in panels A, B, C, and D each have the same adjacency graph. Therefore, each geometry would have the same distribution under the Besag model.
 </p>
 </div>
 <p>A fundamental objection is that summarising a geometry by an adjacency graph represents a loss of information.
@@ -657,7 +657,7 @@ This is known as the BYM2 model and given by
 where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <span class="math inline">\(\mathbf{u}\)</span>, <span class="math inline">\(\phi \in [0, 1]\)</span> gives the proportion of the marginal variance explained by each component, and <span class="math inline">\(\mathbf{w}^\star\)</span> is a scaled version of <span class="math inline">\(\mathbf{w}\)</span> with precision matrix given by the scaled structure matrix <span class="math inline">\(\mathbf{R}^\star\)</span>.
 When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
 To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue 2020</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
-<p>Although the BYM and BYM2 models were originally proposed using the Besag model as spatially structured component, this need not be the case.
+<p>Although the BYM and BYM2 models were originally proposed using the Besag model as the spatially structured component, this need not be the case.
 Indeed, more broadly it is reasonable to consider convolution random effects (of a form analogous to that in Equation <a href="beyond-borders.html#eq:bym">(4.5)</a> or <a href="beyond-borders.html#eq:bym2">(4.6)</a>) with any model for spatially structured noise.
 Any limitations of the model for spatially structured random effects are inherited by the convolution random effects.</p>
 </div>
@@ -699,7 +699,7 @@ This choice results in the centroid kernel
 \end{equation}\]</span>
 The centroid kernel has been used in environmental epidemiology <span class="citation">(<a href="#ref-wakefield1999spatial">J. Wakefield and Morris 1999</a>)</span>, for US election modelling <span class="citation">(<a href="#ref-flaxman2015supported">Flaxman, Wang, and Smola 2015</a>)</span>, and to model the reproduction number of COVID-19 <span class="citation">(<a href="#ref-teh2021efficient">Teh et al. 2022</a>)</span>.
 In a model comparison study <span class="citation">Nicky Best, Richardson, and Thomson (<a href="#ref-best2005comparison">2005</a>)</span> (Section 3) simulated data representing heterogeneous exposure to air pollution, including elevated rates of exposure near two hypothetical point source locations, and found that the centroid kernel tended to over-smooth the high-risk areas.
-That said, it unsurprising that a stationary covariance function would struggle to recover non-stationary structure.</p>
+That said, it is unsurprising that a stationary covariance function would struggle to recover non-stationary structure.</p>
 </div>
 <div id="integrated-kernel" class="section level3 hasAnchor" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Integrated kernel<a href="beyond-borders.html#integrated-kernel" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -718,7 +718,7 @@ Examples of use of this model in statistical practice are rare.</p>
 This can be accomplished using weighting distributions <span class="math inline">\(\{w_i\}\)</span> which represent an unequal contribution of each point to the similarity measure.
 The weighted integrated kernel is given by
 <span class="math display" id="eq:ik2">\[\begin{equation}
-  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d} s \text{d} s&#39;, \tag{4.12}
+  K(A_i, A_j) = \frac{1}{|A_i||A_j|}\int_{A_i} \int_{A_j} w_i(s) w_j(s&#39;) k(s, s&#39;) \text{d} s \text{d} s&#39;. \tag{4.12}
 \end{equation}\]</span>
 This areal kernel may be useful in disease mapping.
 For example, areas with populations who live close to a shared border are likely to be more strongly correlated than areas whose populations live far apart.
@@ -777,7 +777,7 @@ corresponding to an areal integrated kernel with a logarithmic link function and
 <div id="connection-to-disaggregation-regression" class="section level4 hasAnchor" number="4.2.2.4">
 <h4><span class="header-section-number">4.2.2.4</span> Connection to disaggregation regression<a href="beyond-borders.html#connection-to-disaggregation-regression" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Disaggregation regression, also known as downscaling or interpolation, is another closely related approach.
-Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-arambepola2022simulation">Arambepola et al. 2022</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>
+Rather than focusing on the aggregate nature of areal observations as a route towards better area-level estimates, disaggregation regression aims to produce high-resolution or point-level estimates from areal observations <span class="citation">(<a href="#ref-utazi2019spatial">Utazi et al. 2019</a>; <a href="#ref-arambepola2022simulation">Arambepola et al. 2022</a>; <a href="#ref-nandi2023disaggregation">Nandi et al. 2023</a>)</span>.
 These two tasks are similar, and indeed it could be argued that accurate point-level estimates are a necessary intermediate step towards accurate area-level estimates.
 However, disaggregation regression is challenging without auxiliary covariate information, and therefore unlikely to be applicable to small-area estimation of HIV.</p>
 </div>
@@ -1126,23 +1126,23 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
 </p>
 </div>
 
-<div id="ddizgqnree" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ddizgqnree table {
+<div id="ybvdtbjzmd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ybvdtbjzmd table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ddizgqnree thead, #ddizgqnree tbody, #ddizgqnree tfoot, #ddizgqnree tr, #ddizgqnree td, #ddizgqnree th {
+#ybvdtbjzmd thead, #ybvdtbjzmd tbody, #ybvdtbjzmd tfoot, #ybvdtbjzmd tr, #ybvdtbjzmd td, #ybvdtbjzmd th {
   border-style: none;
 }
 
-#ddizgqnree p {
+#ybvdtbjzmd p {
   margin: 0;
   padding: 0;
 }
 
-#ddizgqnree .gt_table {
+#ybvdtbjzmd .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1168,12 +1168,12 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-left-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_caption {
+#ybvdtbjzmd .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ddizgqnree .gt_title {
+#ybvdtbjzmd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1185,7 +1185,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-width: 0;
 }
 
-#ddizgqnree .gt_subtitle {
+#ybvdtbjzmd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1197,7 +1197,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-width: 0;
 }
 
-#ddizgqnree .gt_heading {
+#ybvdtbjzmd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1209,13 +1209,13 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_bottom_border {
+#ybvdtbjzmd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_col_headings {
+#ybvdtbjzmd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1230,7 +1230,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_col_heading {
+#ybvdtbjzmd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1250,7 +1250,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#ddizgqnree .gt_column_spanner_outer {
+#ybvdtbjzmd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1262,15 +1262,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 4px;
 }
 
-#ddizgqnree .gt_column_spanner_outer:first-child {
+#ybvdtbjzmd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ddizgqnree .gt_column_spanner_outer:last-child {
+#ybvdtbjzmd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ddizgqnree .gt_column_spanner {
+#ybvdtbjzmd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1282,11 +1282,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   width: 100%;
 }
 
-#ddizgqnree .gt_spanner_row {
+#ybvdtbjzmd .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ddizgqnree .gt_group_heading {
+#ybvdtbjzmd .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1312,7 +1312,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   text-align: left;
 }
 
-#ddizgqnree .gt_empty_group_heading {
+#ybvdtbjzmd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1327,15 +1327,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: middle;
 }
 
-#ddizgqnree .gt_from_md > :first-child {
+#ybvdtbjzmd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ddizgqnree .gt_from_md > :last-child {
+#ybvdtbjzmd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ddizgqnree .gt_row {
+#ybvdtbjzmd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1354,7 +1354,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#ddizgqnree .gt_stub {
+#ybvdtbjzmd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1367,7 +1367,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#ddizgqnree .gt_stub_row_group {
+#ybvdtbjzmd .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1381,15 +1381,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: top;
 }
 
-#ddizgqnree .gt_row_group_first td {
+#ybvdtbjzmd .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ddizgqnree .gt_row_group_first th {
+#ybvdtbjzmd .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ddizgqnree .gt_summary_row {
+#ybvdtbjzmd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1399,16 +1399,16 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#ddizgqnree .gt_first_summary_row {
+#ybvdtbjzmd .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_first_summary_row.thick {
+#ybvdtbjzmd .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ddizgqnree .gt_last_summary_row {
+#ybvdtbjzmd .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1418,7 +1418,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_grand_summary_row {
+#ybvdtbjzmd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1428,7 +1428,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#ddizgqnree .gt_first_grand_summary_row {
+#ybvdtbjzmd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1438,7 +1438,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_last_grand_summary_row_top {
+#ybvdtbjzmd .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1448,11 +1448,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_striped {
+#ybvdtbjzmd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ddizgqnree .gt_table_body {
+#ybvdtbjzmd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1461,7 +1461,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_footnotes {
+#ybvdtbjzmd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1475,7 +1475,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_footnote {
+#ybvdtbjzmd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1484,7 +1484,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#ddizgqnree .gt_sourcenotes {
+#ybvdtbjzmd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1498,7 +1498,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#ddizgqnree .gt_sourcenote {
+#ybvdtbjzmd .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1506,67 +1506,67 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#ddizgqnree .gt_left {
+#ybvdtbjzmd .gt_left {
   text-align: left;
 }
 
-#ddizgqnree .gt_center {
+#ybvdtbjzmd .gt_center {
   text-align: center;
 }
 
-#ddizgqnree .gt_right {
+#ybvdtbjzmd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ddizgqnree .gt_font_normal {
+#ybvdtbjzmd .gt_font_normal {
   font-weight: normal;
 }
 
-#ddizgqnree .gt_font_bold {
+#ybvdtbjzmd .gt_font_bold {
   font-weight: bold;
 }
 
-#ddizgqnree .gt_font_italic {
+#ybvdtbjzmd .gt_font_italic {
   font-style: italic;
 }
 
-#ddizgqnree .gt_super {
+#ybvdtbjzmd .gt_super {
   font-size: 65%;
 }
 
-#ddizgqnree .gt_footnote_marks {
+#ybvdtbjzmd .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ddizgqnree .gt_asterisk {
+#ybvdtbjzmd .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ddizgqnree .gt_indent_1 {
+#ybvdtbjzmd .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ddizgqnree .gt_indent_2 {
+#ybvdtbjzmd .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ddizgqnree .gt_indent_3 {
+#ybvdtbjzmd .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ddizgqnree .gt_indent_4 {
+#ybvdtbjzmd .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ddizgqnree .gt_indent_5 {
+#ybvdtbjzmd .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ddizgqnree .katex-display {
+#ybvdtbjzmd .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
@@ -1668,7 +1668,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
 </div>
 <p>The results (Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a>, Table <a href="beyond-borders.html#tab:cv-crps">4.4</a>, Table <a href="models-for-areal-spatial-structure.html#tab:cv-mse">A.4</a>) for each survey were as follows:</p>
 <ol style="list-style-type: decimal">
-<li><p>For the 2017 PHIA survey in Côte d’Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ2017phia">A.37</a>)
+<li><p>For the 2017 PHIA survey in Côte d’Ivoire, all of the models performed similarly, using both LOO- and SLOO-CV (Figure <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-civ2017phia">A.37</a>).
 The pointwise CRPS for all models was high at one outlying district in the survey, Grand-Ponts.
 It is difficult to see how any spatial random model would perform well in this situation, without additional covariates or using a distribution with heavier tails than the Gaussian.</p>
 <p>The CK and IK models had lengthscale posterior distributions largely unchanged from their prior distribution (Figure <a href="models-for-areal-spatial-structure.html#fig:lengthscale-posteriors">A.31</a>).
@@ -1705,7 +1705,7 @@ If the link function <span class="math inline">\(g\)</span> is the identity or l
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
 Nonetheless, it would be of value to confirm this empirically.</p>
 <!-- * Discussion of the overall area versus point question. Papers of Sam using point level. -->
-<p>This chapter used of area-level models to for point-level data throughout.
+<p>This chapter used area-level models to for point-level data throughout.
 However, <span class="citation">Konstantinoudis et al. (<a href="#ref-konstantinoudis2020discrete">2020</a>)</span> found that using a point-level LGCP model rather than an area-level BYM model may have significant benefits.
 The work in this chapter does not address the broader question of under which circumstances use of an area or point-level model is sensible.</p>
 <p>The adjacency-based models considered in this study were limited to the Besag and BYM2 model.

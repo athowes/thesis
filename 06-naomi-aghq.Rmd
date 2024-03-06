@@ -244,7 +244,7 @@ Quadrature methods are most effective when integrating over small dimensions, sa
 This is because the number of quadrature nodes at which the function is required to be evaluated in the computation grows exponentially with the dimension.
 For even moderate dimension, this quickly makes computation intractable.
 For example, using 5, 10, or 20 quadrature nodes per dimension, as in Figure \@ref(fig:trapezoid), in five-dimensions (rather than one, as shown) would require 3125, 100000 or 3200000 quadrature nodes respectively.
-Though quadrature is embarrassingly parallel, in that function evaluation at each node is entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.
+Though quadrature is easily parallelisable, in that function evaluation at each node are entirely independent, solutions requiring the evaluation of millions quadrature nodes are unlikely to be tractable.
 
 #### Gauss-Hermite quadrature
 
@@ -490,7 +490,7 @@ The interface is similar to that used in the `lm` function in the core `stats` R
 For example, a model with one fixed effect `a` and one IID random effect `b`, has the formula `y ~ a + f(b, model = "iid")`.
 This interface is easy to engage with for new users, but can be limiting for more advanced users.
 
-The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can chosen by setting `method` to `"gaussian"` (Section \@ref(gaussian-marginals)), `"laplace"` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
+The approach used to compute the marginals $\tilde p(x_i \, | \, \mathbf{y})$ can be chosen by setting `method` to `"gaussian"` (Section \@ref(gaussian-marginals)), `"laplace"` (Section \@ref(laplace-marginals)) or `simplified.laplace` (Section \@ref(simplified-laplace-marginals)).
 The quadrature grid used can be chosen by setting `int.strategy` to `"eb"` (empirical Bayes, one quadrature node), `"grid"` (a dense grid), or `"ccd"` [Box-Wilson central composite design; @box1992experimental].
 Figure \@ref(fig:inla-grid-demo) demonstrates the latter two integration strategies.
 By default, the `"grid"` strategy is used for $m \leq 2$ and the `"ccd"` strategy is used for $m > 2$.
@@ -500,7 +500,7 @@ Perhaps the most substantial is the `inlabru` R package [@bachl2019inlabru].
 As well as a simplified syntax, `inlabru` provides capabilities for fitting more general non-linear structured additive predictor expressions via linearisation and repeat use of `R-INLA`.
 These complex model components are specified in `inlabru` using the `bru_mapper` system.
 See the `inlabru` package vignettes for additional details.
-Further inference procedures which leverage `R-INLA `include INLA within MCMC [@gomez2018markov] and importance sampling with INLA [@berild2022importance].
+Further inference procedures which leverage `R-INLA` include INLA within MCMC [@gomez2018markov] and importance sampling with INLA [@berild2022importance].
 
 <!-- Note: does the CCD need to have weights added? -->
 
@@ -1451,7 +1451,7 @@ The reduced rank approximation to the inverse curvature with this choice of $s$ 
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/pc-loadings.png"))
 ```
 
-The principal component (PC) loadings (Figure \@ref(pc-loadings)) provide interpretable information about which directions had the greatest variation.
+The principal component (PC) loadings (Figure \@ref(fig:pc-loadings)) provide interpretable information about which directions had the greatest variation.
 Many of the first PC loadings are sums of two hyperparameters.
 As such, there is some redundancy in the hyperparameter parameterisation, supporting the findings of Section \@ref(naomi-nuts) regarding correlation structure in the hyperparameter posterior.
 It is exactly this correlation structure that PCA, and PCA-AGHQ, looks to utilise.
