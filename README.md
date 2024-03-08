@@ -2,7 +2,7 @@
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
 > \[!WARNING\]  
-> Thesis under construction! Currently 306 pages. There are various
+> Thesis undergoing corrections! Currently 305 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
