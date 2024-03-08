@@ -456,7 +456,7 @@ Details are left to Section 3.2.3 of @rue2009approximate.
 #### Simplified INLA {#simplified-inla}
 
 @wood2020simplified describe a method for approximating the Laplace marginals without depending on the Markov structure, while still achieving equivalent efficiency.
-This work was motivated by a setting in which, which similar to extended latent Gaussian models [ELGMs; @stringer2022fast], precision matrices are not typically as sparse as GMRFs.
+This work was motivated by a setting in which, similar to extended latent Gaussian models [ELGMs; @stringer2022fast], precision matrices are not typically as sparse as GMRFs.
 Details are left to @wood2020simplified.
 
 #### Augmenting a noisy structured additive predictor to the latent field
@@ -988,7 +988,7 @@ For each method (Table \@ref(tab:loaloa-approaches)) 500 conditional Gaussian fi
 
 #### Results
 
-(ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi_\texttt{LA}(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho_\texttt{LA}(s)]$ (Panel B) random fields computed using Laplace marginals. Inferences over this fine spatial grid were using conditional Gaussian field simulation as implemented by `gstat::kridge`.
+(ref:conditional-simulation-adam-fixed) Posterior mean of the suitability $\mathbb{E}[\phi_\texttt{LA}(s)]$ (Panel A) and prevalence $\mathbb{E}[\rho_\texttt{LA}(s)]$ (Panel B) random fields computed using Laplace marginals. Inferences over this fine spatial grid were using conditional Gaussian field simulation as implemented by `gstat::krige`.
 
 ```{r conditional-simulation-adam-fixed, fig.cap="(ref:conditional-simulation-adam-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-adam-fixed.png")
@@ -1341,7 +1341,7 @@ For concreteness, the normalising constant obtained by application of PCA-AGHQ t
 \end{equation}
 where $\hat{\mathbf{E}}_{\texttt{LA}, s}$ is an $m \times s$ matrix containing the first $s$ eigenvectors, $\hat{\mathbf{\Lambda}}_{\texttt{LA}, s}$ is the $s \times s$ diagonal matrix containing the first $s$ eigenvalues, and
 \begin{equation}
-\omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^d \omega_1(z_j).
+\omega(\mathbf{z}) = \prod_{j = 1}^s \omega_s(z_j) \times \prod_{j = s + 1}^m \omega_1(z_j).
 \end{equation}
 
 (ref:pca-demo) Consider the function $f(z_1, z_2) = \text{sn}(0.5 z_1, \alpha = 2) \cdot \text{sn}(0.8 z_1 - 0.5 z_2, \alpha = -2)$ as described in Figure \@ref(fig:aghq-demo). Panel A shows the usual AGHQ nodes with a spectral matrix decomposition. Panel B shows the adapted PCA-AGHQ nodes $\mathcal{Q}(2, 1, 3)$. These nodes correspond exactly to those in Panel A along the first eigenvector. The proportion of variation explained by this direction is around 95%, with the remaining 5% explained by the second eigenvector.
@@ -1419,7 +1419,7 @@ c(\phi) = 1 - \frac{\mathbb{V}_\text{prior}}{\mathbb{V}_\text{post}(\phi)}.
 \end{equation}
 Posterior variances were extracted from NUTS results, and prior variances obtained by simulating from a model with the likelihood component removed (Figure \@ref(fig:nuts-hand-comparison)).
 The average posterior contraction was positive for all latent field parameter vectors, and for the majority of hyperparameters (Figure \@ref(fig:posterior-contraction)).
-However, for seven hyperparameters the posterior contraction was very closet to zero.
+However, for seven hyperparameters the posterior contraction was very close to zero.
 Furthermore, for some latent field parameter vectors, the average contraction was small.
 Based on this findings, these parameters may not be identifiable.
 
@@ -1456,7 +1456,7 @@ Many of the first PC loadings are sums of two hyperparameters.
 As such, there is some redundancy in the hyperparameter parameterisation, supporting the findings of Section \@ref(naomi-nuts) regarding correlation structure in the hyperparameter posterior.
 It is exactly this correlation structure that PCA, and PCA-AGHQ, looks to utilise.
 
-(ref:nodes-samples-comparison) The 6561 PCA-AGHQ nodes projected onto the 24 hyperparameter marginal distributions obtained with NUTS.
+(ref:nodes-samples-comparison) The grey histograms show the 24 hyperparameter marginal distributions obtained with NUTS. The green lines indicate the position of the 6561 PCA-AGHQ nodes projected onto each hyperparameter marginal. For some hyperparameters, the PCA-AGHQ nodes vary over the domain of the posterior marginal distribution, while for others they concentrate at the mode.
 
 ```{r nodes-samples-comparison, fig.cap="(ref:nodes-samples-comparison)"}
 knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depends/nodes-samples-comparison.png"))
