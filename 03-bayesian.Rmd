@@ -95,6 +95,7 @@ Hence, although it is easy to evaluate a quantity proportional to the posterior 
 p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) p(\boldsymbol{\mathbf{\phi}}),
 \end{equation}
 it is typically difficult to evaluate the posterior distribution itself.
+Further, even given a closed form expression for the posterior distribution, if $\boldsymbol{\mathbf{\phi}}$ is of moderate to high dimension, then it is not obvious how to evaluate expressions of interest, which usually themselves are integrals, or expectations, with respect to the posterior distribution.
 
 The difficulty in performing Bayesian inference may be thought of as analogous to the difficulty in calculating integrals.
 As with integration, in specific cases closed form analytic solutions are available.
@@ -134,9 +135,10 @@ NUTS automatically adapts these parameters based on local properties of the post
 Though not a one-size-fits-all solution, NUTS has been shown empirically to be a good choice for sampling from a range of posterior distributions.
 Figure \@ref(fig:stan) shows an example of using the NUTS MCMC algorithm to sample from a posterior distribution.
 
-After running an MCMC sampler, it is important that diagnostic checks are used to evaluate convergence and assess whether the results of the Markov chain can be used to compute posterior quantities.
-It is never possible to be sure that results computed from MCMC will be accurate, though it is possible to know when they will be inaccurate.
-Panel \@ref(fig:stan)B shows the traceplot for a Markov chain which has converged, and moves freely through the range of plausible parameter values.
+After running an MCMC sampler, it is important that diagnostic checks are used to evaluate whether the Markov chain has reached its stationary distribution.
+If so, the Markov chain is said to have converged, and its samples may be used to compute posterior quantities.
+Though it is possible to check poor convergence in some cases, we may never be sure that a Markov chain has converged, and thus that results computed from MCMC will be accurate.
+Panel \@ref(fig:stan)B shows the traceplot for a Markov chain which appears to have converged, and moves freely through the range of plausible parameter values.
 A range of convergence diagnostics have been developed for MCMC [@roy2020convergence; @margossian2023many].
 Two widely used examples are the potential scale reduction factor $\hat R$ [@gelman1992inference], which compares the variance between and within parallel Markov chains, and the effective sample size (ESS), which measures the efficiency of samples drawn from MCMC.
 
@@ -360,7 +362,7 @@ The Gaussian prior distribution is then
 where $\boldsymbol{\mathbf{\theta}}_2 \in \mathbb{R}^{s_2}$ are hyperparameters, with $s_2$ assumed small.
 The vector $\boldsymbol{\mathbf{\theta}}_1 \in \mathbb{R}^{s_1}$, with $s_1$ assumed small, are additional parameters of the likelihood.
 Let $\boldsymbol{\mathbf{\theta}} = (\boldsymbol{\mathbf{\theta}}_1, \boldsymbol{\mathbf{\theta}}_2) \in \mathbb{R}^m$ with $m = s_1 + s_2$ be all hyperparameters, with prior distribution $p(\boldsymbol{\mathbf{\theta}})$.
-The posterior distribution under an LGM in then
+The posterior distribution under an LGM is then
 \begin{equation}
 p(\mathbf{x}, \boldsymbol{\mathbf{\theta}} \, | \, \mathbf{y}) \propto p(\mathbf{y} \, | \, \mathbf{x}, \boldsymbol{\mathbf{\theta}}) p(\mathbf{x} \, | \, \boldsymbol{\mathbf{\theta}}) p(\boldsymbol{\mathbf{\theta}}),
 \end{equation}
