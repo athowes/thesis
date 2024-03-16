@@ -289,3 +289,5 @@ Here are a collection of enhancements I think would improve this thesis:
 - Rendering the PDF version, figures and tables tend to move around a
   lot, especially in the appendix. It would be good to have been control
   over this, but I know that this can be challenging in LaTeX.
+- Note to check that references are displayed in a systematic way. Are
+  there any better settings than the one that I have currently?
