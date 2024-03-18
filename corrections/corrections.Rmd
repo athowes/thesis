@@ -2,6 +2,7 @@
 title: Thesis corrections for "Bayesian spatio-temporal methods for small-area estimation of HIV indicators"
 subtitle: |
   Adam Howes (`ath19@ic.ac.uk`)
+bibliography: ../references.bib
 output:
   pdf_document:
     toc: true
@@ -172,15 +173,16 @@ I have corrected the text to read that $p(u_i) \sim \mathcal{N}(0, \tau_u^{-1})$
 
 > *47. tau_v an d tau_w are not orthogonal - what does this mean?*
 
-Not yet resolved.
+Practically speaking, this means that the posteriors for $\tau_v$ and $\tau_w$ are likely to be correlated.
+See Figure C.8 and Figure C.9 in Appendix C for an example, showing that the BYM2 parameterisation overcomes this issue.
 
 > *48. Is convolution the right term here?*
 
-Not yet resolved.
+I have altered the text to use the term "convolved random effects" following use of this terminology by @morris2019bayesian.
 
 > *55: what is meant by "model is implemented in arealutils"?*
 
-Not yet resolved.
+I have updated the text to read: "in the `arealutils` R package [@howes2023arealutils]".
 
 > *56: need citation for v being hard to estimate*
 
@@ -188,7 +190,8 @@ Not yet resolved.
 
 > *56: have Li vary with size?*
 
-Not yet resolved.
+The $L_i$ did not vary with the size of the area.
+A fixed number were used for each area.
 
 > *56: effect -> affect*
 
@@ -196,7 +199,7 @@ Change made.
 
 > *57: "and the calibration"*
 
-Not yet resolved.
+I have altered the text to read: "and the probability integral transform (PIT; @dawid1984present) values".
 
 > *57: What parameter is shown in Figs 4.7-4.9 - it's not clear you're assessing the latent process values. And in that case you should be clear the CRPS is averaged over locations.*
 
@@ -234,7 +237,7 @@ Changed to "female sex workers (FSW)".
 
 > *71: In Table 1 why does High risk group IRR not vary with local incidence?*
 
-Not yet resolved.
+This was a modelling assumption which was made for the following reasons.
 
 > *71: Purpose of Table 1 is not clear. Nor how IRR is to be used.*
 
@@ -254,11 +257,16 @@ Not yet resolved.
 
 > *82: I would say clearly that model structure for q_ia is discussed next.*
 
-Not yet resolved.
+I have altered the text to read:
+"As all such surveys occurred in the years 2013-2018 (Figure 5.2) I assumed no dependence on time, hence omission of the index $t$.
+Model specification for the linear predictor $\eta_{ia}$ is discussed in Section 5.3.2.1 to follow."
 
 > *85: First paragraph of 5.3.3 is a bit hard to follow.*
 
-Not yet resolved.
+I have altered the text to read:
+"Domain experts do not consider having had sex "in return for gifts, cash or anything else in the past 12 months" sufficient to constitute sex work.
+For this reason, I adjusted the estimates obtained based on the transactional sex survey question to match alternatively obtained age-country FSW population size estimates.
+Taking this approach retained subnational variation informed by the transactional sex survey question.".
 
 > *86: The bio-marker survey data and disaggregation model is unclear. How are risk groups known for individuals in the survey?*
 
@@ -284,7 +292,7 @@ Not yet resolved.
 
 > *106: Not sure what you mean by "log p(y|x,theta) is small". This is the likelihood...*
 
-Not yet resolved.
+I based this sentence on @blangiardo2013spatial.
 
 > *116: "in which, which"*
 
@@ -292,11 +300,13 @@ Changed to "in which, similar to extended latent Gaussian models".
 
 > *122: "Method" in Table 6.1 a bit terse.*
 
-Not yet resolved.
+I have updated this column to be more specific about the first word referring to "latent field marginals" and the second being "over the hyperparameters" (apart from for NUTS, which is over the whole space).
 
 > *122: Is "Gaussian, EB" the same as frequentist Laplace approx (up to hyperparameter prior)? If so, probably worth saying.*
 
-Not yet resolved.
+Yes I believe it is.
+I have updated the text as follows:
+"...".
 
 > *130: Somewhat unclear how the quadrature is implemented, wrapped around the TMB-based Laplace approximation. Is your code in R? (Sorry, this may be because I didn't have time to look through appendices.)*
 
@@ -304,7 +314,8 @@ Not yet resolved.
 
 > *131: Using same number of iterations with stan (full posterior, including latent values) vs tmbstan (hyperparameters, much lower-dimensional space) seems odd.*
 
-Not yet resolved.
+Here I am using `tmbstan` with the default option `laplace = FALSE`.
+Hence the `tmbstan` sampler is operating over the full space, just as the `rstan` sampler.
 
 > *132: Fig 6.7 is just grid/AGHQ, not EB? If so, why present EB method?*
 
@@ -312,7 +323,7 @@ Not yet resolved.
 
 > *132: Why surprising tmbstan faster than rstan - what are the different computations involved - having to compute Laplace vs doing HMC over higher dimensional space. I expect it would vary with I expect it would vary with hyperparameter and latent dimensions.*
 
-Not yet resolved.
+It is surprising as they are running the same algorithm: HMC over the full space.
 
 > *136: "kridge" -> "krige"*
 
@@ -320,7 +331,8 @@ Changed to `gstat::krige`.
 
 > *137: "this" in "this difference" is unclear.*
 
-Not yet resolved.
+I have altered the text to read:
+"As $\beta_\phi$ was fixed then differences in approximation accuracy between the Gaussian and Laplace approximations of $\phi(s)$ are due only to differences in estimation of $u(s)$.".
 
 > *143: "survey weighting increases variance" - what about effect of increasing precision in small strata? Are you talking about influence of complex survey design or somehow about weighting scheme?*
 
@@ -328,7 +340,8 @@ Not yet resolved.
 
 > *149: INLA uses CCD for d>2, right? Would this not work for this setting?*
 
-Not yet resolved.
+Yes, `R-INLA` does use central composite design (CCD) for integration over moderate dimensions.
+I note that `R-INLA` uses CCD for $m > 2$ in Section 6.1.4.1, illustrate CCD in Figure 6.4, and mention that it would be of interest to compare PCA-AGHQ to CCD in Section 6.6.3.1.
 
 > *151: (6.97) has 'd' instead of 'm'*
 
@@ -348,11 +361,12 @@ Fixed, thank you.
 
 > *156: "far fewer than full 24" - is this a problem?*
 
-Not yet resolved.
+This is a problem in the sense that it would ideal for the quadrature nodes used to show some variability in all 24 dimensions.
+PCA-AGHQ does improve upon a naive product grid, but is still far from ideal.
 
 > *156: "point estimates" "distributional quantities" - need "and"*
 
-Not yet resolved.
+Fixed, thank you.
 
 > *157: Need caption to describe the green*
 

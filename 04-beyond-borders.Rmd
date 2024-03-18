@@ -275,8 +275,8 @@ When $\phi = 0$ the random effects are IID, and when $\phi = 1$ the random effec
 To borrow an analogy [@rue2020comment] the parameterisation $(\tau_v, \tau_w)$ is like having one hot water and one cold water tap, whereas the parameterisation $(\tau_u, \phi)$ is like a mixer tap where the amount of water and its temperature can be adjusted separately.
 
 Although the BYM and BYM2 models were originally proposed using the Besag model as the spatially structured component, this need not be the case.
-Indeed, more broadly it is reasonable to consider convolution random effects (of a form analogous to that in Equation \@ref(eq:bym) or \@ref(eq:bym2)) with any model for spatially structured noise.
-Any limitations of the model for spatially structured random effects are inherited by the convolution random effects.
+Indeed, more broadly it is reasonable to consider convolved random effects (of a form analogous to that in Equation \@ref(eq:bym) or \@ref(eq:bym2)) with any model for spatially structured noise.
+Any limitations of the model for spatially structured random effects are inherited by the convolved random effects.
 
 ## Models using kernels {#kernel-models}
 
@@ -448,7 +448,7 @@ For each of the three spatial random effect models and seven geometries 250 synt
 | FIK   | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with hexagonal points (Panel \@ref(fig:integration-strategy)C), $L_i = 10$, and fixed length-scale $l$ |
 | IK    | $\mathbf{u} \sim \mathcal{N}(0, \tau_u^{-1} \mathbf{K})$ with $K_{ij} = K(A_i, A_j)$ as in Section \@ref(integrated-kernel) with hexagonal points (Panel \@ref(fig:integration-strategy)C), $L_i = 10$, and length-scale prior distribution $l \sim \mathrm{Inv{\text-}Gamma}(a, b)$ with $a, b$ set based on the geometry |
 
-Table: (\#tab:inferential-models) The spatial random effect models used for inference. Each model is implemented in the `arealutils` package. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of @riebler2016intuitive.
+Table: (\#tab:inferential-models) The spatial random effect models used for inference. Each model is implemented in the `arealutils` R package [@howes2023arealutils]. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of @riebler2016intuitive.
 
 Eight inferential models were fit to the synthetic data (Table \@ref(tab:inferential-models)).
 Apart from the spatial random effect specification, each inferential model corresponded exactly to the simulation model.
@@ -501,7 +501,7 @@ Here, the number of samples per posterior marginal was $S = 200$.
 Let $\omega$ be the true value of $\phi$ used in the simulation.
 
 The accuracy of latent field parameter and hyperparameter posterior marginals from each model were assessed using three methods.
-These were the mean squared error (MSE), the continuous ranked probability score [CRPS; @matheson1976scoring], and the calibration.
+These were the mean squared error (MSE), the continuous ranked probability score [CRPS; @matheson1976scoring], and the probability integral transform (PIT; @dawid1984present) values.
 
 The MSE is a simple and popular measure, calculated using samples as
 \begin{equation}
@@ -518,12 +518,12 @@ The CRPS may be estimated using samples by
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. (\#eq:crps-approx)
 \end{equation}
 
-A posterior marginal is calibrated if over repeated simulations the quantile of the true value is uniformly distributed such that
+A posterior marginal is calibrated if over repeated simulations the quantile of the true value, known as the PIT value, is uniformly distributed such that
 \begin{equation}
 F(\omega) \approx \frac{1}{S} \sum_{s = 1}^S \mathbb{I} \{\phi_i \geq \omega \} = q \sim \mathcal{U}[0, 1]. (\#eq:unif)
 \end{equation}
 If Equation \@ref(eq:unif) holds then at any given nominal coverage $1 - \alpha$ the proportion of quantile-based credible intervals containing $\omega$ is also $1 - \alpha$.
-Uniformity was assessed using probability integral transform (PIT) histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power] with simultaneous confidence bands as described in @sailynoja2022graphical.
+Uniformity was assessed using PIT histograms [@dawid1984present] and empirical cumulative distribution function (ECDF) difference plots [@aldor2013power] with simultaneous confidence bands as described in @sailynoja2022graphical.
 
 ### Results
 

@@ -658,8 +658,8 @@ where <span class="math inline">\(\tau_u\)</span> is the marginal precision of <
 When <span class="math inline">\(\phi = 0\)</span> the random effects are IID, and when <span class="math inline">\(\phi = 1\)</span> the random effects follow the Besag model.
 To borrow an analogy <span class="citation">(<a href="#ref-rue2020comment">Håvard Rue 2020</a>)</span> the parameterisation <span class="math inline">\((\tau_v, \tau_w)\)</span> is like having one hot water and one cold water tap, whereas the parameterisation <span class="math inline">\((\tau_u, \phi)\)</span> is like a mixer tap where the amount of water and its temperature can be adjusted separately.</p>
 <p>Although the BYM and BYM2 models were originally proposed using the Besag model as the spatially structured component, this need not be the case.
-Indeed, more broadly it is reasonable to consider convolution random effects (of a form analogous to that in Equation <a href="beyond-borders.html#eq:bym">(4.5)</a> or <a href="beyond-borders.html#eq:bym2">(4.6)</a>) with any model for spatially structured noise.
-Any limitations of the model for spatially structured random effects are inherited by the convolution random effects.</p>
+Indeed, more broadly it is reasonable to consider convolved random effects (of a form analogous to that in Equation <a href="beyond-borders.html#eq:bym">(4.5)</a> or <a href="beyond-borders.html#eq:bym2">(4.6)</a>) with any model for spatially structured noise.
+Any limitations of the model for spatially structured random effects are inherited by the convolved random effects.</p>
 </div>
 </div>
 <div id="kernel-models" class="section level2 hasAnchor" number="4.2">
@@ -839,7 +839,7 @@ For each of the three spatial random effect models and seven geometries 250 synt
 <div id="inferential-models" class="section level3 hasAnchor" number="4.3.2">
 <h3><span class="header-section-number">4.3.2</span> Inferential models<a href="beyond-borders.html#inferential-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <table>
-<caption><span id="tab:inferential-models">Table 4.2: </span> The spatial random effect models used for inference. Each model is implemented in the <code>arealutils</code> package. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of <span class="citation">Riebler et al. (<a href="#ref-riebler2016intuitive">2016</a>)</span>.</caption>
+<caption><span id="tab:inferential-models">Table 4.2: </span> The spatial random effect models used for inference. Each model is implemented in the <code>arealutils</code> R package <span class="citation">(<a href="#ref-howes2023arealutils">Howes 2023a</a>)</span>. The BYM2 model was implemented using the sparsity preserving parameterisation described in Section 3.2 of <span class="citation">Riebler et al. (<a href="#ref-riebler2016intuitive">2016</a>)</span>.</caption>
 <colgroup>
 <col width="31%" />
 <col width="68%" />
@@ -929,7 +929,7 @@ Let <span class="math inline">\(\phi_s\)</span> be samples <span class="math inl
 Here, the number of samples per posterior marginal was <span class="math inline">\(S = 200\)</span>.
 Let <span class="math inline">\(\omega\)</span> be the true value of <span class="math inline">\(\phi\)</span> used in the simulation.</p>
 <p>The accuracy of latent field parameter and hyperparameter posterior marginals from each model were assessed using three methods.
-These were the mean squared error (MSE), the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], and the calibration.</p>
+These were the mean squared error (MSE), the continuous ranked probability score [CRPS; <span class="citation">Matheson and Winkler (<a href="#ref-matheson1976scoring">1976</a>)</span>], and the probability integral transform (PIT; <span class="citation">Dawid (<a href="#ref-dawid1984present">1984</a>)</span>) values.</p>
 <p>The MSE is a simple and popular measure, calculated using samples as
 <span class="math display">\[\begin{equation}
 \text{MSE}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S (\phi_s - \omega)^2.
@@ -944,12 +944,12 @@ The CRPS may be estimated using samples by
 <span class="math display" id="eq:crps-approx">\[\begin{equation}
 \text{CRPS}(f, \omega) \approx \frac{1}{S} \sum_{s = 1}^S | \phi_s - \omega | - \frac{1}{2S^2} \sum_{s = 1}^S \sum_{l = 1}^S | \phi_s - \phi_l |. \tag{4.16}
 \end{equation}\]</span></p>
-<p>A posterior marginal is calibrated if over repeated simulations the quantile of the true value is uniformly distributed such that
+<p>A posterior marginal is calibrated if over repeated simulations the quantile of the true value, known as the PIT value, is uniformly distributed such that
 <span class="math display" id="eq:unif">\[\begin{equation}
 F(\omega) \approx \frac{1}{S} \sum_{s = 1}^S \mathbb{I} \{\phi_i \geq \omega \} = q \sim \mathcal{U}[0, 1]. \tag{4.17}
 \end{equation}\]</span>
 If Equation <a href="beyond-borders.html#eq:unif">(4.17)</a> holds then at any given nominal coverage <span class="math inline">\(1 - \alpha\)</span> the proportion of quantile-based credible intervals containing <span class="math inline">\(\omega\)</span> is also <span class="math inline">\(1 - \alpha\)</span>.
-Uniformity was assessed using probability integral transform (PIT) histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span> and empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power">Aldor-Noiman et al. 2013</a>)</span> with simultaneous confidence bands as described in <span class="citation">Säilynoja, Bürkner, and Vehtari (<a href="#ref-sailynoja2022graphical">2022</a>)</span>.</p>
+Uniformity was assessed using PIT histograms <span class="citation">(<a href="#ref-dawid1984present">Dawid 1984</a>)</span> and empirical cumulative distribution function (ECDF) difference plots <span class="citation">(<a href="#ref-aldor2013power">Aldor-Noiman et al. 2013</a>)</span> with simultaneous confidence bands as described in <span class="citation">Säilynoja, Bürkner, and Vehtari (<a href="#ref-sailynoja2022graphical">2022</a>)</span>.</p>
 </div>
 <div id="results" class="section level3 hasAnchor" number="4.3.4">
 <h3><span class="header-section-number">4.3.4</span> Results<a href="beyond-borders.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1126,23 +1126,23 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
 </p>
 </div>
 
-<div id="pdxmjbxizt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pdxmjbxizt table {
+<div id="axsiihvwyc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#axsiihvwyc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pdxmjbxizt thead, #pdxmjbxizt tbody, #pdxmjbxizt tfoot, #pdxmjbxizt tr, #pdxmjbxizt td, #pdxmjbxizt th {
+#axsiihvwyc thead, #axsiihvwyc tbody, #axsiihvwyc tfoot, #axsiihvwyc tr, #axsiihvwyc td, #axsiihvwyc th {
   border-style: none;
 }
 
-#pdxmjbxizt p {
+#axsiihvwyc p {
   margin: 0;
   padding: 0;
 }
 
-#pdxmjbxizt .gt_table {
+#axsiihvwyc .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1168,12 +1168,12 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-left-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_caption {
+#axsiihvwyc .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pdxmjbxizt .gt_title {
+#axsiihvwyc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1185,7 +1185,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-width: 0;
 }
 
-#pdxmjbxizt .gt_subtitle {
+#axsiihvwyc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1197,7 +1197,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-width: 0;
 }
 
-#pdxmjbxizt .gt_heading {
+#axsiihvwyc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1209,13 +1209,13 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_bottom_border {
+#axsiihvwyc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_col_headings {
+#axsiihvwyc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1230,7 +1230,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_col_heading {
+#axsiihvwyc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1250,7 +1250,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#pdxmjbxizt .gt_column_spanner_outer {
+#axsiihvwyc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1262,15 +1262,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 4px;
 }
 
-#pdxmjbxizt .gt_column_spanner_outer:first-child {
+#axsiihvwyc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pdxmjbxizt .gt_column_spanner_outer:last-child {
+#axsiihvwyc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pdxmjbxizt .gt_column_spanner {
+#axsiihvwyc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1282,11 +1282,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   width: 100%;
 }
 
-#pdxmjbxizt .gt_spanner_row {
+#axsiihvwyc .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pdxmjbxizt .gt_group_heading {
+#axsiihvwyc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1312,7 +1312,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   text-align: left;
 }
 
-#pdxmjbxizt .gt_empty_group_heading {
+#axsiihvwyc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1327,15 +1327,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: middle;
 }
 
-#pdxmjbxizt .gt_from_md > :first-child {
+#axsiihvwyc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pdxmjbxizt .gt_from_md > :last-child {
+#axsiihvwyc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pdxmjbxizt .gt_row {
+#axsiihvwyc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1354,7 +1354,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   overflow-x: hidden;
 }
 
-#pdxmjbxizt .gt_stub {
+#axsiihvwyc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1367,7 +1367,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#pdxmjbxizt .gt_stub_row_group {
+#axsiihvwyc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1381,15 +1381,15 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   vertical-align: top;
 }
 
-#pdxmjbxizt .gt_row_group_first td {
+#axsiihvwyc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pdxmjbxizt .gt_row_group_first th {
+#axsiihvwyc .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pdxmjbxizt .gt_summary_row {
+#axsiihvwyc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1399,16 +1399,16 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#pdxmjbxizt .gt_first_summary_row {
+#axsiihvwyc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_first_summary_row.thick {
+#axsiihvwyc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pdxmjbxizt .gt_last_summary_row {
+#axsiihvwyc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1418,7 +1418,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_grand_summary_row {
+#axsiihvwyc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1428,7 +1428,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#pdxmjbxizt .gt_first_grand_summary_row {
+#axsiihvwyc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1438,7 +1438,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-top-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_last_grand_summary_row_top {
+#axsiihvwyc .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1448,11 +1448,11 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_striped {
+#axsiihvwyc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pdxmjbxizt .gt_table_body {
+#axsiihvwyc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1461,7 +1461,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-bottom-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_footnotes {
+#axsiihvwyc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1475,7 +1475,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_footnote {
+#axsiihvwyc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1484,7 +1484,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#pdxmjbxizt .gt_sourcenotes {
+#axsiihvwyc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1498,7 +1498,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   border-right-color: #D3D3D3;
 }
 
-#pdxmjbxizt .gt_sourcenote {
+#axsiihvwyc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1506,67 +1506,67 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
   padding-right: 5px;
 }
 
-#pdxmjbxizt .gt_left {
+#axsiihvwyc .gt_left {
   text-align: left;
 }
 
-#pdxmjbxizt .gt_center {
+#axsiihvwyc .gt_center {
   text-align: center;
 }
 
-#pdxmjbxizt .gt_right {
+#axsiihvwyc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pdxmjbxizt .gt_font_normal {
+#axsiihvwyc .gt_font_normal {
   font-weight: normal;
 }
 
-#pdxmjbxizt .gt_font_bold {
+#axsiihvwyc .gt_font_bold {
   font-weight: bold;
 }
 
-#pdxmjbxizt .gt_font_italic {
+#axsiihvwyc .gt_font_italic {
   font-style: italic;
 }
 
-#pdxmjbxizt .gt_super {
+#axsiihvwyc .gt_super {
   font-size: 65%;
 }
 
-#pdxmjbxizt .gt_footnote_marks {
+#axsiihvwyc .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pdxmjbxizt .gt_asterisk {
+#axsiihvwyc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pdxmjbxizt .gt_indent_1 {
+#axsiihvwyc .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pdxmjbxizt .gt_indent_2 {
+#axsiihvwyc .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pdxmjbxizt .gt_indent_3 {
+#axsiihvwyc .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pdxmjbxizt .gt_indent_4 {
+#axsiihvwyc .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pdxmjbxizt .gt_indent_5 {
+#axsiihvwyc .gt_indent_5 {
   text-indent: 25px;
 }
 
-#pdxmjbxizt .katex-display {
+#axsiihvwyc .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }

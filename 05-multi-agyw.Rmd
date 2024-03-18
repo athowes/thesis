@@ -430,9 +430,10 @@ where
 q_{ia} = \frac{p_{ia4}}{p_{ia3} + p_{ia4}} = \frac{p_{ia4}}{p_{ia{3^+}}}.
 \end{equation}
 This two-step approach allowed all surveys to be included in the multinomial regression model, but only those surveys with a specific transactional sex question to be included in the logistic regression model.
-As all such surveys occurred in the years 2013-2018 (Figure \@ref(fig:available-surveys)), I assumed $q_{ia}$ to be constant with respect to time.
+As all such surveys occurred in the years 2013-2018 (Figure \@ref(fig:available-surveys)) I assumed no dependence on time, hence omission of the index $t$.
+Model specification for the linear predictor $\eta_{ia}$ is discussed in Section \@ref(s-logistic-model) to follow.
 
-#### Model specifications
+#### Model specifications {#s-logistic-model}
 
 |    |Intercept $\beta_0$|Country $\zeta_{c}$|Age $\alpha_{ac}$|Spatial $u_{i}$|Covariates|
 | -- |-------------------|-------------------|-----------------|---------------|----------|
@@ -491,10 +492,9 @@ Table: (\#tab:model-comparison-logistic) CPO, DIC, and WAIC values for the logis
 
 ### Female sex worker population size adjustment
 
-Having had sex "in return for gifts, cash or anything else in the past 12 months" is not considered sufficient to constitute sex work.
-As such, I adjusted the estimates obtained based on the transactional sex survey question to match FSW population size estimates obtained using an alternative method, which I describe below.
-The estimates of the non-regular or multiple sexual partner(s) population size were changed to facilitate changing of the FSW population size.
-This approach retained subnational variation informed by the transactional sex survey question.
+Domain experts do not consider having had sex "in return for gifts, cash or anything else in the past 12 months" sufficient to constitute sex work.
+For this reason, I adjusted the estimates obtained based on the transactional sex survey question to match alternatively obtained age-country FSW population size estimates.
+Taking this approach retained subnational variation informed by the transactional sex survey question.
 
 I used the estimates of adult (15-49) FSW population size by country from a Bayesian meta-analysis of key population specific data sources [@stevens2023estimating].
 To disaggregate these estimates by age, I took the following steps.
@@ -507,6 +507,9 @@ where $\kappa_c, \mu_c, \gamma_c > 0$ are country-specific shape, shape and skew
 Next, I used the assumed $\text{Gamma}(\alpha = 10.4, \beta = 0.36)$ FSW age distribution in South Africa from the Thembisa model [@johnson2020thembisa] to calculate the implied ratio between the number of FSW and the sexually debuted population in each age group.
 I assumed the South African ratios were applicable to every country, allowing calculation of the number of FSW by age group in all 13 countries.
 The resulting age trends obtained (Figure \@ref(fig:age-disagg-fsw-line)) reflect country-level variation in demographics and age-at-first-sex.
+
+Altering the FSW population size estimates requires that other risk group population size estimates are also altered such that the corresponding risk group proportion estimates sum to one.
+Here, estimates of the non-regular or multiple sexual partner(s) population size were altered to facilitate changing of the FSW population size.
 
 (ref:age-disagg-fsw-line) The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups.
 

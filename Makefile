@@ -25,4 +25,3 @@ clean:
 clean-knits:
 	Rscript -e 'file.remove(list.files(pattern = "*.(docx|html|pdf|log|maf|mtc|tex|toc|out|lof|lot|bcf|aux)"))'
 	Rscript -e 'unlink(list.files(pattern = "*_(files|cache)"), recursive = TRUE)'
-

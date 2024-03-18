@@ -592,16 +592,16 @@ The patient $\epsilon_i \sim \mathcal{N}(0, 1/\tau_\epsilon)$ and patient-visit 
 knitr::include_graphics("figures/naomi-aghq/epil.png")
 ```
 
-|             | Method         | Software      |
-| ------------|----------------|---------------|
-| Section \@ref(epil-inla)             | Gaussian, EB   | `R-INLA`      | 
-| Section \@ref(epil-inla)             | Gaussian, grid | `R-INLA`      |
-| Section \@ref(epil-inla)             | Laplace, EB    | `R-INLA`      | 
-| Section \@ref(epil-inla)             | Laplace, grid  | `R-INLA`      |
-| Section \@ref(epil-gauss-eb-tmb)     | Gaussian, EB   | `TMB`         | 
-| Section \@ref(epil-gauss-aghq-tmb)   | Gaussian, AGHQ | `TMB` and `aghq` |
-| Section \@ref(epil-laplace-eb-tmb)   | Laplace, EB    | `TMB`         |
-| Section \@ref(epil-laplace-aghq-tmb) | Laplace, AGHQ  | `TMB` and `aghq` |
+|      | Method          |Software|
+| -----|-----------------|--------|
+| Section \@ref(epil-inla)             | Gaussian latent field marginals, EB over hyperparameters | `R-INLA`      | 
+| Section \@ref(epil-inla)             | Gaussian latent field marginals, grid over hyperparameters | `R-INLA`      |
+| Section \@ref(epil-inla)             | Laplace latent field marginals, EB over hyperparameters    | `R-INLA`      | 
+| Section \@ref(epil-inla)             | Laplace latent field marginals, grid over hyperparameters  | `R-INLA`      |
+| Section \@ref(epil-gauss-eb-tmb)     | Gaussian latent field marginals, EB over hyperparameters   | `TMB`         | 
+| Section \@ref(epil-gauss-aghq-tmb)   | Gaussian latent field marginals, AGHQ over hyperparameters | `TMB` and `aghq` |
+| Section \@ref(epil-laplace-eb-tmb)   | Laplace latent field marginals, EB over hyperparameters    | `TMB`         |
+| Section \@ref(epil-laplace-aghq-tmb) | Laplace latent field marginals, AGHQ over hyperparameters  | `TMB` and `aghq` |
 | Section \@ref(epil-nuts)             | NUTS           | `tmbstan`     |
 | Section \@ref(epil-nuts-rstan)       | NUTS           | `rstan`       |
 
@@ -996,7 +996,7 @@ knitr::include_graphics("figures/naomi-aghq/conditional-simulation-adam-fixed.pn
 
 Figure \@ref(fig:conditional-simulation-adam-fixed) shows the suitability and prevalence posterior means across the fine grid obtained using AGHQ with Laplace marginals.
 
-(ref:conditional-simulation-phi-diff-fixed) Difference between the suitability posterior means with Gaussian marginals $\mathbb{E}[\phi_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\phi_\texttt{LA}(s)]$ to NUTS results. While the Gaussian approximation appears to systematically underestimate suitability, results from the Laplace approximation are substantially closer to results from NUTS. As $\beta_\phi$ was fixed this difference is as a result in differences in estimation of $u(s)$. The diverging colour palette used in this figure is from @thyng2016true.
+(ref:conditional-simulation-phi-diff-fixed) Difference between the suitability posterior means with Gaussian marginals $\mathbb{E}[\phi_\texttt{G}(s)]$ and Laplace marginals $\mathbb{E}[\phi_\texttt{LA}(s)]$ to NUTS results. While the Gaussian approximation appears to systematically underestimate suitability, results from the Laplace approximation are substantially closer to results from NUTS. As $\beta_\phi$ was fixed then differences in approximation accuracy between the Gaussian and Laplace approximations of $\phi(s)$ are due only to differences in estimation of $u(s)$. The diverging colour palette used in this figure is from @thyng2016true.
 
 ```{r conditional-simulation-phi-diff-fixed, fig.cap="(ref:conditional-simulation-phi-diff-fixed)"}
 knitr::include_graphics("figures/naomi-aghq/conditional-simulation-phi-diff-fixed.png")
@@ -1518,7 +1518,7 @@ Both the NUTS and GPCA-AGHQ algorithms can be run under a range of settings, tra
 
 ### Inference comparison
 
-Posterior inferences from GEB, GPCA-AGHQ and NUTS were compared using point estimates (Section \@ref(point-estimates)) distributional quantities (Section \@ref(distributional-quantities)).
+Posterior inferences from GEB, GPCA-AGHQ and NUTS were compared using point estimates (Section \@ref(point-estimates)) and distributional quantities (Section \@ref(distributional-quantities)).
 
 #### Point estimates {#point-estimates}
 
