@@ -4,3 +4,6 @@ pdftools::pdf_combine(c("docs/cover.pdf", "docs/corrections.pdf"), output = "doc
 file.remove("docs/cover.pdf")
 file.remove("docs/corrections.pdf")
 file.remove("docs/corrections.tex")
+file.remove("corrections/cover.html")
+unlink("corrections/cover_files/", recursive = TRUE)
+unlink("corrections/corrections_cache/", recursive = TRUE)

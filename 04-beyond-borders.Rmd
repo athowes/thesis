@@ -96,8 +96,8 @@ If $\mathcal{G}$ is connected, in that by traversing the edges, any vertex can b
 
 ### Best practises for the Besag model
 
-Directly implementing the Besag model as described in Section \@ref(besag) is not recommended.
-@freni2018note provide three best practices:
+Directly using the Besag model as described in Section \@ref(besag) has several practical limitations in applied settings.
+To overcome these limitations, @freni2018note recommend three best practices:
 
 1. The structure matrix $\mathbf{R}$ should be rescaled to have generalised variance equal to one.
 The generalised variance of a matrix is defined by the geometric mean of the diagonal elements of its generalised inverse.
@@ -130,7 +130,7 @@ More broadly, other measures of typical variance could be used.
 \end{equation}
 has no dependence on $u_i$.
 This is equivalent to using an improper prior.
-To avoid this, each singleton should be set to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, 1)$.
+To avoid this, each singleton should be set to have independent Gaussian noise $p(u_i) \sim \mathcal{N}(0, \tau_u^{-1})$.
 
 3. To avoid confounding of the spatial random effects with the intercept, it is recommended to place a sum-to-zero constraint on each non-singleton connected component.
 In other words,
