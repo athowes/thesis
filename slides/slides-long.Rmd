@@ -22,6 +22,11 @@ output:
 
 Use probability distributions for all unknowns
 
+\begin{align*}
+\text{Posterior} &\propto \text{Likelihood} \times \text{Prior} \\
+p(\boldsymbol{\mathbf{\phi}} \, | \, \mathbf{y}) &\propto p(\mathbf{y} \, | \, \boldsymbol{\mathbf{\phi}}) \times p(\boldsymbol{\mathbf{\phi}})
+\end{align*}
+
 #
 
 ```{r conjugate, echo=FALSE, out.width="100%"}
@@ -34,6 +39,8 @@ knitr::include_graphics("../figures/bayesian/conjugate.png")
 
 Observed data has spatial and temporal location
 
+$y_{s, t}$ where $s$ is space and $t$ is time
+
 #
 
 ```{r st, echo=FALSE, out.width="100%"}
@@ -45,6 +52,8 @@ knitr::include_graphics("../figures/bayesian/st.png")
 **Small-area estimation**
 
 Sample size for demographic subgroups too low for precise direct estimates
+
+By space $s$ and time $t$ together with other factors like age and sex
 
 #
 
@@ -61,9 +70,14 @@ knitr::include_graphics("../figures/bayesian/zmb-scatter.png")
 
 #
 
-**Toy example! Same principle applies to real models**
+**Toy example! But the same principle applies to real models**
 
-e.g. Naomi^[See [C.4 Simplified Naomi model description](https://athowes.github.io/thesis/naomi-aghq-appendix.html#naomi-math)] [@eaton2021naomi; @esra2024improved]
+e.g. Naomi^[See [C.4 Simplified Naomi model description](https://athowes.github.io/thesis/naomi-aghq-appendix.html#naomi-math) for details] [@eaton2021naomi; @esra2024improved]\
+\
+
+> "Now I understand how Naomi works!"
+>
+> `r tufte::quote_footer('--- Anonymous, fictionalised, workshop participant')`
 
 #
 
@@ -102,7 +116,7 @@ knitr::include_graphics("../figures/beyond-borders/geometries.png")
 
 **Measure forecast performance using strictly proper scoring rules**
 
-See @gneiting2007strictly
+Evaluates the whole distribution and does not incentivize dishonesty [@gneiting2007strictly]
 
 #
 
@@ -113,8 +127,17 @@ knitr::include_graphics(paste0("../resources/beyond-borders/", resource_version,
 
 #
 
+**Model comparison on real data is more challenging than with simulated data**
+
+Information criteria: adjust within-sample scoring rule performance
+Cross-validation: partition data to estimate out-of-sample scoring rule performance
+
+I'd recommend @vehtari2020cross for an overview
+
+#
+
 ```{r cv, echo=FALSE, out.width="80%", fig.align = 'center'}
-knitr::include_graphics("../figures/beyond-borders/cv.R")
+knitr::include_graphics("../figures/beyond-borders/cv.png")
 ```
 
 #
@@ -131,6 +154,12 @@ knitr::include_graphics("global-aids-strategy.png")
 
 #
 
+```{r risk-grid, echo=FALSE, out.width="90%", fig.align = 'center'}
+knitr::include_graphics(paste0("../figures/multi-agyw/risk-grid.png"))
+```
+
+#
+
 ```{r available-surveys, echo=FALSE, out.width="90%", fig.align = 'center'}
 resource_version <- list.files("../resources/multi-agyw")
 knitr::include_graphics(paste0("../resources/multi-agyw/", resource_version, "/depends/available-surveys.png"))
@@ -140,7 +169,12 @@ knitr::include_graphics(paste0("../resources/multi-agyw/", resource_version, "/d
 
 **Use the multinomial-Poisson transformation of @baker1994multinomial**
 
-A multinomial logistic regression on $\mathbf{y} = (y_1, \ldots, y_K)$ can be expressed as a Poisson regression $y_k \sim \text{Poisson}(\lambda_k)$ with observation-specific random effects with recover the sample size $m = \sum_k y_k$.
+A multinomial logistic regression on $\mathbf{y} = (y_1, \ldots, y_K)$ can be expressed as a Poisson regression
+$$
+y_k \sim \text{Poisson}(\lambda_k)
+$$
+with observation-specific random effects with recover the sample size $m = \sum_k y_k$.
+See blog post [@howes2023estimating]
 
 #
 
@@ -162,15 +196,29 @@ See the sub-national HIV estimates in priority populations UNAIDS tool at [`hivt
 
 #
 
-**Bayesian computation amounts to solving challenging integrals**
+**Bayesian computation amounts mostly to solving challenging integrals**
 $$
 p(\mathbf{y}) = \int p(\mathbf{y}, \boldsymbol{\mathbf{\phi}}) \text{d}\boldsymbol{\mathbf{\phi}}
 $$
+
+Methods can broadly be divided into "stochastic" and "deterministic"
 
 #
 
 ```{r stan, echo=FALSE, out.width="100%"}
 knitr::include_graphics("../figures/bayesian/stan.png")
+```
+
+#
+
+```{r laplace, echo=FALSE, out.width="100%"}
+knitr::include_graphics("../figures/naomi-aghq/laplace.png")
+```
+
+#
+
+```{r tweet, echo=FALSE, out.width="80%", fig.align = 'center'}
+knitr::include_graphics("tweet.png")
 ```
 
 #
@@ -188,7 +236,7 @@ knitr::include_graphics("../figures/naomi-aghq/intercept-comparison.png")
 #
 
 ```{r loa-loa-data, echo=FALSE, out.width="80%", fig.align = 'center'}
-knitr::include_graphics("../figures/naomi-aghq/loa-loa-data.png")
+knitr::include_graphics("../figures/naomi-aghq/loa-loa-data-A.png")
 ```
 
 #
@@ -229,8 +277,8 @@ knitr::include_graphics(paste0("../resources/naomi-aghq/", resource_version, "/d
 
 # What am I up to now?
 
-* Adaptive survey design to improve efficiency of mobile phone surveys
-  * Still interested to apply this approach to household surveys e.g. for HIV
-* Multilevel regression and poststratification models for district-level food security estimates
+* Nowcasting food insecurity with the WFP using MRP and active learning
+* Starting forecasting work with CDC soon -- especially interested in disease-agnostic methods and data source integration
+* Still based in London! Keep in touch 
  
 # References {.allowframebreaks}

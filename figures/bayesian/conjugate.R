@@ -1,6 +1,6 @@
 library(ggplot2)
 
-cbpalette <- c("#56B4E9","#009E73", "#E69F00", "#CC79A7")
+cbpalette <- c("#56B4E9","#009E73", "#E69F00", "#F0E442")
 
 a <- 3
 b <- 1
@@ -10,7 +10,7 @@ set.seed(1)
 truth <- 2.5
 y <- rpois(3, lambda = truth)
 
-types <- c("Prior", "Likelihood", "Posterior", "Truth")
+types <- c("Prior", "Likelihood", "Posterior", "True value")
 types <- factor(types, levels = unique(types))
 
 ggplot(data = data.frame(x = c(0, 8)), aes(x)) +

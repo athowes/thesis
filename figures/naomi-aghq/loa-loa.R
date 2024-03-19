@@ -32,12 +32,15 @@ figA <- ggplot() +
   scale_color_viridis_c() +
   scale_size(range = c(1, 4)) +
   theme_void() +
-  labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero", tag = "A") +
+  labs(x = "", y = "", col = "Prevalence", size = "Sample size", shape = "Zero") +
   guides(
     col = guide_colourbar(order = 1),
     shape = guide_legend(override.aes = list(size = 2.5, col = "grey20"), order = 2),
     size = guide_legend(override.aes = list(shape = 16, col = "grey20"), order = 3)
-  ) +
+  )
+
+figA_edit <- figA +
+  labs(tag = "A") +
   theme(
     legend.direction = "vertical", 
     legend.box = "vertical",
@@ -54,9 +57,18 @@ figB <- ggplot(loaloa_sf, aes(x = p)) +
   coord_fixed(ratio = 0.01) +
   theme_minimal()
 
-figA / figB + plot_layout(heights = c(1.5, 1))
+figA_edit / figB + plot_layout(heights = c(1.5, 1))
 
 ggsave("figures/naomi-aghq/loa-loa-data.png", h = 5, w = 6.25, bg = "white")
+
+figA +
+  theme(
+    legend.position = "right",
+    legend.direction = "vertical"
+  )
+
+ggsave("figures/naomi-aghq/loa-loa-data-A.png", h = 4, w = 6.25, bg = "white")
+
 
 #' TMB model
 compile("figures/naomi-aghq/TMB/loaloazip.cpp")
