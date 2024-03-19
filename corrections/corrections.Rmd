@@ -37,35 +37,54 @@ I have addressed the corrections point by point, as follows.
 
 ### Chapter 4
 
-> *I'd like to see some more context relating the potential shortcomings to the public health setting (you have a bit of this in Section 4.1.3). For a public health analyst, when might they be most concerned about using the Besag model? What kinds of areal arrangements/neighborhood structures/types of data might be most prone to concern? E.g., one might be concerned about cases like Canadian provinces where their populations are so concentrated right near neighboring US states and most of the provincial area is sparsely populated. And as we discussed, I'd like for you to see if you can drill down into the localized results of the simulation to give some insight into where the smoothing is sub-optimal in the simulations. Relatedly would you expect the features highlighted by your vignettes to occur in reality in public health settings?*
+> *I'd like to see some more context relating the potential shortcomings to the public health setting (you have a bit of this in Section 4.1.3).
+For a public health analyst, when might they be most concerned about using the Besag model?
+What kinds of areal arrangements/neighborhood structures/types of data might be most prone to concern?
+E.g., one might be concerned about cases like Canadian provinces where their populations are so concentrated right near neighboring US states and most of the provincial area is sparsely populated. And as we discussed, I'd like for you to see if you can drill down into the localized results of the simulation to give some insight into where the smoothing is sub-optimal in the simulations.
+Relatedly would you expect the features highlighted by your vignettes to occur in reality in public health settings?*
 
 Not yet resolved.
 
 ### Chapter 5
 
-> *I'd like to see the chapter initially clearly lay out the overall goal, the quantitative representation of that, the various pieces of the analysis and how they fit together, and the data available, as well as what components you can estimate uncertainty for. In particular the notion of "reaching" the population needs to be clearly spelled out initially. And as we discussed, please make clear how prevalence is needed.*
+> *I'd like to see the chapter initially clearly lay out the overall goal, the quantitative representation of that, the various pieces of the analysis and how they fit together, and the data available, as well as what components you can estimate uncertainty for.
+In particular the notion of "reaching" the population needs to be clearly spelled out initially.
+And as we discussed, please make clear how prevalence is needed.*
 
 Not yet resolved.
 
-> *Model 5.11 omits various interactions. Focusing on the category-area-age interaction, which seems like the omitted interaction most likely to have substantial variation in reality, some effort to come up with some "residual" type diagnostic to assess model mis-specification in this regard would be helpful (e.g., perhaps some sort of variogram type analysis of some sort of age-group specific "working residuals" to borrow a GLM framing). Or you mentioned fitting the model with the interaction for one country. If that is not too burdensome that would also be a reasonable approach here.*
+> *Model 5.11 omits various interactions.
+Focusing on the category-area-age interaction, which seems like the omitted interaction most likely to have substantial variation in reality, some effort to come up with some "residual" type diagnostic to assess model mis-specification in this regard would be helpful (e.g., perhaps some sort of variogram type analysis of some sort of age-group specific "working residuals" to borrow a GLM framing). Or you mentioned fitting the model with the interaction for one country.
+If that is not too burdensome that would also be a reasonable approach here.*
 
-Not yet resolved.
+The linear predictor used for the multinomial logistic regression model was
+$$
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
+$$
+This equation does contain age-country-category interactions $\alpha_{ac[i]k}$, but you are right to point out that age-district-category interactions are omitted.
+A model containing the effects $\alpha_{aik}$ is likely to cause computational difficulties.
 
-> *The distinct differences between the CPO and information criteria (IC) results (and the very structured pattern in the surprising IC results) suggest the possibility of a bug somewhere, as we discussed. Getting the observation-specific values from INLA might help to better understand this.*
+> *The distinct differences between the CPO and information criteria (IC) results (and the very structured pattern in the surprising IC results) suggest the possibility of a bug somewhere, as we discussed.
+Getting the observation-specific values from INLA might help to better understand this.*
 
-Not yet resolved.
+I agree.
 
 ### Chapter 6
 
-> *Chapter 6 extends standard INLA computation in two ways. For the first, I'd like to see more clarity in how this differs from the Stringer et al. (2022) approach (i.e., that you go beyond the Gaussian mixture over the quadrature points, as we discussed in the defense) and the details of the software implementation (e.g., giving an overview in the chapter describing what someone would need to do to make use of your code/approach).*
+> *Chapter 6 extends standard INLA computation in two ways.
+For the first, I'd like to see more clarity in how this differs from the Stringer et al. (2022) approach (i.e., that you go beyond the Gaussian mixture over the quadrature points, as we discussed in the defense) and the details of the software implementation (e.g., giving an overview in the chapter describing what someone would need to do to make use of your code/approach).*
+
+The @stringer2022fast approach is that of Section 6.1.3.1.
+It is similar to the `inla::inla` with `method = "gaussian"`.
+The novel approach implemented in Section 6.2 is similar to `inla::inla` with `method = "laplace"`.
+
+> *As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input.
+You should be clear anytime you do this that this is problematic (and try to avoid as much as possible).*
 
 Not yet resolved.
 
-> *As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input. You should be clear anytime you do this that this is problematic (and try to avoid as much as possible).*
-
-Not yet resolved.
-
-> *Relatedly, assuming I'm understanding correctly, there is an important tradeoff between using Laplace marginals for improved accuracy for latent marginals and using the Gaussian mixture over the quadrature points, which allows one to make draws and do inference on any derived quantity in a way that takes account of posterior dependence between and amongst hyperparameters and latent process values. If that's the case, I think it's worth pointing this out and discussing when one can use the Laplace marginals in a public health context and when one might need to use the Gaussian mixture.*
+> *Relatedly, assuming I'm understanding correctly, there is an important tradeoff between using Laplace marginals for improved accuracy for latent marginals and using the Gaussian mixture over the quadrature points, which allows one to make draws and do inference on any derived quantity in a way that takes account of posterior dependence between and amongst hyperparameters and latent process values.
+If that's the case, I think it's worth pointing this out and discussing when one can use the Laplace marginals in a public health context and when one might need to use the Gaussian mixture.*
 
 Not yet resolved.
 
