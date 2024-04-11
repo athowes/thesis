@@ -3,6 +3,7 @@ title: Thesis corrections for "Bayesian spatio-temporal methods for small-area e
 subtitle: |
   Adam Howes (`ath19@ic.ac.uk`)
 bibliography: ../references.bib
+fontsize: 12pt
 output:
   pdf_document:
     toc: true
@@ -30,8 +31,9 @@ knitr::opts_chunk$set(
 
 # Dr. Christopher Paciorek
 
-Thank you for the thorough discussion of the thesis, both during the defense and in the provided corrections.
-I have addressed the corrections point by point, as follows.
+Thank you for the thorough discussion of the thesis.
+Both during the defense and in the provided corrections.
+I have addressed your suggested corrections point by point, as follows.
 
 ## General comments
 
@@ -51,7 +53,9 @@ Not yet resolved.
 In particular the notion of "reaching" the population needs to be clearly spelled out initially.
 And as we discussed, please make clear how prevalence is needed.*
 
-Not yet resolved.
+I have updated Section 5.1 giving the background for Chapter 5 as follows:
+
+"In this chapter, I used a Bayesian spatio-temporal model (Section 5.3) of behavioural data from household surveys (Section 5.2) to estimate HIV risk group proportions. To then estimate risk group specific HIV prevalence and HIV incidences (Section 5.4), I combined the proportion estimates with population size, HIV prevalence and HIV incidence estimates, as well as risk group specific HIV incidence rate ratios, and HIV prevalence rate ratios. Finally, by ordering district, age, risk group strata by HIV incidence, I estimated an upper bound for the number of new HIV infections that could be averted under different risk prioritisation strategies (Section 5.4.3)."
 
 > *Model 5.11 omits various interactions.
 Focusing on the category-area-age interaction, which seems like the omitted interaction most likely to have substantial variation in reality, some effort to come up with some "residual" type diagnostic to assess model mis-specification in this regard would be helpful (e.g., perhaps some sort of variogram type analysis of some sort of age-group specific "working residuals" to borrow a GLM framing). Or you mentioned fitting the model with the interaction for one country.
@@ -77,6 +81,8 @@ For the first, I'd like to see more clarity in how this differs from the Stringe
 The @stringer2022fast approach is that of Section 6.1.3.1.
 It is similar to the `inla::inla` with `method = "gaussian"`.
 The novel approach implemented in Section 6.2 is similar to `inla::inla` with `method = "laplace"`.
+
+I have clarified this point in the following text: "First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation. For users of `R-INLA`, the @stringer2022fast approach is analogous to `method = "gaussian"`, while the approach newly implemented in this chapter is analogous to `method = "laplace"`. Section 6.2 demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible."
 
 > *As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input.
 You should be clear anytime you do this that this is problematic (and try to avoid as much as possible).*
@@ -145,11 +151,12 @@ Though it is possible to check poor convergence in some cases, we may never be s
 
 > *21. I'd frame this as deterministic approximations need to focus on approximating expectations of interest. I think of Laplace as approximating an integral over part of parameter space (often > random effects') to be able to work with a smaller-dimensional space, such as for maximization.*
 
-Not yet resolved.
+Thank you for the comment.
+In Chapter 6, I refer to a Laplace approximation over part of the parameter space as the marginal Laplace approximation.
 
 > *23. "data is" -> "data are" (also p 66 and perhaps elsewhere)*
 
-I have corrected to "data are" in these instances, and searched through the thesis for other incorrect uses of "data is".
+I have corrected to "data are" in this instance and elsewhere in the thesis.
 
 > *30. You distinguish ELGM from LGM with having defined eta for LGM or been explicit about 1:1 relationship of x and y.*
 
@@ -178,11 +185,12 @@ Corrected to "arrived at by estimating the variance of".
 
 > *41. Might be worth including the variance piece raised to the power `n-c`.*
 
-I imagine this relates to Equation (4.4) and the equation for the probability density $p(\mathbf{u})$.
+I have added the factor $\tau_u^{\frac{n - n_c}{2}}$.
+Initially I excluded this factor as the primary intention of Equation (4.4) is to demonstrate that $p(\mathbf{u})$ is a function of the pairwise differences and thus improper.
 
 > *41. "recommended against": passive, and by who?*
 
-Altered the text to read:
+I have altered the text to read:
 "Directly using the Besag model as described in Section 4.1.1 has several practical limitations in applied settings.
 To overcome these limitations, @freni2018note recommend three best practices:".
 

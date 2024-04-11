@@ -273,16 +273,16 @@ div.csl-indent {
 <li class="chapter" data-level="5.3.2" data-path="multi-agyw.html"><a href="multi-agyw.html#s-logistic"><i class="fa fa-check"></i><b>5.3.2</b> Spatial logistic regression</a></li>
 <li class="chapter" data-level="5.3.3" data-path="multi-agyw.html"><a href="multi-agyw.html#female-sex-worker-population-size-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Female sex worker population size adjustment</a></li>
 </ul></li>
-<li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
+<li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prev-inc-risk"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
 <ul>
 <li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-prevalence-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi prevalence estimates</a></li>
 <li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-incidence-estimates"><i class="fa fa-check"></i><b>5.4.2</b> Disaggregation of Naomi incidence estimates</a></li>
-<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections-reached"><i class="fa fa-check"></i><b>5.4.3</b> Expected new infections reached</a></li>
+<li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections"><i class="fa fa-check"></i><b>5.4.3</b> Expected new infections reached</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#results-2"><i class="fa fa-check"></i><b>5.5</b> Results</a>
 <ul>
 <li class="chapter" data-level="5.5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#model-for-risk-group-proportions"><i class="fa fa-check"></i><b>5.5.1</b> Model for risk group proportions</a></li>
-<li class="chapter" data-level="5.5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group-1"><i class="fa fa-check"></i><b>5.5.2</b> Prevalence and incidence by risk group</a></li>
+<li class="chapter" data-level="5.5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#prevalence-and-incidence-by-risk-group"><i class="fa fa-check"></i><b>5.5.2</b> Prevalence and incidence by risk group</a></li>
 </ul></li>
 <li class="chapter" data-level="5.6" data-path="multi-agyw.html"><a href="multi-agyw.html#discussion-1"><i class="fa fa-check"></i><b>5.6</b> Discussion</a>
 <ul>
@@ -424,7 +424,7 @@ Code for the analysis in this chapter is available from <a href="https://github.
 <div id="background-2" class="section level2 hasAnchor" number="5.1">
 <h2><span class="header-section-number">5.1</span> Background<a href="multi-agyw.html#background-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:risk-grid"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:risk-grid"></span>
 <img src="figures/multi-agyw/risk-grid.png" alt="Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. It is assumed here that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively." width="95%" />
 <p class="caption">
 Figure 5.1: Risk of acquiring HIV depends on both individual-level risk behaviour and population-level HIV incidence. It is assumed here that with no individual-level risk behaviour, there is no risk of acquiring HIV, independent of the population-level HIV incidence. The risk scale is intended to be illustrative, rather than interpreted quantitatively.
@@ -446,8 +446,10 @@ It proposed stratifying HIV prevention packages to AGYW based on two factors:</p
 As such, prioritisation of prevention services is more efficient if both are taken into account.
 Figure <a href="multi-agyw.html#fig:risk-grid">5.1</a> illustrates this fact stylistically.
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions (Table <a href="a-model-for-risk-group-proportions.html#tab:unaids-strategy-targets">B.2</a>) based on prioritisation strata which incorporate behavioural risk (Table <a href="a-model-for-risk-group-proportions.html#tab:unaids-strategy-prioritisation">B.1</a>).
-Implementation of the strategy by national HIV programmes and stakeholders requires estimates of the population size and HIV incidence in each risk group by location.
-In this chapter, I used behavioural data from household surveys (Section <a href="multi-agyw.html#agyw-data">5.2</a>) to estimate these quantities using a Bayesian spatio-temporal model (Section <a href="multi-agyw.html#risk-group-model">5.3</a>).</p>
+Implementation of the strategy by national HIV programmes and stakeholders requires estimates of the population size and HIV incidence in each risk group by location.</p>
+<p>In this chapter, I used a Bayesian spatio-temporal model (Section <a href="multi-agyw.html#risk-group-model">5.3</a>) of behavioural data from household surveys (Section <a href="multi-agyw.html#agyw-data">5.2</a>) to estimate HIV risk group proportions.
+To then estimate risk group specific HIV prevalence and HIV incidences (Section <a href="multi-agyw.html#prev-inc-risk">5.4</a>), I combined the proportion estimates with population size, HIV prevalence and HIV incidence estimates, as well as risk group specific HIV incidence rate ratios, and HIV prevalence rate ratios.
+Finally, by ordering district, age, risk group strata by HIV incidence, I estimated an upper bound for the number of new HIV infections that could be averted under different risk prioritisation strategies (Section <a href="multi-agyw.html#expected-new-infections">5.4.3</a>).</p>
 </div>
 <div id="agyw-data" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Data<a href="multi-agyw.html#agyw-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -500,7 +502,7 @@ There were 46 suitable surveys (Figure <a href="multi-agyw.html#fig:available-su
 Of the respondents, 103,063 were aged 15-19 years, 92,173 were aged 20-24 years, and 79,734 were aged 25-29 years.
 The median number of surveys per country was four, ranging from one in both Botswana and South Africa to six in Uganda.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:available-surveys"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:available-surveys"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/available-surveys.png" alt="Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. That is, whether the respondent had “had sex in return for gifts, cash or anything else in the past 12 months”. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys." width="95%" />
 <p class="caption">
 Figure 5.2: Surveys conducted 1999-2018 that were used in the analysis by year, survey type, sample size, and whether the survey included a specific question about transactional sex. That is, whether the respondent had “had sex in return for gifts, cash or anything else in the past 12 months”. Survey type included AIDS Indicator Surveys (AIS), Demographic and Health Surveys (DHS), the Botswana AIDS Impact Survey 2013 (BAIS), and Population-based HIV Impact Assessment (PHIA) surveys.
@@ -530,7 +532,7 @@ Of the total 46 surveys included in the analysis, 12 had a specific transactiona
 The sample size for women aged 25-29 is smaller because there were 6 DHS surveys which excluded women 25-29 from the transactional sex survey question.
 Table <a href="a-model-for-risk-group-proportions.html#tab:household-survey-data">B.3</a> gives the sample size by age group for every survey included in the analysis.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:category-flowchart"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:category-flowchart"></span>
 <img src="figures/multi-agyw/category-flowchart.png" alt="Flowchart describing how respondents were classified to HIV risk groups based on their survey responses." width="95%" />
 <p class="caption">
 Figure 5.3: Flowchart describing how respondents were classified to HIV risk groups based on their survey responses.
@@ -811,7 +813,7 @@ For comparison, I also computed the deviance information criterion (DIC) <span c
 Each of these criterion can be calculated in <code>R-INLA</code> without requiring model refitting.
 The results are presented in Table <a href="multi-agyw.html#tab:model-comparison-multinomial">5.4</a> and Figure <a href="multi-agyw.html#fig:model-comparison">5.4</a>.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:model-comparison"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:model-comparison"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/model-comparison.png" alt="For the multinomial logistic regression model, under the conditional predictive ordinate (CPO) criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the deviance information criterion (DIC) and widely applicable information criterion (WAIC), where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria, AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe." width="95%" />
 <p class="caption">
 Figure 5.4: For the multinomial logistic regression model, under the conditional predictive ordinate (CPO) criterion, including Besag spatial random effects rather than IID spatial random effects improved model performance. On the other hand, under the deviance information criterion (DIC) and widely applicable information criterion (WAIC), where smaller values are preferred, the opposite was true. Though IID temporal random effects are preferred by all criteria, AR1 temporal random effects performed very similarly, likely as there is a limited amount of temporal variation in the data to describe.
@@ -967,7 +969,7 @@ Inclusion of Besag spatial random effects, rather than IID, consistently improve
 Benefits from inclusion of covariates were more marginal.
 As some countries had no suitable surveys, I nonetheless preferred to include covariate information so that estimates in these countries would be based on some country-specific data.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:fsw-logit-model-comparison"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:fsw-logit-model-comparison"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/fsw-logit-model-comparison.png" alt="For the logistic regression model, the CPO, DIC, and WAIC each agreed that the model containing Besag spatial random effects and the cfswrecent covariates was best. Inclusion of Besag spatial random effects consistently improved each criterion, whereas improvements from inclusion of any covariates were marginal." width="95%" />
 <p class="caption">
 Figure 5.5: For the logistic regression model, the CPO, DIC, and WAIC each agreed that the model containing Besag spatial random effects and the <code>cfswrecent</code> covariates was best. Inclusion of Besag spatial random effects consistently improved each criterion, whereas improvements from inclusion of any covariates were marginal.
@@ -1048,7 +1050,7 @@ The resulting age trends obtained (Figure <a href="multi-agyw.html#fig:age-disag
 <p>Altering the FSW population size estimates requires that other risk group population size estimates are also altered such that the corresponding risk group proportion estimates sum to one.
 Here, estimates of the non-regular or multiple sexual partner(s) population size were altered to facilitate changing of the FSW population size.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:age-disagg-fsw-line"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:age-disagg-fsw-line"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/age-disagg-fsw-line.png" alt="The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups." width="95%" />
 <p class="caption">
 Figure 5.6: The disaggregation procedure I used produces an age distribution for FSW peaking in the 20-24 and 25-29 age groups, and declining for older age groups.
@@ -1056,8 +1058,8 @@ Figure 5.6: The disaggregation procedure I used produces an age distribution for
 </div>
 </div>
 </div>
-<div id="prevalence-and-incidence-by-risk-group" class="section level2 hasAnchor" number="5.4">
-<h2><span class="header-section-number">5.4</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prevalence-and-incidence-by-risk-group" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="prev-inc-risk" class="section level2 hasAnchor" number="5.4">
+<h2><span class="header-section-number">5.4</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prev-inc-risk" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:</p>
 <ol style="list-style-type: decimal">
 <li>HIV prevalence <span class="math inline">\(\rho_{iak}\)</span>,</li>
@@ -1107,9 +1109,9 @@ Risk group specific HIV incidence estimates were then given by
 These equations were evaluated using Naomi model estimates of the number of new HIV infections <span class="math inline">\(I_{ia} = \lambda_{ia} N_{ia}\)</span>.
 The number of new HIV infections were <span class="math inline">\(I_{iak} = \lambda_{iak} N_{iak}\)</span>.</p>
 </div>
-<div id="expected-new-infections-reached" class="section level3 hasAnchor" number="5.4.3">
-<h3><span class="header-section-number">5.4.3</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections-reached" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The number of new infections that would be reached prioritising according to each possible stratification of the population were calculated.
+<div id="expected-new-infections" class="section level3 hasAnchor" number="5.4.3">
+<h3><span class="header-section-number">5.4.3</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The number of new infections that could be “reached” prioritising according to each possible stratification of the population were calculated.
 Each possible stratification refers to all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.
 As an illustration, consider stratification by age.
 I first aggregated the number of new HIV infections and HIV incidence such that
@@ -1129,14 +1131,14 @@ As there are three age groups, the resulting function was piecewise linear with 
 <div id="estimates" class="section level4 hasAnchor" number="5.5.1.1">
 <h4><span class="header-section-number">5.5.1.1</span> Estimates<a href="multi-agyw.html#estimates" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-continental-map"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:3p1-continental-map"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/3p1-continental-map.png" alt="The posterior mean of the AGYW risk group proportions over space in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, though desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group." width="95%" />
 <p class="caption">
 Figure 5.7: The posterior mean of the AGYW risk group proportions over space in 2018. Estimates are stratified by risk group (columns) and five-year age group (rows). Countries in grey were not included in the analysis. A limitation of this figure is that using a common colour scale, though desirable for other reasons, makes it challenging to see spatial variation in the FSW risk group.
 </p>
 </div>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:3p1-within-between-country-variation"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:3p1-within-between-country-variation"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/3p1-within-between-country-variation.png" alt="National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows). Though the information presented is similar to that of Figure 5.7, this figure presents a clear view of within- and between-country variation in risk group proportions." width="95%" />
 <p class="caption">
 Figure 5.8: National (in white) and subnational (in color) posterior means of the risk group proportions. Estimates are stratified by risk group (columns) and five-year age group (rows). Though the information presented is similar to that of Figure <a href="multi-agyw.html#fig:3p1-continental-map">5.7</a>, this figure presents a clear view of within- and between-country variation in risk group proportions.
@@ -1158,7 +1160,7 @@ The exception was Mozambique, where the majority (64.23%) were sexually active i
 <div id="coverage-assessment" class="section level4 hasAnchor" number="5.5.1.2">
 <h4><span class="header-section-number">5.5.1.2</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:coverage"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:coverage"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/coverage.png" alt="Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model." width="95%" />
 <p class="caption">
 Figure 5.9: Probability integral transform (PIT) histograms (top row) and empirical cumulative distribution function (ECDF) difference plots (bottom row) for the final selected model.
@@ -1185,10 +1187,10 @@ Temporal changes only explained 0.9% (95% CI 0.6–1.4%) of variation, indicatin
 I found similar variance decomposition results fitting each country individually (Figure <a href="a-model-for-risk-group-proportions.html#fig:aaa-variance-proportions">B.1</a>) and using other model specifications.</p>
 </div>
 </div>
-<div id="prevalence-and-incidence-by-risk-group-1" class="section level3 hasAnchor" number="5.5.2">
-<h3><span class="header-section-number">5.5.2</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prevalence-and-incidence-by-risk-group-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="prevalence-and-incidence-by-risk-group" class="section level3 hasAnchor" number="5.5.2">
+<h3><span class="header-section-number">5.5.2</span> Prevalence and incidence by risk group<a href="multi-agyw.html#prevalence-and-incidence-by-risk-group" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:infections-reached"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:infections-reached"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/infections-reached.png" alt="Percentage of new infections reached across all 13 countries, taking a variety of risk stratification approaches, against the percentage of at risk population required to be reached." width="95%" />
 <p class="caption">
 Figure 5.10: Percentage of new infections reached across all 13 countries, taking a variety of risk stratification approaches, against the percentage of at risk population required to be reached.
@@ -1232,7 +1234,7 @@ First, by taking a modular modelling approach, I integrated all relevant survey 
 Second, whereas direct estimates exhibit large sampling variability at a district level, I alleviated this issue using spatio-temporal smoothing (Figure <a href="multi-agyw.html#fig:model-direct-benefits">5.11</a>).
 Third, I provided estimates in all district-years, including those not directly sampled by surveys, allowing estimates to be consistently fed into further analysis and planning pipelines such as my analysis of risk group specific prevalence and incidence.</p>
 
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:model-direct-benefits"></span>
+<div class="figure" style="text-align: centre"><span style="display:block;" id="fig:model-direct-benefits"></span>
 <img src="resources/multi-agyw/20240304-124114-c2e0b2fd/depends/model-direct-benefits.png" alt="The modelled estimates display more plausible spatial smoothness than the direct estimates. In addition, missing values in the direct estimates are appropriately infilled by the model." width="95%" />
 <p class="caption">
 Figure 5.11: The modelled estimates display more plausible spatial smoothness than the direct estimates. In addition, missing values in the direct estimates are appropriately infilled by the model.

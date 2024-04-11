@@ -54,7 +54,10 @@ As such, prioritisation of prevention services is more efficient if both are tak
 Figure \@ref(fig:risk-grid) illustrates this fact stylistically.
 The strategy encourages programmes to define targets for the proportion of AGYW to be reached with a range of interventions (Table \@ref(tab:unaids-strategy-targets)) based on prioritisation strata which incorporate behavioural risk (Table \@ref(tab:unaids-strategy-prioritisation)).
 Implementation of the strategy by national HIV programmes and stakeholders requires estimates of the population size and HIV incidence in each risk group by location.
-In this chapter, I used behavioural data from household surveys (Section \@ref(agyw-data)) to estimate these quantities using a Bayesian spatio-temporal model (Section \@ref(risk-group-model)).
+
+In this chapter, I used a Bayesian spatio-temporal model (Section \@ref(risk-group-model)) of behavioural data from household surveys (Section \@ref(agyw-data)) to estimate HIV risk group proportions.
+To then estimate risk group specific HIV prevalence and HIV incidences (Section \@ref(prev-inc-risk)), I combined the proportion estimates with population size, HIV prevalence and HIV incidence estimates, as well as risk group specific HIV incidence rate ratios, and HIV prevalence rate ratios.
+Finally, by ordering district, age, risk group strata by HIV incidence, I estimated an upper bound for the number of new HIV infections that could be averted under different risk prioritisation strategies (Section \@ref(expected-new-infections)).
 
 ## Data {#agyw-data}
 
@@ -517,7 +520,7 @@ Here, estimates of the non-regular or multiple sexual partner(s) population size
 knitr::include_graphics(paste0("resources/multi-agyw/", resource_version, "/depends/age-disagg-fsw-line.png"))
 ```
 
-## Prevalence and incidence by risk group
+## Prevalence and incidence by risk group {#prev-inc-risk}
 
 Using the most recent risk group proportion estimates, I calculated the following indicators stratified according to district, age group and risk group:
 
@@ -571,9 +574,9 @@ Risk group specific HIV incidence estimates were then given by
 These equations were evaluated using Naomi model estimates of the number of new HIV infections $I_{ia} = \lambda_{ia} N_{ia}$.
 The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
 
-### Expected new infections reached
+### Expected new infections reached {#expected-new-infections}
 
-The number of new infections that would be reached prioritising according to each possible stratification of the population were calculated.
+The number of new infections that could be "reached" prioritising according to each possible stratification of the population were calculated.
 Each possible stratification refers to all $2^3 = 8$ possible combinations of stratification by location, age, and risk group.
 As an illustration, consider stratification by age.
 I first aggregated the number of new HIV infections and HIV incidence such that
