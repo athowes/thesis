@@ -2,7 +2,7 @@
 # Bayesian spatio-temporal methods for small-area estimation of HIV indicators
 
 > \[!WARNING\]  
-> Thesis undergoing corrections! Currently 305 pages. There are various
+> Thesis undergoing corrections! Currently 307 pages. There are various
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
@@ -164,8 +164,8 @@ Here are a collection of enhancements I think would improve this thesis:
   survey section.
 - In Chapter 3 I follow other authors in using the notation
   $u_k(w_{ki})$ to refer to random effects. It would be good to connect
-  up this functional notation with specifying random effects as
-  e.g. $u_i$ rather than some function of some covariates.
+  up this functional notation with specifying random effects as $u_i$
+  rather than some function of some covariates.
 - In Chapter 3, it would be nice to include a figure illustrating the
   DHS sampling procedure.
 
