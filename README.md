@@ -6,6 +6,10 @@
 > [enhancements](#enhancements) I would ideally like to make, but as
 > they say “a good thesis is a done thesis”.
 
+> \[!NOTE\]  
+> If you’re interested in my advice on doing a PhD, see this [blog
+> post](https://athowes.github.io/posts/2024-04-01-phd-advice/)!
+
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
 London](https://www.imperial.ac.uk/).
