@@ -39,7 +39,7 @@ I have addressed your suggested corrections point by point, as follows.
 
 ### Chapter 4
 
-> *I'd like to see some more context relating the potential shortcomings to the public health setting (you have a bit of this in Section 4.1.3).
+> I'd like to see some more context relating the potential shortcomings to the public health setting (you have a bit of this in Section 4.1.3).
 For a public health analyst, when might they be most concerned about using the Besag model?
 What kinds of areal arrangements/neighborhood structures/types of data might be most prone to concern?
 E.g., one might be concerned about cases like Canadian provinces where their populations are so concentrated right near neighboring US states and most of the provincial area is sparsely populated.
@@ -106,7 +106,12 @@ Not yet resolved.
 > *Relatedly, assuming I'm understanding correctly, there is an important tradeoff between using Laplace marginals for improved accuracy for latent marginals and using the Gaussian mixture over the quadrature points, which allows one to make draws and do inference on any derived quantity in a way that takes account of posterior dependence between and amongst hyperparameters and latent process values.
 If that's the case, I think it's worth pointing this out and discussing when one can use the Laplace marginals in a public health context and when one might need to use the Gaussian mixture.*
 
-Not yet resolved.
+This is an interesting observation.
+If you're correct, then I agree it worth pointing out, and it would shift my preference towards using the mixture of Gaussians approach.
+The way in which I think that it might not be correct is that the INLA approach fundamentally targets marginals, even when using the mixture of Gaussians.
+That is, the mixture of Gaussians does not "take account of posterior dependence between and amongst hyperparameters and latent process values" as suggested.
+I think this in part because there is work extending INLA to the joint setting -- which I don't think would need to exist if this question were correct.
+To follow up here.
 
 ## Minor comments
 
@@ -228,7 +233,10 @@ I have updated the text to read: "in the `arealutils` R package [@howes2023areal
 
 > *56: need citation for v being hard to estimate*
 
-Not yet resolved.
+Although I found references [@zhang2004inconsistent; @williams2006gaussian; @anderes2010consistent; @karvonen2023maximum] supporting difficulties estimating one or multiple hyperparameters for spatial models (including using the Matérn kernel) I did not find a reference to directly support $\nu$ being difficult to estimate.
+For example, @williams2006gaussian note that above $\nu = 7/2$ (i.e. quite smooth) then it's difficult to estimate $\nu$ from "finite noisy training samples".
+Hence I have updated the text to read: "We fixed the smoothness hyperparameter $\nu$ to $3/2$ to avoid concerns regarding the joint identifiability of the smoothness and lengthscale hyperparameters.".
+The observations in Chapter 4 being from a binomial distribution, to me intuitively, does support further that $\nu$ would be very difficult to estimate, but I could be wrong.
 
 > *56: have Li vary with size?*
 
@@ -237,7 +245,7 @@ A fixed number were used for each area.
 
 > *56: effect -> affect*
 
-Change made.
+Change made, thank you!
 
 > *57: "and the calibration"*
 
@@ -261,7 +269,7 @@ Changed to "resulted in wide".
 
 > *64: surprisingly*
 
-Changed.
+Changed, thank you!
 
 > *67: "This chapter used of area-level models to for point-level data throughout". I can't parse this. You can only use point level model if have point level data.*
 
@@ -360,6 +368,7 @@ Not yet resolved.
 
 Here I am using `tmbstan` with the default option `laplace = FALSE`.
 Hence the `tmbstan` sampler is operating over the full space, just as the `rstan` sampler.
+As such, it's reasonable to use the sample number of iterations with both samplers.
 
 > *132: Fig 6.7 is just grid/AGHQ, not EB? If so, why present EB method?*
 
