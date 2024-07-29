@@ -529,14 +529,14 @@ As such, in total the number of sum-to-zero constraints equals to the number of 
 <h3><span class="header-section-number">4.1.3</span> Concerns about the Besag model<a href="beyond-borders.html#concerns" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The Besag model was originally proposed by <span class="citation">Besag, York, and Mollié (<a href="#ref-besag1991bayesian">1991</a>)</span> for use in image analysis.
 In this setting, areas correspond to pixels arranged in a regular lattice structure.
-Since then, it has seen wider use.
-In some situations, like small-area estimation of HIV, the spatial structure is less regular than a lattice.
-This raises concerns about the Besag model’s applicability to this broader setting.
-The discussion in this section is closely linked to:</p>
-<ul>
-<li>the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation;</li>
-<li>the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Jonathan Wakefield and Lyons 2010</a>)</span>.</li>
-</ul>
+In an image, the data point at each pixel can be thought of as an average of the intensity or colour over the space represented by the pixel.</p>
+<p>Since it’s original proposal, the Besag model has seen wider use.
+However, for small-area estimation of HIV, the spatial structure corresponds to administrative units.
+These administrative units may have a more irregular spatial structure than a lattice.
+Furthermore, data points may not come about by uniform averaging over a space.
+For example, population density may vary across the area.</p>
+<p>These considerations raise concerns about the Besag model’s applicability to the small-area estimation setting, which we explore in this section.
+The discussion is closely linked to the modifiable areal unit problem <span class="citation">(<a href="#ref-openshow1979million">Openshaw and Taylor 1979</a>)</span>, whereby statistical conclusions change as a result of seemingly arbitrary changes in data aggregation, and the challenge of ecological inference and the ecological fallacy <span class="citation">(<a href="#ref-wakefield2010aggregation">Jonathan Wakefield and Lyons 2010</a>)</span>.</p>
 <div id="compression-to-adjacency" class="section level4 hasAnchor" number="4.1.3.1">
 <h4><span class="header-section-number">4.1.3.1</span> Compression to adjacency<a href="beyond-borders.html#compression-to-adjacency" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 
@@ -899,7 +899,7 @@ In Equation <a href="beyond-borders.html#eq:matern">(4.14)</a>:</p>
 <li><span class="math inline">\(\nu\)</span> is the smoothness hyperparameter;</li>
 <li><span class="math inline">\(l\)</span> is the length-scale hyperparameter on the latitude-longitude scale.</li>
 </ul>
-<p>The smoothness parameter <span class="math inline">\(\nu\)</span> is difficult to identify from data and so was fixed at <span class="math inline">\(3/2\)</span>.
+<p>We fixed the smoothness hyperparameter <span class="math inline">\(\nu\)</span> to <span class="math inline">\(3/2\)</span> to avoid concerns regarding the joint identifiability of the smoothness and lengthscale hyperparameters.
 This value matches that used to simulate data, and simplifies Equation <a href="beyond-borders.html#eq:matern">(4.14)</a> as follows
 <span class="math display">\[\begin{equation}
 k(s, s&#39;) = \left(1 + \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right) \exp \left(- \frac{\sqrt{3} \lvert s - s&#39; \rvert}{l} \right).
