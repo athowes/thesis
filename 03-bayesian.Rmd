@@ -439,6 +439,11 @@ Naively, computing $\text{elpd}_\texttt{LOO-CV}$ requires refitting the model $n
 This can be computationally costly, and so approximation strategies have been developed.
 Importance sampling methods using the the full posterior as a proposal are a notable example, including Pareto-smoothed importance sampling [PSIS; @vehtari2017practical].
 
+Equation \@ref(eq:loo-cv-elpd) is additive, and treats each observation as an independent unit of information.
+Special care is therefore required in applying cross-validation techniques to dependent (Section \@ref(correlation-structure)) spatio-temporal data.
+For example, @burkner2020approximate and @cooper2024cross use "leave-future-out" (LFO) cross-validation in the time-series context.
+Similarly, in Chapter \@ref(beyond-borders) I apply a spatial-leave-one-out (SLOO) cross-validation scheme.
+
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validation schemes for specific settings. -->
 <!-- Importance sampling less likely to work in some settings, like the spatial. -->
