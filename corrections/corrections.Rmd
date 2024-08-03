@@ -311,7 +311,7 @@ Practically speaking, the ALPHA network data used to inform the "High" IRR has q
 
 > *71: Purpose of Table 1 is not clear. Nor how IRR is to be used.*
 
-Not yet resolved.
+I have included an additional clause that the IRR is "used to calculate HIV incidence" (by risk group).
 
 > *Tables sometimes appear earlier than they should (e.g., 5.1 and 5.2).*
 
@@ -345,11 +345,14 @@ Not yet resolved.
 
 > *88: Section 5.4.3 is hard to understand. I don't understand how it relates to 5.4.2. "Reach" is not clearly defined nor is it clearly discussed how it is quantified based on the various modeling pieces.*
 
-Not yet resolved.
+Section 5.4.3 relates to Section 5.4.2 because it uses $I_{iak}$ which is calculated in Section 5.4.2.
+I have rewritten Section 5.4.3 to make this clearer and address these comments.
 
 > *91: Not clear what the quantities are in the statement about "in most districts adolescent girls aged 15-19 were not sexually active". Is this an across-district or within-district quantity?*
 
-Not yet resolved.
+You're right that this sentence didn't make sense.
+I've rewritten it to clarify as follows:
+"In the median district, 57.9% of adolescent girls 15-19 were not sexually active (95% credible interval [CI] at the district-level 27.7–79.7)."
 
 > *95: does the approach presented allow identification of actual people or just targeting efforts to reach more such people collectively*
 
@@ -363,7 +366,7 @@ Not yet resolved.
 
 > *106: Not sure what you mean by "log p(y|x,theta) is small". This is the likelihood...*
 
-I based this sentence on @blangiardo2013spatial.
+I based this sentence on @blangiardo2013spatial, which I have now cited.
 
 > *116: "in which, which"*
 
@@ -381,7 +384,8 @@ I have updated the text as follows:
 
 > *130: Somewhat unclear how the quadrature is implemented, wrapped around the TMB-based Laplace approximation. Is your code in R? (Sorry, this may be because I didn't have time to look through appendices.)*
 
-Not yet resolved.
+Yes my code is in R.
+All code for the thesis is available at `athowes/thesis` and for the analysis in Chapter 6 at `athowes/naomi-aghq`.
 
 > *131: Using same number of iterations with stan (full posterior, including latent values) vs tmbstan (hyperparameters, much lower-dimensional space) seems odd.*
 
@@ -391,7 +395,11 @@ As such, it's reasonable to use the sample number of iterations with both sample
 
 > *132: Fig 6.7 is just grid/AGHQ, not EB? If so, why present EB method?*
 
-Not yet resolved.
+Yes that's correct, and I have updated the caption of Figure 6.7 to make this more clear.
+The focus of this section of the chapter was to validate that my approach for implementing Laplace marginals is correct (as compared to `R-INLA`).
+For that purpose, I focused on presenting results for the methods with quadrature.
+Though you do raise a good point that the results for EB should also be similar.
+Part of the reason to include EB methods was for teaching purposes.
 
 > *132: Why surprising tmbstan faster than rstan - what are the different computations involved - having to compute Laplace vs doing HMC over higher dimensional space. I expect it would vary with I expect it would vary with hyperparameter and latent dimensions.*
 

@@ -277,7 +277,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.4" data-path="multi-agyw.html"><a href="multi-agyw.html#prev-inc-risk"><i class="fa fa-check"></i><b>5.4</b> Prevalence and incidence by risk group</a>
 <ul>
 <li class="chapter" data-level="5.4.1" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-prevalence-estimates"><i class="fa fa-check"></i><b>5.4.1</b> Disaggregation of Naomi prevalence estimates</a></li>
-<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#disaggregation-of-naomi-incidence-estimates"><i class="fa fa-check"></i><b>5.4.2</b> Disaggregation of Naomi incidence estimates</a></li>
+<li class="chapter" data-level="5.4.2" data-path="multi-agyw.html"><a href="multi-agyw.html#disagg-incidence"><i class="fa fa-check"></i><b>5.4.2</b> Disaggregation of Naomi incidence estimates</a></li>
 <li class="chapter" data-level="5.4.3" data-path="multi-agyw.html"><a href="multi-agyw.html#expected-new-infections"><i class="fa fa-check"></i><b>5.4.3</b> Expected new infections reached</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multi-agyw.html"><a href="multi-agyw.html#results-2"><i class="fa fa-check"></i><b>5.5</b> Results</a>
@@ -517,7 +517,8 @@ In increasing order of HIV acquisition risk, these risk groups were:</p>
 <li><span class="math inline">\(k = 3\)</span>: Non-regular or multiple sexual partner(s), and</li>
 <li><span class="math inline">\(k = 4\)</span>: Reporting transactional sex.</li>
 </ul>
-<p>The HIV incidence rate ratio <span class="math inline">\(\text{RR}_k\)</span> was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>), with the one cohabiting partner risk group as baseline.
+<p>The HIV incidence rate ratio <span class="math inline">\(\text{RR}_k\)</span>, used to calculate HIV incidence, was assumed to vary by risk group (Table <a href="multi-agyw.html#tab:risk-groups">5.1</a>).
+The one cohabiting partner risk group was set as baseline such that <span class="math inline">\(\text{RR}_2 = 1\)</span>.
 For the <span class="math inline">\(k = 4\)</span> risk group, the HIV incidence ratio ratio was further assumed to vary by local HIV incidence among the general population.</p>
 <p>Exact survey questions varied slightly across survey types and between survey phases.
 Questions captured information about whether the respondent had been sexually active in the past twelve months, and if so with how many partners.
@@ -1090,8 +1091,8 @@ These values were given by
 \end{equation}\]</span>
 The number of PLHIV were obtained by <span class="math inline">\(H_{iak} = \rho_{iak} N_{iak}\)</span>, where <span class="math inline">\(N_{iak}\)</span> is the risk group population size.</p>
 </div>
-<div id="disaggregation-of-naomi-incidence-estimates" class="section level3 hasAnchor" number="5.4.2">
-<h3><span class="header-section-number">5.4.2</span> Disaggregation of Naomi incidence estimates<a href="multi-agyw.html#disaggregation-of-naomi-incidence-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="disagg-incidence" class="section level3 hasAnchor" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> Disaggregation of Naomi incidence estimates<a href="multi-agyw.html#disagg-incidence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>I used linear disaggregation to calculate the number of new HIV infections by risk group
 <span class="math display">\[\begin{align}
     I_{ia} &amp;= \sum_k I_{iak} = \sum_k \lambda_{iak} (1 - \rho_{iak}) N_{iak} \\
@@ -1112,17 +1113,16 @@ The number of new HIV infections were <span class="math inline">\(I_{iak} = \lam
 </div>
 <div id="expected-new-infections" class="section level3 hasAnchor" number="5.4.3">
 <h3><span class="header-section-number">5.4.3</span> Expected new infections reached<a href="multi-agyw.html#expected-new-infections" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The number of new infections that could be “reached” prioritising according to each possible stratification of the population were calculated.
-Each possible stratification refers to all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.
-As an illustration, consider stratification by age.
-I first aggregated the number of new HIV infections and HIV incidence such that
+<p>To quantify the number of new infections that could be reached prioritising according to each possible stratification of the population, I took the following approach, which I illustrate for stratification by age.
+First, I aggregated the number of new HIV infections and HIV incidence (calculated above in Section <a href="multi-agyw.html#disagg-incidence">5.4.2</a>) such that
 <span class="math display">\[\begin{align}
     I_a &amp;= \sum_{ik} I_{iak}, \\
     \lambda_a &amp;= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
 \end{align}\]</span>
 I then considered prioritisation individuals by age group <span class="math inline">\(a\)</span> according to the highest HIV incidence <span class="math inline">\(\lambda_a\)</span>.
-By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
-As there are three age groups, the resulting function was piecewise linear with three segments.</p>
+By cumulatively summing the expected infections, for each fraction of the total population reached (0-100%) I calculated the fraction of total expected new infections that would be reached.
+In this instance, as there are three age groups, the resulting function was piecewise linear with three segments.
+This analysis was repeated for all <span class="math inline">\(2^3 = 8\)</span> possible combinations of stratification by location, age, and risk group.</p>
 </div>
 </div>
 <div id="results-2" class="section level2 hasAnchor" number="5.5">
@@ -1155,8 +1155,8 @@ In contrast, countries in southern Africa (Botswana, Eswatini, Lesotho, Namibia 
 This finding is the most notable feature of between-country variation shown in Figure <a href="multi-agyw.html#fig:3p1-within-between-country-variation">5.8</a>.
 Figure <a href="multi-agyw.html#fig:3p1-continental-map">5.7</a> shows the geographic delineation to pass along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia.
 The bimodality of the 20-24 and 25-29 year age groups is shown in Figure <a href="a-model-for-risk-group-proportions.html#fig:age-variation">B.2</a>.</p>
-<p>In most districts (57.9%; 95% credible interval [CI] 27.7–79.7) adolescent girls aged 15-19 were not sexually active.
-The exception was Mozambique, where the majority (64.23%) were sexually active in the past year and close to a third (34.17%) were cohabiting with a partner.</p>
+<p>In the median district, 57.9% of adolescent girls 15-19 were not sexually active (95% credible interval [CI] at the district-level 27.7–79.7).
+The country of Mozambique was an exception, where the majority of adolescent girls 15-19 (64.23%) were sexually active in the past year and close to a third (34.17%) were cohabiting with a partner.</p>
 </div>
 <div id="coverage-assessment" class="section level4 hasAnchor" number="5.5.1.2">
 <h4><span class="header-section-number">5.5.1.2</span> Coverage assessment<a href="multi-agyw.html#coverage-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h4>

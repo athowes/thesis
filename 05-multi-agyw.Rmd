@@ -169,7 +169,8 @@ In increasing order of HIV acquisition risk, these risk groups were:
 * $k = 3$: Non-regular or multiple sexual partner(s), and
 * $k = 4$: Reporting transactional sex.
 
-The HIV incidence rate ratio $\text{RR}_k$ was assumed to vary by risk group (Table \@ref(tab:risk-groups)), with the one cohabiting partner risk group as baseline.
+The HIV incidence rate ratio $\text{RR}_k$, used to calculate HIV incidence, was assumed to vary by risk group (Table \@ref(tab:risk-groups)).
+The one cohabiting partner risk group was set as baseline such that $\text{RR}_2 = 1$.
 For the $k = 4$ risk group, the HIV incidence ratio ratio was further assumed to vary by local HIV incidence among the general population.
 
 Exact survey questions varied slightly across survey types and between survey phases.
@@ -554,7 +555,7 @@ These values were given by
 \end{equation}
 The number of PLHIV were obtained by $H_{iak} = \rho_{iak} N_{iak}$, where $N_{iak}$ is the risk group population size.
 
-### Disaggregation of Naomi incidence estimates
+### Disaggregation of Naomi incidence estimates {#disagg-incidence}
 
 I used linear disaggregation to calculate the number of new HIV infections by risk group
 \begin{align}
@@ -576,17 +577,16 @@ The number of new HIV infections were $I_{iak} = \lambda_{iak} N_{iak}$.
 
 ### Expected new infections reached {#expected-new-infections}
 
-The number of new infections that could be "reached" prioritising according to each possible stratification of the population were calculated.
-Each possible stratification refers to all $2^3 = 8$ possible combinations of stratification by location, age, and risk group.
-As an illustration, consider stratification by age.
-I first aggregated the number of new HIV infections and HIV incidence such that
+To quantify the number of new infections that could be reached prioritising according to each possible stratification of the population, I took the following approach, which I illustrate for stratification by age.
+First, I aggregated the number of new HIV infections and HIV incidence (calculated above in Section \@ref(disagg-incidence)) such that
 \begin{align}
     I_a &= \sum_{ik} I_{iak}, \\
     \lambda_a &= I_a / \sum_{ik} (1 - \rho_{iak}) N_{iak}.
 \end{align}
 I then considered prioritisation individuals by age group $a$ according to the highest HIV incidence $\lambda_a$.
-By cumulatively summing the expected infections, for each fraction of the total population reached I calculated the fraction of total expected new infections that would be reached.
-As there are three age groups, the resulting function was piecewise linear with three segments.
+By cumulatively summing the expected infections, for each fraction of the total population reached (0-100%) I calculated the fraction of total expected new infections that would be reached.
+In this instance, as there are three age groups, the resulting function was piecewise linear with three segments.
+This analysis was repeated for all $2^3 = 8$ possible combinations of stratification by location, age, and risk group.
 
 ## Results
 
@@ -727,8 +727,8 @@ This finding is the most notable feature of between-country variation shown in F
 Figure \@ref(fig:3p1-continental-map) shows the geographic delineation to pass along the border of Mozambique, through the interior of Zimbabwe and along the border of Zambia.
 The bimodality of the 20-24 and 25-29 year age groups is shown in Figure \@ref(fig:age-variation).
 
-In most districts (`r round(district_Y015_019_nosex12m_quantiles$median, 1)`\%; 95\% credible interval [CI] `r round(district_Y015_019_nosex12m_quantiles$lower, 1)`--`r round(district_Y015_019_nosex12m_quantiles$upper, 1)`) adolescent girls aged 15-19 were not sexually active.
-The exception was Mozambique, where the majority (`r 100 - round(moz_Y015_019_nosex12m$estimate_smoothed, 2)`\%) were sexually active in the past year and close to a third (`r round(moz_Y015_019_sexcohab$estimate_smoothed, 2)`\%) were cohabiting with a partner.
+In the median district, `r round(district_Y015_019_nosex12m_quantiles$median, 1)`\% of adolescent girls 15-19 were not sexually active (95\% credible interval [CI] at the district-level `r round(district_Y015_019_nosex12m_quantiles$lower, 1)`--`r round(district_Y015_019_nosex12m_quantiles$upper, 1)`).
+The country of Mozambique was an exception, where the majority of adolescent girls 15-19 (`r 100 - round(moz_Y015_019_nosex12m$estimate_smoothed, 2)`\%) were sexually active in the past year and close to a third (`r round(moz_Y015_019_sexcohab$estimate_smoothed, 2)`\%) were cohabiting with a partner.
 
 #### Coverage assessment
 
