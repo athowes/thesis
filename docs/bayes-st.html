@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>3 Bayesian spatio-temporal statistics | Bayesian spatio-temporal methods for small-area estimation of HIV indicators</title>
   <meta name="description" content="3 Bayesian spatio-temporal statistics | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
-  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.40.1 and GitBook 2.6.7" />
 
   <meta property="og:title" content="3 Bayesian spatio-temporal statistics | Bayesian spatio-temporal methods for small-area estimation of HIV indicators" />
   <meta property="og:type" content="book" />
@@ -802,6 +802,10 @@ where the subscript <span class="math inline">\(-i\)</span> refers to all elemen
 Naively, computing <span class="math inline">\(\text{elpd}_\texttt{LOO-CV}\)</span> requires refitting the model <span class="math inline">\(n\)</span> times.
 This can be computationally costly, and so approximation strategies have been developed.
 Importance sampling methods using the the full posterior as a proposal are a notable example, including Pareto-smoothed importance sampling [PSIS; <span class="citation">Vehtari, Gelman, and Gabry (<a href="#ref-vehtari2017practical">2017</a>)</span>].</p>
+<p>Equation <a href="bayes-st.html#eq:loo-cv-elpd">(3.11)</a> is additive, and treats each observation as an independent unit of information.
+Special care is therefore required in applying cross-validation techniques to dependent (Section <a href="bayes-st.html#correlation-structure">3.2.1.2</a>) spatio-temporal data.
+For example, <span class="citation">Bürkner, Gabry, and Vehtari (<a href="#ref-burkner2020approximate">2020</a>)</span> and <span class="citation">Cooper et al. (<a href="#ref-cooper2024cross">2024</a>)</span> use “leave-future-out” (LFO) cross-validation in the time-series context.
+Similarly, in Chapter <a href="beyond-borders.html#beyond-borders">4</a> I apply a spatial-leave-one-out (SLOO) cross-validation scheme.</p>
 <!-- $K$-fold cross-validation, divide data into $K$ blocks. -->
 <!-- Other cross-validation schemes for specific settings. -->
 <!-- Importance sampling less likely to work in some settings, like the spatial. -->
@@ -956,6 +960,9 @@ Bradley, Valerie C, Shiro Kuriwaki, Michael Isakov, Dino Sejdinovic, Xiao-Li Men
 <div id="ref-brier1950verification" class="csl-entry">
 Brier, Glenn W. 1950. <span>“<span class="nocase">Verification of forecasts expressed in terms of probability</span>.”</span> <em>Monthly Weather Review</em> 78 (1): 1–3.
 </div>
+<div id="ref-burkner2020approximate" class="csl-entry">
+Bürkner, Paul-Christian, Jonah Gabry, and Aki Vehtari. 2020. <span>“Approximate Leave-Future-Out Cross-Validation for Bayesian Time Series Models.”</span> <em>Journal of Statistical Computation and Simulation</em> 90 (14): 2499–2523.
+</div>
 <div id="ref-carpenter2017stan" class="csl-entry">
 Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).
 </div>
@@ -964,6 +971,9 @@ Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“<span class="nocase
 </div>
 <div id="ref-chopin2020introduction" class="csl-entry">
 Chopin, Nicolas, Omiros Papaspiliopoulos, et al. 2020. <em><span class="nocase">An introduction to sequential Monte Carlo</span></em>. Vol. 4. Springer.
+</div>
+<div id="ref-cooper2024cross" class="csl-entry">
+Cooper, Alex, Dan Simpson, Lauren Kennedy, Catherine Forbes, and Aki Vehtari. 2024. <span>“Cross-Validatory Model Selection for Bayesian Autoregressions with Exogenous Regressors.”</span> <em>Bayesian Analysis</em> 1 (1): 1–25.
 </div>
 <div id="ref-cressie2015statistics" class="csl-entry">
 Cressie, Noel, and Christopher K Wikle. 2015. <em><span class="nocase">Statistics for spatio-temporal data</span></em>. John Wiley &amp; Sons.
