@@ -61,7 +61,7 @@ Finally, by ordering district, age, risk group strata by HIV incidence, I estima
 
 ## Data {#agyw-data}
 
-### Behavioural data from household surveys
+### Behavioural data from household surveys {#household-data}
 
 ```{r results='hide', warning=FALSE, message=FALSE}
 path <- paste0("resources/multi-agyw/", resource_version, "/depends/available-surveys.csv")
@@ -535,10 +535,10 @@ To do so, I disaggregated district, age group specific Naomi estimates by risk g
 ### Disaggregation of Naomi prevalence estimates
 
 To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios $\log(\text{OR}_k)$ relative to the general population.
-To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
-I also included general population HIV prevalence data.
-The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
-The log odds ratios may then be easily obtained by taking the difference in odds ratios.
+To do so, I began by calculating age, country, and risk group specific (as well as general population) HIV prevalence $\rho_{cak}$ using bio-marker survey data from all `r total_surveys` surveys included in the risk group model (Section \@ref(household-data)).
+I then fit a logistic regression model, with indicator functions for each risk group, and an indicator for being in the general population.
+The fitted regression coefficients in this model $\beta_k$ correspond to log odds $\log \rho_k - \log(1 - \rho_k)$.
+The required log odds ratios may then be easily obtained by taking the difference in odds ratios.
 
 To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
 I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.
@@ -885,11 +885,7 @@ The final surveys included in the risk model model were conducted in 2018.
 The analysis may be updated with more surveys as they become available.
 I do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.
 
-```{r}
-# Get number of new infections which occur in adults not females 15-29
-```
-
-My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the `r 100 - 100`\% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
+My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for new infections among adults 15-49 which occur in women 30-49 and men 15-49.
 Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.
 
 <!-- Phylogenetic results from BDI are about transmission rather than incidence. -->

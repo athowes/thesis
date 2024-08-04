@@ -265,7 +265,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.1" data-path="multi-agyw.html"><a href="multi-agyw.html#background-2"><i class="fa fa-check"></i><b>5.1</b> Background</a></li>
 <li class="chapter" data-level="5.2" data-path="multi-agyw.html"><a href="multi-agyw.html#agyw-data"><i class="fa fa-check"></i><b>5.2</b> Data</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="multi-agyw.html"><a href="multi-agyw.html#behavioural-data-from-household-surveys"><i class="fa fa-check"></i><b>5.2.1</b> Behavioural data from household surveys</a></li>
+<li class="chapter" data-level="5.2.1" data-path="multi-agyw.html"><a href="multi-agyw.html#household-data"><i class="fa fa-check"></i><b>5.2.1</b> Behavioural data from household surveys</a></li>
 <li class="chapter" data-level="5.2.2" data-path="multi-agyw.html"><a href="multi-agyw.html#other-data"><i class="fa fa-check"></i><b>5.2.2</b> Other data</a></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="multi-agyw.html"><a href="multi-agyw.html#risk-group-model"><i class="fa fa-check"></i><b>5.3</b> Model for risk group proportions</a>
@@ -454,8 +454,8 @@ Finally, by ordering district, age, risk group strata by HIV incidence, I estima
 </div>
 <div id="agyw-data" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Data<a href="multi-agyw.html#agyw-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="behavioural-data-from-household-surveys" class="section level3 hasAnchor" number="5.2.1">
-<h3><span class="header-section-number">5.2.1</span> Behavioural data from household surveys<a href="multi-agyw.html#behavioural-data-from-household-surveys" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="household-data" class="section level3 hasAnchor" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Behavioural data from household surveys<a href="multi-agyw.html#household-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <table>
 <caption><span id="tab:risk-groups">Table 5.1: </span> HIV risk groups and HIV incidence rate ratios relative to AGYW with one cohabiting sexual partner.
 The incidence rate ratio for women with non-regular or multiple sexual partner(s) was derived from analysis of longitudinal data by <span class="citation">Slaymaker et al. (<a href="#ref-slaymaker2020croi">2020</a>)</span>.
@@ -1073,10 +1073,10 @@ Figure 5.6: The disaggregation procedure I used produces an age distribution for
 <div id="disaggregation-of-naomi-prevalence-estimates" class="section level3 hasAnchor" number="5.4.1">
 <h3><span class="header-section-number">5.4.1</span> Disaggregation of Naomi prevalence estimates<a href="multi-agyw.html#disaggregation-of-naomi-prevalence-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios <span class="math inline">\(\log(\text{OR}_k)\)</span> relative to the general population.
-To do so, I fit a logistic regression model using age, country and risk group specific HIV prevalence bio-marker survey data.
-I also included general population HIV prevalence data.
-The logistic regression model included an indicator function for each risk group, and an indicator for being in the general population, such that the regression coefficients in this model correspond to log odds.
-The log odds ratios may then be easily obtained by taking the difference in odds ratios.</p>
+To do so, I began by calculating age, country, and risk group specific (as well as general population) HIV prevalence <span class="math inline">\(\rho_{cak}\)</span> using bio-marker survey data from all 46 surveys included in the risk group model (Section <a href="multi-agyw.html#household-data">5.2.1</a>).
+I then fit a logistic regression model, with indicator functions for each risk group, and an indicator for being in the general population.
+The fitted regression coefficients in this model <span class="math inline">\(\beta_k\)</span> correspond to log odds <span class="math inline">\(\log \rho_k - \log(1 - \rho_k)\)</span>.
+The required log odds ratios may then be easily obtained by taking the difference in odds ratios.</p>
 <p>To allow the log odds ratio for the highest risk group to vary based on general population prevalence I fit a linear regression of the FSW log odds against the general population log odds.
 I ensured that log odds ratios for the FSW risk group were at least as large as those for the multiple or non-regular partner(s) risk group.</p>
 <p>Given the fitted log odds ratios, I disaggregated Naomi estimates of PLHIV <span class="math inline">\(H_{ia}\)</span> on the logit scale using numerical optimisation.
@@ -1244,7 +1244,7 @@ Figure 5.11: The modelled estimates display more plausible spatial smoothness th
 <p>The final surveys included in the risk model model were conducted in 2018.
 The analysis may be updated with more surveys as they become available.
 I do not anticipate that the risk group proportions will change substantially, as I found that they did not change significantly over time.</p>
-<p>My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for the 0% of new infections among adults 15-49 which occur in women 30-49 and men 15-49.
+<p>My analysis focused on females aged 15-29 years, and could be extended to consider optimisation of prevention more broadly, accounting for new infections among adults 15-49 which occur in women 30-49 and men 15-49.
 Estimating sexual risk behaviour in adults 15-49 would be a crucial step toward greater understanding of the dynamics of the HIV epidemic in sub-Saharan Africa, and would allow incidence models to include stratification of individuals by sexual risk.</p>
 <!-- Phylogenetic results from BDI are about transmission rather than incidence. -->
 <!-- Only age-sex structured not age-sex-behaviour. -->
