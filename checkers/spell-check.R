@@ -40,3 +40,6 @@ spell_check("92-appendixC.Rmd")
 spell_check("references.bib")
 
 spell_check("README.Rmarkdown")
+
+spell_check("corrections/corrections.Rmd")
+spell_check("corrections/cover.Rmd")
