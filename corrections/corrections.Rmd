@@ -90,8 +90,31 @@ The linear predictor used for the multinomial logistic regression model was
 $$
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
 $$
-This equation does contain age-country-category interactions $\alpha_{ac[i]k}$, but you are right to point out that age-district-category interactions are omitted.
-A model containing the effects $\alpha_{aik}$ is likely to cause computational difficulties.
+This equation does contain age-country-category interactions $\alpha_{ac[i]k}$, but you are right to point out that age-district-category interactions, call them say $\xi_{aik}$ are omitted.
+A model containing the effects $\xi_{aik}$ would be likely to cause computational difficulties in the full joint model of all countries.
+Nonetheless, restricting attention to one country (Malawi) and fitting the expanded model
+$$
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \xi_{ack} + u_{ik} + \gamma_{tk}.
+$$
+as suggested, I found:
+
+* Not a lot of change in plots
+* DIC, WAIC, and CPO are better
+* Small amount of variance explained
+* It would be beneficial to investigate this further
+* Pass these results along to the team continuing to develop the model
+
+```{r age-district-nosex12m}
+knitr::include_graphics("resources/age-district-plot-nosex12m.png")
+```
+
+```{r age-district-sexcohab}
+knitr::include_graphics("resources/age-district-plot-sexcohab.png")
+```
+
+```{r age-district-sexnonregplus}
+knitr::include_graphics("resources/age-district-plot-sexnonregplus.png")
+```
 
 \begin{examiner}
 The distinct differences between the CPO and information criteria (IC) results (and the very structured pattern in the surprising IC results) suggest the possibility of a bug somewhere, as we discussed.
