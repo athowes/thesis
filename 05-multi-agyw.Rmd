@@ -278,15 +278,6 @@ Although in theory an improper prior distribution $\theta_{ita} \propto 1$ shoul
 
 #### Model specifications
 
-|    | Category $\beta_k$ | Country $\zeta_{ck}$ | Age $\alpha_{ack}$ | Spatial $u_{ik}$ | Temporal $\gamma_{tk}$ |
-| -- | ------------------ | -------------------- | ------------------ | ------------------- | ---------------------- |
-| M1 | IID | IID | IID | IID   | IID |
-| M2 | IID | IID | IID | Besag | IID |
-| M3 | IID | IID | IID | IID   | AR1 |
-| M4 | IID | IID | IID | Besag | AR1 |
-
-Table: (\#tab:multinomial-models) Four multinomial regression models were considered. Observation random effects $\theta_{ita}$, included in all models, are omitted from this table.
-
 I considered four models (Table \@ref(tab:multinomial-models)) for $\eta_{ita}$ in the equivalent Poisson log-linear model of the form
 \begin{equation}
 \eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
@@ -296,6 +287,15 @@ Observation random effects $\theta_{ita} \sim \mathcal{N}(0, 1000^2)$ with a vag
 To capture country-specific proportion estimates for each category, I included category random effects $\beta_k \sim \mathcal{N}(0, \tau_\beta^{-1})$ and country-category random effects $\zeta_{ck} \sim \mathcal{N}(0, \tau_\zeta^{-1})$.
 Heterogeneity in risk group proportions by age was allowed by including age-country-category random effects $\alpha_{ack} \sim \mathcal{N}(0, \tau_\alpha^{-1})$.
 I considered several specifications for the space-category $u_{ik}$ and time-category effects $\gamma_{tk}$, described in Sections \@ref(spatial-re) and \@ref(temporal-re).
+
+|    | Category $\beta_k$ | Country $\zeta_{ck}$ | Age $\alpha_{ack}$ | Spatial $u_{ik}$ | Temporal $\gamma_{tk}$ |
+| -- | ------------------ | -------------------- | ------------------ | ------------------- | ---------------------- |
+| M1 | IID | IID | IID | IID   | IID |
+| M2 | IID | IID | IID | Besag | IID |
+| M3 | IID | IID | IID | IID   | AR1 |
+| M4 | IID | IID | IID | Besag | AR1 |
+
+Table: (\#tab:multinomial-models) Four multinomial regression models were considered. Observation random effects $\theta_{ita}$, included in all models, are omitted from this table.
 
 Use of the multinomial-Poisson transformation required all random effects to include interaction with category $k$, because any random effects which did not include interaction with category would give no change in category probabilities.
 The only exception were the observation random effects, which were included as a device to ensure the transformation is valid, rather than to model the data.
