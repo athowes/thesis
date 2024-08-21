@@ -121,18 +121,48 @@ The distinct differences between the CPO and information criteria (IC) results (
 Getting the observation-specific values from INLA might help to better understand this.
 \end{examiner}
 
-* Note that I've found the pattern is reversed (i.e. normal and what you'd expect) fitting to a subset of countries
-* Will paste results of that analysis into here
+Thank you for this suggestion.
+As discussed I agree that the mismatch between the models favoured by the CPO and IC is surprising and suggestive of a bug.
+To investigate this, I began by refitting the four models on a subset of countries for computational convenience.
+I found that the observed surprising pattern did not occur, and that both the CPO and IC agreed:
 
-<!--   model      dic dic_se   waic waic_se   cpo cpo_se -->
-<!--   <chr>    <dbl>  <dbl>  <dbl>   <dbl> <dbl>  <dbl> -->
-<!-- 1 Model 1 40597.   191. 41763.    227. 2098.   22.6 -->
-<!-- 2 Model 2 40445.   192. 41592.    229. 2232.   22.8 -->
-<!-- 3 Model 3 40598.   191. 41763.    227. 2098.   22.6 -->
-<!-- 4 Model 4 40446.   192. 41592.    229. 2232.   22.8 -->
+```r
+  model      dic dic_se   waic waic_se   cpo cpo_se
+  <chr>    <dbl>  <dbl>  <dbl>   <dbl> <dbl>  <dbl>
+1 Model 1 40597.   191. 41763.    227. 2098.   22.6
+2 Model 2 40445.   192. 41592.    229. 2232.   22.8
+3 Model 3 40598.   191. 41763.    227. 2098.   22.6
+4 Model 4 40446.   192. 41592.    229. 2232.   22.8
+```
 
-* Could indicate that the values presented for all countries are just a mistake
-* Pending a full refit to test that
+Following this result, I refit the four models on all countries, which reproduced the strange result in the thesis:
+
+```r
+  model       dic dic_se    waic waic_se   cpo cpo_se
+  <chr>     <dbl>  <dbl>   <dbl>   <dbl> <dbl>  <dbl>
+1 Model 1 100790.   300. 103834.    358. 5433.   35.9
+2 Model 2 101598.   317. 105074.    383. 5661.   36.0
+3 Model 3 100789.   300. 103834.    358. 5432.   35.9
+4 Model 4 101598.   317. 105075.    383. 5661.   36.0
+```
+
+To investigate further, I grouped the local observation-specific values by survey and recomputed summary statistics.
+I found that in 42 of 46 surveys, the CPO value was higher for Model 4 than Model 3.
+Further, in 34 of the 46 surveys, the DIC value was lower for Model 4 than Model 3.
+There were 8 surveys that the CPO and DIC disagreed about:
+
+```r
+"CMR2017PHIA" "MWI2015DHS"  "NAM2000DHS"  "NAM2013DHS"
+"TZA2007AIS"  "TZA2010DHS"  "TZA2012AIS"  "ZMB2007DHS"
+```
+
+There were very large differences in the DIC values for the three surveys of the four surveys in Tanzania specifically.
+Hence, the strange results are due to differences in how the CPO and DIC/WAIC rank performance of the models in Tanzania.
+
+An additional check that I performed was to look at the values of `cpo$failure` (as discussed on the `R-INLA` website FAQ).
+A value of `cpo$failure[i] > 0` for observation `i` indicates the assumptions required for calculation of the CPO are violated, and therefore results may be inaccurate.
+I found that, for all models, 30597 observations had `cpo$failure[i] == 0` and 3 observations had `cpo$failure[i] == 1`.
+As these three observations cannot have impacted the CPO results significantly (which are consistent across the surveys) I concluded the inaccurate CPO computation is not an issue.
 
 ### Chapter 6
 
@@ -150,24 +180,27 @@ I have clarified this point in the following text:
 > First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
 > For users of `R-INLA`, the @stringer2022fast approach is analogous to `method = "gaussian"`, while the approach newly implemented in this chapter is analogous to `method = "laplace"`. Section 6.2 demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible.
 
+All code for the analysis is available at `athowes/thesis` and `athowes/naomi-aghq`.
+
 \begin{examiner}
 As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input.
 You should be clear anytime you do this that this is problematic (and try to avoid as much as possible).
 \end{examiner}
 
-Not yet resolved.
+As discussed in the defense, I agree that this is a reasonable concern.
+I believe that there are two places in the thesis that I calculate posterior estimates for derived quantities which are a function of multiple elements of the latent field.
+These are:
+
+1. In Section 6.2.2 where I use conditional Gaussian field simulation to obtain inferences about Loa loa prevalence over a fine spatial grid based on inferences at the 190 sampled villages.
+2. In Section 6.5.5 where I calculate functions of... exceedance probabilities for the Naomi model.
 
 \begin{examiner}
 Relatedly, assuming I'm understanding correctly, there is an important tradeoff between using Laplace marginals for improved accuracy for latent marginals and using the Gaussian mixture over the quadrature points, which allows one to make draws and do inference on any derived quantity in a way that takes account of posterior dependence between and amongst hyperparameters and latent process values.
 If that's the case, I think it's worth pointing this out and discussing when one can use the Laplace marginals in a public health context and when one might need to use the Gaussian mixture.
 \end{examiner}
 
-This is an interesting observation.
-If you're correct, then I agree it worth pointing out, and it would shift my preference towards using the mixture of Gaussians approach.
-The way in which I think that it might not be correct is that the INLA approach fundamentally targets marginals, even when using the mixture of Gaussians.
-That is, the mixture of Gaussians does not "take account of posterior dependence between and amongst hyperparameters and latent process values" as suggested.
-I think this in part because there is work extending INLA to the joint setting -- which I don't think would need to exist if this question were correct.
-To follow up here.
+This is correct.
+Indeed the recent work of @chiuchiolo2023joint aims to extend `R-INLA` to use Laplace approximations to estimate subsets of the latent field, beyond merely marginals.
 
 \newpage
 
