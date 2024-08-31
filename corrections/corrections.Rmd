@@ -5,7 +5,7 @@ subtitle: |
 bibliography: ../references.bib
 fontsize: 12pt
 output:
-  pdf_document:
+  bookdown::pdf_document2:
     toc: true
     number_sections: true
     keep_tex: true
@@ -86,33 +86,74 @@ Focusing on the category-area-age interaction, which seems like the omitted inte
 If that is not too burdensome that would also be a reasonable approach here.
 \end{examiner}
 
-The linear predictor used for the multinomial logistic regression model was
-$$
-\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}.
-$$
+The linear predictor used for the (base) multinomial logistic regression model was
+\begin{equation}
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + u_{ik} + \gamma_{tk}. (\#eq:base)
+\end{equation}
 This equation does contain age-country-category interactions $\alpha_{ac[i]k}$, but you are right to point out that age-district-category interactions, call them say $\xi_{aik}$ are omitted.
 A model containing the effects $\xi_{aik}$ would be likely to cause computational difficulties in the full joint model of all countries.
-Nonetheless, restricting attention to one country (Malawi) and fitting the expanded model
-$$
-\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \xi_{ack} + u_{ik} + \gamma_{tk}.
-$$
-as suggested, I found:
+However, restricting attention to one country, Malawi, I was able to fit the extended model
+\begin{equation}
+\eta_{ita} = \theta_{ita} + \beta_k + \zeta_{c[i]k} + \alpha_{ac[i]k} + \xi_{aik} + u_{ik} + \gamma_{tk}. (\#eq:extended)
+\end{equation}
 
-* Not a lot of change in plots
-* DIC, WAIC, and CPO are better
-* Small amount of variance explained
-* It would be beneficial to investigate this further
-* Pass these results along to the team continuing to develop the model
+```{r}
+ve_ad <- readr::read_csv("resources/variance-proportions.csv")
+```
 
-```{r age-district-nosex12m}
+(ref:age-district-table) The DIC, WAIC, and CPO values for the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) models. The standard error multiplied by 1.96 to give a 95% confidence interval is shown in brackets.
+
+```{r age-district-table}
+ic_ad <- readr::read_csv("resources/information-criteria.csv")
+
+as_latex_with_caption <- function(gt, chunk_label) {
+  gt <- gt::as_latex(gt)
+  caption <- paste0(
+    "\\caption{\\label{tab:", chunk_label, "}(ref:", chunk_label, ")}\\\\")
+  latex <- strsplit(gt[1], split = "\n")[[1]]
+  latex <- c(latex[1], caption, latex[-1])
+  latex <- paste(latex, collapse = "\n")
+  gt[1] <- latex
+  return(gt)
+}
+
+ic_ad$model <- c("Base", "Extended")
+ic_ad$iso3 <- c("Malawi", "Malawi")
+
+ic_ad |>
+  dplyr::mutate(
+    DIC = paste0(round(dic, digits = 1), " (", round(1.96 * dic_se, 1), ")"),
+    WAIC = paste0(round(waic, digits = 1), " (", round(1.96 * waic_se, 1), ")"),
+    CPO = paste0(round(cpo, digits = 1), " (", round(1.96 * cpo_se, 1), ")"),
+  ) |>
+  dplyr::select(Model = model, Country = iso3, DIC, WAIC, CPO) |>
+  gt::gt() |>
+  as_latex_with_caption("age-district-table")
+```
+
+Figures \@ref(fig:age-district-nosex12m), \@ref(fig:age-district-sexcohab), and \@ref(fig:age-district-sexnonregplus) show risk group estimates from the survey as compared with posterior means from the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) models.
+Although the base and extended model posterior means are, on the whole, very similar, there are indeed small differences.
+In the extended model, the proportion of variance explained by the age-country-category interactions was `r round(ve_ad$percentage_variance_area_idx_copy[2] * 100, 1)`% reflecting this small difference.
+Results for each of the DIC, WAIC, and CPO model comparison metrics (Table \@ref(tab:age-district-table)) also show that the extended model is preferred in this instance over the base model, though not significantly.
+
+Although restricted to Malawi, these results indicate that inclusion of age-district-category random effects could result in a marginal improvement to the model's fit more broadly.
+As such, I think it would be beneficial to investigate this issue further, and have passed these findings along to the team continuing to work on the risk group model.
+
+(ref:age-district-nosex12m) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "not sexually active" risk group.
+
+```{r age-district-nosex12m, fig.cap="(ref:age-district-nosex12m)"}
 knitr::include_graphics("resources/age-district-plot-nosex12m.png")
 ```
 
-```{r age-district-sexcohab}
+(ref:age-district-sexcohab) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "one cohabiting partner" risk group.
+
+```{r age-district-sexcohab, fig.cap="(ref:age-district-sexcohab)"}
 knitr::include_graphics("resources/age-district-plot-sexcohab.png")
 ```
 
-```{r age-district-sexnonregplus}
+(ref:age-district-sexnonregplus) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "non-regular or multiple partner(s) +" risk group.
+
+```{r age-district-sexnonregplus, fig.cap="(ref:age-district-sexnonregplus)"}
 knitr::include_graphics("resources/age-district-plot-sexnonregplus.png")
 ```
 
