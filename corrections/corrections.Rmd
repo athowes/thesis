@@ -101,6 +101,24 @@ However, restricting attention to one country, Malawi, I was able to fit the ext
 ve_ad <- readr::read_csv("resources/variance-proportions.csv")
 ```
 
+(ref:age-district-nosex12m) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "not sexually active" risk group.
+
+```{r age-district-nosex12m, fig.cap="(ref:age-district-nosex12m)"}
+knitr::include_graphics("resources/age-district-plot-nosex12m.png")
+```
+
+(ref:age-district-sexcohab) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "one cohabiting partner" risk group.
+
+```{r age-district-sexcohab, fig.cap="(ref:age-district-sexcohab)"}
+knitr::include_graphics("resources/age-district-plot-sexcohab.png")
+```
+
+(ref:age-district-sexnonregplus) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "non-regular or multiple partner(s) +" risk group.
+
+```{r age-district-sexnonregplus, fig.cap="(ref:age-district-sexnonregplus)"}
+knitr::include_graphics("resources/age-district-plot-sexnonregplus.png")
+```
+
 (ref:age-district-table) The DIC, WAIC, and CPO values for the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) models. The standard error multiplied by 1.96 to give a 95% confidence interval is shown in brackets.
 
 ```{r age-district-table}
@@ -139,33 +157,15 @@ Results for each of the DIC, WAIC, and CPO model comparison metrics (Table \@ref
 Although restricted to Malawi, these results indicate that inclusion of age-district-category random effects could result in a marginal improvement to the model's fit more broadly.
 As such, I think it would be beneficial to investigate this issue further, and have passed these findings along to the team continuing to work on the risk group model.
 
-(ref:age-district-nosex12m) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "not sexually active" risk group.
-
-```{r age-district-nosex12m, fig.cap="(ref:age-district-nosex12m)"}
-knitr::include_graphics("resources/age-district-plot-nosex12m.png")
-```
-
-(ref:age-district-sexcohab) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "one cohabiting partner" risk group.
-
-```{r age-district-sexcohab, fig.cap="(ref:age-district-sexcohab)"}
-knitr::include_graphics("resources/age-district-plot-sexcohab.png")
-```
-
-(ref:age-district-sexnonregplus) A comparison of survey raw risk group estimates to the base (Equation \@ref(eq:base)) and extended (Equation \@ref(eq:extended)) model specifications for the "non-regular or multiple partner(s) +" risk group.
-
-```{r age-district-sexnonregplus, fig.cap="(ref:age-district-sexnonregplus)"}
-knitr::include_graphics("resources/age-district-plot-sexnonregplus.png")
-```
-
 \begin{examiner}
 The distinct differences between the CPO and information criteria (IC) results (and the very structured pattern in the surprising IC results) suggest the possibility of a bug somewhere, as we discussed.
 Getting the observation-specific values from INLA might help to better understand this.
 \end{examiner}
 
 Thank you for this suggestion.
-As discussed I agree that the mismatch between the models favoured by the CPO and IC is surprising and suggestive of a bug.
-To investigate this, I began by refitting the four models on a subset of countries for computational convenience.
-I found that the observed surprising pattern did not occur, and that both the CPO and IC agreed:
+As discussed, I agree with you that the mismatch between the models favoured by the CPO and IC is surprising and suggestive of a possible bug.
+To investigate this issue, I began by refitting the four models on a subset of countries for computational convenience.
+In this case, the observed surprising pattern did not occur, and that both the CPO and IC agreed:
 
 ```r
   model      dic dic_se   waic waic_se   cpo cpo_se
@@ -187,9 +187,10 @@ Following this result, I refit the four models on all countries, which reproduce
 4 Model 4 101598.   317. 105075.    383. 5661.   36.0
 ```
 
-To investigate further, I grouped the local observation-specific values by survey and recomputed summary statistics.
-I found that in 42 of 46 surveys, the CPO value was higher for Model 4 than Model 3.
+To drill down further, I grouped the local observation-specific values by survey and recomputed summary statistics.
+In 42 of 46 surveys, the CPO value was higher for Model 4 than Model 3.
 Further, in 34 of the 46 surveys, the DIC value was lower for Model 4 than Model 3.
+That is to say, for most surveys, the CPO and DIC agreed.
 There were 8 surveys that the CPO and DIC disagreed about:
 
 ```r
@@ -197,13 +198,15 @@ There were 8 surveys that the CPO and DIC disagreed about:
 "TZA2007AIS"  "TZA2010DHS"  "TZA2012AIS"  "ZMB2007DHS"
 ```
 
-There were very large differences in the DIC values for the three surveys of the four surveys in Tanzania specifically.
-Hence, the strange results are due to differences in how the CPO and DIC/WAIC rank performance of the models in Tanzania.
+There were very large differences in the DIC values for three of the four surveys in Tanzania specifically.
+Hence, the strange results are due to differences in how the CPO and DIC (and WAIC) rank performance of the models in Tanzania.
+This is a confusing finding, but supports the choice of Model 4 over Model 3.
+Further investigation of this issue could look to disentangle the large DIC difference in Tanzania further, including by district, age, and sex, as the extent of the difference is suggestive to me of something suspicious (rather than merely a typical difference of opinion between two measures).
 
-An additional check that I performed was to look at the values of `cpo$failure` (as discussed on the `R-INLA` website FAQ).
-A value of `cpo$failure[i] > 0` for observation `i` indicates the assumptions required for calculation of the CPO are violated, and therefore results may be inaccurate.
-I found that, for all models, 30597 observations had `cpo$failure[i] == 0` and 3 observations had `cpo$failure[i] == 1`.
-As these three observations cannot have impacted the CPO results significantly (which are consistent across the surveys) I concluded the inaccurate CPO computation is not an issue.
+An additional check I performed was to assess the values of `cpo$failure`.
+As discussed on the `R-INLA` website FAQ, a value of `cpo$failure[i] > 0` for observation `i` indicates the assumptions required for calculation of the CPO are violated, and that therefore results may be inaccurate.
+For all models, 30597 observations had `cpo$failure[i] == 0` and 3 observations had `cpo$failure[i] == 1`.
+As these three observations cannot have impacted the CPO results significantly (which are consistent across the surveys) I concluded that inaccurate CPO computation was not part of the issue here.
 
 ### Chapter 6
 
@@ -221,19 +224,33 @@ I have clarified this point in the following text:
 > First, a universally applicable implementation of INLA with Laplace marginals, where automatic differentiation via `TMB` is used to obtain the derivatives required for the Laplace approximation.
 > For users of `R-INLA`, the @stringer2022fast approach is analogous to `method = "gaussian"`, while the approach newly implemented in this chapter is analogous to `method = "laplace"`. Section 6.2 demonstrates the implementation using two examples, one compatible with `R-INLA` and one incompatible.
 
-All code for the analysis is available at `athowes/thesis` and `athowes/naomi-aghq`.
+Section 6.2 gives an overview of my implementation, and all code for the for the analysis is available at `athowes/thesis` and `athowes/naomi-aghq`.
+I agree that a more user friendly implementation of the method would be of benefit.
+This is something I highlight at future work in Section 7.2, noting that ideally the method would be included in the `aghq` R package or similar:
+
+> Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter 6 would be enhanced greatly by improvements to its speed and usability.
+> The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by Wood (2020).
+> Although the naive implementation used in this thesis is viable for integrating Laplace marginals over a small number of hyperparameter quadrature nodes, such as the $3^2 = 9$ nodes used Sections 6.2.2 and 6.2.1, it becomes prohibitively slow for larger numbers.
+> Usability would be improved by providing the method as a part of statistical software, likely via the `aghq` package.
+> The primary difficulty which would have to be overcome to do so is that the `random` argument of `TMB::MakeADFun` does not allow indexing.
 
 \begin{examiner}
 As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input.
 You should be clear anytime you do this that this is problematic (and try to avoid as much as possible).
 \end{examiner}
 
-As discussed in the defense, I agree that this is a reasonable concern.
-I believe that there are two places in the thesis that I calculate posterior estimates for derived quantities which are a function of multiple elements of the latent field.
+As discussed, I agree that this is a reasonable concern.
+There are two places in the thesis that I calculate posterior estimates for derived quantities that are a function of multiple elements of the latent field.
 These are:
 
 1. In Section 6.2.2 where I use conditional Gaussian field simulation to obtain inferences about Loa loa prevalence over a fine spatial grid based on inferences at the 190 sampled villages.
-2. In Section 6.5.5 where I calculate functions of... exceedance probabilities for the Naomi model.
+2. In Section 6.5.5 where I calculate functions of the exceedance probabilities for ART coverage and HIV incidence of the Naomi model in Malawi.
+
+In the first case, I found (Figure 6.11 and Figure 6.12) that the Laplace marginals approach (which suffers from the concern raised) outperforms the Gaussian marginals approach (which does not) as compared with NUTS (which also takes posterior dependences into account).
+In the second case, I am using the Gaussian marginals approach (mixture of Gaussians) hence this is not a concern.
+As such, I have added the following sentence to Section 6.2.2:
+
+> Something here!
 
 \begin{examiner}
 Relatedly, assuming I'm understanding correctly, there is an important tradeoff between using Laplace marginals for improved accuracy for latent marginals and using the Gaussian mixture over the quadrature points, which allows one to make draws and do inference on any derived quantity in a way that takes account of posterior dependence between and amongst hyperparameters and latent process values.
