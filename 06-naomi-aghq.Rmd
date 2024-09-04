@@ -1535,11 +1535,11 @@ df_point_pct <- df_point %>%
     mae_diff = 100 * diff(mae) / max(mae)
   )
 
-rmse_ahgq_mean <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior mean", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_aghq_mean <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior mean", type == "latent") %>% pull(rmse) %>% signif(2)
 rmse_tmb_mean <- filter(df_point, method == "GEB", indicator == "Posterior mean", type == "latent") %>% pull(rmse) %>% signif(2)
 rmse_diff_mean <- filter(df_point_pct, indicator == "Posterior mean", type == "latent") %>% pull(rmse_diff) %>% signif(2)
 
-rmse_ahgq_sd <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior SD", type == "latent") %>% pull(rmse) %>% signif(2)
+rmse_aghq_sd <- filter(df_point, method == "GPCA-AGHQ", indicator == "Posterior SD", type == "latent") %>% pull(rmse) %>% signif(2)
 rmse_tmb_sd <- filter(df_point, method == "GEB", indicator == "Posterior SD", type == "latent") %>% pull(rmse) %>% signif(2)
 rmse_diff_sd <- filter(df_point_pct, indicator == "Posterior SD", type == "latent") %>% pull(rmse_diff) %>% signif(0)
 ```
@@ -1551,8 +1551,8 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 ```
 
 Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure \@ref(fig:mean-sd-alt-latent)).
-The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (`r rmse_ahgq_mean`) was `r abs(rmse_diff_mean)`% lower than that between GEB and NUTS (`r rmse_tmb_mean`).
-For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (TMB) to `r abs(rmse_ahgq_sd)` (PCA-AGHQ).
+The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (`r rmse_aghq_mean`) was `r abs(rmse_diff_mean)`% lower than that between GEB and NUTS (`r rmse_tmb_mean`).
+For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (TMB) to `r abs(rmse_aghq_sd)` (PCA-AGHQ).
 However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures \@ref(fig:mean-alt-output) and \@ref(fig:sd-alt-output)).
 
 #### Distributional quantities {#distributional-quantities}
@@ -1723,7 +1723,7 @@ However, its application to Naomi surfaced instances where it overlooked potenti
 
 1. The amount of variation explained in the Hessian matrix may not be of direct interest.
 For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
-As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indicies, could be preferable.
+As such, using alternative measures of importance from sensitivity analysis, such as Shapley values [@shapley1953value] or Sobol indices, could be preferable.
 2. Use of PCA is challenging when the dimensions have different scales. 
 For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.
 3. When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
