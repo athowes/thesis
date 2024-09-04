@@ -2,6 +2,7 @@
 title: Thesis corrections for "Bayesian spatio-temporal methods for small-area estimation of HIV indicators"
 subtitle: |
   Adam Howes (`ath19@ic.ac.uk`)
+date: September 2024
 bibliography: ../references.bib
 fontsize: 12pt
 output:
@@ -34,7 +35,7 @@ knitr::opts_chunk$set(
 
 Thank you for the thorough discussion of the thesis.
 Both during the defense and in the provided corrections.
-I have addressed your suggested corrections point by point, as follows.
+I have addressed your suggested corrections item by item as follows.
 
 ## General comments
 
@@ -273,6 +274,7 @@ I have added the following note to the discussion:
 4: "develop into a stage" -> "Infection with HIV can"
 \end{examiner}
 
+Thank you!
 Changed to:
 
 > If untreated, infection with HIV can develop into a more advanced stage known as acquired immunodeficiency syndrome (AIDS).
@@ -281,6 +283,7 @@ Changed to:
 6: "to result a reduction"
 \end{examiner}
 
+Thank you!
 Changed to:
 
 > found complete surgical removal of the foreskin to result in a reduction
@@ -289,6 +292,7 @@ Changed to:
 11: "Both DHS and PHIA surveys collecting"
 \end{examiner}
 
+Thank you!
 Changed to:
 
 > Both DHS and PHIA surveys collect demographic, behavioural, and clinical information
@@ -322,10 +326,12 @@ I have fixed this issue and look forward to joining the good fight.
 Fig 3.1: I suggest that you also show the likelihood.
 \end{examiner}
 
-I have now included the likelihood in Figure 3.1 as follows.
+Yes this is a good suggestion, I have now included the likelihood in Figure 3.1 (Figure \@ref(fig:conjugate)).
 Figure 6.1, demonstrating the Laplace approximation, has also been updated to include the likelihood.
 
-```{r conjugate}
+(ref:conjugate) The updated version of Figure 3.1 as suggested.
+
+```{r conjugate, fig.cap="(ref:conjugate)"}
 knitr::include_graphics("../figures/bayesian/conjugate.png")
 ```
 
@@ -357,11 +363,13 @@ If so, the Markov chain is said to have converged, and its samples may be used t
 
 Thank you for the comment.
 In Chapter 6, I refer to a Laplace approximation over part of the parameter space as the marginal Laplace approximation.
+For this reason, unless otherwise stated, by "the Laplace approximation" I mean over all parameters.
 
 \begin{examiner}
 23. "data is" -> "data are" (also p 66 and perhaps elsewhere)
 \end{examiner}
 
+Thank you!
 I have corrected to "data are" in this instance and elsewhere in the thesis.
 
 \begin{examiner}
@@ -421,7 +429,7 @@ Initially I excluded this factor as the primary intention was to demonstrate tha
 41. "recommended against": passive, and by who?
 \end{examiner}
 
-I have altered the text to read:
+I have altered the text to be less passive and more direct about the citation:
 
 > Directly using the Besag model as described in Section 4.1.1 has several practical limitations in applied settings.
 > To overcome these limitations, @freni2018note recommend three best practices:
@@ -441,17 +449,20 @@ I have corrected the text to read that $p(u_i) \sim \mathcal{N}(0, \tau_u^{-1})$
 I use this terminology to mean that the posteriors for $\tau_v$ and $\tau_w$ are likely to be correlated.
 See Figure C.8 and Figure C.9 in Appendix C for an example, showing that the BYM2 parameterisation overcomes this issue.
 This appears to be inline with use of the term by, say, @cox1987parameter.
+It also seems to be standard practise within the `R-INLA` community and adjacent.
 
 \begin{examiner}
 48. Is convolution the right term here?
 \end{examiner}
 
 I have altered the text to use the term "convolved random effects" following use of this terminology by @morris2019bayesian.
+This term seems inline with a convolution being a linear combination of random variables (IID and structured random effects, in this instance).
 
 \begin{examiner}
 55: what is meant by "model is implemented in arealutils"?
 \end{examiner}
 
+`arealutils` is an R package where I implemented the models in this chapter.
 I have updated the text to read:
 
 > in the `arealutils` R package [@howes2023arealutils]
@@ -494,7 +505,7 @@ I have altered the text to read:
 
 Good points!
 I have altered these three captions.
-As an example, for Figure 4.7 the caption now reads:
+As an example, in the case of Figure 4.7, the caption now reads:
 
 > The mean CRPS in estimating $\rho_i$ and its standard error for each inferential model and simulation model on the grid geometry  (Panel 4.6E). The mean value averages over both areas and simulation runs.
 
@@ -512,6 +523,7 @@ I have added the sentence:
 \end{examiner}
 
 Standard errors were omitted from Table 4.4 due to space constraints.
+I have removed the incorrect text from the Table 4.4 caption, and added a note to look at Figure 4.12 for the standard errors.
 
 \begin{examiner}
 64: "resulted wide"
@@ -583,7 +595,8 @@ Thank you, fixed.
 80: Mention country-specific vs single models earlier.
 \end{examiner}
 
-Not yet resolved.
+The model is fit jointly to all countries.
+My use of the term "country-specific" in the sentence "to capture country-specific proportion estimates for each category" refers to random effects rather than models.
 
 \begin{examiner}
 82: I would say clearly that model structure for $q_{ia}$ is discussed next.
@@ -611,7 +624,7 @@ I have altered the text to read:
 I have clarified this model as follows:
 
 > To disaggregate HIV prevalence, I began by estimating HIV prevalence log odds ratios $\log(\text{OR}_k)$ relative to the general population.
-To do so, I began by calculating age, country, and risk group specific (as well as general population) HIV prevalence $\rho_{cak}$ using bio-marker survey data from all 46 surveys included in the risk group model (Section 5.2.1)..
+To do so, I began by calculating age, country, and risk group specific (as well as general population) HIV prevalence $\rho_{cak}$ using bio-marker survey data from all 46 surveys included in the risk group model (Section 5.2.1).
 I then fit a logistic regression model, with indicator functions for each risk group, and an indicator for being in the general population.
 The fitted regression coefficients in this model $\beta_k$ correspond to log odds $\log \rho_k - \log(1 - \rho_k)$.
 The required log odds ratios may then be easily obtained by taking the difference in odds ratios.
