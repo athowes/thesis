@@ -797,6 +797,8 @@ However, unlike the Gaussian case (Section <a href="naomi-aghq.html#gaussian-mar
 As such, Equation <a href="naomi-aghq.html#eq:lamarginal">(6.18)</a> may instead be represented by its evaluation at a number of nodes.
 One approach is to chose these nodes based on a one-dimensional AGHQ rule, using the mode and standard deviation of the Gaussian approximation to avoid unnecessary computation of the Laplace marginal mode and standard deviation.
 The probability density function of the marginal posterior may then be recovered using a Lagrange polynomial or spline interpolant to the log probabilities.</p>
+<p>An important downside of the Laplace approach is that posterior dependences between posterior marginal draws are not preserved, unlike in the mixture of Gaussians case (Equation <a href="naomi-aghq.html#eq:mixgaussian">(6.15)</a>).
+Recent work using Gaussian copulas <span class="citation">(<a href="#ref-chiuchiolo2023joint">Chiuchiolo, Niekerk, and Rue 2023</a>)</span> aims to retain the accuracy of the Laplace marginals strategy while obtaining a joint approximation.</p>
 </div>
 <div id="simplified-laplace-marginals" class="section level4 hasAnchor" number="6.1.3.3">
 <h4><span class="header-section-number">6.1.3.3</span> Simplified Laplace marginals<a href="naomi-aghq.html#simplified-laplace-marginals" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1359,7 +1361,8 @@ Figure 6.15: The element of the latent field with maximum difference in absolute
 </div>
 <p>For both the suitability and prevalence posterior mean, using Laplace marginals rather than Gaussian marginals substantially reduced error compared to NUTS (Figures <a href="naomi-aghq.html#fig:conditional-simulation-phi-diff-fixed">6.12</a> and <a href="naomi-aghq.html#fig:conditional-simulation-rho-diff-fixed">6.13</a>).
 As the hyperparameter posteriors for each approach were the same, differences in Gaussian field simulation results were due to differences in latent field posterior marginals at each of the 190 sites, shown in Figure <a href="naomi-aghq.html#fig:loa-loa-mean-sd-abs">6.14</a>.
-At some sites, the differences in ECDF were subtantial (Figure <a href="naomi-aghq.html#fig:loa-loa-worst-node">6.15</a>).
+At some sites, the differences in ECDF were substantial (Figure <a href="naomi-aghq.html#fig:loa-loa-worst-node">6.15</a>).
+This improvement is even given that draws from the Laplace marginals do not take posterior dependences into account like the draws from the mixture of Gaussians used to construct the Gaussian marginals.
 Figure <a href="naomi-aghq-appendix.html#fig:nuts-loa-loa">C.3</a> shows that the results from NUTS were suitable for use, and therefore that this comparison is valid.</p>
 
 <div class="figure" style="text-align: centre"><span style="display:block;" id="fig:loa-loa-time"></span>
@@ -1525,7 +1528,7 @@ As a result, it is assumed that travel to each neighbouring district, for all ag
 y^{A}_I = \sum_{i \in I} y^{A}_i. \tag{6.30}
 \end{equation}\]</span>
 Let the probability of a person in strata <span class="math inline">\(i\)</span> travelling from district <span class="math inline">\(x(i) = x\)</span> to <span class="math inline">\(x&#39;\)</span> to receive ART be
-<span class="math display" id="eq:recieve-art">\[\begin{equation}
+<span class="math display" id="eq:receive-art">\[\begin{equation}
 \pi_{i, x(i) = x, x&#39;} = \rho_{i} \alpha_{i} \gamma_{x(i) = x, x&#39;}. \tag{6.31}
 \end{equation}\]</span>
 These probabilities are the product of three probabilities, each for a person in strata <span class="math inline">\(i\)</span>:</p>
@@ -1927,7 +1930,7 @@ However, its application to Naomi surfaced instances where it overlooked potenti
 <ol style="list-style-type: decimal">
 <li>The amount of variation explained in the Hessian matrix may not be of direct interest.
 For the Naomi model, interest is in the effect of including each dimension on the relevant model outputs.
-As such, using alternative measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> or Sobol indicies, could be preferable.</li>
+As such, using alternative measures of importance from sensitivity analysis, such as Shapley values <span class="citation">(<a href="#ref-shapley1953value">Shapley et al. 1953</a>)</span> or Sobol indices, could be preferable.</li>
 <li>Use of PCA is challenging when the dimensions have different scales.
 For the Naomi model, logit-scale hyperparameters were systematically favoured over those on the log-scale.</li>
 <li>When the quadrature rule is used within an INLA algorithm, it is more important to allocate quadrature nodes to those hyperparameter marginals which are non-Gaussian.
@@ -2045,6 +2048,9 @@ Casella, George. 1985. <span>“<span class="nocase">An introduction to empirica
 </div>
 <div id="ref-chen2014use" class="csl-entry">
 Chen, Cici, Jon Wakefield, and Thomas Lumely. 2014. <span>“<span class="nocase">The use of sampling weights in Bayesian hierarchical models for small area estimation</span>.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 11: 33–43.
+</div>
+<div id="ref-chiuchiolo2023joint" class="csl-entry">
+Chiuchiolo, Cristian, Janet van Niekerk, and Håvard Rue. 2023. <span>“Joint Posterior Inference for Latent Gaussian Models with r-INLA.”</span> <em>Journal of Statistical Computation and Simulation</em> 93 (5): 723–52.
 </div>
 <div id="ref-cranlogs" class="csl-entry">
 Csárdi, Gábor. 2023. <em><span class="nocase">cranlogs: Download Logs from the ’RStudio’ ’CRAN’ Mirror</span></em>.

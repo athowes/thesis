@@ -713,8 +713,8 @@ Unlike for the centroid kernel where <span class="math inline">\(K_{ii} = 1\)</s
 <p>This covariance structure is equivalent to that obtained by aggregating a spatially continuous Gaussian process with kernel <span class="math inline">\(k\)</span> over the areal partition.
 In the machine learning literature, models of this kind have been studied under the name aggregated Gaussian processes <span class="citation">(<a href="#ref-law2018variational">Law et al. 2018</a>; <a href="#ref-tanaka2019spatially">Tanaka et al. 2019</a>; <a href="#ref-yousefi2019multi">Yousefi, Smith, and Alvarez 2019</a>; <a href="#ref-hamelijnck2019multi">Hamelijnck et al. 2019</a>; <a href="#ref-chau2021deconditional">Chau, Bouabid, and Sejdinovic 2021</a>)</span>.
 Examples of use of this model in statistical practice are rare.</p>
-<div id="ik-hetrogeneity" class="section level4 hasAnchor" number="4.2.2.1">
-<h4><span class="header-section-number">4.2.2.1</span> Accounting for heterogeneity<a href="beyond-borders.html#ik-hetrogeneity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="ik-heterogeneity" class="section level4 hasAnchor" number="4.2.2.1">
+<h4><span class="header-section-number">4.2.2.1</span> Accounting for heterogeneity<a href="beyond-borders.html#ik-heterogeneity" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Additional information accounting for heterogeneity over <span class="math inline">\(A_i\)</span> may be incorporated into the integrated kernel.
 This can be accomplished using weighting distributions <span class="math inline">\(\{w_i\}\)</span> which represent an unequal contribution of each point to the similarity measure.
 The weighted integrated kernel is given by
@@ -1569,7 +1569,7 @@ Figure 4.12: The mean pointwise leave-one-out and spatial leave-one-out CRPS in 
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-  <caption><span id="tab:cv-crps">Table 4.4: </span>The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating <span class="math inline">\(\rho_i\)</span>, with standard errors, for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths.</caption>
+  <caption><span id="tab:cv-crps">Table 4.4: </span>The mean pointwise leave-one-out and spatial leave-one-out CRPS in estimating <span class="math inline">\(\rho_i\)</span> for each inferential model across the four considered PHIA surveys. The units used in this table are thousandths. For standard errors, see Figure <a href="beyond-borders.html#fig:crps-mean-se-surveys">4.12</a>.</caption>
   <thead>
     <tr class="gt_col_headings gt_spanner_row">
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="PHIA survey">PHIA survey</th>
@@ -1675,7 +1675,7 @@ It is surprisingly that this behaviour appears not to have resulted in poor LOO 
 <p>For this survey the BYM2 proportion posterior distribution was also similar to its prior distribution, in contrast to each of the other surveys which had BYM2 proportion posteriors peaked at one, corresponding to spatially structured noise (Figure <a href="models-for-areal-spatial-structure.html#fig:proportion-posteriors">A.32</a>).</p></li>
 <li><p>For the 2017 PHIA survey in Malawi the Besag and BYM2 models performed the best, followed by the kernel models, and then the IID model (Figure <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-mwi2016phia">A.38</a>).
 While the LOO and SLOO CRPS values for IID, Besag and BYM2 models were similar, for the kernel models forecasting performance was substantially reduced by leaving out adjacent districts.
-This finding is suprising, as the kernel models make use of more distant correlations, and it is the adjacency-based models that one would intuitively expect to be hampered more by the SLOO-CV.
+This finding is surprising, as the kernel models make use of more distant correlations, and it is the adjacency-based models that one would intuitively expect to be hampered more by the SLOO-CV.
 For the IID model, that LOO and SLOO performance are similar is no surprise as in all cases the IID model should be predicting the mean.
 Though less data are available in the SLOO case, this should be of little consequence.</p></li>
 <li><p>For the 2017 PHIA survey in Tanzania (Figure <a href="models-for-areal-spatial-structure.html#fig:crps-mean-se-tza2017phia">A.39</a>), under LOO-CV the kernel models performed better, but under SLOO-CV there was a significant drop in performance.</p></li>
@@ -1696,7 +1696,7 @@ However, the transferability of this finding to applied settings is limited by t
 First and foremost, it is usually impossible to know that real data was generated from any particular process.
 Second, the synthetic data study used the same kernel, Matérn with <span class="math inline">\(\nu = 3/2\)</span> (Equation <a href="beyond-borders.html#eq:matern">(4.14)</a>), for both simulation and inference, and as such represents a best-case.
 Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
-Finally, aggregation via the integrated kernel occured at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
+Finally, aggregation via the integrated kernel occurred at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
 If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.</p>
 <p>This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span> as a potentially more computationally efficient way to implement integrated kernel models <span class="citation">(<a href="#ref-wilson2018pointless">Wilson and Wakefield 2018</a>)</span>.
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
@@ -1708,7 +1708,7 @@ The work in this chapter does not address the broader question of under which ci
 <p>The adjacency-based models considered in this study were limited to the Besag and BYM2 model.
 Although these are perhaps the most widely used adjacency-based models, others could have been considered.
 Examples include the more general weighted ICAR model discussed in Section <a href="beyond-borders.html#weighted-icar">4.1.4</a>.
-Additionally, it would be of interest to implement the integrated kernel model with population-based weighting (Section <a href="beyond-borders.html#ik-hetrogeneity">4.2.2.1</a>).</p>
+Additionally, it would be of interest to implement the integrated kernel model with population-based weighting (Section <a href="beyond-borders.html#ik-heterogeneity">4.2.2.1</a>).</p>
 <p>The models used for spatial structure in this chapter were all stationary.
 Although stationarity assumptions may be violated by HIV survey data, it remains challenging to estimate non-stationary spatial structure <span class="citation">(<a href="#ref-paciorek2006spatial">Christopher J. Paciorek and Schervish 2006</a>)</span>.</p>
 <!-- * What are my suggestions for new models to develop on the basis of this work -->
