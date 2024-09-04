@@ -231,13 +231,15 @@ I have clarified this point in the following text:
 
 Section 6.2 gives an overview of my implementation, and all code for the for the analysis is available at `athowes/thesis` and `athowes/naomi-aghq`.
 I agree that a more user friendly implementation of the method would be of benefit.
-This is something I highlight at future work in Section 7.2, noting that ideally the method would be included in the `aghq` R package or similar:
+This is something I highlight as future work in Section 7.2, noting that ideally the method would be included in the `aghq` R package or similar:
 
 > Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter 6 would be enhanced greatly by improvements to its speed and usability.
 > The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by Wood (2020).
 > Although the naive implementation used in this thesis is viable for integrating Laplace marginals over a small number of hyperparameter quadrature nodes, such as the $3^2 = 9$ nodes used Sections 6.2.2 and 6.2.1, it becomes prohibitively slow for larger numbers.
 > Usability would be improved by providing the method as a part of statistical software, likely via the `aghq` package.
 > The primary difficulty which would have to be overcome to do so is that the `random` argument of `TMB::MakeADFun` does not allow indexing.
+
+I also discuss this in Section 6.6.3.6 within the chapter.
 
 \begin{examiner}
 As we discussed in the defense, I'm concerned about any case where one draws from marginals, implicitly assuming no dependence, either at the hyperparameter level or the latent process level, and then does inference on a derived quantity that depends on more than one input.
