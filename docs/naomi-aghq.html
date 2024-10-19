@@ -893,7 +893,7 @@ This package is briefly mentioned so as to note that the function <code>mgcv::gi
 <h2><span class="header-section-number">6.2</span> A universal INLA implementation<a href="naomi-aghq.html#universal" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This section is about implementation of the INLA method using AD via the <code>TMB</code> package.
 Both the Gaussian and Laplace latent field marginal approximations are implemented.
-The implementation is universal in that it is compatible with any model with a <code>TMB</code> C++ template, rather than being based on a restrictive formula interface.
+The implementation is universal in that it is compatible with any model with a <code>TMB</code> C++ template, rather than based on a restrictive formula interface.
 The <code>TMB</code> probabilistic programming language is described as “universal” in that it is an extension of the Turing-complete general purpose language C++.</p>
 <p><span class="citation">Martino and Riebler (<a href="#ref-martino2020integrated">2020</a>)</span> note that “implementing INLA from scratch is a complex task” and as a result “applications of INLA are limited to the (large class of) models implemented [in <code>R-INLA</code>]”.
 A universal INLA implementation facilitates application of the method to models which are not compatible with <code>R-INLA</code>.
@@ -1387,7 +1387,7 @@ To allow interactive review and iteration of model results by workshop participa
 Additionally, it should be reliable and automatic, across a range of country settings.
 Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and as such these requirements present a challenging Bayesian inference problem.</p>
 <p>This section begins (Section <a href="naomi-aghq.html#naomi-model">6.3.1</a>) by describing a simplified version of Naomi.
-The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
+The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing.
 The nowcasting and temporal projection components of the complete model are omitted.
 These time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are likely transferable to the complete model.
@@ -1395,7 +1395,7 @@ Description of some features of the simplified model is left to the more exhaust
 After outlining the model, Section <a href="naomi-aghq.html#naomi-elgm">6.3.2</a> explains why it is an ELGM <span class="citation">(<a href="#ref-stringer2022fast">Stringer, Brown, and Stafford 2022</a>)</span> rather than an LGM <span class="citation">(<a href="#ref-rue2009approximate">Håvard Rue, Martino, and Chopin 2009</a>)</span>.</p>
 <div id="naomi-model" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Model structure<a href="naomi-aghq.html#naomi-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Naomi synthesises data from three different sources to estimate HIV indicators at a district-level, by age and sex.
+<p>Naomi synthesises data from three sources to estimate HIV indicators at a district-level, by age and sex.
 It may be described as having three components, corresponding to these three data sources.
 The model components are:</p>
 <ul>
@@ -1616,13 +1616,13 @@ Although <span class="math inline">\(m = 24\)</span> cannot be described as high
 Hence here the term moderate-dimensional is used.
 Naive use of AGHQ with the product rule requires evaluation of <span class="math inline">\(|\mathcal{Q}(m, k)| = k^m\)</span> quadrature points.
 This would be intractable for <span class="math inline">\(m = 24\)</span> and any <span class="math inline">\(k &gt; 1\)</span>.
-As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.</p>
+As a result, a quadrature rule which does not scale exponentially is required for integrating out the Naomi model hyperparameters.</p>
 <p>This section focuses on the development of an AGHQ rule for moderate dimension, for use within an inference procedure for the Naomi model.
 Though the rule is to be applied within a nested Laplace approximation approach, it is not limited to this setting.</p>
 <div id="aghq-with-variable-levels" class="section level3 hasAnchor" number="6.4.1">
 <h3><span class="header-section-number">6.4.1</span> AGHQ with variable levels<a href="naomi-aghq.html#aghq-with-variable-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Rather than having the same number of quadrature nodes for each dimension of <span class="math inline">\(\boldsymbol{\mathbf{\theta}}\)</span>, it is possible to use a variable number of nodes per dimension.
-In line with the terminology used in the <code>mvQuad</code> package, the number of nodes per dimension are referred to as levels.
+In line with the terminology used in the <code>mvQuad</code> package, the number of nodes per dimension are referred to as “levels”.
 Let <span class="math inline">\(\mathbf{k} = (k_1, \ldots, k_m)\)</span> be a vector of levels, where each <span class="math inline">\(k_j \in \mathbb{Z}^+\)</span>.
 A GHQ grid with (potentially) variable levels is then given by
 <span class="math display">\[\begin{equation}
@@ -2074,7 +2074,7 @@ Diggle, Peter J, and Emanuele Giorgi. 2016. <span>“<span class="nocase">Model-
 Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oliver Stevens, Sumali Bajaj, Rob Ashton, et al. 2021. <span>“<span class="nocase">Naomi: a new modelling tool for estimating HIV epidemic indicators at the district level in sub-Saharan Africa</span>.”</span> <em>Journal of the International AIDS Society</em> 24: e25788.
 </div>
 <div id="ref-esra2024improved" class="csl-entry">
-Esra, Rachel, Mpho Mmelesi, Akeem T. Ketlogetswe, Timothy M. Wolock, Adam Howes, Tlotlo Nong, Matshelo Tina Matlhaga, Siphiwe Ratladi, Dinah Ramaabya, and Jeffrey W. Imai-Eaton. 2024. <span>“Improved Indicators for Subnational Unmet Antiretroviral Therapy Need in the Health System: Updates to the Naomi Model in 2023.”</span> <em>JAIDS Journal of Acquired Immune Deficiency Syndromes</em> 95 (1S): e24–33. <a href="https://doi.org/10.1097/QAI.0000000000003324">https://doi.org/10.1097/QAI.0000000000003324</a>.
+Esra, Rachel, Mpho Mmelesi, Akeem T. Ketlogetswe, Timothy M. Wolock, Adam Howes, Tlotlo Nong, Matshelo Tina Matlhaga, Siphiwe Ratladi, Dinah Ramaabya, and Jeffrey W. Imai-Eaton. 2024. <span>“Improved Indicators for Subnational Unmet Antiretroviral Therapy Need in the Health System: Updates to the Naomi Model in 2023.”</span> <em>Journal of Acquired Immune Deficiency Syndromes</em> 95 (1S): e24–33. <a href="https://doi.org/10.1097/QAI.0000000000003324">https://doi.org/10.1097/QAI.0000000000003324</a>.
 </div>
 <div id="ref-fattah2022smart" class="csl-entry">
 Fattah, EA, JV Niekerk, and H Rue. 2022. <span>“<span class="nocase">Smart gradient-an adaptive technique for improving gradient estimation</span>.”</span> <em>Foundations of Data Science</em>.
@@ -2146,7 +2146,7 @@ Martins, Thiago G, Daniel Simpson, Finn Lindgren, and Håvard Rue. 2013. <span>�
 Meng, Xiao-Li. 2018. <span>“<span class="nocase">Statistical paradises and paradoxes in big data (i) law of large populations, big data paradox, and the 2016 US presidential election</span>.”</span> <em>The Annals of Applied Statistics</em> 12 (2): 685–726.
 </div>
 <div id="ref-monnahan2018no" class="csl-entry">
-Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“<span class="nocase">No-U-turn sampling for fast Bayesian inference in ADMB and TMB: Introducing the adnuts and tmbstan R packages</span>.”</span> <em>PloS One</em> 13 (5): e0197954.
+Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“<span class="nocase">No-U-turn sampling for fast Bayesian inference in ADMB and TMB: Introducing the adnuts and tmbstan R packages</span>.”</span> <em>PLOS One</em> 13 (5): e0197954.
 </div>
 <div id="ref-naylor1982applications" class="csl-entry">
 Naylor, John C, and Adrian FM Smith. 1982. <span>“<span class="nocase">Applications of a method for the efficient computation of posterior distributions</span>.”</span> <em>Journal of the Royal Statistical Society Series C: Applied Statistics</em> 31 (3): 214–25.
@@ -2191,7 +2191,7 @@ Rue, Håvard, Andrea Riebler, Sigrunn H Sørbye, Janine B Illian, Daniel P Simps
 Schad, Daniel J, Michael Betancourt, and Shravan Vasishth. 2021. <span>“Toward a Principled Bayesian Workflow in Cognitive Science.”</span> <em>Psychological Methods</em> 26 (1): 103.
 </div>
 <div id="ref-schluter2016using" class="csl-entry">
-Schlüter, Daniela K, Martial L Ndeffo-Mbah, Innocent Takougang, Tony Ukety, Samuel Wanji, Alison P Galvani, and Peter J Diggle. 2016. <span>“<span class="nocase">Using community-level prevalence of Loa loa infection to predict the proportion of highly-infected individuals: statistical modelling to support lymphatic filariasis and onchocerciasis elimination programs</span>.”</span> <em>PLoS Neglected Tropical Diseases</em> 10 (12): e0005157.
+Schlüter, Daniela K, Martial L Ndeffo-Mbah, Innocent Takougang, Tony Ukety, Samuel Wanji, Alison P Galvani, and Peter J Diggle. 2016. <span>“<span class="nocase">Using community-level prevalence of Loa loa infection to predict the proportion of highly-infected individuals: statistical modelling to support lymphatic filariasis and onchocerciasis elimination programs</span>.”</span> <em>PLOS Neglected Tropical Diseases</em> 10 (12): e0005157.
 </div>
 <div id="ref-shapley1953value" class="csl-entry">
 Shapley, Lloyd S et al. 1953. <span>“<span class="nocase">A value for n-person games</span>.”</span> Princeton University Press Princeton.

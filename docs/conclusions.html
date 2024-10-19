@@ -420,7 +420,7 @@ div.csl-indent {
 <div id="contributions" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Contributions<a href="conclusions.html#contributions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Effective response to the HIV epidemic depends on strategic information provided by models of data.
-The contributions of this thesis are both in generating this information, and in understanding and advancing statistical methods.</p>
+This thesis contributes both to generating this information and to advancing statistical methods.</p>
 <p>Chapter <a href="beyond-borders.html#beyond-borders">4</a> found that spatially structured random effects should be used in small-area models for HIV.
 Kernel models performed better for data simulated from an adjacency-based spatial process than adjacency-based models did for data simulated from a kernel model.
 However, adjacency-based models performed better under cross-validation of real HIV survey data.
@@ -433,7 +433,7 @@ Figure 7.1: Panel A shows the front page of <span class="citation">UNAIDS (<a hr
 </p>
 </div>
 <p>Chapter <a href="multi-agyw.html#multi-agyw">5</a> estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy <span class="citation">(<a href="#ref-unaids2021global">UNAIDS 2021b</a>)</span>.
-Risk group proportion estimates were used to behaviourally disaggregate HIV prevalence and incidence, and assess the benefits of a variety of risk stratification strategies.
+Risk group proportion estimates were used to behaviourally disaggregate HIV prevalence and incidence and assess the benefits of a variety of risk stratification strategies.
 This work is the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
 The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure <a href="conclusions.html#fig:global-update-conclusion">7.1</a>; <span class="citation">UNAIDS (<a href="#ref-unaids2023global">2023b</a>)</span>].
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
@@ -454,8 +454,8 @@ Indeed, <span class="citation">Esra et al. (<a href="#ref-esra2024improved">2024
 <li><p>It would be valuable to extend the risk group model developed in Chapter <a href="multi-agyw.html#multi-agyw">5</a>, and the resulting tool, to include all adults 15-49.
 Although AGYW are disproportionately at risk of HIV infection, 56% of new infections in SSA occur in other demographic groups.
 Modelling of age-stratified sexual partnerships <span class="citation">(<a href="#ref-wolock2021evaluating">Wolock et al. 2021</a>)</span> may help to overcome reporting biases by harmonising male and female reporting.
-This model would likely fall out of the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
-<li><p>Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would be enhanced greatly by improvements to its speed and usability.
+This model would likely fall outside the scope of <code>R-INLA</code>, but would be possible to write with <code>TMB</code> and therefore amenable to the inference methods advanced in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a>.</p></li>
+<li><p>Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter <a href="naomi-aghq.html#naomi-aghq">6</a> would be greatly enhanced by improvements to its speed and usability.
 The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by <span class="citation">Wood (<a href="#ref-wood2020simplified">2020</a>)</span>.
 Although the naive implementation used in this thesis is viable for integrating Laplace marginals over a small number of hyperparameter quadrature nodes, such as the <span class="math inline">\(3^2 = 9\)</span> nodes used Sections <a href="naomi-aghq.html#loaloa">6.2.2</a> and <a href="naomi-aghq.html#epil">6.2.1</a>, it becomes prohibitively slow for larger numbers.
 Usability would be improved by providing the method as a part of statistical software, likely via the <code>aghq</code> package.
@@ -474,7 +474,7 @@ Figure 7.2: For the Loa loa ELGM (Section <a href="naomi-aghq.html#loaloa">6.2.2
 That a single <code>TMB</code> C++ template for the log-posterior supports inference using multiple methods, including gold-standard NUTS via <code>tmbstan</code>, is a substantial asset in conducting this type of research.</p>
 <p>As an example research question, within this class of models, what is the best way to obtain accurate inferences within a fixed computational budget.
 Is it better to use additional hyperparameter grid points, or more accurate latent field approximations?
-For the Loa loa ELGM in Section <a href="naomi-aghq.html#loaloa">6.2.2</a>, the benefit of Laplace marginals was greater than a denser AGHQ grid (Figure <a href="conclusions.html#fig:conditional-simulation-diff-k-fixed">7.2</a>).
+For the Loa loa ELGM in Section <a href="naomi-aghq.html#loaloa">6.2.2</a>, the benefit of using Laplace marginals exceeded that of a denser AGHQ grid (Figure <a href="conclusions.html#fig:conditional-simulation-diff-k-fixed">7.2</a>).
 It would also be of interest to find methods to obtain accurate inferences for particular parameters, or functions of parameters, using INLA-like methods.
 For example, in Section <a href="naomi-aghq.html#malawi">6.5</a>, although the PCA-AGHQ grid improved latent field parameter inferences, it did little to improve model output accuracy.
 Is there a way in which computational effort could be focused on obtaining accurate estimates of Naomi model outputs?</p>
@@ -488,11 +488,11 @@ This work is benefited by the complete specification (Appendix <a href="naomi-ag
 <h2><span class="header-section-number">7.3</span> Broader reflections<a href="conclusions.html#broader-reflections" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Conducting the work in this thesis involved testing the boundaries of available statistical software.
 For example, I found it challenging, if not impossible, to implement a common model using different inferential software.
-As the frequently asked questions section of the <code>R-INLA</code> website <span class="citation">(<a href="#ref-rinla2023faq">Havard Rue 2023</a>)</span> notes: “the devil is in the details”.
+As the Frequently Asked Questions section of the <code>R-INLA</code> website <span class="citation">(<a href="#ref-rinla2023faq">Havard Rue 2023</a>)</span> notes: “the devil is in the details”.
 Similarly, I encountered issues implementing a desired collection of different models in a common inferential software.
 From personal experience, my colleagues have also encountered similar problems.
 Needless to say, conflation of statistical models and inference methodologies limits the validity of any findings.
-To avoid this issue, I implemented all models in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> using <code>TMB</code> model templates.
+To avoid this issue I implemented all models in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> using <code>TMB</code> model templates.
 (Additionally, I would recommend implementing the model used in Chapter <a href="multi-agyw.html#multi-agyw">5</a> in <code>TMB</code> for future development.)
 Alongside being sufficiently flexible to meet my model specification requirements, <code>TMB</code> is compatible with a range of inference methodologies, including those advanced in this thesis.
 As such, <code>TMB</code> remains <span class="citation">(<a href="#ref-osgood2023statistical">Osgood-Zimmerman and Wakefield 2023</a>)</span> an under-rated statistical tool.
@@ -501,7 +501,7 @@ In demonstrating some of its capabilities, I hope this thesis contributes to its
 This approach reflects the complexity of the models and methods used in this thesis.
 Understanding complex systems from a theoretical perspective can be challenging.
 That said, in my opinion the work in this thesis could benefit from closer integration with statistical theory.
-Though comprehensive theoretical understanding of models or algorithms may be too optimistic, better understanding simplified examples, limiting cases, or constituent parts may provide value.</p>
+Although a full theoretical understanding of these models or algorithms may be ambitious, better understanding simplified examples, limiting cases, or constituent parts could still prove valuable.</p>
 <p>Working with the data in Chapter <a href="multi-agyw.html#multi-agyw">5</a> deepened my appreciation for the realistic challenges faced in applied work, and data quality being linchpin for any successful statistical analysis.
 While from the real world, the data in Chapters <a href="beyond-borders.html#beyond-borders">4</a> and <a href="naomi-aghq.html#naomi-aghq">6</a> underwent substantial cleaning, processing, and vetting before I handled them, as is typical in methodological research.
 It is important that methodological and theoretical statisticians appreciate the real challenges of applied work, by doing it themselves, or working in close collaboration with those who do.</p>
@@ -537,7 +537,7 @@ Bilodeau, Blair, Alex Stringer, and Yanbo Tang. 2022. <span>“<span class="noca
 Eaton, Jeffrey W, Laura Dwyer-Lindgren, Steve Gutreuter, Megan O’Driscoll, Oliver Stevens, Sumali Bajaj, Rob Ashton, et al. 2021. <span>“<span class="nocase">Naomi: a new modelling tool for estimating HIV epidemic indicators at the district level in sub-Saharan Africa</span>.”</span> <em>Journal of the International AIDS Society</em> 24: e25788.
 </div>
 <div id="ref-esra2024improved" class="csl-entry">
-Esra, Rachel, Mpho Mmelesi, Akeem T. Ketlogetswe, Timothy M. Wolock, Adam Howes, Tlotlo Nong, Matshelo Tina Matlhaga, Siphiwe Ratladi, Dinah Ramaabya, and Jeffrey W. Imai-Eaton. 2024. <span>“Improved Indicators for Subnational Unmet Antiretroviral Therapy Need in the Health System: Updates to the Naomi Model in 2023.”</span> <em>JAIDS Journal of Acquired Immune Deficiency Syndromes</em> 95 (1S): e24–33. <a href="https://doi.org/10.1097/QAI.0000000000003324">https://doi.org/10.1097/QAI.0000000000003324</a>.
+Esra, Rachel, Mpho Mmelesi, Akeem T. Ketlogetswe, Timothy M. Wolock, Adam Howes, Tlotlo Nong, Matshelo Tina Matlhaga, Siphiwe Ratladi, Dinah Ramaabya, and Jeffrey W. Imai-Eaton. 2024. <span>“Improved Indicators for Subnational Unmet Antiretroviral Therapy Need in the Health System: Updates to the Naomi Model in 2023.”</span> <em>Journal of Acquired Immune Deficiency Syndromes</em> 95 (1S): e24–33. <a href="https://doi.org/10.1097/QAI.0000000000003324">https://doi.org/10.1097/QAI.0000000000003324</a>.
 </div>
 <div id="ref-grieve2023importance" class="csl-entry">
 Grieve, Richard, Youqi Yang, Sam Abbott, Giridhara R Babu, Malay Bhattacharyya, Natalie Dean, Stephen Evans, et al. 2023. <span>“The Importance of Investing in Data, Models, Experiments, Team Science, and Public Trust to Help Policymakers Prepare for the Next Pandemic.”</span> <em>PLOS Global Public Health</em> 3 (11): e0002601.

@@ -418,11 +418,10 @@ div.csl-indent {
 <p>This chapter is about spatial random effect model specifications for areal data.
 A simple model based on the adjacency structure between areas is popular in HIV small-area estimation and beyond.
 The analysis aimed to determine if using a more complex model would result in more accurate predictions.</p>
-<p>Modelling spatial correlation is particularly important for the small-area estimation of HIV.
-This is because the covariates which are most strongly associated with HIV, such as sexual behaviour and STI status <span class="citation">(<a href="#ref-mayala2020predicting">Mayala, Bhatt, and Gething 2020</a>)</span>, are themselves difficult to measure.
+<p>Modelling spatial correlation is particularly important for small-area estimation of HIV because the covariates most strongly associated with HIV, such as sexual behaviour and STI status <span class="citation">(<a href="#ref-mayala2020predicting">Mayala, Bhatt, and Gething 2020</a>)</span>, are difficult to measure.
 As a result, previous small-area models of HIV have found including covariates only modestly improve predictive performance <span class="citation">(Supplementary Figure 20, <a href="#ref-dwyer2019mapping">Dwyer-Lindgren et al. 2019</a>)</span>.
 The lack of predictive covariates emphasises the role of modelling spatial variation.
-For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and directly modelling spatial correlation is less important <span class="citation">(<a href="#ref-weiss2015re">Weiss et al. 2015</a>; <a href="#ref-bhatt2015effect">Bhatt et al. 2015</a>)</span>.</p>
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily measurable environmental factors, explanatory covariates are more easily available and directly modelling spatial correlation is less important <span class="citation">(<a href="#ref-weiss2015re">Weiss et al. 2015</a>; <a href="#ref-bhatt2015effect">Bhatt et al. 2015</a>)</span>.</p>
 <p>Spatial variation in areal data is often modelled using spatial random effects <span class="citation">(<a href="#ref-haining2003spatial">Haining 2003</a>; <a href="#ref-cramb2018investigation">Cramb et al. 2018</a>)</span>.
 The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; <span class="citation">Havard Rue and Held (<a href="#ref-rue2005gaussian">2005</a>)</span>].
 These models combine a Gaussian distribution with Markov conditional independence assumptions between areas.
@@ -456,7 +455,7 @@ The full conditional distribution of the <span class="math inline">\(i\)</span>t
     u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), \tag{4.1}
 \end{equation}\]</span>
 where <span class="math inline">\(\delta i\)</span> is the set of neighbours of <span class="math inline">\(A_i\)</span> with cardinality <span class="math inline">\(n_{\delta i} = |\delta i|\)</span> and <span class="math inline">\(\mathbf{u}_{-i}\)</span> is the vector of spatial random effects with the <span class="math inline">\(i\)</span>th entry removed.
-By Brook’s lemma <span class="citation">(<a href="#ref-rue2005gaussian">Havard Rue and Held 2005</a>)</span> the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
+By Brook’s lemma <span class="citation">(<a href="#ref-rue2005gaussian">Havard Rue and Held 2005</a>)</span> the set of full conditionals of the Besag model is equivalent to the Gaussian Markov random field (GMRF) given by
 <span class="math display" id="eq:gmrf">\[\begin{equation}
     \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}). \tag{4.2}
 \end{equation}\]</span>
@@ -530,7 +529,7 @@ As such, in total the number of sum-to-zero constraints equals to the number of 
 <p>The Besag model was originally proposed by <span class="citation">Besag, York, and Mollié (<a href="#ref-besag1991bayesian">1991</a>)</span> for use in image analysis.
 In this setting, areas correspond to pixels arranged in a regular lattice structure.
 In an image, the data point at each pixel can be thought of as an average of the intensity or colour over the space represented by the pixel.</p>
-<p>Since it’s original proposal, the Besag model has seen wider use.
+<p>Since its original proposal, the Besag model has seen wider use.
 However, for small-area estimation of HIV, the spatial structure corresponds to administrative units.
 These administrative units may have a more irregular spatial structure than a lattice.
 Furthermore, data points may not come about by uniform averaging over a space.
@@ -548,18 +547,18 @@ Figure 4.2: Though they are quite different, the geometries shown in panels A, B
 </div>
 <p>A fundamental objection is that summarising a geometry by an adjacency graph represents a loss of information.
 Many geometries share the same adjacency graph, and as such are isomorphic under the Besag model (Figure <a href="beyond-borders.html#fig:maup1">4.2</a>).
-Though not in itself a problem, this fact prompts consideration as to whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.</p>
+Though not in itself a problem, this fact prompts consideration whether the class of geometries with the same adjacency graph is sufficiently similar to merit identical models.</p>
 <p>Intuitively, the more regular the spatial structure, the less information is lost in compression to an adjacency graph.
 In image analysis, very little spatial information is lost in compression of a lattice structure to an adjacency graph.
 On the other hand, the regions of a country, determined by political and geographic forces, tend to display greater irregularity.
-The appropriateness of adjacency compression therefore varies by the type of geometry common to the application setting.</p>
+The appropriateness of adjacency compression varies therefore by the type of geometry common to the application setting.</p>
 <p>The regularity of realistic geometries may help to constrain each class to be similar.
 In other words, although pathological geometries can be constructed, they might be implausible in statistical practice and so of limited concern.</p>
 </div>
 <div id="mean-structure" class="section level4 hasAnchor" number="4.1.3.2">
 <h4><span class="header-section-number">4.1.3.2</span> Mean structure<a href="beyond-borders.html#mean-structure" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>In the Besag model all adjacent areas count equally in the equation for the conditional mean.
-This assumption is unsatisfying: for most geometries, we expect different amounts of correlation between neighbouring areas.
+This assumption is unsatisfying, as for most geometries we expect different amounts of correlation between neighbouring areas.
 Figure <a href="beyond-borders.html#fig:maup1">4.2</a> illustrates a number of heuristic features for neighbour importance.
 In Panel <a href="beyond-borders.html#fig:maup1">4.2</a>C, the area with a longer shared border would be expected to be more highly correlated.
 In Panel <a href="beyond-borders.html#fig:maup1">4.2</a>D, the area with a closer centre would be expected to be more highly correlated.</p>
@@ -574,7 +573,7 @@ Figure 4.3: A sequence of geometries where the number of neighbours of area one 
 </p>
 </div>
 <p>In Equation <a href="beyond-borders.html#eq:besag">(4.1)</a> the precision of <span class="math inline">\(u_i\)</span> is proportional to its number of neighbours <span class="math inline">\(n_{\delta i}\)</span>.
-It follow that as <span class="math inline">\(n_{\delta i} \to \infty\)</span> then <span class="math inline">\(\text{Var}(u_i) \to 0\)</span>.
+It follows that as <span class="math inline">\(n_{\delta i} \to \infty\)</span> then <span class="math inline">\(\text{Var}(u_i) \to 0\)</span>.
 This is illustrated by Figure <a href="beyond-borders.html#fig:maup2">4.3</a> where the area on the right is repeatedly divided such that its number of neighbours increases.
 This property is a consequence of averaging the conditional mean over a greater number of areas, which, in certain situations, can correspond to a greater amount of information.
 However, if the amount of information in the shaded area remains fixed, it is inappropriate that <span class="math inline">\(\text{Var}(u_1)\)</span> should tend to zero as a result of drawing additional, arbitrary, boundaries.
@@ -1689,7 +1688,7 @@ Differences within the kernel-based models for this survey, and indeed across al
 <h2><span class="header-section-number">4.5</span> Discussion<a href="beyond-borders.html#discussion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="modelling" class="section level3 hasAnchor" number="4.5.1">
 <h3><span class="header-section-number">4.5.1</span> Modelling<a href="beyond-borders.html#modelling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Though there are situations were other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
+<p>Though there are situations where other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
 For the study on HIV survey data, adjacency-based models performed well, if not the best, in all cases.
 That is not to say that under data truly generated from a kernel model, there isn’t significant benefit to using the corresponding kernel model for inference.
 However, the transferability of this finding to applied settings is limited by the following factors.
@@ -1697,7 +1696,7 @@ First and foremost, it is usually impossible to know that real data was generate
 Second, the synthetic data study used the same kernel, Matérn with <span class="math inline">\(\nu = 3/2\)</span> (Equation <a href="beyond-borders.html#eq:matern">(4.14)</a>), for both simulation and inference, and as such represents a best-case.
 Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
 Finally, aggregation via the integrated kernel occurred at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
-If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.</p>
+If the link function <span class="math inline">\(g\)</span> is the identity or linear then the two are equivalent, but non-linear link functions create a discrepancy, which this study did not address.</p>
 <p>This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of <span class="citation">Lindgren, Rue, and Lindström (<a href="#ref-lindgren2011explicit">2011</a>)</span> as a potentially more computationally efficient way to implement integrated kernel models <span class="citation">(<a href="#ref-wilson2018pointless">Wilson and Wakefield 2018</a>)</span>.
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.
 Nonetheless, it would be of value to confirm this empirically.</p>
@@ -1760,7 +1759,7 @@ Aldor-Noiman, Sivan, Lawrence D Brown, Andreas Buja, Wolfgang Rolke, and Robert 
 Arambepola, Rohan, Tim CD Lucas, Anita K Nandi, Peter W Gething, and Ewan Cameron. 2022. <span>“<span class="nocase">A simulation study of disaggregation regression for spatial disease mapping</span>.”</span> <em>Statistics in Medicine</em> 41 (1): 1–16.
 </div>
 <div id="ref-bennett2019particulate" class="csl-entry">
-Bennett, James E, Helen Tamura-Wicks, Robbie M Parks, Richard T Burnett, C Arden Pope III, Matthew J Bechle, Julian D Marshall, Goodarz Danaei, and Majid Ezzati. 2019. <span>“<span class="nocase">Particulate matter air pollution and national and county life expectancy loss in the USA: A spatiotemporal analysis</span>.”</span> <em>PLoS Medicine</em> 16 (7): e1002856.
+Bennett, James E, Helen Tamura-Wicks, Robbie M Parks, Richard T Burnett, C Arden Pope III, Matthew J Bechle, Julian D Marshall, Goodarz Danaei, and Majid Ezzati. 2019. <span>“<span class="nocase">Particulate matter air pollution and national and county life expectancy loss in the USA: A spatiotemporal analysis</span>.”</span> <em>PLOS Medicine</em> 16 (7): e1002856.
 </div>
 <div id="ref-besag1991bayesian" class="csl-entry">
 Besag, Julian, Jeremy York, and Annie Mollié. 1991. <span>“<span class="nocase">Bayesian image restoration, with two applications in spatial statistics</span>.”</span> <em>Annals of the Institute of Statistical Mathematics</em> 43 (1): 1–20.
@@ -1781,7 +1780,7 @@ Bhatt, Samir, DJ Weiss, E Cameron, D Bisanzio, B Mappin, U Dalrymple, KE Battle,
 Blangiardo, Marta, Michela Cameletti, Gianluca Baio, and Håvard Rue. 2013. <span>“<span class="nocase">Spatial and spatio-temporal models with R-INLA</span>.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 4: 33–49.
 </div>
 <div id="ref-bosse2023scoring" class="csl-entry">
-Bosse, Nikos I, Sam Abbott, Anne Cori, Edwin van Leeuwen, Johannes Bracher, and Sebastian Funk. 2023. <span>“<span class="nocase">Scoring epidemiological forecasts on transformed scales</span>.”</span> <em>PLoS Computational Biology</em> 19 (8): e1011393.
+Bosse, Nikos I, Sam Abbott, Anne Cori, Edwin van Leeuwen, Johannes Bracher, and Sebastian Funk. 2023. <span>“<span class="nocase">Scoring epidemiological forecasts on transformed scales</span>.”</span> <em>PLOS Computational Biology</em> 19 (8): e1011393.
 </div>
 <div id="ref-carpenter2017stan" class="csl-entry">
 Carpenter, Bob, Andrew Gelman, Matthew D Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span class="nocase">Stan: A probabilistic programming language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1).
@@ -1886,7 +1885,7 @@ Matheson, James E, and Robert L Winkler. 1976. <span>“<span class="nocase">Sco
 Mayala, Benjamin K., Samir Bhatt, and Peter Gething. 2020. <span>“<span class="nocase">Predicting HIV/AIDS at Subnational Levels using DHS Covariates related to HIV</span>.”</span> DHS Spatial Analysis Reports 18. Rockville, Maryland, USA: ICF.
 </div>
 <div id="ref-monnahan2018no" class="csl-entry">
-Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“<span class="nocase">No-U-turn sampling for fast Bayesian inference in ADMB and TMB: Introducing the adnuts and tmbstan R packages</span>.”</span> <em>PloS One</em> 13 (5): e0197954.
+Monnahan, Cole C, and Kasper Kristensen. 2018. <span>“<span class="nocase">No-U-turn sampling for fast Bayesian inference in ADMB and TMB: Introducing the adnuts and tmbstan R packages</span>.”</span> <em>PLOS One</em> 13 (5): e0197954.
 </div>
 <div id="ref-morris2019bayesian" class="csl-entry">
 Morris, Mitzi, Katherine Wheeler-Martin, Dan Simpson, Stephen J. Mooney, Andrew Gelman, and Charles DiMaggio. 2019. <span>“<span class="nocase">Bayesian hierarchical spatial models: Implementing the Besag York Mollié model in stan</span>.”</span> <em>Spatial and Spatio-Temporal Epidemiology</em> 31: 100301. https://doi.org/<a href="https://doi.org/10.1016/j.sste.2019.100301">https://doi.org/10.1016/j.sste.2019.100301</a>.

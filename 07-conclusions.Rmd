@@ -24,7 +24,7 @@ This chapter concludes the thesis by discussing its most important contributions
 ## Contributions
 
 Effective response to the HIV epidemic depends on strategic information provided by models of data.
-The contributions of this thesis are both in generating this information, and in understanding and advancing statistical methods.
+This thesis contributes both to generating this information and to advancing statistical methods.
 
 Chapter \@ref(beyond-borders) found that spatially structured random effects should be used in small-area models for HIV.
 Kernel models performed better for data simulated from an adjacency-based spatial process than adjacency-based models did for data simulated from a kernel model.
@@ -38,7 +38,7 @@ knitr::include_graphics("figures/conclusions/global-update-conclusion.png")
 ```
 
 Chapter \@ref(multi-agyw) estimated HIV risk group proportions for AGYW to enable implementation of the Global AIDS strategy [@unaids2021global].
-Risk group proportion estimates were used to behaviourally disaggregate HIV prevalence and incidence, and assess the benefits of a variety of risk stratification strategies.
+Risk group proportion estimates were used to behaviourally disaggregate HIV prevalence and incidence and assess the benefits of a variety of risk stratification strategies.
 This work is the basis for a tool used to prioritise delivery of HIV prevention services by countries in SSA.
 The tool now encompasses at least 30 countries, expanding from the initial 13 included [Figure \@ref(fig:global-update-conclusion); @unaids2023global].
 Models will be rerun each year to populate the tool with updated information as a part of the UNAIDS annual HIV estimates process.
@@ -60,9 +60,9 @@ Promising avenues for future work, that I might prioritise, include:
 1. It would be valuable to extend the risk group model developed in Chapter \@ref(multi-agyw), and the resulting tool, to include all adults 15-49.
 Although AGYW are disproportionately at risk of HIV infection, 56% of new infections in SSA occur in other demographic groups.
 Modelling of age-stratified sexual partnerships [@wolock2021evaluating] may help to overcome reporting biases by harmonising male and female reporting.
-This model would likely fall out of the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the inference methods advanced in Chapter \@ref(naomi-aghq).
+This model would likely fall outside the scope of `R-INLA`, but would be possible to write with `TMB` and therefore amenable to the inference methods advanced in Chapter \@ref(naomi-aghq).
 
-2. Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter \@ref(naomi-aghq) would be enhanced greatly by improvements to its speed and usability.
+2. Although suitable for early stage research, wider adoption of the INLA implementation developed in Chapter \@ref(naomi-aghq) would be greatly enhanced by improvements to its speed and usability.
 The most important speed enhancement would come from using the simplified approximation to the Laplace marginals developed by @wood2020simplified.
 Although the naive implementation used in this thesis is viable for integrating Laplace marginals over a small number of hyperparameter quadrature nodes, such as the $3^2 = 9$ nodes used Sections \@ref(loaloa) and \@ref(epil), it becomes prohibitively slow for larger numbers.
 Usability would be improved by providing the method as a part of statistical software, likely via the `aghq` package.
@@ -81,7 +81,7 @@ knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-k-fixed.
     
     As an example research question, within this class of models, what is the best way to obtain accurate inferences within a fixed computational budget.
     Is it better to use additional hyperparameter grid points, or more accurate latent field approximations?
-    For the Loa loa ELGM in Section \@ref(loaloa), the benefit of Laplace marginals was greater than a denser AGHQ grid (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
+    For the Loa loa ELGM in Section \@ref(loaloa), the benefit of using Laplace marginals exceeded that of a denser AGHQ grid (Figure \@ref(fig:conditional-simulation-diff-k-fixed)).
     It would also be of interest to find methods to obtain accurate inferences for particular parameters, or functions of parameters, using INLA-like methods.
     For example, in Section \@ref(malawi), although the PCA-AGHQ grid improved latent field parameter inferences, it did little to improve model output accuracy.
     Is there a way in which computational effort could be focused on obtaining accurate estimates of Naomi model outputs?
@@ -96,11 +96,11 @@ knitr::include_graphics("figures/naomi-aghq/conditional-simulation-diff-k-fixed.
 
 Conducting the work in this thesis involved testing the boundaries of available statistical software.
 For example, I found it challenging, if not impossible, to implement a common model using different inferential software.
-As the frequently asked questions section of the `R-INLA` website [@rinla2023faq] notes: "the devil is in the details".
+As the Frequently Asked Questions section of the `R-INLA` website [@rinla2023faq] notes: "the devil is in the details".
 Similarly, I encountered issues implementing a desired collection of different models in a common inferential software.
 From personal experience, my colleagues have also encountered similar problems.
 Needless to say, conflation of statistical models and inference methodologies limits the validity of any findings.
-To avoid this issue, I implemented all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
+To avoid this issue I implemented all models in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) using `TMB` model templates.
 (Additionally, I would recommend implementing the model used in Chapter \@ref(multi-agyw) in `TMB` for future development.)
 Alongside being sufficiently flexible to meet my model specification requirements, `TMB` is compatible with a range of inference methodologies, including those advanced in this thesis.
 As such, `TMB` remains [@osgood2023statistical] an under-rated statistical tool.
@@ -110,7 +110,7 @@ The work done in this thesis, particularly Chapters \@ref(beyond-borders) and \@
 This approach reflects the complexity of the models and methods used in this thesis.
 Understanding complex systems from a theoretical perspective can be challenging.
 That said, in my opinion the work in this thesis could benefit from closer integration with statistical theory.
-Though comprehensive theoretical understanding of models or algorithms may be too optimistic, better understanding simplified examples, limiting cases, or constituent parts may provide value.
+Although a full theoretical understanding of these models or algorithms may be ambitious, better understanding simplified examples, limiting cases, or constituent parts could still prove valuable.
 
 Working with the data in Chapter \@ref(multi-agyw) deepened my appreciation for the realistic challenges faced in applied work, and data quality being linchpin for any successful statistical analysis.
 While from the real world, the data in Chapters \@ref(beyond-borders) and \@ref(naomi-aghq) underwent substantial cleaning, processing, and vetting before I handled them, as is typical in methodological research.

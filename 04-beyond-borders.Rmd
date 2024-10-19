@@ -25,11 +25,10 @@ This chapter is about spatial random effect model specifications for areal data.
 A simple model based on the adjacency structure between areas is popular in HIV small-area estimation and beyond.
 The analysis aimed to determine if using a more complex model would result in more accurate predictions.
 
-Modelling spatial correlation is particularly important for the small-area estimation of HIV.
-This is because the covariates which are most strongly associated with HIV, such as sexual behaviour and STI status [@mayala2020predicting], are themselves difficult to measure.
+Modelling spatial correlation is particularly important for small-area estimation of HIV because the covariates most strongly associated with HIV, such as sexual behaviour and STI status [@mayala2020predicting], are difficult to measure.
 As a result, previous small-area models of HIV have found including covariates only modestly improve predictive performance [Supplementary Figure 20, @dwyer2019mapping].
 The lack of predictive covariates emphasises the role of modelling spatial variation.
-For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily-measurable environmental factors, explanatory covariates are more easily available and directly modelling spatial correlation is less important [@weiss2015re; @bhatt2015effect].
+For mapping of other infectious diseases, such as Malaria where transmission is driven by more predictive and easily measurable environmental factors, explanatory covariates are more easily available and directly modelling spatial correlation is less important [@weiss2015re; @bhatt2015effect].
 
 Spatial variation in areal data is often modelled using spatial random effects [@haining2003spatial; @cramb2018investigation].
 The most common class of models used to specify spatial random effects are Gaussian Markov random fields [GMRFs; @rue2005gaussian].
@@ -66,7 +65,7 @@ The full conditional distribution of the $i$th spatial random effect is given by
     u_i \, | \, \mathbf{u}_{-i} \sim \mathcal{N} \left(\frac{1}{n_{\delta i}} \sum_{j: j \sim i} u_j, \frac{1}{n_{\delta i}\tau_u}\right), (\#eq:besag)
 \end{equation}
 where $\delta i$ is the set of neighbours of $A_i$ with cardinality $n_{\delta i} = |\delta i|$ and $\mathbf{u}_{-i}$ is the vector of spatial random effects with the $i$th entry removed.
-By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag model are equivalent to the Gaussian Markov random field (GMRF) given by
+By Brook's lemma [@rue2005gaussian] the set of full conditionals of the Besag model is equivalent to the Gaussian Markov random field (GMRF) given by
 \begin{equation}
     \mathbf{u} \sim \mathcal{N}(\mathbf{0}, \tau_u^{-1} \mathbf{R}^{-}). (\#eq:gmrf)
 \end{equation}
@@ -732,7 +731,7 @@ Differences within the kernel-based models for this survey, and indeed across al
 
 ### Modelling
 
-Though there are situations were other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
+Though there are situations where other models perform better, on the whole this study supports the use of adjacency-based spatial random effect models.
 For the study on HIV survey data, adjacency-based models performed well, if not the best, in all cases.
 That is not to say that under data truly generated from a kernel model, there isn't significant benefit to using the corresponding kernel model for inference.
 However, the transferability of this finding to applied settings is limited by the following factors.
@@ -740,7 +739,7 @@ First and foremost, it is usually impossible to know that real data was generate
 Second, the synthetic data study used the same kernel, Matérn with $\nu = 3/2$ (Equation \@ref(eq:matern)), for both simulation and inference, and as such represents a best-case.
 Third, specification of the lengthscale prior distribution is challenging, and easy to do badly.
 Finally, aggregation via the integrated kernel occurred at the level of the latent field, despite the fact that most of the time we expect aggregation to occur at the level of the data.
-If the link function $g$ is the identity or linear then the two are equivalent, but for non-linear link functions there is a discrepancy, which was not addressed in this study.
+If the link function $g$ is the identity or linear then the two are equivalent, but non-linear link functions create a discrepancy, which this study did not address.
 
 This chapter did not consider use of the stochastic partial differential equation (SPDE) approximation of @lindgren2011explicit as a potentially more computationally efficient way to implement integrated kernel models [@wilson2018pointless].
 Though the underlying models are ultimately similar, that is a continuous Matérn random field over space aggregated at an area-level, the findings from this work are likely to apply to use of the SPDE approximation.

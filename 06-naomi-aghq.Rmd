@@ -545,7 +545,7 @@ This package is briefly mentioned so as to note that the function `mgcv::ginla` 
 
 This section is about implementation of the INLA method using AD via the `TMB` package.
 Both the Gaussian and Laplace latent field marginal approximations are implemented.
-The implementation is universal in that it is compatible with any model with a `TMB` C++ template, rather than being based on a restrictive formula interface.
+The implementation is universal in that it is compatible with any model with a `TMB` C++ template, rather than based on a restrictive formula interface.
 The `TMB` probabilistic programming language is described as "universal" in that it is an extension of the Turing-complete general purpose language C++.
 
 @martino2020integrated note that "implementing INLA from scratch is a complex task" and as a result "applications of INLA are limited to the (large class of) models implemented [in `R-INLA`]".
@@ -1062,7 +1062,7 @@ Additionally, it should be reliable and automatic, across a range of country set
 Naomi is a complex model, comprised of multiple linked generalized linear mixed models (GLMMs), and as such these requirements present a challenging Bayesian inference problem.
 
 This section begins (Section \@ref(naomi-model)) by describing a simplified version of Naomi.
-The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing is considered.
+The model is simplified in that it is defined only at the time of the most recent household survey with HIV testing.
 The nowcasting and temporal projection components of the complete model are omitted.
 These time points play a limited role in inference as they correspond to a small proportion of the total data.
 As such, findings about inference for the simplified model are likely transferable to the complete model.
@@ -1071,7 +1071,7 @@ After outlining the model, Section \@ref(naomi-elgm) explains why it is an ELGM 
 
 ### Model structure {#naomi-model}
 
-Naomi synthesises data from three different sources to estimate HIV indicators at a district-level, by age and sex.
+Naomi synthesises data from three sources to estimate HIV indicators at a district-level, by age and sex.
 It may be described as having three components, corresponding to these three data sources.
 The model components are:
 
@@ -1308,7 +1308,7 @@ Although $m = 24$ cannot be described as high-dimensional, it is certainly more 
 Hence here the term moderate-dimensional is used.
 Naive use of AGHQ with the product rule requires evaluation of $|\mathcal{Q}(m, k)| = k^m$ quadrature points.
 This would be intractable for $m = 24$ and any $k > 1$.
-As a result, integrating out the hyperparameters for Naomi requires a quadrature rule which does not scale exponentially.
+As a result, a quadrature rule which does not scale exponentially is required for integrating out the Naomi model hyperparameters.
 
 This section focuses on the development of an AGHQ rule for moderate dimension, for use within an inference procedure for the Naomi model.
 Though the rule is to be applied within a nested Laplace approximation approach, it is not limited to this setting.
@@ -1316,7 +1316,7 @@ Though the rule is to be applied within a nested Laplace approximation approach,
 ### AGHQ with variable levels
 
 Rather than having the same number of quadrature nodes for each dimension of $\boldsymbol{\mathbf{\theta}}$, it is possible to use a variable number of nodes per dimension.
-In line with the terminology used in the `mvQuad` package, the number of nodes per dimension are referred to as levels.
+In line with the terminology used in the `mvQuad` package, the number of nodes per dimension are referred to as "levels".
 Let $\mathbf{k} = (k_1, \ldots, k_m)$ be a vector of levels, where each $k_j \in \mathbb{Z}^+$.
 A GHQ grid with (potentially) variable levels is then given by 
 \begin{equation}
