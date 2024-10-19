@@ -5,12 +5,6 @@
 > If you’re interested in my advice on doing a PhD, see this [blog
 > post](https://athowes.github.io/posts/2024-04-01-phd-advice/)!
 
-> \[!WARNING\]  
-> Thesis undergoing
-> [corrections](https://athowes.github.io/thesis/correct.pdf) ! There
-> are various other [enhancements](#enhancements) I would ideally like
-> to make, but as they say “a good thesis is a done thesis”.
-
 PhD in [Modern Statistics and Statistical Machine
 Learning](https://statml.io/) at [Imperial College
 London](https://www.imperial.ac.uk/).
@@ -56,6 +50,13 @@ well as advancing Bayesian methods for spatio-temporal data.
 | A   | [Appendix to models for areal spatial structure](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html)   |                                                               |                                                                                                                   |
 | B   | [Appendix to a model for risk group proportions](https://athowes.github.io/thesis/a-model-for-risk-group-proportions.html)   |                                                               |                                                                                                                   |
 | C   | [Appendix to fast approximate Bayesian inference](https://athowes.github.io/thesis/fast-approximate-bayesian-inference.html) |                                                               |                                                                                                                   |
+
+> \[!TIP\]  
+> I have made the completed
+> [corrections](https://athowes.github.io/thesis/correct.pdf) for this
+> thesis available. There are various other
+> [enhancements](#enhancements) I would ideally like to make, but as
+> they say “a good thesis is a done thesis”.
 
 ## Citation
 
