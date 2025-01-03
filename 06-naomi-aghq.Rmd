@@ -1555,7 +1555,7 @@ knitr::include_graphics(paste0("resources/naomi-aghq/", resource_version, "/depe
 
 Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure \@ref(fig:mean-sd-alt-latent)).
 The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (`r rmse_aghq_mean`) was `r abs(rmse_diff_mean)`% lower than that between GEB and NUTS (`r rmse_tmb_mean`).
-For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (TMB) to `r abs(rmse_aghq_sd)` (PCA-AGHQ).
+For the posterior standard deviation estimates, there was a substantial `r abs(rmse_diff_sd)`% reduction in RMSE: from `r abs(rmse_tmb_sd)` (GEB) to `r abs(rmse_aghq_sd)` (GPCA-AGHQ).
 However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures \@ref(fig:mean-alt-output) and \@ref(fig:sd-alt-output)).
 
 #### Distributional quantities {#distributional-quantities}
@@ -1682,7 +1682,7 @@ GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days 
 
 Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections \@ref(second90) and \@ref(one-inc)).
 As such, where possible, gold-standard NUTS results should be computed.
-Though NUTS is to slow too run during a workshop, it could be run afterwards.
+Though NUTS is too slow to run during a workshop, it could be run afterwards.
 As the UNAIDS HIV estimates process occurs annually, requiring days to compute more accurate estimates is viable.
 That said, Malawi is one of the countries with the fewest number of districts.
 As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may be impossible to run NUTS to convergence, and approximate methods may be required.
@@ -1721,7 +1721,7 @@ However, as `inlabru`, like `R-INLA`, is based on a formula interface, it may no
 
 #### Better quadrature grids
 
-PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
+PCA-AGHQ is a sensible approach to allocating more computational effort to dimensions which contribute more to the integral in question.
 However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:
 
 1. The amount of variation explained in the Hessian matrix may not be of direct interest.

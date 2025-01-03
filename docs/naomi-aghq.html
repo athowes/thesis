@@ -75,7 +75,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -1785,7 +1785,7 @@ Figure 6.24: The latent field posterior mean and posterior standard deviation po
 </div>
 <p>Latent field point estimates obtained from GPCA-AGHQ were closer to the gold-standard results from NUTS than those obtained from GEB (Figure <a href="naomi-aghq.html#fig:mean-sd-alt-latent">6.24</a>).
 The root mean square error (RMSE) between posterior mean estimates from GPCA-AGHQ and NUTS (0.063) was 20% lower than that between GEB and NUTS (0.078).
-For the posterior standard deviation estimates, there was a substantial 60% reduction in RMSE: from 0.14 (TMB) to 0.05 (PCA-AGHQ).
+For the posterior standard deviation estimates, there was a substantial 60% reduction in RMSE: from 0.14 (GEB) to 0.05 (GPCA-AGHQ).
 However, puzzlingly, improvements in latent field estimate accuracy only transferred to model outputs to a limited extent (Figures <a href="naomi-aghq-appendix.html#fig:mean-alt-output">C.15</a> and <a href="naomi-aghq-appendix.html#fig:sd-alt-output">C.16</a>).</p>
 </div>
 <div id="distributional-quantities" class="section level4 hasAnchor" number="6.5.4.2">
@@ -1888,7 +1888,7 @@ Approximate posterior exceedance probabilities from both GEB and GPCA-AGHQ had s
 GEB and GPCA-AGHQ were substantially faster than NUTS, which took over two days to reach convergence.</p>
 <p>Inaccuracies in model outputs from GEB and GPCA-AGHQ do have potential to meaningfully mislead policy (Sections <a href="naomi-aghq.html#second90">6.5.5.1</a> and <a href="naomi-aghq.html#one-inc">6.5.5.2</a>).
 As such, where possible, gold-standard NUTS results should be computed.
-Though NUTS is to slow too run during a workshop, it could be run afterwards.
+Though NUTS is too slow to run during a workshop, it could be run afterwards.
 As the UNAIDS HIV estimates process occurs annually, requiring days to compute more accurate estimates is viable.
 That said, Malawi is one of the countries with the fewest number of districts.
 As NUTS took days to run in Malawi, for larger countries, with hundreds of districts, it may be impossible to run NUTS to convergence, and approximate methods may be required.</p>
@@ -1925,7 +1925,7 @@ However, as <code>inlabru</code>, like <code>R-INLA</code>, is based on a formul
 </div>
 <div id="better-quadrature-grids" class="section level4 hasAnchor" number="6.6.3.2">
 <h4><span class="header-section-number">6.6.3.2</span> Better quadrature grids<a href="naomi-aghq.html#better-quadrature-grids" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>PCA-AGHQ is a sensible approach to allocating more computational to dimensions which contribute more to the integral in question.
+<p>PCA-AGHQ is a sensible approach to allocating more computational effort to dimensions which contribute more to the integral in question.
 However, its application to Naomi surfaced instances where it overlooked potential benefits, or otherwise did not behave as one might wish:</p>
 <ol style="list-style-type: decimal">
 <li>The amount of variation explained in the Hessian matrix may not be of direct interest.
