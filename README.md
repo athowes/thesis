@@ -45,18 +45,18 @@ well as advancing Bayesian methods for spatio-temporal data.
 
 ## Chapters
 
-|     | Title                                                                                                                        | GitHub repository                                             | Journal                                                                                                           |
-|-----|------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| 1   | [Introduction](https://athowes.github.io/thesis/introduction.html)                                                           |                                                               |                                                                                                                   |
-| 2   | [The HIV/AIDS epidemic](https://athowes.github.io/thesis/hiv-aids.html)                                                      |                                                               |                                                                                                                   |
-| 3   | [Bayesian spatio-temporal statistics](https://athowes.github.io/thesis/bayes-st.html)                                        |                                                               |                                                                                                                   |
-| 4   | [Models for areal spatial structure](https://athowes.github.io/thesis/beyond-borders.html)                                   | [`beyond-borders`](https://github.com/athowes/beyond-borders) | In preparation!                                                                                                   |
-| 5   | [A model for risk group proportions](https://athowes.github.io/thesis/multi-agyw.html)                                       | [`multi-agyw`](https://github.com/athowes/multi-agyw)         | [PLOS Global Public Health](https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731) |
-| 6   | [Fast approximate Bayesian inference](https://athowes.github.io/thesis/naomi-aghq.html)                                      | [`naomi-aghq`](https://github.com/athowes/naomi-aghq)         | In preparation!                                                                                                   |
-| 7   | [Conclusions](https://athowes.github.io/thesis/conclusions.html)                                                             |                                                               |                                                                                                                   |
-| A   | [Appendix to models for areal spatial structure](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html)   |                                                               |                                                                                                                   |
-| B   | [Appendix to a model for risk group proportions](https://athowes.github.io/thesis/a-model-for-risk-group-proportions.html)   |                                                               |                                                                                                                   |
-| C   | [Appendix to fast approximate Bayesian inference](https://athowes.github.io/thesis/fast-approximate-bayesian-inference.html) |                                                               |                                                                                                                   |
+|  | Title | GitHub repository | Paper |
+|----|----|----|----|
+| 1 | [Introduction](https://athowes.github.io/thesis/introduction.html) |  |  |
+| 2 | [The HIV/AIDS epidemic](https://athowes.github.io/thesis/hiv-aids.html) |  |  |
+| 3 | [Bayesian spatio-temporal statistics](https://athowes.github.io/thesis/bayes-st.html) |  |  |
+| 4 | [Models for areal spatial structure](https://athowes.github.io/thesis/beyond-borders.html) | [`beyond-borders`](https://github.com/athowes/beyond-borders) | In preparation! |
+| 5 | [A model for risk group proportions](https://athowes.github.io/thesis/multi-agyw.html) | [`multi-agyw`](https://github.com/athowes/multi-agyw) | [PLOS Global Public Health](https://journals.plos.org/globalpublichealth/article?id=10.1371/journal.pgph.0001731) |
+| 6 | [Fast approximate Bayesian inference](https://athowes.github.io/thesis/naomi-aghq.html) | [`naomi-aghq`](https://github.com/athowes/naomi-aghq) | [arXiv](https://arxiv.org/abs/2508.15665) |
+| 7 | [Conclusions](https://athowes.github.io/thesis/conclusions.html) |  |  |
+| A | [Appendix to models for areal spatial structure](https://athowes.github.io/thesis/models-for-areal-spatial-structure.html) |  |  |
+| B | [Appendix to a model for risk group proportions](https://athowes.github.io/thesis/a-model-for-risk-group-proportions.html) |  |  |
+| C | [Appendix to fast approximate Bayesian inference](https://athowes.github.io/thesis/fast-approximate-bayesian-inference.html) |  |  |
 
 ## Citation
 
@@ -78,6 +78,7 @@ see this
 [presentation](https://athowes.github.io/thesis/slides-long.pdf).
 
 <p align="center">
+
 <a href="https://athowes.github.io/thesis/slides.pdf">
 <img src="docs/slide-1.png" alt="The title slide!" height="300"/> </a>
 </p>
